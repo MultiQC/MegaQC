@@ -2,7 +2,7 @@
 
 ### NB: Placeholder text. Package is not yet ready for production use.
 
-### 1) Install MultiQC_DB package
+### 2) Install MultiQC_DB package
 MultiQC_DB is available on both the Python Package Index (PyPI) and
 conda (bioconda channel). To install using PyPI do the following command:
 
@@ -16,14 +16,28 @@ To install with conda:
 conda install -c bioconda multiqc_db
 ```
 
-### 2) Set up database
+### 1) Set up database
 > MultiQC_DB uses the Flask SQLAlchemy plugin, meaning that it can be used
 > with any SQL database (_PostgreSQL_, _MySQL_, _SQLite_ and others).
 >
 > If you have a preference for any of the above, feel free to use that.
 > The instructions below describe how to set up a PostgreSQL database.
 
-First, create a PostgreSQL database:
+First, install PostgreSQL. On a linux machine, this can be done with `apt-get`:
+
+```bash
+sudo apt-get install postgresql postgresql-contrib
+```
+
+If you're on a mac, you can do this with homebrew:
+
+```bash
+brew install postgresql
+```
+
+For other systems, see the [PostgreSQL documentation](https://www.postgresql.org/download/).
+
+Next, create a PostgreSQL database:
 
 ```bash
 cd /path/to/database/multiqc_db
@@ -61,7 +75,7 @@ set every time a shell is loaded:
 ```bash
 export MULTIQC_DB_SECRET='[ SOMETHING REALLY SECRET ]'
 export FLASK_APP=multiqc_db.app
-export FLASK_DEBUG=0
+export FLASK_DEBUG=false
 
 export MULTIQC_DB_DBNAME='[ DATABASE NAME HERE ]'
 export MULTIQC_DB_DBUSER='[ RANDOM USERNAME ]'

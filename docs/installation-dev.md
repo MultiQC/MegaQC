@@ -15,9 +15,27 @@ your own forked version) and install the required packages:
 ```bash
 git clone https://github.com/ewels/MultiQC_DB
 cd MultiQC_DB
+python setup.py develop
 pip install -r requirements/dev.txt
 ```
 
+The installation may complain that `Error: pg_config executable not found.`
+If so, you need to install PostgreSQL first. On a linux machine, this can be
+done with `apt-get`:
+
+```bash
+sudo apt-get install postgresql postgresql-contrib
+```
+
+If you're on a mac, you can do this with homebrew:
+
+```bash
+brew install postgresql
+```
+
+For other systems, see the [PostgreSQL documentation](https://www.postgresql.org/download/).
+
+#### JavaScript and CSS
 The code on GitHub doesn't include any of the front-end packages, so
 you need to fetch them using `bower`, itself installed using `npm`.
 All of the front end CSS and JavaScript is combined and minified using
@@ -63,8 +81,8 @@ server. Add the following to `.bashrc` or `.bash_profile`:
 
 ```bash
 export MULTIQC_DB_SECRET='[ SOMETHING REALLY SECRET ]'
-export FLASK_APP='/path/to/MultiQC_DB/multiqc_db/app.py'
-export FLASK_DEBUG=1
+export FLASK_APP=multiqc_db.app
+export FLASK_DEBUG=true
 ```
 
 Finally, initialise and update the MultiQC_DB database:

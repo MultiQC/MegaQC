@@ -1,3 +1,6 @@
+# Development stuff
+dev.db
+
 # Don't commit front end libraries, that can be handled by bower
 multiqc_db/static/libs/
 multiqc_db/static/public/

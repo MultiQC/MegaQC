@@ -78,7 +78,7 @@ def register_commands(app):
     app.cli.add_command(commands.urls)
 
 
-if __name__ == '__main__':
-    """ Run the server """
-    CONFIG = DevConfig if get_debug_flag() else ProdConfig
-    app = create_app(CONFIG)
+# Run the app!
+CONFIG = DevConfig if get_debug_flag() else ProdConfig
+app = create_app(CONFIG)
+
