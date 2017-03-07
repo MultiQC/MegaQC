@@ -1,5 +1,12 @@
 # Don't commit front end libraries, that can be handled by bower
 multiqc_db/static/libs/
+multiqc_db/static/public/
+
+# Front end packaging stuff
+.sass-cache
+_build
+node_modules
+
 
 *.py[cod]
 

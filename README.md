@@ -1,14 +1,19 @@
 # MultiQC_DB
-A web-based tool to collect and visualise data from multiple MultiQC reports.
+#### A web-based tool to collect and visualise data from multiple MultiQC reports.
 
-## Installation
+MultiQC_DB is a Flask web application that lets you easily set up a MultiQC_DB
+website for your group or facility. Once running, MultiQC can be configured to
+automatically save data to the website every time it runs. This data can then
+be explored on the website, allowing visualisation of long-term trends.
+
+## Installation
 To see how to install MultiQC_DB, see the [installation docs](docs/installation-prod.md).
 
 This describe a typical setup for users of MultiQC_DB. If you want to do
 development work with the MultiQC_DB code, see the
 [development installation docs](docs/installation-dev.md).
 
-## User Authentication
+## User Authentication
 By default, MultiQC_DB uses built-in user registration and authentication.
 If you would prefer, you can log in using Google OAuth instead - simply set
 the following environment variables in your `.bashrc` file:
@@ -42,7 +47,7 @@ permissions for each group are as follows (in addition to the role above):
   * Enable and disable user registration
 
 ### Submitting data to MultiQC_DB
-Once the MultiQC_DB website is up and running, you will find a page on the
+Once your MultiQC_DB website is up and running, you will find a page on the
 website describing how to configure the main [MultiQC](http://multiqc.info)
 tool so that it submits data to your website.
 

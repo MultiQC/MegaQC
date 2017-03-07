@@ -19,12 +19,35 @@ pip install -r requirements/dev.txt
 ```
 
 The code on GitHub doesn't include any of the front-end packages, so
-you need to fetch them using `npm` and `bower`:
+you need to fetch them using `bower`, itself installed using `npm`.
+All of the front end CSS and JavaScript is combined and minified using
+`Grunt` (also installed by `npm`).
+
+The CSS in MultiQC_DB is written as sass (`*.scss` files). These need to
+be compiled to `.css` files before they can be used by the web browser.
+This is done automagically (see below), but needs the `sass` tool available
+on the command line to do this. To install, run the following command:
+
+```bash
+gem install sass
+```
+
+> I recommend getting a copy of [`rbenv`](https://github.com/rbenv/rbenv) if you
+> have any problems with Ruby.
+
+Ok, nearly there. Now [install Node.js and `npm`](https://docs.npmjs.com/getting-started/installing-node).
+Then, run the following commands in the MultiQC_DB directory:
 
 ```bash
 npm install
 bower install
+grunt
 ```
+
+This should install everything, fetch the front end files and compile them.
+
+If you're working on the front-end javascript or SCSS, you'll want to run
+`grunt watch` to automatically recompile every time you save changes.
 
 ### 2) Database setup
 MultiQC_DB can work with any SQL database, but for development it's probably
@@ -52,7 +75,7 @@ flask db migrate
 flask db upgrade
 ```
 
-### 4) Running MultiQC
+### 4) Running MultiQC_DB
 Once everything is installed and configured, you can run the `flask` server
 application to launch the MultiQC_DB website. 
 

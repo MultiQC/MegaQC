@@ -1,0 +1,30 @@
+{
+  "name": "MultiQC_DB",
+  "version": "0.1.0",
+  "license": "GPL-3.0",
+  "description": "A web-based tool to collect and visualise data from multiple MultiQC reports.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ewels/MultiQC_DB.git"
+  },
+  "keywords": [
+    "MultiQC",
+    "Bioinformatics"
+  ],
+  "author": "Phil Ewels",
+  "bugs": {
+    "url": "https://github.com/ewels/MultiQC_DB/issues"
+  },
+  "homepage": "https://multiqc.info/db",
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "grunt": "^1.0.1",
+    "grunt-bower-concat": "^1.0.0",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-exec": "^1.0.1"
+  }
+}
