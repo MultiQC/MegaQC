@@ -47,6 +47,17 @@ module.exports = function(grunt) {
         }
       }
     },
+    copy: {
+      main: {
+        files: [{
+          expand: true,
+          src: ['multiqc_db/static/libs/font-awesome/fonts/*'],
+          dest: 'multiqc_db/static/public/fonts/',
+          filter: 'isFile',
+          flatten: true
+        }],
+      }
+    },
     
     // watch and exec commands
     watch: {
@@ -82,8 +93,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task.
-  grunt.registerTask('default', ['bower_concat','concat','uglify','sass']);
+  grunt.registerTask('default', ['bower_concat','concat','uglify','sass','copy']);
 
 };

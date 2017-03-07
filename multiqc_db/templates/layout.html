@@ -1,72 +1,56 @@
 
-<!doctype html>
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="../../favicon.ico">
 
-  <title>{% block page_title %}
-  
-    MultiQC_DB
-  
-    {% endblock %}
-  </title>
+  <title>{% block page_title %}MultiQC_DB{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}{% endblock %}">
   <meta name="author" content="{% block meta_author %}{% endblock %}">
-
-  <!-- Mobile viewport optimized: h5bp.com/viewport -->
-  <meta name="viewport" content="width=device-width">
-
-  <link rel="stylesheet" href="{{ url_for('static', filename='libs/font-awesome4/css/font-awesome.min.css') }}">
-  {% assets "css_all" %}
-    <link rel="stylesheet" href="{{ ASSET_URL }}">
-  {% endassets %}
-
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='public/css/main.css') }}">
+  {% assets "css_all" %}<link rel="stylesheet" href="{{ ASSET_URL }}">{% endassets %}
   {% block css %}{% endblock %}
-
+  
 </head>
-<body class="{% block body_class %}{% endblock %}">
+
+<body>
 {% block body %}
-{% with form=form  %}
-{% include "nav.html" %}
-{% endwith %}
 
-<header>{% block header %}{% endblock %}</header>
-<div class="{% block content_class %}container{% endblock content_class %}">
+  {% with form=form  %}
+  {% include "nav.html" %}
+  {% endwith %}
 
-  <div role="main">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="row">
-      <div class="col-md-12">
+  {% if self.header() %}<header>{% block header %}{% endblock %}</header>{% endif %}
+  <div class="{% block content_class %}container{% endblock content_class %}">
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
         {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
-          <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
-         {{message}}
-        </div><!-- end .alert -->
+        <div class="alert alert-{{ category }}" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          {{message}}
+        </div>
         {% endfor %}
-      </div><!-- end col-md -->
-    </div><!-- end row -->
         {% endif %}
-    {% endwith %}
+      {% endwith %}
 
-    {% block content %}{% endblock %}
-  </div>
+      {% block content %}{% endblock %}
 
-</div><!-- end container -->
+  </div><!-- /.container -->
+  
+  
+  {% include "footer.html" %}
 
-{% include "footer.html" %}
+  <!-- JavaScript -->
+  <script type="text/javascript" src="{{ url_for('static', filename='public/js/multiqc_db.min.js') }}"></script>
+  {% assets "js_all" %}<script type="text/javascript" src="{{ ASSET_URL }}"></script>{% endassets %}
+  {% block js %}{% endblock %}
 
-<!-- JavaScript at the bottom for fast page loading -->
-{% assets "js_all" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-{% block js %}{% endblock %}
-<!-- end scripts -->
 {% endblock %}
 </body>
 </html>
-
