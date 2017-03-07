@@ -2,6 +2,16 @@
 // Main MultiQC_DB CSS File
 //
 
-body {
-  padding: 20px;
-}
+// Define our MultiQC_DB variables before Bootstrap
+@import "variables";
+
+// Twitter Bootstrap
+@import "../libs/bootstrap/scss/bootstrap";
+
+// Font Awesome
+@import "../libs/font-awesome/scss/font-awesome";
+
+// Specifics
+@import "core";
+@import "app";
+

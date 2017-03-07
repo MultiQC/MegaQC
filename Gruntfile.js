@@ -59,7 +59,12 @@ module.exports = function(grunt) {
         tasks: ['concat','uglify']
       },
       app_scss: {
-        files: ['multqc_db/static/scss/main.scss'],
+        files: [
+          'multiqc_db/static/scss/main.scss',
+          'multiqc_db/static/scss/variables.scss',
+          'multiqc_db/static/scss/core.scss',
+          'multiqc_db/static/scss/app.scss',
+        ],
         tasks: ['sass']
       }
     },
