@@ -1,11 +1,19 @@
 <footer>
-  <small>
-    <ul class="company">
-      <li>&copy; Philip Ewels</li>
-    </ul>
-    <ul class="footer-nav">
-      <li><a href="{{ url_for('public.about') }}">About</a></li>
-      <li><a href="http://phil.ewels.co.uk" target="_blank">Contact</a></li>
-    </ul>
-  </small>
+  <div class="container-fluid">
+    <a href="http://www.scilifelab.se/" target="_blank" class="pull-right">
+      <img src="{{ url_for('static', filename='public/img/SciLifeLab_logo.png') }}" style="height:41px;">
+    </a>
+    <p>
+        <a href="http://multiqc.info/db" target="_blank">MultiQC_DB v{{ version }}</a>
+         - Written by Phil Ewels,
+        available on <a href="https://github.com/ewels/MultiQC_DB" target="_blank">GitHub</a>.
+    </p>
+    <p>
+      MultiQC_DB uses
+      <a href="http://flask.pocoo.org/" target="_blank">Flask</a>,
+      <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a>,
+      <a href="http://fontawesome.io/" target="_blank">Font-Awesome</a> and
+      <a href="https://jquery.com/" target="_blank">jQuery</a>.
+    </p>
+  </div>
 </footer>

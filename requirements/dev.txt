@@ -5,6 +5,7 @@
 pytest==3.0.6
 WebTest==2.0.26
 factory-boy==2.8.1
+livereload==2.5.1
 
 # Lint and code style
 flake8==3.3.0

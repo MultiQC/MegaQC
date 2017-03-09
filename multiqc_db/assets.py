@@ -2,18 +2,20 @@
 """Application assets."""
 from flask_assets import Bundle, Environment
 
+# ///////
+# ASSETS ONLY USED IN DEBUG MODE
+# In production, combined + minified grunt versions are used
+
 css = Bundle(
-    'libs/bootstrap/dist/css/bootstrap.css',
-    'css/style.css',
-    filters='cssmin',
-    output='public/css/common.css'
+    'libs/font-awesome/css/font-awesome.min.css',
+    'scss/main.css'
 )
 
 js = Bundle(
-    'libs/jQuery/dist/jquery.js',
-    'libs/bootstrap/dist/js/bootstrap.js',
+    'libs/jquery/dist/jquery.min.js',
+    'libs/tether/dist/js/tether.min.js',
+    'libs/bootstrap/dist/js/bootstrap.min.js',
     'js/plugins.js',
-    filters='jsmin',
     output='public/js/common.js'
 )
 

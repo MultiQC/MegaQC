@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,11 +8,16 @@
   <title>{% block page_title %}MultiQC_DB{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}{% endblock %}">
   <meta name="author" content="{% block meta_author %}{% endblock %}">
-  
+
+  {% if debug %}
+  {% assets "css_all" %}
+  <link rel="stylesheet" href="{{ ASSET_URL }}">{% endassets %}
+  {% else %}
   <link rel="stylesheet" href="{{ url_for('static', filename='public/css/main.css') }}">
-  {% assets "css_all" %}<link rel="stylesheet" href="{{ ASSET_URL }}">{% endassets %}
+  {% endif %}
+
   {% block css %}{% endblock %}
-  
+
 </head>
 
 <body>
@@ -24,7 +28,7 @@
   {% endwith %}
 
   {% if self.header() %}<header>{% block header %}{% endblock %}</header>{% endif %}
-  <div class="{% block content_class %}container{% endblock content_class %}">
+  <div class="{% block content_class %}container-fluid{% endblock content_class %}">
 
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -42,13 +46,17 @@
       {% block content %}{% endblock %}
 
   </div><!-- /.container -->
-  
-  
+
+
   {% include "footer.html" %}
 
   <!-- JavaScript -->
+  {% if debug %}
+  {% assets "js_all" %}
+  <script type="text/javascript" src="{{ ASSET_URL }}"></script>{% endassets %}
+  {% else %}
   <script type="text/javascript" src="{{ url_for('static', filename='public/js/multiqc_db.min.js') }}"></script>
-  {% assets "js_all" %}<script type="text/javascript" src="{{ ASSET_URL }}"></script>{% endassets %}
+  {% endif %}
   {% block js %}{% endblock %}
 
 {% endblock %}

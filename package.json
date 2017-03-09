@@ -26,6 +26,7 @@
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-exec": "^1.0.1"
+    "grunt-exec": "^1.0.1",
+    "grunt-subgrunt": "^1.2.0"
   }
 }

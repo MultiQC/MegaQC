@@ -6,11 +6,12 @@ from __future__ import print_function
 from flask import Flask, render_template
 from flask.helpers import get_debug_flag
 
-from multiqc_db import commands, public, user
+from multiqc_db import commands, public, user, version
 from multiqc_db.assets import assets
 from multiqc_db.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
 from multiqc_db.settings import DevConfig, ProdConfig
 
+from multiqc import __version__
 
 def create_app(config_object=ProdConfig):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -37,6 +38,12 @@ def register_extensions(app):
     login_manager.init_app(app)
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
+
+    @app.context_processor
+    def inject_debug():
+        """ Make the debug variable available to templates """
+        return dict(debug=app.debug, version=version)
+
     return None
 
 
@@ -77,8 +84,13 @@ def register_commands(app):
     app.cli.add_command(commands.clean)
     app.cli.add_command(commands.urls)
 
-
 # Run the app!
 CONFIG = DevConfig if get_debug_flag() else ProdConfig
 app = create_app(CONFIG)
 
+# Live reload
+if get_debug_flag():
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    from livereload import Server
+    server = Server(app.wsgi_app)
+    server.serve()
