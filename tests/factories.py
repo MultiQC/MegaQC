@@ -3,8 +3,8 @@
 from factory import PostGenerationMethodCall, Sequence
 from factory.alchemy import SQLAlchemyModelFactory
 
-from multiqc_db.database import db
-from multiqc_db.user.models import User
+from megaqc.database import db
+from megaqc.user.models import User
 
 
 class BaseFactory(SQLAlchemyModelFactory):

@@ -1,23 +1,23 @@
-# MultiQC_DB Installation: Production
+# MegaQC Installation: Production
 
 ### NB: Placeholder text. Package is not yet ready for production use.
 
-### 2) Install MultiQC_DB package
-MultiQC_DB is available on both the Python Package Index (PyPI) and
+### 2) Install MegaQC package
+MegaQC is available on both the Python Package Index (PyPI) and
 conda (bioconda channel). To install using PyPI do the following command:
 
 ```bash
-pip install multiqc_db
+pip install megaqc
 ```
 
 To install with conda:
 
 ```bash
-conda install -c bioconda multiqc_db
+conda install -c bioconda megaqc
 ```
 
 ### 1) Set up database
-> MultiQC_DB uses the Flask SQLAlchemy plugin, meaning that it can be used
+> MegaQC uses the Flask SQLAlchemy plugin, meaning that it can be used
 > with any SQL database (_PostgreSQL_, _MySQL_, _SQLite_ and others).
 >
 > If you have a preference for any of the above, feel free to use that.
@@ -27,6 +27,11 @@ First, install PostgreSQL. On a linux machine, this can be done with `apt-get`:
 
 ```bash
 sudo apt-get install postgresql postgresql-contrib
+```
+
+Now install the Python package that handles requests
+```bash
+pip install psycopg2
 ```
 
 If you're on a mac, you can do this with homebrew:
@@ -40,51 +45,51 @@ For other systems, see the [PostgreSQL documentation](https://www.postgresql.org
 Next, create a PostgreSQL database:
 
 ```bash
-cd /path/to/database/multiqc_db
+cd /path/to/database/megaqc
 initdb -D postgres/data/
 ```
 
-MultiQC_DB uses environment variables to store sensitive data, such as
+MegaQC uses environment variables to store sensitive data, such as
 database passwords. Add the following lines to your `~/.bashrc` file so
 that the variables are set up every time a shell is loaded:
 
 ```bash
-export MULTIQC_DB_DBNAME='[ DATABASE NAME HERE ]'
-export MULTIQC_DB_DBUSER='[ RANDOM USERNAME ]'
-export MULTIQC_DB_DBPASSWORD='[ REALLY SECURE PASSWORD ]'
-export MULTIQC_DB_DBPATH="postgresql://$MULTIQC_DB_DBUSER:$MULTIQC_DB_DBPASSWORD@localhost/$MULTIQC_DB_DBNAME"
-export MULTIQC_DB_POSTGRES='/path/to/database/multiqc_db/postgres/'
+export MEGAQC_DBNAME='[ DATABASE NAME HERE ]'
+export MEGAQC_DBUSER='[ RANDOM USERNAME ]'
+export MEGAQC_DBPASSWORD='[ REALLY SECURE PASSWORD ]'
+export MEGAQC_DBPATH="postgresql://$MEGAQC_DBUSER:$MEGAQC_DBPASSWORD@localhost/$MEGAQC_DBNAME"
+export MEGAQC_POSTGRES='/path/to/database/megaqc/postgres/'
 ```
 
 Now we can create a new database for the website to use:
 
 ```bash
-echo $MULTIQC_DB_DBPASSWORD # so you can copy it for the prompt in a second!
-createuser -s $MULTIQC_DB_DBUSER --pwprompt --createdb --no-superuser --no-createrole
+echo $MEGAQC_DBPASSWORD # so you can copy it for the prompt in a second!
+createuser -s $MEGAQC_DBUSER --pwprompt --createdb --no-superuser --no-createrole
 # paste password in prompt
 createdb -U $EELSDB_DB_USER --locale=en_US.utf-8 -E utf-8 -O $EELSDB_DB_USER $EELSDB_DB_NAME -T template0
 ```
 
-### 3) Configure MultiQC_DB
+### 3) Configure MegaQC
 Now that everything is installed, we need to add a few more environment
-variables to configure the Flask server behind MultiQC_DB.
+variables to configure the Flask server behind MegaQC.
 
 Add the following lines to your `~/.bashrc` file so that the variables are
 set every time a shell is loaded:
 
 ```bash
-export MULTIQC_DB_SECRET='[ SOMETHING REALLY SECRET ]'
-export FLASK_APP=multiqc_db.app
+export MEGAQC_SECRET='[ SOMETHING REALLY SECRET ]'
+export FLASK_APP=megaqc.app
 export FLASK_DEBUG=false
 
-export MULTIQC_DB_DBNAME='[ DATABASE NAME HERE ]'
-export MULTIQC_DB_DBUSER='[ RANDOM USERNAME ]'
-export MULTIQC_DB_DBPASSWORD='[ REALLY SECURE PASSWORD ]'
-export MULTIQC_DB_DBPATH="postgresql://$MULTIQC_DB_DBUSER:$MULTIQC_DB_DBPASSWORD@localhost/$MULTIQC_DB_DBNAME"
-export MULTIQC_DB_POSTGRES='/path/to/database/multiqc_db/postgres/'
+export MEGAQC_DBNAME='[ DATABASE NAME HERE ]'
+export MEGAQC_DBUSER='[ RANDOM USERNAME ]'
+export MEGAQC_DBPASSWORD='[ REALLY SECURE PASSWORD ]'
+export MEGAQC_DBPATH="postgresql://$MEGAQC_DBUSER:$MEGAQC_DBPASSWORD@localhost/$MEGAQC_DBNAME"
+export MEGAQC_POSTGRES='/path/to/database/megaqc/postgres/'
 ```
 
-Finally, initialise and update the MultiQC_DB database:
+Finally, initialise and update the MegaQC database:
 
 ```bash
 flask db init
@@ -92,9 +97,9 @@ flask db migrate
 flask db upgrade
 ```
 
-### 4) Running MultiQC_DB
+### 4) Running MegaQC
 Once everything is installed and configured, you can run the `flask` server
-application to launch the MultiQC_DB website. 
+application to launch the MegaQC website. 
 
 ```bash
 flask run

@@ -1,5 +1,5 @@
 {
-  "name": "multiqc_db",
+  "name": "megaqc",
   "description": "A web-based tool to collect and visualise data from multiple MultiQC reports.",
   "authors": [
     "Phil Ewels"

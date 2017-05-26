@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-""" MultiQC_DB: A web-based tool to collect and visualise data from multiple MultiQC reports.
+""" MegaQC: A web-based tool to collect and visualise data from multiple MultiQC reports.
 This file contains the app module, with the app factory function."""
 
 from __future__ import print_function
 from flask import Flask, render_template
 from flask.helpers import get_debug_flag
 
-from multiqc_db import commands, public, user, version
-from multiqc_db.assets import assets
-from multiqc_db.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
-from multiqc_db.settings import DevConfig, ProdConfig
+from megaqc import commands, public, user, version
+from megaqc.assets import assets
+from megaqc.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
+from megaqc.settings import DevConfig, ProdConfig
 
 from multiqc import __version__
 

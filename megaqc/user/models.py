@@ -4,8 +4,8 @@ import datetime as dt
 
 from flask_login import UserMixin
 
-from multiqc_db.database import Column, Model, SurrogatePK, db, reference_col, relationship
-from multiqc_db.extensions import bcrypt
+from megaqc.database import Column, Model, SurrogatePK, db, reference_col, relationship
+from megaqc.extensions import bcrypt
 
 
 class Role(SurrogatePK, Model):

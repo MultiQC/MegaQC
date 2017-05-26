@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="icon" href="../../favicon.ico">
 
-  <title>{% block page_title %}MultiQC_DB{% endblock %}</title>
+  <title>{% block page_title %}MegaQC{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}{% endblock %}">
   <meta name="author" content="{% block meta_author %}{% endblock %}">
 
@@ -55,7 +55,7 @@
   {% assets "js_all" %}
   <script type="text/javascript" src="{{ ASSET_URL }}"></script>{% endassets %}
   {% else %}
-  <script type="text/javascript" src="{{ url_for('static', filename='public/js/multiqc_db.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='public/js/megaqc.min.js') }}"></script>
   {% endif %}
   {% block js %}{% endblock %}
 

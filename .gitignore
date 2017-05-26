@@ -2,13 +2,13 @@
 dev.db
 
 # Don't commit front end libraries, that can be handled by bower
-multiqc_db/static/libs/
-multiqc_db/static/public/css
-multiqc_db/static/public/js
-multiqc_db/static/public/fonts
+megaqc/static/libs/
+megaqc/static/public/css
+megaqc/static/public/js
+megaqc/static/public/fonts
 
 # Dev CSS
-multiqc_db/static/scss/*.css
+megaqc/static/scss/*.css
 
 # Front end packaging stuff
 .sass-cache

@@ -3,11 +3,11 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from multiqc_db.extensions import login_manager
-from multiqc_db.public.forms import LoginForm
-from multiqc_db.user.forms import RegisterForm
-from multiqc_db.user.models import User
-from multiqc_db.utils import flash_errors
+from megaqc.extensions import login_manager
+from megaqc.public.forms import LoginForm
+from megaqc.user.forms import RegisterForm
+from megaqc.user.models import User
+from megaqc.utils import flash_errors
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 

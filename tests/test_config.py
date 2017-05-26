@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test configs."""
-from multiqc_db.app import create_app
-from multiqc_db.settings import DevConfig, ProdConfig
+from megaqc.app import create_app
+from megaqc.settings import DevConfig, ProdConfig
 
 
 def test_production_config():

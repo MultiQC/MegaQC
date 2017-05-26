@@ -1,3 +1,4 @@
+multiqc>=1.0
 Flask==0.12
 MarkupSafe==0.23
 Werkzeug==0.11.15
@@ -5,7 +6,7 @@ Jinja2==2.9.5
 itsdangerous==0.24
 click>=5.0
 Flask-SQLAlchemy==2.2
-psycopg2==2.6.2
+# psycopg2==2.6.2
 SQLAlchemy==1.1.5
 Flask-Migrate==2.0.3
 Flask-WTF==0.14.2

@@ -1,11 +1,11 @@
 {
-  "name": "MultiQC_DB",
+  "name": "MegaQC",
   "version": "0.1.0",
   "license": "GPL-3.0",
   "description": "A web-based tool to collect and visualise data from multiple MultiQC reports.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ewels/MultiQC_DB.git"
+    "url": "git+https://github.com/ewels/MegaQC.git"
   },
   "keywords": [
     "MultiQC",
@@ -13,7 +13,7 @@
   ],
   "author": "Phil Ewels",
   "bugs": {
-    "url": "https://github.com/ewels/MultiQC_DB/issues"
+    "url": "https://github.com/ewels/MegaQC/issues"
   },
   "homepage": "https://multiqc.info/db",
   "devDependencies": {

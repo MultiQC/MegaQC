@@ -4,7 +4,7 @@ import datetime as dt
 
 import pytest
 
-from multiqc_db.user.models import Role, User
+from megaqc.user.models import Role, User
 
 from .factories import UserFactory
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """
-MultiQC_DB is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.
+MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.
 
 See the MultiQC website for installation instructions and documentation: http://multiqc.info/db/
 
-MultiQC_DB was written by Phil Ewels (http://phil.ewels.co.uk) at SciLifeLab Sweden (http://www.scilifelab.se)
+MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) at SciLifeLab Sweden (http://www.scilifelab.se)
 """
 
 from setuptools import setup
@@ -19,13 +19,13 @@ except IOError:
     install_requires = []
 
 print("""-----------------------------------
- Installing MultiQC_DB version {}
+ Installing MegaQC version {}
 -----------------------------------
 
 """.format(version))
 
 setup(
-    name = 'multiqc_db',
+    name = 'megaqc',
     version = version,
     author = 'Phil Ewels',
     author_email = 'phil.ewels@scilifelab.se',
@@ -33,9 +33,9 @@ setup(
     long_description = __doc__,
     keywords = ['bioinformatics', 'biology', 'sequencing', 'NGS', 'next generation sequencing', 'quality control'],
     url = 'http://multiqc.info/db',
-    download_url = 'https://github.com/MultiQC/MultiQC_DB/tarball/{}'.format(dl_version),
+    download_url = 'https://github.com/MultiQC/MegaQC/tarball/{}'.format(dl_version),
     license = 'GPLv3',
-    packages = ['multiqc_db'],
+    packages = ['megaqc'],
     include_package_data = True,
     zip_safe = False,
     install_requires = install_requires,
@@ -59,7 +59,7 @@ setup(
 
 print("""
 --------------------------------
- MultiQC_DB installation complete!
+ MegaQC installation complete!
 --------------------------------
 For help in running MultiQC, please see the documentation available
 at http://multiqc.info/db

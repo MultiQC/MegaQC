@@ -20,7 +20,7 @@ module.exports = function(grunt) {
     },
     concat: {
       extras: {
-        src: ['build/_bower.js', 'multiqc_db/static/js/script.js'],
+        src: ['build/_bower.js', 'megaqc/static/js/script.js'],
         dest: 'build/_concat.js',
       },
     },
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
       },
       build: {
         src: 'build/_concat.js',
-        dest: 'multiqc_db/static/public/js/multiqc_db.min.js'
+        dest: 'megaqc/static/public/js/megaqc.min.js'
       }
     },
     
@@ -43,7 +43,7 @@ module.exports = function(grunt) {
           trace: true
         },
         files: { // 'destination': 'source'
-          'multiqc_db/static/public/css/main.css': 'multiqc_db/static/scss/main.scss'
+          'megaqc/static/public/css/main.css': 'megaqc/static/scss/main.scss'
         }
       }
     },
@@ -51,8 +51,8 @@ module.exports = function(grunt) {
       main: {
         files: [{
           expand: true,
-          src: ['multiqc_db/static/libs/font-awesome/fonts/*'],
-          dest: 'multiqc_db/static/public/fonts/',
+          src: ['megaqc/static/libs/font-awesome/fonts/*'],
+          dest: 'megaqc/static/public/fonts/',
           filter: 'isFile',
           flatten: true
         }],
@@ -66,15 +66,15 @@ module.exports = function(grunt) {
         tasks: [ 'exec:bower_install' ]
       },
       app_js: {
-        files: ['multiqc_db/static/js/script.js'],
+        files: ['megaqc/static/js/script.js'],
         tasks: ['concat','uglify']
       },
       app_scss: {
         files: [
-          'multiqc_db/static/scss/main.scss',
-          'multiqc_db/static/scss/variables.scss',
-          'multiqc_db/static/scss/core.scss',
-          'multiqc_db/static/scss/app.scss',
+          'megaqc/static/scss/main.scss',
+          'megaqc/static/scss/variables.scss',
+          'megaqc/static/scss/core.scss',
+          'megaqc/static/scss/app.scss',
         ],
         tasks: ['sass']
       }

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Test forms."""
 
-from multiqc_db.public.forms import LoginForm
-from multiqc_db.user.forms import RegisterForm
+from megaqc.public.forms import LoginForm
+from megaqc.user.forms import RegisterForm
 
 
 class TestRegisterForm:

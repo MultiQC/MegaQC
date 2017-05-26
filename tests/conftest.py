@@ -4,9 +4,9 @@
 import pytest
 from webtest import TestApp
 
-from multiqc_db.app import create_app
-from multiqc_db.database import db as _db
-from multiqc_db.settings import TestConfig
+from megaqc.app import create_app
+from megaqc.database import db as _db
+from megaqc.settings import TestConfig
 
 from .factories import UserFactory
 
