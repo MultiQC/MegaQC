@@ -1,13 +1,15 @@
 
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+<nav class="navbar navbar-toggleable-md navbar-light">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#megaqc_navbar" aria-controls="megaqc_navbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  
-  <a class="navbar-brand" href="{{ url_for('public.home') }}">MegaQC</a>
-  
+
+  <a class="navbar-brand" href="{{ url_for('public.home') }}">
+    <img src="{{ url_for('static', filename='public/img/MegaQC_logo_nav.png') }}" title="MegaQC">
+  </a>
+
   <div class="collapse navbar-collapse" id="megaqc_navbar">
-    
+
     <ul class="navbar-nav mr-auto">
       <li class="nav-item {% if request.path == "/" %}active{% endif %}">
         <a class="nav-link" href="{{ url_for('public.home') }}">Home{%- if request.path == "/home" %} <span class="sr-only">(current)</span>{% endif %}</a>
@@ -16,7 +18,7 @@
         <a class="nav-link" href="{{ url_for('public.about') }}">About{%- if request.path == "/home" %} <span class="sr-only">(current)</span>{% endif %}</a>
       </li>
     </ul>
-    
+
     {% if current_user and current_user.is_authenticated %}
     <ul class="navbar-nav my-2 my-lg-0">
       <li class="nav-item">
@@ -31,11 +33,11 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       {{ form.username(placeholder="Username", class_="form-control mr-sm-2") }}
       {{ form.password(placeholder="Password", class_="form-control mr-sm-2") }}
-      <button class="btn btn-outline-info my-2 mr-sm-2" type="submit">Log in</button>
+      <button class="btn btn-outline-info mr-sm-2" type="submit">Log in</button>
       <a class="btn btn-outline-primary my-2 my-sm-0" href="{{ url_for('public.register') }}">Create account</a>
     </form>
     {% endif %}
-    
+
   </div>
 
 </nav>

@@ -3,8 +3,26 @@
 // MegaQC Core Styles
 //   Central styling - stuff like fonts and common elements
 
+img {
+    max-width: 100%;
+}
+
 nav.navbar {
     margin-bottom: 1rem;
+    background-color: $gray-lighter;
+    border-bottom: 1px solid $gray-lightish;
+}
+#loginForm input {
+    background-color: $gray-lighter;
+    transition: background-color 0.1s;
+}
+#loginForm input::placeholder {
+    color: #999;
+    transition: color 0.1s;
+}
+#loginForm input:focus,
+#loginForm input:active {
+    background-color: $white;
 }
 
 footer {
