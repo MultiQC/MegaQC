@@ -9,6 +9,8 @@ from flask import current_app
 from flask.cli import with_appcontext
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 
+from megaqc.extensions import db
+
 HERE = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(HERE, os.pardir)
 TEST_PATH = os.path.join(PROJECT_ROOT, 'tests')
@@ -124,3 +126,11 @@ def urls(url, order):
 
     for row in rows:
         click.echo(str_template.format(*row[:column_length]))
+
+@click.command()
+@with_appcontext
+def initdb():
+    """Initializes the database."""
+    db.metadata.bind=db.engine
+    db.metadata.create_all()
+    print('Initialized the database.')

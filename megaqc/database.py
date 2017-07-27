@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
-from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 from .compat import basestring
 from .extensions import db
 
 # Alias common SQLAlchemy names
 Column = db.Column
-relationship = relationship
 
 
 class CRUDMixin(object):
@@ -63,15 +64,3 @@ class SurrogatePK(object):
             return cls.query.get(int(record_id))
         return None
 
-
-def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
-    """Column that adds primary key foreign key reference.
-
-    Usage: ::
-
-        category_id = reference_col('category')
-        category = relationship('Category', backref='categories')
-    """
-    return db.Column(
-        db.ForeignKey('{0}.{1}'.format(tablename, pk_name)),
-        nullable=nullable, **kwargs)

@@ -27,6 +27,11 @@
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('public.logout') }}"><i class="fa fa-sign-out"></i></a>
       </li>
+      {% if current_user.is_admin %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('user.admin_panel') }}">Admin Panel</a>
+      </li>
+      {% endif %}
     </ul>
     {% elif form %}
     <form id="loginForm" method="POST" class="form-inline my-2 my-lg-0" action="/" role="login">

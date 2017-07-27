@@ -9,6 +9,7 @@
   <meta name="description" content="{% block meta_description %}{% endblock %}">
   <meta name="author" content="{% block meta_author %}{% endblock %}">
 
+ <link rel="stylesheet" href="/static/libs/bootstrap/dist/css/bootstrap.min.css">
   {% if debug %}
   {% assets "css_all" %}
   <link rel="stylesheet" href="{{ ASSET_URL }}">{% endassets %}
@@ -50,6 +51,8 @@
 
   {% include "footer.html" %}
 
+  <script type="text/javascript" src="/static/libs/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="/static/libs/bootstrap/dist/js/bootstrap.min.js"></script>
   <!-- JavaScript -->
   {% if debug %}
   {% assets "js_all" %}

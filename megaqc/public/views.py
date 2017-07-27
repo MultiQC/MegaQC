@@ -3,11 +3,13 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from megaqc.extensions import login_manager
+from megaqc.extensions import login_manager, db
 from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.utils import flash_errors
+
+from sqlalchemy.sql import func
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 
@@ -15,7 +17,7 @@ blueprint = Blueprint('public', __name__, static_folder='../static')
 @login_manager.user_loader
 def load_user(user_id):
     """Load user by ID."""
-    return User.get_by_id(int(user_id))
+    return User.query.get(int(user_id))
 
 
 @blueprint.route('/', methods=['GET', 'POST'])
@@ -48,7 +50,8 @@ def register():
     """Register new user."""
     form = RegisterForm(request.form, csrf_enabled=False)
     if form.validate_on_submit():
-        User.create(username=form.username.data, email=form.email.data, password=form.password.data, active=True)
+        user_id = (db.session.query(func.max(User.user_id)).scalar() or 0)+1
+        User.create(user_id=user_id, username=form.username.data, email=form.email.data, password=form.password.data, active=True)
         flash('Thank you for registering. You can now log in.', 'success')
         return redirect(url_for('public.home'))
     else:

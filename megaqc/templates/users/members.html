@@ -3,5 +3,20 @@
 {% block content %}
     <h1>Welcome {{ current_user.username }}</h1>
     <h3>This is the members-only page.</h3>
+    <h4> Here is your identification token : {{current_user.salt}}</h4>
+    <form id="password_form">
+    <table class="table" width="30%">
+        <tr>
+            <td>New password </td><td> <input type="password" class="pw_input"></td>
+        </tr>
+        <tr>
+            <td>Retype password :</td><td> <input type="password" class="pw_input"></td>
+        </tr>
+        <tr><td colspan="2"><input type="button" class="btn btn-primary" value="Submit" id="password_submit"/></td></tr>
+    </table>
+    </form>
+  <script type="text/javascript">window.token = "{{ current_user.api_token }}" </script>
+  <script type="text/javascript" src="/static/libs/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='public/js/members.js') }}"></script>
 {% endblock %}
 

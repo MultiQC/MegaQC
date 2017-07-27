@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 from .models import User
 
+import sqlalchemy as sa
 
 class RegisterForm(Form):
     """Register form."""

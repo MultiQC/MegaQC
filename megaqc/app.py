@@ -6,9 +6,9 @@ from __future__ import print_function
 from flask import Flask, render_template
 from flask.helpers import get_debug_flag
 
-from megaqc import commands, public, user, version
+from megaqc import commands, public, user, version, api, model
 from megaqc.assets import assets
-from megaqc.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
+from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager
 from megaqc.settings import DevConfig, ProdConfig
 
 from multiqc import __version__
@@ -31,13 +31,11 @@ def create_app(config_object=ProdConfig):
 def register_extensions(app):
     """Register Flask extensions."""
     assets.init_app(app)
-    bcrypt.init_app(app)
     cache.init_app(app)
     db.init_app(app)
     csrf_protect.init_app(app)
     login_manager.init_app(app)
     debug_toolbar.init_app(app)
-    migrate.init_app(app, db)
 
     @app.context_processor
     def inject_debug():
@@ -51,6 +49,8 @@ def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(public.views.blueprint)
     app.register_blueprint(user.views.blueprint)
+    csrf_protect.exempt(api.views.api_blueprint)
+    app.register_blueprint(api.views.api_blueprint)
     return None
 
 
@@ -83,13 +83,14 @@ def register_commands(app):
     app.cli.add_command(commands.lint)
     app.cli.add_command(commands.clean)
     app.cli.add_command(commands.urls)
+    app.cli.add_command(commands.initdb)
 
 # Run the app!
 CONFIG = DevConfig if get_debug_flag() else ProdConfig
 app = create_app(CONFIG)
 
 # Live reload
-if get_debug_flag():
+if False and get_debug_flag():
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     from livereload import Server
     server = Server(app.wsgi_app)
