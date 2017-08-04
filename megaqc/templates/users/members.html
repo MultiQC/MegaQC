@@ -3,14 +3,16 @@
 {% block content %}
     <h1>Welcome {{ current_user.username }}</h1>
     <h3>This is the members-only page.</h3>
-    <h4> Here is your identification token : {{current_user.salt}}</h4>
+    <h4> Here is your identification token : {{current_user.api_token}}</h4>
     <form id="password_form">
     <table class="table" width="30%">
         <tr>
-            <td>New password </td><td> <input type="password" class="pw_input"></td>
+            <td>Change {{form.password.label}}</td>
+            <td>{{form.password(placeholder="Password", class_="form-control pw_input")}}</td>
         </tr>
         <tr>
-            <td>Retype password :</td><td> <input type="password" class="pw_input"></td>
+            <td>{{form.confirm.label}}</td>
+            <td>{{form.confirm(placeholder="Re-type Password", class_="form-control pw_input")}}</td>
         </tr>
         <tr><td colspan="2"><input type="button" class="btn btn-primary" value="Submit" id="password_submit"/></td></tr>
     </table>

@@ -5,6 +5,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for,
 from megaqc.extensions import db
 from megaqc.user.models import User
 from megaqc.api.utils import handle_report_data
+from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func
 
@@ -50,10 +51,10 @@ def test_post(user, *args, **kwargs):
 
 @api_blueprint.route('/api/upload_data', methods=['POST'])
 @check_user
-def handle_multiqc_data():
+def handle_multiqc_data(user, *args, **kwargs):
     data = request.get_json()
     handle_report_data(user, data)
-    return render_template('public/home.html')
+    return jsonify({'ok' : 200})
 
 
 @api_blueprint.route('/api/update_users', methods=['POST'])
@@ -61,20 +62,26 @@ def handle_multiqc_data():
 def admin_update_users(user, *args, **kwargs):
     data = request.get_json()
     try:
-        user_id = int(data['id'])
-        del data['id']
+        user_id = int(data['user_id'])
+        data['user_id'] = user_id
     except:
         abort(400)
     cured_data = {key:(data[key] if data[key] != "None" else None) for key in data}
-    db.session.query(User).filter(User.user_id==user_id).first().update(**cured_data)
-    return jsonify({"ok":200})
+    form = AdminForm(**cured_data)
+    if not form.validate():
+        response = jsonify({'message': ' '.join(' '.join(errs) for errs in form.errors.values())})
+        response.status_code = 400
+        return response
+    else:
+        db.session.query(User).filter(User.user_id==user_id).first().update(**cured_data)
+        return jsonify({"ok":200})
 
 @api_blueprint.route('/api/delete_users', methods=['POST'])
 @check_admin
 def admin_delete_users(user, *args, **kwargs):
     data = request.get_json()
     try:
-        user_id = int(data['id'])
+        user_id = int(data['user_id'])
     except:
         abort(400)
     db.session.query(User).filter(User.user_id==user_id).first().delete()
@@ -84,7 +91,7 @@ def admin_delete_users(user, *args, **kwargs):
 @check_user
 def reset_password(user, *args, **kwargs):
     data = request.get_json()
-    if user.is_admin or data['id'] == user.user_id:
+    if user.is_admin or data['user_id'] == user.user_id:
         new_password= user.reset_password()
         user.save()
     else:
@@ -104,10 +111,19 @@ def set_password(user, *args, **kwargs):
 def admin_add_users(user, *args, **kwargs):
     data = request.get_json()
     try:
-        data['user_id'] = int(data.pop('id'))
+        data['user_id'] = int(data['user_id'])
     except:
         abort(400)
     new_user= User(**data)
     password = new_user.reset_password()
+    new_user.active= True
     new_user.save()
-    return jsonify({"ok":200, "password":password})
+    return jsonify({"ok":200, "password":password, "api_token":user.api_token})
+
+@api_blueprint.route('/api/get_samples_per_report', methods=['POST'])
+@check_user
+def get_samples_per_report(user, *args, **kwargs):
+    data = request.get_json()
+    report_ids=data.get("report_id")
+    sample_names=db.session.query(PlotData.sample_name).filter(PlotData.report_id ==  report_id).all()
+    return jsonify(sample_names)

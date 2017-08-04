@@ -1,0 +1,48 @@
+
+{% extends "layout.html" %}
+{% block css %}
+ <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+{% endblock %}
+{% block content %}
+    <h1>Generate new Plot</h1>
+    <div id="available_plots">
+        <h3>Plot type</h3>
+        <p>
+            <img src="{{ url_for('static', filename='public/img/BarRandom-256.png') }}" id="create_bar" name="Bar graph" />
+        </p>
+    </div>
+    <div id="sample_chooser">
+        <table class="table" id="report_table">
+            <thead>
+            <tr>
+                <th>Report Id</th><th>Report Name</th><th>Report Date</th><th>User</th><th>Select</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr data-id="{{ report.id}}">
+                    <td>{{report.hash}}</td>
+                    <td>{{report.title}}</td>
+                    <td>{{report.created_at}}</td>
+                    <td>{{db.session.query(User).filter(User.user_id == report.user_id).first().username}}</td>
+                    <td><input type="checkbox" class="form-control checkbox_report" id="select_report_{{ report.id }}"data-id={{report.id}}/></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <table class="table" id="sample_table">
+            <thead>
+            <tr>
+                <th>Sample Name</th><th>Report Name</th><th>Select</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+{% block js %}
+  <script type="text/javascript" >window.token="{{user_token}}"</script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='public/js/plot_choice.js') }}"></script>
+{% endblock %}

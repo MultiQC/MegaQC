@@ -3,7 +3,7 @@ import datetime as dt
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, String, TIMESTAMP, Binary, DateTime
+from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, String, TIMESTAMP, Binary, DateTime, func
 
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
@@ -18,10 +18,12 @@ class Report(db.Model, CRUDMixin):
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     user_id = Column(Integer, ForeignKey('users.user_id'))
 
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(Report.report_id)).first()[0] or 0) + 1
+
     def __init__(self, **kwargs):
         """Create instance."""
-        if "report_id" not in kwargs:
-            pass
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
@@ -54,6 +56,10 @@ class PlotData(db.Model, CRUDMixin):
     sample_name = Column(String(80), unique=True, nullable=False)
     data = Column(String(2048), nullable=False)
 
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(PlotData.plot_data_id)).first()[0] or 0) + 1
+
 class SampleDataConfig(db.Model, CRUDMixin):
     __tablename__ = "sample_data_config"
     sample_data_config_id = Column(Integer, primary_key=True)
@@ -63,6 +69,7 @@ class SampleDataType(db.Model, CRUDMixin):
     __tablename__ = "sample_data_type"
     sample_data_type_id = Column(Integer, primary_key=True)
     data_id = Column(Integer)
+    data_section = Column(String(80))
     data_key = Column(String(80), nullable=False) 
 
 class SampleData(db.Model, CRUDMixin):
@@ -71,6 +78,11 @@ class SampleData(db.Model, CRUDMixin):
     report_id = Column(Integer, ForeignKey('report.report_id'))
     sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id'))
     data_config_id = Column(Integer, ForeignKey('sample_data_config.sample_data_config_id'))
+    sample_name = Column(String(80))
     value = Column(String(80))
+
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(SampleData.sample_data_id)).first()[0] or 0) + 1
 
 

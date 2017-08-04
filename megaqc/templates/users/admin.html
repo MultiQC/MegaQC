@@ -1,0 +1,62 @@
+
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Welcome {{ current_user.username }}</h1>
+    <h3>This is the Admin Panel.</h3>
+    <form id="user_form">
+    {{ form.csrf_token}}
+    <table id="user_table" class="table table-bordered">
+       <tr>
+           <th>Username</th>
+           <th>Email</th>
+           <th>First Name</th>
+           <th>Last Name</th>
+           <th>Api Token</th>
+           <th>Active</th>
+           <th>Admin</th>
+           <th>Update</th>
+           <th>Password</th>
+           <th>Delete</th>
+       </tr>
+       {% for user in users_data %}
+       <tr>
+           <td><input name="user_id" type="hidden" value={{user.user_id}} /><input class="form-control" name="username" type="text" value = {{user.username}} /></td>
+           <td><input class="form-control" name="email" type="text" value = {{user.email}} /></td>
+           <td><input class="form-control" name="first_name" type="text" value = {{user.first_name}} /></td>
+           <td><input class="form-control" name="last_name" type="text" value = {{user.last_name}} /></td>
+           <td><input class="form-control" name="api_token" type="text" value = {{user.api_token}} disabled/></td>
+           <td><input class="form-control" name="active" type="checkbox"  {% if user.active %}checked{% endif %} /></td>
+           <td><input class="form-control" name="is_admin" type="checkbox" {% if user.is_admin %}checked{% endif %} /></td>
+           <td><input type="button" class="btn btn-default update_btn" name="update_btn" value="Update"/></td>
+           <td><input type="button" class="btn btn-default reset_btn" name="reset_btn"  value="Reset"/></td>
+           <td><input type="button" class="btn btn-danger delete_btn" name="delete_btn"  value="Delete"/></td>
+       </tr>
+       {% endfor %}
+   </table>
+   <table id="add_table" class="table table-bordered">
+       <tr>
+           <th>Username</th>
+           <th>Email</th>
+           <th>First Name</th>
+           <th>Last Name</th>
+           <th>Active</th>
+           <th>Admin</th>
+           <th>Add</th>
+       </tr>
+       <tr>
+           <td><input class="form-control" name="user_id" type="hidden" value={{ users_data[-1].user_id + 1 }} /><input class="form-control" name="username" type="text" /></td>
+           <td><input class="form-control" name="email" type="text" /></td>
+           <td><input class="form-control" name="first_name" type="text" /></td>
+           <td><input class="form-control" name="last_name" type="text" /></td>
+           <td><input class="form-control" name="active" type="checkbox" /></td>
+           <td><input class="form-control" name="is_admin" type="checkbox" /></td>
+           <td colspan="3"><input type="button" class="btn btn-success add_btn" name="add_btn" value="Add"/></td>
+       </tr>
+    </table>
+    </form>
+    
+  <script type="text/javascript">window.token = "{{ current_user.api_token }}" </script>
+  <script type="text/javascript" src="/static/libs/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='public/js/admin.js') }}"></script>
+{% endblock %}
+

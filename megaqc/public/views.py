@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import login_required, login_user, logout_user
+from flask import Blueprint, flash, redirect, render_template, request, url_for, abort
+from flask_login import login_required, login_user, logout_user, current_user
 
 from megaqc.extensions import login_manager, db
 from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
+from megaqc.model.models import Report
 from megaqc.utils import flash_errors
 
 from sqlalchemy.sql import func
@@ -51,7 +52,7 @@ def register():
     form = RegisterForm(request.form, csrf_enabled=False)
     if form.validate_on_submit():
         user_id = (db.session.query(func.max(User.user_id)).scalar() or 0)+1
-        User.create(user_id=user_id, username=form.username.data, email=form.email.data, password=form.password.data, active=True)
+        User.create(user_id=user_id, username=form.username.data, email=form.email.data, password=form.password.data, first_name=form.first_name.data, last_name=form.last_name.data, active=True)
         flash('Thank you for registering. You can now log in.', 'success')
         return redirect(url_for('public.home'))
     else:
@@ -64,3 +65,9 @@ def about():
     """About page."""
     form = LoginForm(request.form)
     return render_template('public/about.html', form=form)
+
+@blueprint.route('/new_plot/')
+@login_required
+def new_plot():
+    reports = db.session.query(Report).all()
+    return render_template('public/plot_choice.html', db=db,User=User, reports=reports, user_token=current_user.api_token)
