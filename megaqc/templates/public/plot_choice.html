@@ -2,13 +2,18 @@
 {% extends "layout.html" %}
 {% block css %}
  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+ <link rel="stylesheet" href="{{ url_for('static', filename='public/css/main.css') }}">
 {% endblock %}
 {% block content %}
     <h1>Generate new Plot</h1>
     <div id="available_plots">
         <h3>Plot type</h3>
         <p>
-            <img src="{{ url_for('static', filename='public/img/BarRandom-256.png') }}" id="create_bar" name="Bar graph" />
+        <form>
+        {% for one_type in plot_types%}
+        <input type="button" class="btn btn-primary plot_btns" value="{{one_type}}"id="btn_{{one_type}}"/>
+        {% endfor %}
+        </form>
         </p>
     </div>
     <div id="sample_chooser">
@@ -20,12 +25,12 @@
             </thead>
             <tbody>
                 {% for report in reports %}
-                <tr data-id="{{ report.id}}">
+                <tr data-id="{{ report.report_id}}">
                     <td>{{report.hash}}</td>
                     <td>{{report.title}}</td>
                     <td>{{report.created_at}}</td>
                     <td>{{db.session.query(User).filter(User.user_id == report.user_id).first().username}}</td>
-                    <td><input type="checkbox" class="form-control checkbox_report" id="select_report_{{ report.id }}"data-id={{report.id}}/></td>
+                    <td><input type="checkbox" class="form-control checkbox_report" id="select_report_{{ report.report_id }}"data-id="{{report.report_id}}"/></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -40,9 +45,15 @@
             </tbody>
         </table>
     </div>
+    <div id="validation">
+        <input type="button" class="btn btn-success" value="Make Plot" id="make_plot_btn" />
+    </div>
+    <div id="plot_location">
+    </div>
 {% endblock %}
 {% block js %}
   <script type="text/javascript" >window.token="{{user_token}}"</script>
   <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='public/js/plot_choice.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 {% endblock %}

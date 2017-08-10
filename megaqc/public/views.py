@@ -7,10 +7,10 @@ from megaqc.extensions import login_manager, db
 from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
-from megaqc.model.models import Report
+from megaqc.model.models import Report, PlotConfig
 from megaqc.utils import flash_errors
 
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, distinct
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 
@@ -70,4 +70,5 @@ def about():
 @login_required
 def new_plot():
     reports = db.session.query(Report).all()
-    return render_template('public/plot_choice.html', db=db,User=User, reports=reports, user_token=current_user.api_token)
+    plot_types = [x[0] for x in db.session.query(distinct(PlotConfig.section)).all()]
+    return render_template('public/plot_choice.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)

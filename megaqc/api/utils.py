@@ -3,11 +3,17 @@ from datetime import datetime
 from megaqc.model.models import *
 from megaqc.extensions import db
 from sqlalchemy import func
+from collections import defaultdict
+
 
 #TODO remove when plot_config.hash is fixed
 from passlib.utils import getrandstr, rng
-import string
 
+import colorlover as clv
+import plotly.offline as py
+import plotly.graph_objs as go
+
+import string
 import json
 
 
@@ -63,22 +69,83 @@ def handle_report_data(user, report_data):
             config_id = (db.session.query(func.max(PlotConfig.config_id)).first()[0] or 0) +1
             new_plot_config = PlotConfig(config_id=config_id,
                     config_hash=getrandstr(rng, string.digits+string.letters, 10),
-                    name=report_data['report_plot_data'][plot]['config']['title'],
+                    name=report_data['report_plot_data'][plot]['plot_type'],
                     section=plot,
                     data=config)
             new_plot_config.save()
         else:
             config_id = existing_plot_config.plot_config_id
 
-        for dataset in report_data['report_plot_data'][plot]['datasets']:
-            for sample_dict in dataset:
-               new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
-                                   report_id=report_id,
-                                   config_id=config_id,
-                                   sample_name=sample_dict['name'],
-                                   data=json.dumps(sample_dict['data'])
-                            )
-               new_dataset_row.save()
+        if report_data['report_plot_data'][plot]['plot_type']=="bar_graph":
+
+            for dst_idx, dataset in enumerate(report_data['report_plot_data'][plot]['datasets']):
+                for sub_dict in dataset:
+                    data_key = sub_dict['name']
+                    for sa_idx, actual_data in enumerate(sub_dict['data']):
+                        new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
+                                       report_id=report_id,
+                                       config_id=config_id,
+                                       sample_name=report_data['report_plot_data'][plot]['samples'][dst_idx][sa_idx],
+                                       data_key=sub_dict['name'],
+                                       data=json.dumps(actual_data)
+                                )
+                        new_dataset_row.save()
+
+        elif report_data['report_plot_data'][plot]['plot_type']=="xy_line":
+            for dst_idx, dataset in enumerate(report_data['report_plot_data'][plot]['datasets']):
+                for sub_dict in dataset:
+                    try:
+                        data_key = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]['ylab']
+                    except KeyError:
+                        data_key = report_data['report_plot_data'][plot]['config']['ylab']
+
+                    for sa_idx, actual_data in enumerate(sub_dict['data']):
+                       new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
+                                       report_id=report_id,
+                                       config_id=config_id,
+                                       sample_name=sub_dict['name'],
+                                       data_key=data_key,
+                                       data=json.dumps(sub_dict['data'])
+                                )
+                    new_dataset_row.save()
 
 
 
+def generate_plot(plot_type, sample_names):
+    if plot_type == "featureCounts_assignment_plot":
+        rows = db.session.query(PlotConfig, PlotData).join(PlotData).filter(PlotConfig.section==plot_type, PlotData.sample_name.in_(sample_names)).all()
+        samples = set()
+        series = set()
+        plot_data=defaultdict(lambda:defaultdict(lambda:0))
+        for row in rows:
+            samples.add(row[1].sample_name)
+            series.add(row[1].data_key)
+            plot_data[row[1].data_key][row[1].sample_name]=float(row[1].data)
+        samples = list(samples)
+        print samples
+        plots=[]
+        scale_idx=str(min(11, max(3,len(series)))) #colorlover only has scales between 3 and 11
+        colors = clv.scales[scale_idx]['div']['RdYlBu']
+        for idx, d in enumerate(series):
+            my_trace = go.Bar(
+                y=samples,
+                x=[plot_data[d][x] for x in samples],
+                name=d,
+                orientation = 'h',
+                marker = dict(
+                    color = colors[idx%12],
+                    line = dict(
+                        color = colors[idx%12],
+                        width = 3)
+                )
+            )
+            plots.append(my_trace)
+
+        layout = go.Layout(
+                barmode='stack'
+        )
+        fig = go.Figure(data=plots, layout=layout)
+        plot_div = py.plot(fig, output_type='div')
+        return plot_div
+    elif plot_type == "xy_line":
+        pass

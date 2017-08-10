@@ -4,10 +4,11 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for,
 
 from megaqc.extensions import db
 from megaqc.user.models import User
-from megaqc.api.utils import handle_report_data
+from megaqc.model.models import PlotData, Report
+from megaqc.api.utils import handle_report_data, generate_plot
 from megaqc.user.forms import AdminForm
 
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, distinct
 
 from functools import  wraps
 
@@ -124,6 +125,15 @@ def admin_add_users(user, *args, **kwargs):
 @check_user
 def get_samples_per_report(user, *args, **kwargs):
     data = request.get_json()
-    report_ids=data.get("report_id")
-    sample_names=db.session.query(PlotData.sample_name).filter(PlotData.report_id ==  report_id).all()
+    report_id = data.get("report_id")
+    sample_names = {x[0]:x[1] for x in db.session.query(distinct(PlotData.sample_name), Report.title).join(Report).filter(PlotData.report_id ==  report_id).all()}
     return jsonify(sample_names)
+
+@api_blueprint.route('/api/get_plot', methods=['POST'])
+@check_user
+def get_plot(user, *args, **kwargs):
+    data = request.get_json()
+    plot_type = data.get("plot_type")
+    sample_names= data.get("samples")
+    html = generate_plot(plot_type, sample_names)
+    return jsonify({"plot": html})

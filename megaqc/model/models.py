@@ -53,7 +53,8 @@ class PlotData(db.Model, CRUDMixin):
     plot_data_id = Column(Integer, primary_key=True)
     report_id = Column(Integer, ForeignKey('report.report_id'))
     config_id = Column(Integer, ForeignKey('plot_config.config_id'))
-    sample_name = Column(String(80), unique=True, nullable=False)
+    sample_name = Column(String(80), nullable=False)
+    data_key = Column(String(120), nullable=True)
     data = Column(String(2048), nullable=False)
 
     @staticmethod
@@ -70,7 +71,7 @@ class SampleDataType(db.Model, CRUDMixin):
     sample_data_type_id = Column(Integer, primary_key=True)
     data_id = Column(Integer)
     data_section = Column(String(80))
-    data_key = Column(String(80), nullable=False) 
+    data_key = Column(String(80), nullable=False)
 
 class SampleData(db.Model, CRUDMixin):
     __tablename__ = "sample_data"

@@ -1,3 +1,4 @@
+colorlover>=0.2.1
 multiqc>=1.0
 Flask==0.12
 MarkupSafe==0.23
@@ -11,11 +12,9 @@ SQLAlchemy==1.1.5
 Flask-Migrate==2.0.3
 Flask-WTF==0.14.2
 WTForms==2.1
-gunicorn>=19.1.1
 Flask-Assets==0.12
 cssmin>=0.2.0
 jsmin>=2.0.11
 Flask-Login==0.4.0
-Flask-Bcrypt==0.7.1
 Flask-Caching>=1.0.0
 Flask-DebugToolbar==0.10.1
