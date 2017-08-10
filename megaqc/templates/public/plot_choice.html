@@ -2,7 +2,6 @@
 {% extends "layout.html" %}
 {% block css %}
  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
- <link rel="stylesheet" href="{{ url_for('static', filename='public/css/main.css') }}">
 {% endblock %}
 {% block content %}
     <h1>Generate new Plot</h1>
@@ -54,6 +53,6 @@
 {% block js %}
   <script type="text/javascript" >window.token="{{user_token}}"</script>
   <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='public/js/plot_choice.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/plot_choice.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 {% endblock %}

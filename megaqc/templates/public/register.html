@@ -4,35 +4,47 @@
 <div class="container-narrow">
   <h1>Register</h1>
     <br/>
-    <form id="registerForm" class="form form-register" method="POST" action="" role="form">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <div class="form-group">
-                {{form.username.label}}
-                {{form.username(placeholder="Username", class_="form-control")}}
-            </div>
-            <div class="form-group">
-                {{form.first_name.label}}
-                {{form.first_name(placeholder="First Name", class_="form-control")}}
-            </div>
-            <div class="form-group">
-                {{form.last_name.label}}
-                {{form.last_name(placeholder="Last Name", class_="form-control")}}
-            </div>
-            <div class="form-group">
-                {{form.email.label}}
-                {{form.email(placeholder="Email", class_="form-control")}}
-            </div>
-            <div class="form-group">
-                {{form.password.label}}
-                {{form.password(placeholder="Password", class_="form-control")}}
-            </div>
-            <div class="form-group">
-                {{form.confirm.label}}
-                {{form.confirm(placeholder="Password (again)", class_="form-control")}}
-            </div>
-            <p><input class="btn btn-default btn-submit" type="submit" value="Register"></p>
+    <form id="registerForm" class="form form-horizontal" method="POST" action="" role="form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <div class="form-group row">
+        {{ form.username.label(class_="col-sm-2 control-label") }}
+        <div class="col-sm-5">
+          {{ form.username(placeholder="Username", class_="form-control") }}
+        </div>
+      </div>
+      <div class="form-group row">
+        {{ form.first_name.label(class_="col-sm-2 control-label") }}
+        <div class="col-sm-5">
+          {{ form.first_name(placeholder="First Name", class_="form-control") }}
+        </div>
+      </div>
+      <div class="form-group row">
+        {{ form.last_name.label(class_="col-sm-2 control-label") }}
+        <div class="col-sm-5">
+          {{ form.last_name(placeholder="Last Name", class_="form-control") }}
+        </div>
+      </div>
+      <div class="form-group row">
+        {{ form.email.label(class_="col-sm-2 control-label") }}
+        <div class="col-sm-5">
+          {{ form.email(placeholder="Email", class_="form-control") }}
+        </div>
+      </div>
+      <div class="form-group row">
+        {{ form.password.label(class_="col-sm-2 control-label") }}
+        <div class="col-sm-5">
+          {{ form.password(placeholder="Password", class_="form-control") }}
+        </div>
+      </div>
+      <div class="form-group row">
+        {{ form.confirm.label(class_="col-sm-2 control-label") }}
+        <div class="col-sm-5">
+          {{ form.confirm(placeholder="Password (again)", class_="form-control") }}
+        </div>
+      </div>
+      <p><input class="btn btn-primary btn-submit" type="submit" value="Register"></p>
     </form>
-    <p><em>Already registered?</em> Click <a href="/">here</a> to login.</p>
+    <blockquote><em>Already registered?</em> Click <a href="/">here</a> to login.</blockquote>
 </div>
 {% endblock %}
 

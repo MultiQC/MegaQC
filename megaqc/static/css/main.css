@@ -1,7 +1,4 @@
-// main: main.scss
-
-// MegaQC Core Styles
-//   Central styling - stuff like fonts and common elements
+/* MegaQC Styles */
 
 img {
     max-width: 100%;
@@ -41,3 +38,7 @@ footer p a {
     text-decoration: underline;
 }
 
+.modal-xl {
+    height:600px;
+    width:90%;
+}

@@ -1,12 +1,6 @@
 # Development stuff
 dev.db
 
-# Don't commit front end libraries, that can be handled by bower
-megaqc/static/libs/
-megaqc/static/public/css
-megaqc/static/public/js
-megaqc/static/public/fonts
-
 # Dev CSS
 megaqc/static/scss/*.css
 
@@ -15,6 +9,7 @@ megaqc/static/scss/*.css
 _build
 node_modules
 
+.DS_Store
 
 *.py[cod]
 
