@@ -6,8 +6,18 @@ input[type=button], button {
 img {
     max-width: 100%;
 }
+blockquote {
+  border-left: 5px solid #8eb9dd;
+  background-color: #e8f1f8;
+  padding: 10px 10px 10px 20px;
+  margin: 25px 0;
+  color: #666;
+}
 .monospace {
   font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+h1, h2, h3 {
+  margin: 20px 0;
 }
 
 nav.navbar {

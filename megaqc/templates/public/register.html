@@ -1,50 +1,51 @@
 
 {% extends "layout.html" %}
 {% block content %}
-<div class="container-narrow">
-  <h1>Register</h1>
-    <br/>
-    <form id="registerForm" class="form form-horizontal" method="POST" action="" role="form">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-      <div class="form-group row">
-        {{ form.username.label(class_="col-sm-2 control-label") }}
-        <div class="col-sm-5">
-          {{ form.username(placeholder="Username", class_="form-control") }}
-        </div>
+  <h1>Create an account</h1>
+  <form id="registerForm" class="form form-horizontal" method="POST" action="" role="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class="form-group row">
+      {{ form.username.label(class_="col-sm-2 control-label") }}
+      <div class="col-sm-5">
+        {{ form.username(placeholder="Username", class_="form-control") }}
       </div>
-      <div class="form-group row">
-        {{ form.first_name.label(class_="col-sm-2 control-label") }}
-        <div class="col-sm-5">
-          {{ form.first_name(placeholder="First Name", class_="form-control") }}
-        </div>
+    </div>
+    <div class="form-group row">
+      {{ form.first_name.label(class_="col-sm-2 control-label") }}
+      <div class="col-sm-5">
+        {{ form.first_name(placeholder="First Name", class_="form-control") }}
       </div>
-      <div class="form-group row">
-        {{ form.last_name.label(class_="col-sm-2 control-label") }}
-        <div class="col-sm-5">
-          {{ form.last_name(placeholder="Last Name", class_="form-control") }}
-        </div>
+    </div>
+    <div class="form-group row">
+      {{ form.last_name.label(class_="col-sm-2 control-label") }}
+      <div class="col-sm-5">
+        {{ form.last_name(placeholder="Last Name", class_="form-control") }}
       </div>
-      <div class="form-group row">
-        {{ form.email.label(class_="col-sm-2 control-label") }}
-        <div class="col-sm-5">
-          {{ form.email(placeholder="Email", class_="form-control") }}
-        </div>
+    </div>
+    <div class="form-group row">
+      {{ form.email.label(class_="col-sm-2 control-label") }}
+      <div class="col-sm-5">
+        {{ form.email(placeholder="Email", class_="form-control") }}
       </div>
-      <div class="form-group row">
-        {{ form.password.label(class_="col-sm-2 control-label") }}
-        <div class="col-sm-5">
-          {{ form.password(placeholder="Password", class_="form-control") }}
-        </div>
+    </div>
+    <div class="form-group row">
+      {{ form.password.label(class_="col-sm-2 control-label") }}
+      <div class="col-sm-5">
+        {{ form.password(placeholder="Password", class_="form-control") }}
       </div>
-      <div class="form-group row">
-        {{ form.confirm.label(class_="col-sm-2 control-label") }}
-        <div class="col-sm-5">
-          {{ form.confirm(placeholder="Password (again)", class_="form-control") }}
-        </div>
+    </div>
+    <div class="form-group row">
+      {{ form.confirm.label(class_="col-sm-2 control-label") }}
+      <div class="col-sm-5">
+        {{ form.confirm(placeholder="Password (again)", class_="form-control") }}
       </div>
-      <p><input class="btn btn-primary btn-submit" type="submit" value="Register"></p>
-    </form>
-    <blockquote><em>Already registered?</em> Click <a href="/">here</a> to login.</blockquote>
-</div>
+    </div>
+    <div class="form-group row">
+      <div class="offset-sm-2 col-sm-10">
+        <input class="btn btn-primary btn-submit" type="submit" value="Register">
+      </div>
+    </div>
+  </form>
+  <blockquote><strong>Already registered?</strong> Click <a href="{{ url_for('public.login') }}">here</a> to login.</blockquote>
 {% endblock %}
 

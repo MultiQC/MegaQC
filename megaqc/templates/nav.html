@@ -17,39 +17,37 @@
       <li class="nav-item {% if request.path == "/about" %}active{% endif %}">
         <a class="nav-link" href="{{ url_for('public.about') }}">About{%- if request.path == "/home" %} <span class="sr-only">(current)</span>{% endif %}</a>
       </li>
-      {% if current_user and current_user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('public.new_plot') }}">New Plot</a>
-        </li>
-      {% endif %}
+      <li class="nav-item {% if request.path == "/about" %}active{% endif %}">
+        <a class="nav-link" href="#">Get Help</a>
+      </li>
     </ul>
 
-    {% if current_user and current_user.is_authenticated %}
     <ul class="navbar-nav my-2 my-lg-0">
-      {% if current_user.is_admin %}
+    {% if current_user and current_user.is_authenticated %}
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('user.admin_panel') }}">Admin Panel</a>
+        <a class="nav-link" href="{{ url_for('public.new_plot') }}">New Plot</a>
       </li>
-      {% endif %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">
-          Welcome {{ current_user.username }}
+          Welcome {{ current_user.first_name }}
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
           <a class="dropdown-item" href="{{ url_for('user.members') }}">Your Profile</a>
+          {% if current_user.is_admin %}
+          <a class="dropdown-item" href="{{ url_for('user.admin_panel') }}">Admin Panel</a>
+          {% endif %}
           <a class="dropdown-item" href="{{ url_for('public.logout') }}">Log Out</a>
         </div>
       </li>
-    </ul>
-    {% elif form %}
-    <form id="loginForm" method="POST" class="form-inline my-2 my-lg-0" action="/" role="login">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-      {{ form.username(placeholder="Username", class_="form-control mr-sm-2") }}
-      {{ form.password(placeholder="Password", class_="form-control mr-sm-2") }}
-      <button class="btn btn-outline-info mr-sm-2" type="submit">Log in</button>
-      <a class="btn btn-outline-primary my-2 my-sm-0" href="{{ url_for('public.register') }}">Create account</a>
-    </form>
+    {% else %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('public.login') }}">Log In</a>
+      </li>
+      <li>
+        <a class="nav-link" href="{{ url_for('public.register') }}">Register</a>
+      </li>
     {% endif %}
+    </ul>
 
   </div>
 
