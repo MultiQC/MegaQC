@@ -1,0 +1,48 @@
+// main: main.scss
+
+// MegaQC Core Styles
+//   Central styling - stuff like fonts and common elements
+
+img {
+    max-width: 100%;
+}
+
+nav.navbar {
+    margin-bottom: 1rem;
+    background-color: #eeeeee;
+    border-bottom: 1px solid #cccccc;
+}
+#loginForm input {
+    background-color: #eeeeee;
+    transition: background-color 0.1s;
+}
+#loginForm input::placeholder {
+    color: #999;
+    transition: color 0.1s;
+}
+#loginForm input:focus,
+#loginForm input:active {
+    background-color: $white;
+}
+
+footer {
+    background-color: #eeeeee;
+    border-top: 1px solid #ccc;
+    font-size: 0.7rem;
+    color: #999;
+    padding: 1.5rem 0;
+    margin-top: 2rem;
+}
+footer p {
+    margin: 0;
+}
+footer p a {
+    color: #999;
+    text-decoration: underline;
+}
+
+.modal-xl {
+    height:600px;
+    width:90%;
+
+}
