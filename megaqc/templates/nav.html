@@ -17,24 +17,29 @@
       <li class="nav-item {% if request.path == "/about" %}active{% endif %}">
         <a class="nav-link" href="{{ url_for('public.about') }}">About{%- if request.path == "/home" %} <span class="sr-only">(current)</span>{% endif %}</a>
       </li>
+      {% if current_user and current_user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('public.new_plot') }}">New Plot</a>
+        </li>
+      {% endif %}
     </ul>
 
     {% if current_user and current_user.is_authenticated %}
     <ul class="navbar-nav my-2 my-lg-0">
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('user.members') }}">Logged in as {{ current_user.username }}</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('public.logout') }}"><i class="fa fa-sign-out"></i></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('public.new_plot') }}">New Plot</a>
-      </li>
       {% if current_user.is_admin %}
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('user.admin_panel') }}">Admin Panel</a>
       </li>
       {% endif %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">
+          Welcome {{ current_user.username }}
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
+          <a class="dropdown-item" href="{{ url_for('user.members') }}">Your Profile</a>
+          <a class="dropdown-item" href="{{ url_for('public.logout') }}">Log Out</a>
+        </div>
+      </li>
     </ul>
     {% elif form %}
     <form id="loginForm" method="POST" class="form-inline my-2 my-lg-0" action="/" role="login">

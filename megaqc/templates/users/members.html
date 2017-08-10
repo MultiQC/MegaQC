@@ -1,24 +1,40 @@
 
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Welcome {{ current_user.username }}</h1>
-    <h3>This is the members-only page.</h3>
-    <h4> Here is your identification token : {{current_user.api_token}}</h4>
-    <form id="password_form">
-    <table class="table" width="30%">
-        <tr>
-            <td>Change {{form.password.label}}</td>
-            <td>{{form.password(placeholder="Password", class_="form-control pw_input")}}</td>
-        </tr>
-        <tr>
-            <td>{{form.confirm.label}}</td>
-            <td>{{form.confirm(placeholder="Re-type Password", class_="form-control pw_input")}}</td>
-        </tr>
-        <tr><td colspan="2"><input type="button" class="btn btn-primary" value="Submit" id="password_submit"/></td></tr>
-    </table>
-    </form>
+  <h1>Profile Page</h1>
+
+  <h3 class="mt-4">Identification token</h3>
+  <p>To push data to MegaQC from MultiQC, you need an API authentication token. This is shown below:</p>
+  <div class="card">
+    <div class="card-block">
+      <samp>{{current_user.api_token}}</samp>
+    </div>
+  </div>
+
+  <h3 class="mt-4">Change Password</h3>
+  <form id="password_form" method="POST" action="" role="form">
+    <div class="form-group row">
+      {{ form.password.label(class_="col-sm-2 col-form-label") }}
+      <div class="col-sm-10 col-md-5">
+        {{ form.password(placeholder="New Password", class_="form-control pw_input") }}
+      </div>
+    </div>
+    <div class="form-group row">
+      {{ form.confirm.label(class_="col-sm-2 col-form-label") }}
+      <div class="col-sm-10 col-md-5">
+        {{form.confirm(placeholder="Re-type Password", class_="form-control pw_input")}}
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="offset-sm-2 col-sm-10">
+        <input type="submit" class="btn btn-primary" value="Submit" id="password_submit"/>
+      </div>
+    </div>
+  </form>
+{% endblock %}
+
+{% block js %}
   <script type="text/javascript">window.token = "{{ current_user.api_token }}" </script>
-  <script type="text/javascript" src="/static/libs/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/members.js') }}"></script>
 {% endblock %}
 

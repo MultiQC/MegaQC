@@ -19,14 +19,18 @@ function init_buttons(){
             }
         });
         $.ajax({
-            url:"/api/update_users", 
+            url:"/api/update_users",
             type: 'post',
             data:JSON.stringify(data),
             headers : {access_token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
-            success: function(){$('form').append('<div id="my_alert" class="alert alert-success">User updated successfully').hide().slideDown();},
-            error: function(ret_data){$('form').append('<div id="my_alert" class="alert alert-danger">Error: <code>'+ret_data.responseJSON.message+'</code></div>').hide().slideDown();}
+            success: function(){
+                $('<div id="my_alert" class="alert alert-success">User updated successfully</div>').append('form').hide().slideDown();
+            },
+            error: function(ret_data){
+                $('<div id="my_alert" class="alert alert-danger">Error: <code>'+ret_data.responseJSON.message+'</code></div>').appendTo('form').hide().slideDown();
+            }
         });
     });
     $(".delete_btn").click(function(e){
@@ -40,13 +44,15 @@ function init_buttons(){
             }
         });
         $.ajax({
-            url:"/api/delete_users", 
+            url:"/api/delete_users",
             type: 'post',
             data:JSON.stringify(data),
             headers : {access_token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
-            success: function(){my_btn.parentsUntil('tbody').remove();}
+            success: function(){
+                my_btn.parentsUntil('tbody').remove();
+            }
         });
     });
     $(".reset_btn").click(function(e){
@@ -58,13 +64,15 @@ function init_buttons(){
             }
         });
         $.ajax({
-            url:"/api/reset_password", 
+            url:"/api/reset_password",
             type: 'post',
             data:JSON.stringify(data),
             headers : {access_token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
-            success: function(data){$('form').append('<div id="my_alert" class="alert alert-success">Reset password: <code>'+data.password+'</code></div>').hide().slideDown();}
+            success: function(data){
+                $('<div id="my_alert" class="alert alert-success">Reset password: <code>'+data.password+'</code></div>').appendTo('form').hide().slideDown();
+            }
         });
     });
     $(".add_btn").click(function(e){
@@ -81,22 +89,21 @@ function init_buttons(){
             }
         });
         $.ajax({
-            url:"/api/add_user", 
+            url:"/api/add_user",
             type: 'post',
-            data:JSON.stringify(data),
-            headers : {access_token:window.token},
+            data: JSON.stringify(data),
+            headers: {access_token:window.token},
             dataType: 'json',
-            contentType:"application/json; charset=UTF-8",
+            contentType: "application/json; charset=UTF-8",
             success: function(ret_data){
                 $('#add_table').find('input').each(function (idx, el){
                     if (el.type != 'button'){
-                        if (el.type=="checkbox"){
+                        if (el.type == "checkbox"){
                             $(el).prop("checked", false);
                         }else{
-                            el.value='';
+                            el.value = '';
                         }
                     }
-                
                 });
                 $('#user_table tr:last').after(
                     '<tr><td><input class="form-control" type="hidden" name="id" value="'+data.user_id+'"/><input class="form-control" type="text" value="'+data.username+'" /></td><td><input class="form-control" type="text" value="'+data.email+'" /></td><td><input class="form-control" type="text" value="'+data.first_name+'" /></td><td><input class="form-control" type="text" value="'+data.last_name+'" /></td><td><input class="form-control" type="text" value="'+ret_data.api_token+'" /></td><td><input class="form-control" type="checkbox" '+(data.active ? "checked":"")+' /></td><td><input class="form-control" type="checkbox" '+(data.active ? "checked":"")+' /></td><td><input type="button" value="Update" class="btn btn-default update_btn" /></td><td><input type="button" value="Reset" class="btn btn-default reset_btn" /></td><td><input type="button" value="Delete" class="btn btn-danger delete_btn" /></td></tr>'

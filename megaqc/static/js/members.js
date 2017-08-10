@@ -7,16 +7,18 @@ $("#password_submit").click(function(e){
     });
     if (passwords[0] != passwords[1]){
         alert("Passwords do not match");
-    }else{
+    } else {
         var data={"password":passwords[0]};
         $.ajax({
-            url:"/api/set_password", 
+            url:"/api/set_password",
             type: 'post',
             data:JSON.stringify(data),
             headers : {access_token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
-            success: function(data){$('form').append('<div class="alert alert-success">New password set</div>').hide().slideDown();}
+            success: function(data){
+               $('<div class="alert alert-success">New password set</div>').appendTo('form').hide().slideDown();
+            }
         });
    }
 });

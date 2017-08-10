@@ -1,7 +1,13 @@
 /* MegaQC Styles */
 
+input[type=button], button {
+  cursor: pointer;
+}
 img {
     max-width: 100%;
+}
+.monospace {
+  font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
 
 nav.navbar {
