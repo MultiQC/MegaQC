@@ -57,8 +57,16 @@ def register():
     form = RegisterForm(request.form, csrf_enabled=False)
     if form.validate_on_submit():
         user_id = (db.session.query(func.max(User.user_id)).scalar() or 0)+1
-        User.create(user_id=user_id, username=form.username.data, email=form.email.data, password=form.password.data, first_name=form.first_name.data, last_name=form.last_name.data, active=True)
-        flash('Thanks for registering! You can now <a href="{}">log in</a>.'.format(url_for('public.login')), 'success')
+        User.create(
+            user_id=user_id,
+            username=form.username.data,
+            email=form.email.data,
+            password=form.password.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            active=True
+        )
+        flash("Thanks for registering! You're now logged in.", 'success')
         return redirect(url_for('public.home'))
     else:
         flash_errors(form)
@@ -76,3 +84,19 @@ def new_plot():
     reports = db.session.query(Report).all()
     plot_types = [x[0] for x in db.session.query(distinct(PlotConfig.section)).all()]
     return render_template('public/plot_choice.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)
+
+@blueprint.route('/report_plot/')
+@login_required
+def report_plot_select():
+    reports = db.session.query(Report).all()
+    plot_types = [x[0] for x in db.session.query(distinct(PlotConfig.section)).all()]
+    return render_template('public/report_plot_select.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)
+
+
+@blueprint.route('/report_plot/plot/')
+@login_required
+def report_plot():
+    reports = db.session.query(Report).all()
+    plot_types = [x[0] for x in db.session.query(distinct(PlotConfig.section)).all()]
+    return render_template('public/report_plot.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)
+

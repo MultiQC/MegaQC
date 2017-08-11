@@ -1,34 +1,46 @@
 
-{% extends "layout.html" %}
-{% block content %}
-
-<div class="jumbotron">
-
-  <h1 class="mt-0 mb-3">
-    <img src="{{ url_for('static', filename='img/MegaQC_logo.png') }}" title="MegaQC">
-  </h1>
-  <p class="lead">MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.</p>
-  <p>See the MultiQC website for installation instructions and documentation: <a href="http://multiqc.info/megaqc/" target="_blank">http://multiqc.info/megaqc/</a></p>
-
-</div>
+{% extends "plot_walkthrough.html" %}
+{% block choosePlotType %}
 
 <div class="row">
-  <div class="col">
-    <h2><i class="fa fa-bar-chart"></i> New MultiQC Plot</h2>
-    <p>Click here to create a new plot that replicates a plot within a MultiQC report.</p>
-    <p><a class="btn btn-primary" href="{{ url_for('public.new_plot') }}">Create &raquo;</a></p>
+  <div class="col-md-6 col-lg-3">
+    <div class="card plot-chooser-card">
+      <div class="card-body text-center">
+        <h4><a href="{{ url_for('public.report_plot_select') }}">Report Plot</a></h4>
+        <a href="{{ url_for('public.report_plot_select') }}"><img src="http://via.placeholder.com/300x200"></a>
+        </a>
+      </div>
+    </div>
   </div>
-  <div class="col">
-    <h2><i class="fa fa-area-chart"></i> Plot Metric</h2>
-    <p>Scrutinise statistics from MultiQC (histograms, over-time and comparisons)</p>
-    <p><a href="#" class="btn btn-primary disabled">Coming soon &raquo;</a></p>
- </div>
-  <div class="col">
-    <h2><i class="fa fa-edit"></i> Buttons</h2>
-    <p>MegaQC makes heavy use of buttons. And other interactive parts of The Internet.</p>
-    <p><a href="#" class="btn btn-primary">Learn more &raquo;</a></p>
+  <div class="col-md-6 col-lg-3">
+    <div class="card plot-chooser-card">
+      <div class="card-body text-center">
+        <h4><a href="#">Data Histogram</a></h4>
+        <a href="#"><img src="http://via.placeholder.com/300x200"></a>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="card plot-chooser-card">
+      <div class="card-body text-center">
+        <h4><a href="#">Data Trend</a></h4>
+        <a href="#"><img src="http://via.placeholder.com/300x200"></a>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="card plot-chooser-card">
+      <div class="card-body text-center">
+        <h4><a href="#">Compare Data</a></h4>
+        <a href="#"><img src="http://via.placeholder.com/300x200"></a>
+        </a>
+      </div>
+    </div>
   </div>
 </div>
+
 
 {% endblock %}
 

@@ -1,0 +1,49 @@
+
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-md-6">
+    <h1><img src="{{ url_for('static', filename='img/MegaQC_logo.png') }}" title="MegaQC"></h1>
+  </div>
+  <div class="col-md-6 megaqc-header-samplecount">
+    Data available from<br>
+    ??? samples, ??? reports
+  </div>
+</div>
+<p class="lead">MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.</p>
+<p>See the MultiQC website for installation instructions and documentation: <a href="http://multiqc.info/megaqc/" target="_blank">http://multiqc.info/megaqc/</a></p>
+
+<h2 class="megaqc-step-header">
+  <a href="{{ url_for('public.home') }}">
+    <span class="fa-stack">
+      <i class="fa fa-circle-thin fa-stack-2x"></i>
+      <strong class="fa-stack-1x calendar-text">1</strong>
+    </span>
+    Choose a plot type
+  </a>
+</h2>
+{% block choosePlotType %}{% endblock %}
+
+
+<h2 class="megaqc-step-header">
+  {% if plotType %}<a href="{{ url_for(plotType) }}">{% endif %}
+    <span class="fa-stack">
+      <i class="fa fa-circle-thin fa-stack-2x"></i>
+      <strong class="fa-stack-1x calendar-text">2</strong>
+    </span>
+    Select samples
+  {% if plotType %}</a>{% endif %}
+</h2>
+{% block selectSamples %}{% endblock %}
+
+<h2 class="megaqc-step-header">
+  <span class="fa-stack">
+    <i class="fa fa-circle-thin fa-stack-2x"></i>
+    <strong class="fa-stack-1x calendar-text">3</strong>
+  </span>
+  Plot data
+</h2>
+{% block plotData %}{% endblock %}
+
+{% endblock %}
