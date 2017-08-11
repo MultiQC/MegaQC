@@ -64,3 +64,6 @@ footer p a {
     height:600px;
     width:90%;
 }
+.card .card-block pre {
+  margin-bottom: 0;
+}
