@@ -29,8 +29,8 @@ def home():
     if request.method == 'POST':
         if form.validate_on_submit():
             login_user(form.user)
-            flash('You are logged in.', 'success')
-            redirect_url = request.args.get('next') or url_for('user.members')
+            flash('Welcome {}! You are now logged in.'.format(current_user.first_name), 'success')
+            redirect_url = request.args.get('next') or url_for('public.home')
             return redirect(redirect_url)
         else:
             flash_errors(form)
@@ -53,7 +53,7 @@ def register():
     if form.validate_on_submit():
         user_id = (db.session.query(func.max(User.user_id)).scalar() or 0)+1
         User.create(user_id=user_id, username=form.username.data, email=form.email.data, password=form.password.data, first_name=form.first_name.data, last_name=form.last_name.data, active=True)
-        flash('Thank you for registering. You can now log in.', 'success')
+        flash('Thanks for registering! You can now <a href="{}">log in</a>.'.format(url_for('public.login')), 'success')
         return redirect(url_for('public.home'))
     else:
         flash_errors(form)

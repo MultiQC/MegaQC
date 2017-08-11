@@ -15,13 +15,13 @@ from functools import  wraps
 api_blueprint = Blueprint('api', __name__, static_folder='../static')
 
 
-#decorator to handle api authentication
+# decorator to handle api authentication
 def check_user(function):
     @wraps(function)
     def user_wrap_function(*args, **kwargs):
         user = User.query.filter_by(api_token=request.headers.get("access_token")).first()
         if not user:
-            abort(403) #if no user, abort the request with 403 
+            abort(403) # if no user, abort the request with 403
         kwargs['user'] = user
         return function(*args, **kwargs) #else add "user" to kwargs so it can be used in the request handling
     return user_wrap_function
@@ -31,7 +31,7 @@ def check_admin(function):
     def user_wrap_function(*args, **kwargs):
         user = User.query.filter_by(api_token=request.headers.get("access_token")).first()
         if not user or not user.is_admin:
-            abort(403) #if no user, abort the request with 403 
+            abort(403) # if no user, abort the request with 403
         kwargs['user'] = user
         return function(*args, **kwargs) #else add "user" to kwargs so it can be used in the request handling
     return user_wrap_function

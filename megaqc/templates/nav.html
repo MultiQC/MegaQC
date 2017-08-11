@@ -1,5 +1,5 @@
 
-<nav class="navbar navbar-toggleable-md navbar-light">
+<nav class="navbar navbar-expand-md navbar-light">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#megaqc_navbar" aria-controls="megaqc_navbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -32,7 +32,9 @@
           Welcome {{ current_user.first_name }}
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
-          <a class="dropdown-item" href="{{ url_for('user.members') }}">Your Profile</a>
+          <a class="dropdown-item" href="{{ url_for('user.profile') }}">Your Profile</a>
+          <a class="dropdown-item" href="{{ url_for('user.multiqc_config') }}">MultiQC Configuration</a>
+          <a class="dropdown-item" href="{{ url_for('user.change_password') }}">Change Password</a>
           {% if current_user.is_admin %}
           <a class="dropdown-item" href="{{ url_for('user.admin_panel') }}">Admin Panel</a>
           {% endif %}

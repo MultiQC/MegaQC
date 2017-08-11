@@ -1,0 +1,21 @@
+
+{% extends "layout.html" %}
+{% block content %}
+  <h1>Profile Page</h1>
+  <p>Welcome to your profile page! Here you can find information about how many MultiQC reports
+    you've submitted, how to configure MultiQC, you can change your password and all kinds of other stuff!</p>
+  <h3>Your Account</h3>
+  <dl class="row">
+    <dt class="col-sm-3">Your name:</dt><dd class="col-sm-9">{{current_user.first_name}} {{current_user.last_name}}</dd>
+    <dt class="col-sm-3">Your username:</dt><dd class="col-sm-9">{{current_user.username}}</dd>
+    <dt class="col-sm-3">Your e-mail address:</dt><dd class="col-sm-9">{{current_user.email}}</dd>
+    <dt class="col-sm-3">Your password:</dt><dd class="col-sm-9"><a href="{{ url_for('user.change_password') }}">Click here to change your password</a></dd>
+    <dt class="col-sm-3">MultiQC API Key:</dt><dd class="col-sm-9"><a href="{{ url_for('user.multiqc_config') }}">Click here for instructions on how to configure MultiQC</a></dd>
+  </dl>
+
+  <h3>MegaQC Statistics</h3>
+  <dl class="row">
+    <dt class="col-sm-3">Number of reports submitted:</dt><dd class="col-sm-9">?</dd>
+    <dt class="col-sm-3">Number of samples submitted:</dt><dd class="col-sm-9">?</dd>
+  </dl>
+{% endblock %}
