@@ -32,7 +32,9 @@
           Welcome {{ current_user.first_name }}
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
-          <a class="dropdown-item" href="{{ url_for('user.members') }}">Your Profile</a>
+          <a class="dropdown-item" href="{{ url_for('user.profile') }}">Your Profile</a>
+          <a class="dropdown-item" href="{{ url_for('user.multiqc_config') }}">MultiQC Configuration</a>
+          <a class="dropdown-item" href="{{ url_for('user.change_password') }}">Change Password</a>
           {% if current_user.is_admin %}
           <a class="dropdown-item" href="{{ url_for('user.admin_panel') }}">Admin Panel</a>
           {% endif %}

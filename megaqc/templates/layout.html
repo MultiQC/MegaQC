@@ -19,11 +19,10 @@
 </head>
 
 <body>
+<div class="page-content">
 {% block body %}
 
-  {% with form=form  %}
   {% include "nav.html" %}
-  {% endwith %}
 
   {% if self.header() %}<header>{% block header %}{% endblock %}</header>{% endif %}
   <div class="{% block content_class %}container-fluid{% endblock content_class %}">
@@ -43,17 +42,19 @@
 
       {% block content %}{% endblock %}
 
-  </div><!-- /.container -->
+  </div><!-- /.container-fluid -->
 
 
   {% include "footer.html" %}
 
-  <!-- JavaScript -->
-  <script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
-  <script type="text/javascript" src="/static/js/tether.min.js"></script>
-  <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-  {% block js %}{% endblock %}
-
 {% endblock %}
+</div><!-- /.page-content -->
+
+<!-- JavaScript -->
+<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/static/js/tether.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+{% block js %}{% endblock %}
+
 </body>
 </html>

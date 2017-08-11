@@ -1,0 +1,34 @@
+
+{% extends "layout.html" %}
+{% block content %}
+  <h1>MultiQC Configuration</h1>
+
+  <h3 class="mt-4">Your identification token</h3>
+  <p>To push data to MegaQC from MultiQC, you need an API authentication token. This needs to be added
+    to the MultiQC configuration. To do this, copy the following to your user MultiQC configuration
+    file in <code>~/.multiqc_config.yaml</code>:</p>
+  <div class="card mb-3">
+    <div class="card-header">
+      <code>~/.multiqc_config.yaml</code>
+    </div>
+    <div class="card-block">
+      <pre class="mb-0"><code><span style="color:#22863a;">megaqc_url:</span> <span style="color:#005cc5;">{{url_for('api.handle_multiqc_data', _external=True)}}<br><span style="color:#22863a;">megaqc_access_token:</span> <span style="color:#005cc5;">{{current_user.api_token}}</span></code></pre>
+    </div>
+  </div>
+  <p>Note that this identification key is specific to you and should not be shared with any other users.</p>
+
+  <h4>Troubleshooting</h4>
+  <p>If you're having difficulties getting MultiQC to send data, you can test the connection using this command:</p>
+  <div class="card mb-3">
+    <div class="card-block">
+      <pre class="mb-0"><code>curl -H "access_token: {{current_user.api_token}}" -H "Content-Type: application/json" {{url_for('api.test', _external=True)}}</code></pre>
+    </div>
+  </div>
+  <p>You should get a response that looks like this:</p>
+  <div class="card mb-3">
+    <div class="card-block">
+      <pre class="mb-0"><code>{<br>  "name": "{{current_user.username}}"<br>}</code></pre>
+    </div>
+  </div>
+  <p>If the command times out or returns an error, this may indicate a problem with your firewall or connection.</p>
+{% endblock %}
