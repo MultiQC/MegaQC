@@ -7,7 +7,9 @@
     <div class="card plot-chooser-card">
       <div class="card-body text-center">
         <h4><a href="{{ url_for('public.report_plot_select') }}">Report Plot</a></h4>
-        <a href="{{ url_for('public.report_plot_select') }}"><img src="http://via.placeholder.com/300x200"></a>
+        <a href="{{ url_for('public.report_plot_select') }}">
+          <img src="{{ url_for('static', filename='img/report_plot_thumb.svg') }}" width="300" height="200">
+        </a>
         </a>
       </div>
     </div>
