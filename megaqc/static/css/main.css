@@ -109,10 +109,10 @@ footer p a {
 .plot-chooser-card h4 {
     font-weight: 300;
 }
-.plot-chooser-card h4 a {
+.plot-chooser-card a {
     color: #666666;
 }
-.plot-chooser-card h4 a:hover {
+.plot-chooser-card a:hover {
     text-decoration: none;
 }
 
