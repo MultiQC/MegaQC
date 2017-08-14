@@ -64,6 +64,7 @@ def register_errorhandlers(app):
         if request.path.startswith('/api/'):
             response = jsonify({
                 'success': False,
+                'message': getattr(error, 'description'),
                 'error': {
                     'code': error_code,
                     'message': getattr(error, 'description')

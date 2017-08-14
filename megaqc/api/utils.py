@@ -63,9 +63,9 @@ def handle_report_data(user, report_data):
                 new_data.save()
 
 
-    for plot in report_data.get('report_plot_data'): 
-        config =  json.dumps(report_data['report_plot_data'][plot]['config'])
-        existing_plot_config=db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
+    for plot in report_data.get('report_plot_data'):
+        config = json.dumps(report_data['report_plot_data'][plot]['config'])
+        existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
         if not existing_plot_config:
             config_id = (db.session.query(func.max(PlotConfig.config_id)).first()[0] or 0) +1
             new_plot_config = PlotConfig(config_id=config_id,
@@ -74,7 +74,7 @@ def handle_report_data(user, report_data):
                     data=config)
             new_plot_config.save()
         else:
-            config_id = existing_plot_config.plot_config_id
+            config_id = existing_plot_config.config_id
 
         if report_data['report_plot_data'][plot]['plot_type']=="bar_graph":
 
