@@ -53,7 +53,7 @@ def test_post(user, *args, **kwargs):
 @api_blueprint.route('/api/upload_data', methods=['POST'])
 @check_user
 def handle_multiqc_data(user, *args, **kwargs):
-    data = request.get_json()
+    data = request.get_json().get('data')
     handle_report_data(user, data)
     return jsonify({'ok' : 200})
 

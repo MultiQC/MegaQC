@@ -7,7 +7,7 @@ from megaqc.extensions import login_manager, db
 from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
-from megaqc.model.models import Report, PlotConfig
+from megaqc.model.models import Report, PlotConfig, PlotData
 from megaqc.utils import flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -21,11 +21,10 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@blueprint.route('/')
+@blueprint.route('/', methods=['GET', 'POST'])
 def home():
     """Home page."""
     return render_template('public/home.html')
-
 
 @blueprint.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -76,13 +75,16 @@ def register():
 @blueprint.route('/about/')
 def about():
     """About page."""
-    return render_template('public/about.html')
+    form = LoginForm(request.form)
+    return render_template('public/about.html', form=form)
 
 @blueprint.route('/new_plot/')
 @login_required
 def new_plot():
     reports = db.session.query(Report).all()
-    plot_types = [x[0] for x in db.session.query(distinct(PlotConfig.section)).all()]
+    plot_types = [x[0] for x in db.session.query(distinct(PlotConfig.section)).filter(PlotConfig.name == 'bar_graph').all()]
+    plot_types.extend(['{} -- {}'.format(x[0], x[1]) for x in db.session.query(distinct(PlotConfig.section), PlotData.data_key).join(PlotData).filter(PlotConfig.name == 'xy_line').all()])
+    plot_types.sort()
     return render_template('public/plot_choice.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)
 
 @blueprint.route('/report_plot/')
