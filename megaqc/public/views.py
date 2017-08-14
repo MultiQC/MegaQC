@@ -24,6 +24,11 @@ def load_user(user_id):
 @blueprint.route('/', methods=['GET', 'POST'])
 def home():
     """Home page."""
+    return render_template('public/home.html')
+
+@blueprint.route('/login/', methods=['GET', 'POST'])
+def login():
+    """Log in."""
     form = LoginForm(request.form)
     # Handle logging in
     if request.method == 'POST':
@@ -34,8 +39,7 @@ def home():
             return redirect(redirect_url)
         else:
             flash_errors(form)
-    return render_template('public/home.html', form=form)
-
+    return render_template('public/login.html', form=form)
 
 @blueprint.route('/logout/')
 @login_required

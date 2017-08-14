@@ -8,11 +8,15 @@
     <div id="available_plots">
         <h3>Plot type</h3>
         <p>
-        <form>
-        {% for one_type in plot_types%}
-        <input type="button" class="btn btn-primary plot_btns" value="{{one_type}}"id="btn_{{one_type}}"/>
-        {% endfor %}
-        </form>
+        <div class="dropdown">
+              <button id="plot_type_btn" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"/>Plot Type
+                <span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                        {% for one_type in plot_types%}
+                        <li class="plot_type_choice" data-type="{{one_type}}">{{one_type}}</li>
+                        {% endfor %}
+                  </ul>
+        </div>
         </p>
     </div>
     <div id="sample_chooser">

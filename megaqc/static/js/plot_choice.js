@@ -62,12 +62,11 @@ function init_btns(){
         });
     
     });
-    $(".plot_btns").each(function(idx){
+    $(".plot_type_choice").each(function(idx){
         $(this).click(function(e){
             e.preventDefault();
-            $(".plot_btns").removeClass("active");
-            $(this).addClass("active");
-            window.graph_type=$(this).val();
+            $("#plot_type_btn").html($(this).data('type')+"<span class='caret'></span>");
+            window.graph_type=$(this).data('type');
         });
     });
 }

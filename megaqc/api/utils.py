@@ -2,12 +2,12 @@
 from datetime import datetime
 from megaqc.model.models import *
 from megaqc.extensions import db
+from megaqc.utils import multiqc_colors
 from sqlalchemy import func
 from collections import defaultdict
+from math import log
 
 
-#TODO remove when plot_config.hash is fixed
-from passlib.utils import getrandstr, rng
 
 import colorlover as clv
 import plotly.offline as py
@@ -20,9 +20,11 @@ import json
 def handle_report_data(user, report_data):
     report_id = (db.session.query(func.max(Report.report_id)).first()[0] or 0) + 1
     report_title = report_data.get('title', "Report_{}".format(datetime.now().strftime("%y%m%d")))
-    new_report = Report(report_id=report_id, hash=report_data['config_report_id'], user_id=user.user_id, title=report_title)
+    new_report = Report(report_id=report_id, user_id=user.user_id, title=report_title)
     new_report.save()
-    #TODO : Add report meta handling
+    for key in report_data:
+        if key.startswith("config"):
+            new_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key=key, report_meta_value=report_data[key], report_id=new_report.report_id)
 
     for idx, general_headers in enumerate(report_data.get('report_general_stats_headers')):
         for general_header in general_headers:
@@ -63,12 +65,10 @@ def handle_report_data(user, report_data):
 
     for plot in report_data.get('report_plot_data'): 
         config =  json.dumps(report_data['report_plot_data'][plot]['config'])
-        #TODO figure out config_hash
         existing_plot_config=db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
         if not existing_plot_config:
             config_id = (db.session.query(func.max(PlotConfig.config_id)).first()[0] or 0) +1
             new_plot_config = PlotConfig(config_id=config_id,
-                    config_hash=getrandstr(rng, string.digits+string.letters, 10),
                     name=report_data['report_plot_data'][plot]['plot_type'],
                     section=plot,
                     data=config)
@@ -112,40 +112,105 @@ def handle_report_data(user, report_data):
 
 
 def generate_plot(plot_type, sample_names):
-    if plot_type == "featureCounts_assignment_plot":
-        rows = db.session.query(PlotConfig, PlotData).join(PlotData).filter(PlotConfig.section==plot_type, PlotData.sample_name.in_(sample_names)).all()
-        samples = set()
-        series = set()
+    if " -- " in plot_type:
+        plot_type=plot_type.split(" -- ")
+        rows = db.session.query(PlotConfig, PlotData).join(PlotData).filter(PlotConfig.section==plot_type[0],PlotData.data_key==plot_type[1],PlotData.sample_name.in_(sample_names)).all()
+    else:
+        rows = db.session.query(PlotConfig, PlotData).join(PlotData).filter(PlotConfig.section==plot_type,PlotData.sample_name.in_(sample_names)).all()
+
+    if rows[0][0].name == "bar_graph":
+        #not using sets to keep the order
+        samples = []
+        series = []
+        total_per_sample = defaultdict(lambda:0)
         plot_data=defaultdict(lambda:defaultdict(lambda:0))
         for row in rows:
-            samples.add(row[1].sample_name)
-            series.add(row[1].data_key)
+            if row[1].sample_name not in samples:
+                samples.append(row[1].sample_name)
+            if row[1].data_key not in series:
+                series.append(row[1].data_key)
             plot_data[row[1].data_key][row[1].sample_name]=float(row[1].data)
-        samples = list(samples)
-        print samples
+            total_per_sample[row[1].sample_name] = total_per_sample[row[1].sample_name] + float(row[1].data)
         plots=[]
-        scale_idx=str(min(11, max(3,len(series)))) #colorlover only has scales between 3 and 11
-        colors = clv.scales[scale_idx]['div']['RdYlBu']
+        colors = multiqc_colors()
+        print total_per_sample
         for idx, d in enumerate(series):
+            print [plot_data[d][x] for x in samples]
             my_trace = go.Bar(
                 y=samples,
                 x=[plot_data[d][x] for x in samples],
                 name=d,
                 orientation = 'h',
                 marker = dict(
-                    color = colors[idx%12],
+                    color = colors[idx%11],
                     line = dict(
-                        color = colors[idx%12],
+                        color = colors[idx%11],
                         width = 3)
-                )
+                ),
+                text=['{:.2f}%'.format(plot_data[d][x]/total_per_sample[x] * 100) for x in samples]
             )
             plots.append(my_trace)
 
         layout = go.Layout(
                 barmode='stack'
         )
+        updated_layout = config_translate('bar_graph', json.loads(row[0].data), layout)
+        fig = go.Figure(data=plots, layout=updated_layout)
+        plot_div = py.plot(fig, output_type='div')
+        return plot_div
+    elif rows[0][0].name == "xy_line":
+        plots=[]
+        for idx, row in enumerate(rows):
+            xs=[]
+            ys=[]
+            data = json.loads(row[1].data)
+            config = json.loads(row[0].data)
+            if "categories" in config:
+                for d_idx, d in enumerate(data):
+                    xs.append(" "+str(config['categories'][d_idx]))
+                    ys.append(d)
+
+            else:
+                for d in data:
+                    xs.append(d[0])
+                    ys.append(d[1])
+            colors = multiqc_colors()
+            my_trace = go.Scatter(
+                y=ys,
+                x=xs,
+                name=row[1].data_key,
+                mode='lines',
+                marker = dict(
+                    color = colors[idx%11],
+                    line = dict(
+                        color = colors[idx%11],
+                        width = 1)
+                )
+            )
+            plots.append(my_trace)
+            layout = go.Layout(
+                    xaxis={'type':'category'} 
+            )
         fig = go.Figure(data=plots, layout=layout)
         plot_div = py.plot(fig, output_type='div')
         return plot_div
-    elif plot_type == "xy_line":
-        pass
+
+def config_translate(plot_type, config, plotly_layout=go.Layout()):
+    if plot_type=="bar_graph":
+        plotly_layout.title = config.get('title')
+        xaxis={}
+        xaxis['title']=config.get('xlab')
+        yaxis={}
+        yaxis['title']=config.get('ylab')
+        if 'ymin' in config and 'ymax' in config:
+            my_range=[float(config['ymin']), float(config['ymax'])]
+            if 'logswitch_active' in config:
+                my_range = map(math.log, my_range)
+        #TODO : Figure out how yfloor and yceiling should be handled
+
+        #for stacked bar graphs, axes are reversed between Highcharts and Plotly
+        plotly_layout.yaxis= xaxis
+        plotly_layout.xaxis= yaxis
+
+        return plotly_layout
+

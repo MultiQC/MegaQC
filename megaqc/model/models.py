@@ -13,8 +13,7 @@ class Report(db.Model, CRUDMixin):
 
     __tablename__ = 'report'
     report_id = Column(Integer, primary_key=True)
-    title = Column(String(80), unique=True, nullable=False)
-    hash = Column(String(80), unique=True, nullable=False)
+    title = Column(String(80), unique=False, nullable=False)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     user_id = Column(Integer, ForeignKey('users.user_id'))
 
@@ -40,10 +39,13 @@ class ReportMeta(db.Model, CRUDMixin):
     report_meta_value = Column(String(80), nullable=False)
     report_id = Column(Integer, ForeignKey('report.report_id'))
 
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(ReportMeta.report_meta_id)).first()[0] or 0) + 1
+
 class  PlotConfig(db.Model, CRUDMixin):
     __tablename__ =  'plot_config'
     config_id = Column(Integer, primary_key=True)
-    config_hash = Column(String(80), unique=True, nullable=False)
     name = Column(String(80),  nullable=False)
     section = Column(String(80), nullable=False)
     data = Column(String(80), nullable=False)
