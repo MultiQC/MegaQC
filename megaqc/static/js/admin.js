@@ -26,7 +26,7 @@ function init_buttons(){
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
             success: function(){
-                $('<div id="my_alert" class="alert alert-success">User updated successfully</div>').append('form').hide().slideDown();
+                $('<div id="my_alert" class="alert alert-success">User updated successfully</div>').appendTo('form').hide().slideDown();
             },
             error: function(ret_data){
                 $('<div id="my_alert" class="alert alert-danger">Error: <code>'+ret_data.responseJSON.message+'</code></div>').appendTo('form').hide().slideDown();
@@ -108,7 +108,7 @@ function init_buttons(){
                 $('#user_table tr:last').after(
                     '<tr><td><input class="form-control" type="hidden" name="id" value="'+data.user_id+'"/><input class="form-control" type="text" value="'+data.username+'" /></td><td><input class="form-control" type="text" value="'+data.email+'" /></td><td><input class="form-control" type="text" value="'+data.first_name+'" /></td><td><input class="form-control" type="text" value="'+data.last_name+'" /></td><td><input class="form-control" type="text" value="'+ret_data.api_token+'" /></td><td><input class="form-control" type="checkbox" '+(data.active ? "checked":"")+' /></td><td><input class="form-control" type="checkbox" '+(data.active ? "checked":"")+' /></td><td><input type="button" value="Update" class="btn btn-default update_btn" /></td><td><input type="button" value="Reset" class="btn btn-default reset_btn" /></td><td><input type="button" value="Delete" class="btn btn-danger delete_btn" /></td></tr>'
                 );
-                $('form').append('<div id="my_alert" class="alert alert-success">New password: <code>'+ret_data.password+'</code></div>').hide().slideDown();
+                $('<div id="my_alert" class="alert alert-success">New password: <code>'+ret_data.password+'</code></div>').appendTo('form').hide().slideDown();
                 init_buttons();
             }
         });

@@ -3,7 +3,7 @@
 This file contains the app module, with the app factory function."""
 
 from __future__ import print_function
-from flask import Flask, render_template
+from flask import Flask, jsonify, render_template, request
 from flask.helpers import get_debug_flag
 
 from megaqc import commands, public, user, version, api, model
@@ -60,8 +60,24 @@ def register_errorhandlers(app):
         """Render error template."""
         # If a HTTPException, pull the `code` attribute; default to 500
         error_code = getattr(error, 'code', 500)
-        return render_template('{0}.html'.format(error_code)), error_code
-    for errcode in [401, 404, 500]:
+        # Return JSON if an API call
+        if request.path.startswith('/api/'):
+            response = jsonify({
+                'success': False,
+                'message': getattr(error, 'description'),
+                'error': {
+                    'code': error_code,
+                    'message': getattr(error, 'description')
+                }
+            })
+            response.status_code = error_code
+            return response
+        # Return HTML error if not an API call
+        if error_code in [401, 404, 500]:
+            return render_template('{0}.html'.format(error_code)), error_code
+        else:
+            return render_template('error.html', error=error), error_code
+    for errcode in [400, 401, 403, 404, 405, 406, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 428, 429, 431, 500, 501, 502, 503, 504, 505]:
         app.errorhandler(errcode)(render_error)
     return None
 

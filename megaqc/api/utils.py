@@ -59,9 +59,9 @@ def handle_report_data(user, report_data):
                 new_data.save()
 
 
-    for plot in report_data.get('report_plot_data'): 
-        config =  json.dumps(report_data['report_plot_data'][plot]['config'])
-        existing_plot_config=db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
+    for plot in report_data.get('report_plot_data'):
+        config = json.dumps(report_data['report_plot_data'][plot]['config'])
+        existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
         if not existing_plot_config:
             config_id = PlotConfig.get_next_id()
         else:

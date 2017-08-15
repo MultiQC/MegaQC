@@ -1,27 +1,53 @@
 /* MegaQC Styles */
 
 input[type=button], button {
-  cursor: pointer;
+    cursor: pointer;
 }
 img {
     max-width: 100%;
 }
+label {
+    font-weight: bold;
+}
 blockquote {
-  border-left: 5px solid #8eb9dd;
-  background-color: #e8f1f8;
-  padding: 10px 10px 10px 20px;
-  margin: 25px 0;
-  color: #666;
+    border-left: 5px solid #8eb9dd;
+    background-color: #e8f1f8;
+    padding: 10px 10px 10px 20px;
+    margin: 25px 0;
+    color: #666;
 }
 .monospace {
-  font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
-h1, h2, h3 {
-  margin: 20px 0;
+
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Thin.ttf); font-weight: 100; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Light.ttf); font-weight: 300; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Regular.ttf); font-weight: 400; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Medium.ttf); font-weight: 500; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Bold.ttf); font-weight: 700; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Black.ttf); font-weight: 900; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-ThinItalic.ttf); font-weight: 100; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-LightItalic.ttf); font-weight: 300; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Italic.ttf); font-weight: 400; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-MediumItalic.ttf); font-weight: 500; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-BoldItalic.ttf); font-weight: 700; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-BlackItalic.ttf); font-weight: 900; font-style: italic; }
+
+.navbar-brand {
+    font-family: Roboto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 20px 0;
+    font-family: Roboto;
+}
+h5, h6 {
+    font-weight: 400;
 }
 
 body {
     background-color: #EEEEEE;
+    color: #666666;
 }
 .page-content {
     background-color: #FFFFFF;
@@ -31,17 +57,11 @@ nav.navbar {
     background-color: #eeeeee;
     border-bottom: 1px solid #cccccc;
 }
-#loginForm input {
-    background-color: #eeeeee;
-    transition: background-color 0.1s;
-}
-#loginForm input::placeholder {
-    color: #999;
-    transition: color 0.1s;
-}
-#loginForm input:focus,
-#loginForm input:active {
-    background-color: $white;
+.megaqc-header-samplecount {
+    text-align: right;
+    font-size: 1.6rem;
+    font-weight: 300;
+    padding: 1.6rem 3rem;
 }
 
 footer {
@@ -65,5 +85,81 @@ footer p a {
     width:90%;
 }
 .card .card-body pre {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
+
+.megaqc-step-header {
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1.1;
+    margin-top: 2.3rem;
+}
+.megaqc-step-header a {
+    color: #666666;
+}
+.megaqc-step-header a.disabled {
+    color: #999999;
+    cursor: not-allowed;
+}
+.megaqc-step-header a:hover {
+    text-decoration: none;
+}
+.megaqc-step-header .fa-stack {
+    font-size: 1.6rem;
+    margin-top: -0.5rem;
+}
+.megaqc-step-header small {
+    font-size: 70%;
+    color: #999;
+    font-weight: 300;
+    margin-left: 15px;
+}
+
+.plot-chooser-card {
+    margin-bottom: 1rem;
+}
+.plot-chooser-card h4 {
+    font-weight: 300;
+}
+.plot-chooser-card a {
+    color: #666666;
+}
+.plot-chooser-card a:hover {
+    text-decoration: none;
+}
+
+.plot-chooser-card .card-body {
+    padding: 0.8rem;
+}
+
+
+.new-filter .filter-favourites {
+    margin-left: 12px;
+}
+.new-filter .filter-favourites a {
+    text-decoration: underline;
+    color: #999;
+    margin-left: 6px;
+}
+.new-filter .filter-favourites a:hover,
+.new-filter .filter-favourites a:focus,
+.new-filter .filter-favourites a:active {
+    color: #666;
+}
+.new-filter .filter-favourites .sep {
+    color: #ccc;
+    margin-left: 6px;
+}
+
+.new-filter .btn-filter-type {
+    padding: 20px;
+    border: 3px dashed #ccc;
+    border-radius: 10px;
+}
+.new-filter #filter-type, .new-filter .filter-filterTypeBox {
+    display: none;
+    border-top: 1px solid #dedede;
+    padding-top: 20px;
+}
+
+

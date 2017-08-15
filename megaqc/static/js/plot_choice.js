@@ -17,7 +17,7 @@ function init_report_checkboxes(){
         report_id = $(this).data('id');
         if( $(this).is(':checked') ){
         $.ajax({
-            url:"/api/get_samples_per_report", 
+            url:"/api/get_samples_per_report",
             type: 'post',
             data:JSON.stringify({"report_id":report_id}),
             headers : {access_token:window.token},
@@ -33,7 +33,7 @@ function init_report_checkboxes(){
             $(".sample_row_"+report_id).remove();
 
         }
-    
+
     });
 
 

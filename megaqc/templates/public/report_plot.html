@@ -1,23 +1,16 @@
 
-{% extends "layout.html" %}
+{% extends "plot_walkthrough.html" %}
 {% block css %}
- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
 {% endblock %}
-{% block content %}
-    <h1>Generate new Plot</h1>
+{% set plotType = 'public.report_plot_select_samples' %}
+{% block plotData %}
     <div id="available_plots">
-        <h3>Plot type</h3>
-        <p>
-        <div class="dropdown">
-              <button id="plot_type_btn" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"/>Plot Type
-                <span class="caret"></span></button>
-                  <ul class="dropdown-menu">
-                        {% for one_type in plot_types%}
-                        <li class="plot_type_choice" data-type="{{one_type}}">{{one_type}}</li>
-                        {% endfor %}
-                  </ul>
-        </div>
-        </p>
+        <form>
+        {% for one_type in plot_types%}
+            <input type="button" class="btn btn-primary plot_btns" value="{{one_type}}"id="btn_{{one_type}}"/>
+        {% endfor %}
+        </form>
     </div>
     <div id="sample_chooser">
         <table class="table" id="report_table">
@@ -55,7 +48,7 @@
     </div>
 {% endblock %}
 {% block js %}
-  <script type="text/javascript">window.token="{{user_token}}"</script>
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/plot_choice.js') }}"></script>
+    <script type="text/javascript">window.token="{{user_token}}"</script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plot_choice.js') }}"></script>
 {% endblock %}
