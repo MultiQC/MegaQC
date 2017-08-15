@@ -6,6 +6,9 @@ input[type=button], button {
 img {
     max-width: 100%;
 }
+label {
+    font-weight: bold;
+}
 blockquote {
     border-left: 5px solid #8eb9dd;
     background-color: #e8f1f8;
@@ -34,9 +37,12 @@ blockquote {
     font-family: Roboto;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4, h5, h6 {
     margin: 20px 0;
     font-family: Roboto;
+}
+h5, h6 {
+    font-weight: 400;
 }
 
 body {
@@ -102,6 +108,12 @@ footer p a {
     font-size: 1.6rem;
     margin-top: -0.5rem;
 }
+.megaqc-step-header small {
+    font-size: 70%;
+    color: #999;
+    font-weight: 300;
+    margin-left: 15px;
+}
 
 .plot-chooser-card {
     margin-bottom: 1rem;
@@ -119,3 +131,35 @@ footer p a {
 .plot-chooser-card .card-body {
     padding: 0.8rem;
 }
+
+
+.new-filter .filter-favourites {
+    margin-left: 12px;
+}
+.new-filter .filter-favourites a {
+    text-decoration: underline;
+    color: #999;
+    margin-left: 6px;
+}
+.new-filter .filter-favourites a:hover,
+.new-filter .filter-favourites a:focus,
+.new-filter .filter-favourites a:active {
+    color: #666;
+}
+.new-filter .filter-favourites .sep {
+    color: #ccc;
+    margin-left: 6px;
+}
+
+.new-filter .btn-filter-type {
+    padding: 20px;
+    border: 3px dashed #ccc;
+    border-radius: 10px;
+}
+.new-filter #filter-type, .new-filter .filter-filterTypeBox {
+    display: none;
+    border-top: 1px solid #dedede;
+    padding-top: 20px;
+}
+
+

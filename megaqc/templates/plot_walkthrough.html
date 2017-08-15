@@ -21,6 +21,9 @@
       <strong class="fa-stack-1x calendar-text">1</strong>
     </span>
     Choose a plot type
+    {% if plotTypeName %}
+        <small>[ {{ plotTypeName }} ]</small>
+    {% endif %}
   </a>
 </h2>
 {% block choosePlotType %}{% endblock %}
@@ -33,6 +36,9 @@
       <strong class="fa-stack-1x calendar-text">2</strong>
     </span>
     Select samples
+    {% if selectSamplesSmall %}
+        <small>[ {{ selectSamplesSmall }} ]</small>
+    {% endif %}
   {% if plotType %}</a>{% endif %}
 </h2>
 {% block selectSamples %}{% endblock %}
