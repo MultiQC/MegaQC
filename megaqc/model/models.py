@@ -23,6 +23,8 @@ class Report(db.Model, CRUDMixin):
 
     def __init__(self, **kwargs):
         """Create instance."""
+        if "report_id" not in kwargs:
+            kwargs['report_id'] = Report.get_next_id()
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
@@ -50,13 +52,29 @@ class  PlotConfig(db.Model, CRUDMixin):
     section = Column(String(80), nullable=False)
     data = Column(String(80), nullable=False)
 
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(PlotConfig.config_id)).first()[0] or 0) + 1
+
 class PlotData(db.Model, CRUDMixin):
     __tablename__ = "plot_data"
     plot_data_id = Column(Integer, primary_key=True)
     report_id = Column(Integer, ForeignKey('report.report_id'))
     config_id = Column(Integer, ForeignKey('plot_config.config_id'))
+    plot_category_id = Column(Integer(), ForeignKey('plot_category.plot_category_id'))
     sample_name = Column(String(80), nullable=False)
-    data_key = Column(String(120), nullable=True)
+    data = Column(String(2048), nullable=False)
+
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(PlotData.plot_data_id)).first()[0] or 0) + 1
+
+class PlotCategory(db.Model, CRUDMixin):
+    __tablename__ = "plot_category"
+    plot_category_id = Column(Integer, primary_key=True)
+    report_id = Column(Integer, ForeignKey('report.report_id'))
+    config_id = Column(Integer, ForeignKey('plot_config.config_id'))
+    category_name = Column(String(120), nullable=True)
     data = Column(String(2048), nullable=False)
 
     @staticmethod
