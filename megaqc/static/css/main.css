@@ -133,33 +133,19 @@ footer p a {
 }
 
 
-.new-filter .filter-favourites {
-    margin-left: 12px;
-}
-.new-filter .filter-favourites a {
-    text-decoration: underline;
-    color: #999;
-    margin-left: 6px;
-}
-.new-filter .filter-favourites a:hover,
-.new-filter .filter-favourites a:focus,
-.new-filter .filter-favourites a:active {
-    color: #666;
-}
-.new-filter .filter-favourites .sep {
-    color: #ccc;
-    margin-left: 6px;
+.activeFiltersActions button {
+    margin-left: 8px;
 }
 
 .new-filter .btn-filter-type {
     padding: 20px;
     border: 3px dashed #ccc;
     border-radius: 10px;
+    min-width: 200px;
+    margin-bottom: 20px;
 }
-.new-filter #filter-type, .new-filter .filter-filterTypeBox {
+.new-filter .filter-filterTypeBox {
     display: none;
-    border-top: 1px solid #dedede;
-    padding-top: 20px;
 }
 
 

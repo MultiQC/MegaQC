@@ -9,12 +9,10 @@
     <div class="card-body">
 
         <div id="activeFilters">
-            <div class="pull-right">
+            <div class="pull-right activeFiltersActions">
                 With checked:
-                <div class="btn-group" role="group" aria-label="Basic example">
-                    <button class="btn btn-sm btn-outline-info"><i class="fa fa-heart" aria-hidden="true"></i> Favourite</button>
-                    <button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
-                </div>
+                <button class="btn btn-sm btn-outline-info"><i class="fa fa-heart" aria-hidden="true"></i> Favourite</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
             </div>
             <h5 class="mt-0">Active Filters</h5>
             <div id="noActiveFiltersAlert" class="alert alert-info">No active filters</div>
@@ -30,51 +28,43 @@
             </table>
         </div>
 
-        <div id="filter-addFilter">
-            <button type="button" class="btn btn-outline-primary filterShowHide" data-hide="#filter-addFilter" data-show="#filter-type">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-                Add new filter
-            </button>
-        </div>
+        <h5>Add Filter</h5>
         <div id="filter-type">
-            <p class="small">
-                <a href="#" class="filterShowHide" data-show="#filter-addFilter" data-hide="#filter-type">&laquo; Back</a>
-                <span class="filter-favourites">
-                    Favourites:
-                    <a href="#">Last six months</a> <span class="sep">|</span>
-                    <a href="#">Development Projects</a>
-                </span>
-            </p>
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col">
                     <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-dateRange">
                         Date range<br>
-                        <small><em>e.g.</em> Samples from the last six months</small>
+                        <small><em>e.g.</em> Last six months</small>
                     </button>
                 </div>
-                <div class="col-sm-3">
+                <div class="col">
                     <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-reportMeta">
                         Report metadata<br>
-                        <small><em>e.g.</em> Reports submitted by user <code>{{current_user.username}}</code></small>
+                        <small><em>e.g.</em> Submitted by <code>{{current_user.username}}</code></small>
                     </button>
                 </div>
-                <div class="col-sm-3">
+                <div class="col">
                     <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-sampleMeta">
                         Sample metadata<br>
-                        <small><em>e.g.</em> Sample names matching pattern <code>*_xyz</code></small>
+                        <small><em>e.g.</em> Sample names <code>*_xyz</code></small>
                     </button>
                 </div>
-                <div class="col-sm-3">
+                <div class="col">
                     <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-sampleData">
                         Sample data query<br>
-                        <small><em>e.g.</em> Samples with <code>%&nbsp;aligned</code>&nbsp;<code>&le;&nbsp;50%</code></small>
+                        <small><em>e.g.</em> Where <code>%&nbsp;aligned &le;&nbsp;50%</code></small>
+                    </button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-favouriteFilters">
+                        Favourite filters<br>
+                        <small>Apply your favourite filters</small>
                     </button>
                 </div>
             </div>
         </div>
         <div id="filter-dateRange" class="filter-filterTypeBox">
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
-            <h5>Filter by report submission date</h5>
             <div class="row">
                 <div class="col-sm-6 col-md-5 col-lg-4">
                     <form>
@@ -94,10 +84,10 @@
                 </div>
                 <div class="col-sm-6 col-md-5 col-lg-4">
                     <div class="list-group filterDatePreset">
-                        <a href="#" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['7days'] }}">Last 7 days</a>
-                        <a href="#" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['30days'] }}">Last 30 days</a>
-                        <a href="#" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['6months'] }}">Last 6 months</a>
-                        <a href="#" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['12months'] }}">Last 12 months</a>
+                        <button type="button" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['7days'] }}">Last 7 days</button>
+                        <button type="button" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['30days'] }}">Last 30 days</button>
+                        <button type="button" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['6months'] }}">Last 6 months</button>
+                        <button type="button" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['12months'] }}">Last 12 months</button>
                     </div>
                 </div>
             </div>
@@ -117,6 +107,19 @@
         <div id="filter-sampleData" class="filter-filterTypeBox">
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
             This is the sample data filter
+        </div>
+        <div id="filter-favouriteFilters" class="filter-filterTypeBox">
+            <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
+            <span class="filter-favourites">
+                <div class="alert alert-info">
+                    You don't have any favourite filters saved yet. To save a set of filters as a favourite, add them then tick their checkboxes and finally click the <em>Favourite</em> button.
+                </div>
+                <p>Click a favourite to add those filters:</p>
+                <div class="list-group filterDatePreset">
+                    <button type="button" class="list-group-item list-group-item-action" >[placeholder] Date: From 2015-01-01 until 2016-01-01</button>
+                    <button type="button" class="list-group-item list-group-item-action" >[placeholder] Our group's development projects</button>
+                </div>
+            </span>
         </div>
     </div>
 </div>
@@ -158,7 +161,6 @@ $(function(){
 });
 
 function init_filters_table(){
-    console.log($('#activeFiltersTable tbody tr').length);
     if( $('#activeFiltersTable tbody tr').length == 0 ){
         $('#noActiveFiltersAlert').slideDown();
         $('#activeFiltersTable').slideUp();
