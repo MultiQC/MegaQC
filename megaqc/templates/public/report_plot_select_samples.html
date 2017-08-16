@@ -11,15 +11,15 @@
         <div id="activeFilters">
             <div class="pull-right activeFiltersActions">
                 With checked:
-                <button class="btn btn-sm btn-outline-info"><i class="fa fa-heart" aria-hidden="true"></i> Favourite</button>
-                <button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+                <button class="btn btn-sm btn-outline-info" id="sampleFiltersFavouriteBtn"><i class="fa fa-heart" aria-hidden="true"></i> Favourite</button>
+                <button class="btn btn-sm btn-outline-danger" id="sampleFiltersDeleteBtn"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
             </div>
             <h5 class="mt-0">Active Filters</h5>
             <div id="noActiveFiltersAlert" class="alert alert-info">No active filters</div>
-            <table id="activeFiltersTable" class="table" style="display: none;">
+            <table id="activeFiltersTable" class="table table-hover" style="display: none;">
                 <thead>
                     <tr>
-                        <th style="width:20px;"><input type="checkbox"></th>
+                        <th style="width:20px;"><input type="checkbox" id="filtersCheckAll"></th>
                         <th>Type</th>
                         <th>Description</th>
                     </tr>
@@ -128,7 +128,43 @@
 {% block js %}
 <script type="text/javascript">
 window.token = "{{user_token}}";
+window.active_filters = {};
 $(function(){
+
+    // Check / uncheck all active filters
+    $('#filtersCheckAll').change(function(e){
+        if($(this).is(':checked')){
+            $('.filterCheckbox').prop('checked', true);
+        } else {
+            $('.filterCheckbox').prop('checked', false);
+        }
+    });
+
+    // Delete checked filters
+    $('#sampleFiltersDeleteBtn').click(function(e){
+        var checked_rows = $('#activeFiltersTable tbody tr').filter(':has(.filterCheckbox:checked)');
+        if(checked_rows.length > 0){
+            checked_rows.each(function(){
+                delete window.active_filters[ $(this).attr('id') ];
+                $(this).remove();
+            });
+            init_filters_table();
+        }
+    });
+
+    // Save favourite filters
+    $('#sampleFiltersFavouriteBtn').click(function(e){
+        var checked_rows = $('#activeFiltersTable tbody tr').filter(':has(.filterCheckbox:checked)');
+        var save_filters = [];
+        if(checked_rows.length > 0){
+            checked_rows.each(function(){
+                save_filters.push($(this).text());
+            });
+            if(confirm("Are you sure that you want to add "+save_filters.length+" filters to your favourites?")){
+                alert("Sorry, not yet implemented. Try again soon!");
+            }
+        }
+    });
 
     // Change panel in the add filter dialogue
     $('.filterShowHide').click(function(e){
@@ -148,14 +184,21 @@ $(function(){
     // Add date preset
     $('#filterDateAddBtn').click(function(e){
         e.preventDefault();
-        var trow = '<tr>' +
-            '<td><input type="checkbox"></td>' +
+        var filter_id = 'filter_'+Math.random().toString(36).substring(2);
+        window.active_filters[filter_id] = {
+            'type': 'daterange',
+            'key': 'daterange',
+            'value': [$('#filterDateFrom').val(), $('#filterDateTo').val()],
+            'cmp': 'in'
+        };
+        var trow = '<tr id="'+filter_id+'">' +
+            '<td><input type="checkbox" class="filterCheckbox"></td>' +
             '<td>Date range</td>' +
             '<td>From '+$('#filterDateFrom').val()+' until '+$('#filterDateTo').val()+'</td>' +
         '</tr>';
         $(trow).appendTo('#activeFiltersTable tbody').hide().slideDown();
         $('.filter-filterTypeBox').slideUp();
-        $('#filter-addFilter').slideDown();
+        $('#filter-type').slideDown();
         init_filters_table();
     });
 });
