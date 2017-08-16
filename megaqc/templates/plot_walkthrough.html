@@ -8,7 +8,7 @@
   </div>
   <div class="col-md-6 megaqc-header-samplecount">
     Data available from<br>
-    ??? samples, ??? reports
+    {{ num_samples }} samples, ??? reports
   </div>
 </div>
 <p class="lead">MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.</p>
@@ -37,7 +37,7 @@
     </span>
     Select samples
     {% if selectSamplesSmall %}
-        <small>[ {{ selectSamplesSmall }} ]</small>
+        <small id="selectSamplesSmall">[ {{ selectSamplesSmall }} ]</small>
     {% endif %}
   {% if plotType %}</a>{% endif %}
 </h2>

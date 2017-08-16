@@ -10,6 +10,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
+from megaqc.api.utils import get_samples
 from megaqc.utils import flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -25,7 +26,7 @@ def load_user(user_id):
 @blueprint.route('/', methods=['GET', 'POST'])
 def home():
     """Home page."""
-    return render_template('public/plot_type.html')
+    return render_template('public/plot_type.html', num_samples=get_samples([], True))
 
 @blueprint.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -96,7 +97,7 @@ def report_plot_select_samples():
     for d in [('now', 0), ('7days', 7), ('30days', 30), ('6months', 182), ('12months', 365)]:
         do = datetime.datetime.now() + datetime.timedelta(-1*d[1])
         dstamps[d[0]] = '{:04d}-{:02d}-{:02d}'.format(do.year, do.month, do.day)
-    return render_template('public/report_plot_select_samples.html', db=db, User=User, reports=reports, user_token=current_user.api_token, dstamps=dstamps)
+    return render_template('public/report_plot_select_samples.html', db=db, User=User, reports=reports, user_token=current_user.api_token, num_samples=get_samples([], True), dstamps=dstamps)
 
 
 @blueprint.route('/report_plot/plot/')
