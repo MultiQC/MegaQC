@@ -98,7 +98,37 @@
         </div>
         <div id="filter-reportMeta" class="filter-filterTypeBox">
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
-            This is the report metadata filter
+            <form>
+                <div class="form-group row">
+                    <label for="reportMeta_field" class="col-sm-4 col-form-label">Field</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="reportMeta_key">
+                            <option value="">[ select field ]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="reportMeta_cmp" class="col-sm-4 col-form-label">Comparison</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="reportMeta_cmp">
+                            <option value="contains">Contains</option>
+                            <option value="regex">Regex</option>
+                            <option value="eq">(=) Equal to</option>
+                            <option value="ne">(!=) Not equal to</option>
+                            <option value="le">(&le;) Less than or equal to</option>
+                            <option value="lt">(&lt;) Less than</option>
+                            <option value="ge">(&ge;) Greater than or equal to</option>
+                            <option value="gt">(&gt;) Greater than</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="reportMeta_value" class="col-sm-4 col-form-label">Value</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="reportMeta_value" placeholder="Enter value here">
+                    </div>
+                </div>
+            </form>
         </div>
         <div id="filter-sampleMeta" class="filter-filterTypeBox">
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
