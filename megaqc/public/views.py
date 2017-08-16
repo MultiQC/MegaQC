@@ -84,7 +84,6 @@ def about():
 def new_plot():
     reports = db.session.query(Report).all()
     plot_types = [x[0] for x in db.session.query(distinct(PlotConfig.section)).filter(PlotConfig.name == 'bar_graph').all()]
-    print db.session.query(distinct(PlotConfig.section), PlotCategory.category_name).join(PlotCategory).filter(PlotConfig.name == 'xy_line')
     plot_types.extend(['{} -- {}'.format(x[0], x[1]) for x in db.session.query(distinct(PlotConfig.section), PlotCategory.category_name).join(PlotCategory).filter(PlotConfig.name == 'xy_line').all()])
     plot_types.sort()
     return render_template('public/plot_choice.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)

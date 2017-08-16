@@ -3,7 +3,7 @@ from datetime import datetime
 from megaqc.model.models import *
 from megaqc.extensions import db
 from megaqc.utils import multiqc_colors
-from sqlalchemy import func
+from sqlalchemy import func, distinct
 from collections import defaultdict
 from math import log
 
@@ -336,3 +336,26 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
             plotly_layout.shapes=shapes
 
     return plotly_layout
+
+def get_samples(filters, count=False):
+    if count:
+        sample_query = db.session.query(func.count(distinct(PlotData.sample_name))).join(Report)
+    else:
+        sample_query = db.session.query(distinct(PlotData.sample_name)).join(Report)
+    for one_filter in filters:
+        if one_filter['type'] == 'daterange':
+            date_from = datetime.strptime(one_filter['value'][0], "%Y-%m-%d")
+            date_to = datetime.strptime(one_filter['value'][1], "%Y-%m-%d")
+            if one_filter['cmp'] == 'in':
+                sample_query = sample_query.filter(Report.created_at > date_from, Report.created_at < date_to)
+            elif one_filter['cmp'] == 'not in':
+                sample_query = sample_query.filter(Report.created_at < date_from, Report.created_at > date_to)
+            else:
+                raise Exception("Unexpected operator")
+    if count:
+        samples = sample_query.first()[0]
+    else:
+        samples = sample_query.all()
+
+    return samples
+
