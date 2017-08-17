@@ -5,7 +5,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for,
 from megaqc.extensions import db
 from megaqc.user.models import User
 from megaqc.model.models import PlotData, Report
-from megaqc.api.utils import handle_report_data, generate_plot, get_samples
+from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -164,3 +164,15 @@ def count_samples(user, *args, **kwargs):
         'success': True,
         'count': count
     })
+
+@api_blueprint.route('/api/report_metadata_fields', methods=['GET', 'POST'])
+@check_user
+def report_metadata_fields(user, *args, **kwargs):
+    data = request.get_json()
+    filters = data.get("filters", [])
+    fields = get_report_metadata_fields(filters)
+    return jsonify({
+        'success': True,
+        'fields': fields
+    })
+

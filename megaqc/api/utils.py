@@ -19,12 +19,12 @@ import json
 
 def handle_report_data(user, report_data):
     report_id = Report.get_next_id()
-    report_title = report_data.get('title', "Report_{}".format(datetime.now().strftime("%y%m%d")))
-    new_report = Report(user_id=user.user_id, title=report_title)
+    new_report = Report(user_id=user.user_id)
     new_report.save()
     for key in report_data:
-        if key.startswith("config"):
+        if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict):
             new_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key=key, report_meta_value=report_data[key], report_id=new_report.report_id)
+            new_meta.save()
 
     for idx, general_headers in enumerate(report_data.get('report_general_stats_headers')):
         for general_header in general_headers:
@@ -337,7 +337,9 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
 
     return plotly_layout
 
-def get_samples(filters, count=False):
+def get_samples(filters=None, count=False):
+    if not filters:
+        filters=[]
     if count:
         sample_query = db.session.query(func.count(distinct(PlotData.sample_name))).join(Report)
     else:
@@ -347,9 +349,9 @@ def get_samples(filters, count=False):
             date_from = datetime.strptime(one_filter['value'][0], "%Y-%m-%d")
             date_to = datetime.strptime(one_filter['value'][1], "%Y-%m-%d")
             if one_filter['cmp'] == 'in':
-                sample_query = sample_query.filter(Report.created_at > date_from, Report.created_at < date_to)
+                sample_query = sample_query.filter(Report.created_at >= date_from, Report.created_at <= date_to)
             elif one_filter['cmp'] == 'not in':
-                sample_query = sample_query.filter(Report.created_at < date_from, Report.created_at > date_to)
+                sample_query = sample_query.filter(Report.created_at <= date_from, Report.created_at >= date_to)
             else:
                 raise Exception("Unexpected operator")
     if count:
@@ -359,3 +361,21 @@ def get_samples(filters, count=False):
 
     return samples
 
+def get_report_metadata_fields(filters=None):
+    if not filters:
+        filters=[]
+    report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key))
+    for one_filter in filters:
+        if one_filter['type'] == 'name':
+            if one_filter['cmp'] in ['eq', '==']:
+                report_metadata_query = report_metadata_query.filter(ReportMeta.report_meta_key == one_filter['value'])
+            elif one_filter['cmp'] in ['ne', '!=']:
+                report_metadata_query = report_metadata_query.filter(ReportMeta.report_meta_key != one_filter['value'])
+            elif one_filter['cmp'] == 'in':
+                report_metadata_query = report_metadata_query.filter(  ReportMeta.report_meta_key.like("%{0}%".format(one_filter['value'])))
+    fields = [row[0] for row in report_metadata_query.all()]
+    return fields
+
+
+def filter_builder(query, filters):
+    pass
