@@ -28,8 +28,8 @@
             </table>
         </div>
 
-        <h5>Add Filter</h5>
         <div id="filter-type">
+            <h5>Add Filter</h5>
             <div class="row">
                 <div class="col">
                     <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-dateRange">
@@ -64,6 +64,7 @@
             </div>
         </div>
         <div id="filter-dateRange" class="filter-filterTypeBox">
+            <h5>Add Date Filter</h5>
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
             <div class="row">
                 <div class="col-sm-6 col-md-5 col-lg-4">
@@ -97,6 +98,7 @@
             </button></p>
         </div>
         <div id="filter-reportMeta" class="filter-filterTypeBox">
+            <h5>Add Report Metadata Filter</h5>
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
             <div class="col-sm-6 col-md-5 col-lg-4">
                 <form>
@@ -105,6 +107,9 @@
                         <div class="col-sm-8">
                             <select class="form-control" id="reportMeta_key">
                                 <option value="">[ select field ]</option>
+                                {% for field in report_md %}
+                                <option value="{{ field }}">{{ report_md[field].nicename }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>

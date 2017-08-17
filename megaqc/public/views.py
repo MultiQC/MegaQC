@@ -3,6 +3,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for, abort
 from flask_login import login_required, login_user, logout_user, current_user
 
+from collections import OrderedDict
 import datetime
 
 from megaqc.extensions import login_manager, db
@@ -10,8 +11,8 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples
-from megaqc.utils import flash_errors
+from megaqc.api.utils import get_samples, get_report_metadata_fields
+from megaqc.utils import config, flash_errors
 
 from sqlalchemy.sql import func, distinct
 
@@ -26,7 +27,7 @@ def load_user(user_id):
 @blueprint.route('/', methods=['GET', 'POST'])
 def home():
     """Home page."""
-    return render_template('public/plot_type.html', num_samples=get_samples([], True))
+    return render_template('public/plot_type.html', num_samples=get_samples(count=True))
 
 @blueprint.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -93,16 +94,51 @@ def new_plot():
 @login_required
 def report_plot_select_samples():
     reports = db.session.query(Report).all()
+
+    # Get some dates for the filter buttons
     dstamps = {}
     for d in [('now', 0), ('7days', 7), ('30days', 30), ('6months', 182), ('12months', 365)]:
         do = datetime.datetime.now() + datetime.timedelta(-1*d[1])
         dstamps[d[0]] = '{:04d}-{:02d}-{:02d}'.format(do.year, do.month, do.day)
-    return render_template('public/report_plot_select_samples.html', db=db, User=User, reports=reports, user_token=current_user.api_token, num_samples=get_samples([], True), dstamps=dstamps)
+
+    # Get the report metadata fields
+    report_fields = { k: {} for k in get_report_metadata_fields() }
+    report_md = {}
+    for md in report_fields:
+        if md in config.report_metadata_fields:
+            if config.report_metadata_fields[md].get('hidden', False):
+                continue
+            report_md[md] = config.report_metadata_fields[md]
+        else:
+            report_md[md] = {}
+        if 'priority' not in report_md[md]:
+            report_md[md]['priority'] = 1
+        if 'nicename' not in report_md[md]:
+            report_md[md]['nicename'] = md.replace('_', ' ')
+    report_md_sorted = OrderedDict(sorted(report_md.items(), key=lambda x: x[1]['priority'], reverse=True))
+
+    # Render the template
+    return render_template(
+        'public/report_plot_select_samples.html',
+        db=db,
+        User=User,
+        reports=reports,
+        user_token=current_user.api_token,
+        num_samples=get_samples(count=True),
+        report_md=report_md_sorted,
+        dstamps=dstamps
+        )
 
 
 @blueprint.route('/report_plot/plot/')
 @login_required
 def report_plot():
     reports = db.session.query(Report).all()
-    return render_template('public/report_plot.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)
+    return render_template(
+        'public/report_plot.html',
+        db=db,User=User,
+        reports=reports,
+        user_token=current_user.api_token,
+        plot_types=plot_types
+        )
 
