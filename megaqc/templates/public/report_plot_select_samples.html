@@ -68,34 +68,62 @@
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
             <div class="row">
                 <div class="col-sm-6 col-md-5 col-lg-4">
-                    <form>
-                        <div class="form-group row">
-                            <label for="filterDateTo" class="col-sm-4 col-form-label">End date</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" id="filterDateTo" placeholder="yyyy-mm-dd" value="{{ dstamps['now'] }}">
+                    <div class="card">
+                        <div class="card-header">Dynamic date ranges</div>
+                        <div class="card-body">
+                            <div class="form-group row">
+                                <label for="filterDatePresetType" class="col-sm-4 col-form-label">Filter type</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="filterDatePresetType">
+                                        <option value="le">Within dates</option>
+                                        <option value="gt">Except dates</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="list-group filterDatePreset">
+                                <button type="button" class="list-group-item list-group-item-action" value="7">Last 7 days</button>
+                                <button type="button" class="list-group-item list-group-item-action" value="30">Last 30 days</button>
+                                <button type="button" class="list-group-item list-group-item-action" value="183">Last 6 months</button>
+                                <button type="button" class="list-group-item list-group-item-action" value="365">Last 12 months</button>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="filterDateFrom" class="col-sm-4 col-form-label">Start date</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" id="filterDateFrom" placeholder="yyyy-mm-dd" value="{{ dstamps['7days'] }}">
-                            </div>
-                        </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="col-sm-6 col-md-5 col-lg-4">
-                    <div class="list-group filterDatePreset">
-                        <button type="button" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['7days'] }}">Last 7 days</button>
-                        <button type="button" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['30days'] }}">Last 30 days</button>
-                        <button type="button" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['6months'] }}">Last 6 months</button>
-                        <button type="button" class="list-group-item list-group-item-action" data-datefrom="{{ dstamps['12months'] }}">Last 12 months</button>
+                    <div class="card">
+                        <div class="card-header">Specific dates</div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-group row">
+                                    <label for="filterDateType" class="col-sm-4 col-form-label">Filter type</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="filterDateType">
+                                            <option value="le">Within dates</option>
+                                            <option value="gt">Except dates</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="filterDateTo" class="col-sm-4 col-form-label">End date</label>
+                                    <div class="col-sm-8">
+                                        <input type="date" class="form-control" id="filterDateTo" placeholder="yyyy-mm-dd">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="filterDateFrom" class="col-sm-4 col-form-label">Start date</label>
+                                    <div class="col-sm-8">
+                                        <input type="date" class="form-control" id="filterDateFrom" placeholder="yyyy-mm-dd">
+                                    </div>
+                                </div>
+                                <button id="filterDateAddBtn" type="submit" class="btn btn-outline-primary">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                    Add filter
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-            <p><button id="filterDateAddBtn" type="button" class="btn btn-outline-primary">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-                Add filter
-            </button></p>
         </div>
         <div id="filter-reportMeta" class="filter-filterTypeBox">
             <h5>Add Report Metadata Filter</h5>
@@ -213,14 +241,28 @@ $(function(){
         $( $(this).data('show') ).slideDown();
     });
 
-    // Date preset buttons
-    $('.filterDatePreset a').click(function(e){
+    // Add date delta preset
+    $('.filterDatePreset button').click(function(e){
         e.preventDefault();
-        $('#filterDateTo').val("{{ dstamps['now'] }}");
-        $('#filterDateFrom').val( $(this).data('datefrom') );
+        var filter_id = 'filter_'+Math.random().toString(36).substring(2);
+        window.active_filters[filter_id] = {
+            'type': 'timedeltarange',
+            'key': 'timedeltarange',
+            'value': $(this).val(),
+            'cmp': $('#filterDatePresetType').val()
+        };
+        var trow = '<tr id="'+filter_id+'">' +
+            '<td><input type="checkbox" class="filterCheckbox"></td>' +
+            '<td>Date delta</td>' +
+            '<td>'+$('#filterDatePresetType option:selected').text().replace(' dates','') + ' ' + $(this).text().toLowerCase()+'</td>' +
+        '</tr>';
+        $(trow).appendTo('#activeFiltersTable tbody').hide().slideDown();
+        $('.filter-filterTypeBox').slideUp();
+        $('#filter-type').slideDown();
+        init_filters_table();
     });
 
-    // Add date preset
+    // Add specific date range
     $('#filterDateAddBtn').click(function(e){
         e.preventDefault();
         var filter_id = 'filter_'+Math.random().toString(36).substring(2);
@@ -228,12 +270,12 @@ $(function(){
             'type': 'daterange',
             'key': 'daterange',
             'value': [$('#filterDateFrom').val(), $('#filterDateTo').val()],
-            'cmp': 'in'
+            'cmp': $('#filterDateType').val()
         };
         var trow = '<tr id="'+filter_id+'">' +
             '<td><input type="checkbox" class="filterCheckbox"></td>' +
             '<td>Date range</td>' +
-            '<td>From '+$('#filterDateFrom').val()+' until '+$('#filterDateTo').val()+'</td>' +
+            '<td>' + $('#filterDateType option:selected').text().replace(' dates','') + ' '+$('#filterDateFrom').val()+' - '+$('#filterDateTo').val()+'</td>' +
         '</tr>';
         $(trow).appendTo('#activeFiltersTable tbody').hide().slideDown();
         $('.filter-filterTypeBox').slideUp();

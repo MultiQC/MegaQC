@@ -4,7 +4,6 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for,
 from flask_login import login_required, login_user, logout_user, current_user
 
 from collections import OrderedDict
-import datetime
 
 from megaqc.extensions import login_manager, db
 from megaqc.public.forms import LoginForm
@@ -95,12 +94,6 @@ def new_plot():
 def report_plot_select_samples():
     reports = db.session.query(Report).all()
 
-    # Get some dates for the filter buttons
-    dstamps = {}
-    for d in [('now', 0), ('7days', 7), ('30days', 30), ('6months', 182), ('12months', 365)]:
-        do = datetime.datetime.now() + datetime.timedelta(-1*d[1])
-        dstamps[d[0]] = '{:04d}-{:02d}-{:02d}'.format(do.year, do.month, do.day)
-
     # Get the report metadata fields
     report_fields = { k: {} for k in get_report_metadata_fields() }
     report_md = {}
@@ -125,8 +118,7 @@ def report_plot_select_samples():
         reports=reports,
         user_token=current_user.api_token,
         num_samples=get_samples(count=True),
-        report_md=report_md_sorted,
-        dstamps=dstamps
+        report_md=report_md_sorted
         )
 
 
