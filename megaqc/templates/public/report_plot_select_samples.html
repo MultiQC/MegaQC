@@ -265,6 +265,19 @@ $(function(){
     // Add specific date range
     $('#filterDateAddBtn').click(function(e){
         e.preventDefault();
+        $('#filterDateFrom, #filterDateTo').removeClass('is-invalid');
+        // Check that dates have been entered
+        if($('#filterDateTo').val() == ''){
+            toastr.error("You must enter a value for filterDateTo");
+            $('#filterDateTo').addClass('is-invalid');
+        }
+        if($('#filterDateFrom').val() == ''){
+            toastr.error("You must enter a value for filterDateFrom");
+            $('#filterDateFrom').addClass('is-invalid');
+        }
+        if($('#filterDateTo').val() == '' || $('#filterDateFrom').val() == ''){
+            return false;
+        }
         var filter_id = 'filter_'+Math.random().toString(36).substring(2);
         window.active_filters[filter_id] = {
             'type': 'daterange',
@@ -275,11 +288,12 @@ $(function(){
         var trow = '<tr id="'+filter_id+'">' +
             '<td><input type="checkbox" class="filterCheckbox"></td>' +
             '<td>Date range</td>' +
-            '<td>' + $('#filterDateType option:selected').text().replace(' dates','') + ' '+$('#filterDateFrom').val()+' - '+$('#filterDateTo').val()+'</td>' +
+            '<td>' + $('#filterDateType option:selected').text().replace(' dates','') + ' '+$('#filterDateFrom').val()+' &raquo; '+$('#filterDateTo').val()+'</td>' +
         '</tr>';
         $(trow).appendTo('#activeFiltersTable tbody').hide().slideDown();
         $('.filter-filterTypeBox').slideUp();
         $('#filter-type').slideDown();
+        $('#filterDateFrom, #filterDateTo').val('');
         init_filters_table();
     });
 });
@@ -313,6 +327,9 @@ function get_sample_count(){
             } else {
                 $('#selectSamplesSmall').text('???');
             }
+        },
+        error: function(data){
+            toastr.error('There was an error applying the sample filters.')
         }
     });
 }
