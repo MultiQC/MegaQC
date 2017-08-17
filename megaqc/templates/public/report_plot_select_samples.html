@@ -117,8 +117,7 @@
                         <label for="reportMeta_cmp" class="col-sm-4 col-form-label">Comparison</label>
                         <div class="col-sm-8">
                             <select class="form-control" id="reportMeta_cmp">
-                                <option value="contains">Contains</option>
-                                <option value="regex">Regex</option>
+                                <option value="in">Contains string</option>
                                 <option value="eq">(=) Equal to</option>
                                 <option value="ne">(!=) Not equal to</option>
                                 <option value="le">(&le;) Less than or equal to</option>
@@ -138,17 +137,20 @@
             </div>
         </div>
         <div id="filter-sampleMeta" class="filter-filterTypeBox">
+            <h5>Add Sample Metadata Filter</h5>
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
             This is the sample metadata filter
         </div>
         <div id="filter-sampleData" class="filter-filterTypeBox">
+            <h5>Add Sample Data Filter</h5>
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
             This is the sample data filter
         </div>
         <div id="filter-favouriteFilters" class="filter-filterTypeBox">
+            <h5>Add Favourite Filters</h5>
             <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
             <span class="filter-favourites">
-                <div class="alert alert-info">
+                <div class="alert alert-secondary">
                     You don't have any favourite filters saved yet. To save a set of filters as a favourite, add them then tick their checkboxes and finally click the <em>Favourite</em> button.
                 </div>
                 <p>Click a favourite to add those filters:</p>
