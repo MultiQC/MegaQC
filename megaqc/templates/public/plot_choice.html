@@ -23,14 +23,13 @@
         <table class="table" id="report_table">
             <thead>
             <tr>
-                <th>Report Id</th><th>Report Name</th><th>Report Date</th><th>User</th><th>Select</th>
+                <th>Report Id</th><th>Report Date</th><th>User</th><th>Select</th>
             </tr>
             </thead>
             <tbody>
                 {% for report in reports %}
                 <tr data-id="{{ report.report_id}}">
                     <td>{{report.hash}}</td>
-                    <td>{{report.title}}</td>
                     <td>{{report.created_at}}</td>
                     <td>{{db.session.query(User).filter(User.user_id == report.user_id).first().username}}</td>
                     <td><input type="checkbox" class="form-control checkbox_report" id="select_report_{{ report.report_id }}"data-id="{{report.report_id}}"/></td>
