@@ -178,7 +178,7 @@ def report_metadata_fields(user, *args, **kwargs):
 
 @api_blueprint.route('/api/sample_metadata_fields', methods=['GET', 'POST'])
 @check_user
-def sample__metadata_fields(user, *args, **kwargs):
+def sample_metadata_fields(user, *args, **kwargs):
     data = request.get_json()
     filters = data.get("filters", [])
     fields = get_sample_metadata_fields(filters)

@@ -10,7 +10,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples, get_report_metadata_fields
+from megaqc.api.utils import get_samples, get_report_metadata_fields, get_sample_metadata_fields
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -111,6 +111,22 @@ def report_plot_select_samples():
             report_md[md]['nicename'] = md.replace('_', ' ')
     report_md_sorted = OrderedDict(sorted(report_md.items(), key=lambda x: x[1]['priority'], reverse=True))
 
+    # Get the sample metadata fields
+    sample_md_fields = { k: {} for k in get_sample_metadata_fields() }
+    sample_md = {}
+    for md in sample_md_fields:
+        if md in settings.sample_metadata_fields:
+            if settings.sample_metadata_fields[md].get('hidden', False):
+                continue
+            sample_md[md] = settings.sample_metadata_fields[md]
+        else:
+            sample_md[md] = {}
+        if 'priority' not in sample_md[md]:
+            sample_md[md]['priority'] = 1
+        if 'nicename' not in sample_md[md]:
+            sample_md[md]['nicename'] = md.replace('_', ' ')
+    sample_md_sorted = OrderedDict(sorted(sample_md.items(), key=lambda x: x[1]['priority'], reverse=True))
+
     total_num_samples=get_samples(count=True)
 
     # Render the template
@@ -122,7 +138,8 @@ def report_plot_select_samples():
         user_token=current_user.api_token,
         total_num_samples=total_num_samples,
         filtered_num_samples=total_num_samples,
-        report_md=report_md_sorted
+        report_md=report_md_sorted,
+        sample_md=sample_md_sorted
         )
 
 

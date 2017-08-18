@@ -39,3 +39,5 @@ report_metadata_fields:
         hidden: True
     config_git_hash:
         hidden: True
+
+sample_metadata_fields: {}
