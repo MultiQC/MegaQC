@@ -88,37 +88,11 @@ footer p a {
     margin-bottom: 0;
 }
 
-.megaqc-step-header {
-    font-size: 2rem;
-    font-weight: 300;
-    line-height: 1.1;
-    margin-top: 2.3rem;
-}
-.megaqc-step-header a {
-    color: #666666;
-}
-.megaqc-step-header a.disabled {
-    color: #999999;
-    cursor: not-allowed;
-}
-.megaqc-step-header a:hover {
-    text-decoration: none;
-}
-.megaqc-step-header .fa-stack {
-    font-size: 1.6rem;
-    margin-top: -0.5rem;
-}
-.megaqc-step-header small {
-    font-size: 70%;
-    color: #999;
-    font-weight: 300;
-    margin-left: 15px;
-}
-
 .plot-chooser-card {
     margin-bottom: 1rem;
 }
 .plot-chooser-card h4 {
+    margin-top: 0;
     font-weight: 300;
 }
 .plot-chooser-card a {
@@ -132,6 +106,13 @@ footer p a {
     padding: 0.8rem;
 }
 
+
+.num_filtered_samples {
+    font-size: 50%;
+    font-weight: 400;
+    vertical-align: middle;
+    margin-left: 12px;
+}
 
 .activeFiltersActions button {
     margin-left: 8px;

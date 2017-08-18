@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for, abort
+from flask import Blueprint, flash, redirect, render_template, request, url_for, abort, json, Request
 from flask_login import login_required, login_user, logout_user, current_user
 
-import datetime
+from collections import OrderedDict
 
 from megaqc.extensions import login_manager, db
 from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.utils import flash_errors
+from megaqc.api.utils import get_samples, get_report_metadata_fields, get_sample_metadata_fields
+from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
+from urllib import unquote_plus
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 
@@ -25,7 +27,7 @@ def load_user(user_id):
 @blueprint.route('/', methods=['GET', 'POST'])
 def home():
     """Home page."""
-    return render_template('public/plot_type.html')
+    return render_template('public/home.html', num_samples=get_samples(count=True))
 
 @blueprint.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -88,20 +90,76 @@ def new_plot():
     plot_types.sort()
     return render_template('public/plot_choice.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)
 
+@blueprint.route('/plot_type/')
+def choose_plot_type():
+    """Choose plot type."""
+    return render_template('public/plot_type.html', num_samples=get_samples(count=True))
+
 @blueprint.route('/report_plot/')
 @login_required
 def report_plot_select_samples():
     reports = db.session.query(Report).all()
-    dstamps = {}
-    for d in [('now', 0), ('7days', 7), ('30days', 30), ('6months', 182), ('12months', 365)]:
-        do = datetime.datetime.now() + datetime.timedelta(-1*d[1])
-        dstamps[d[0]] = '{:04d}-{:02d}-{:02d}'.format(do.year, do.month, do.day)
-    return render_template('public/report_plot_select_samples.html', db=db, User=User, reports=reports, user_token=current_user.api_token, dstamps=dstamps)
+
+    # Get the report metadata fields
+    report_fields = { k: {} for k in get_report_metadata_fields() }
+    report_md = {}
+    for md in report_fields:
+        if md in settings.report_metadata_fields:
+            if settings.report_metadata_fields[md].get('hidden', False):
+                continue
+            report_md[md] = settings.report_metadata_fields[md]
+        else:
+            report_md[md] = {}
+        if 'priority' not in report_md[md]:
+            report_md[md]['priority'] = 1
+        if 'nicename' not in report_md[md]:
+            report_md[md]['nicename'] = md.replace('_', ' ')
+    report_md_sorted = OrderedDict(sorted(report_md.items(), key=lambda x: x[1]['priority'], reverse=True))
+
+    # Get the sample metadata fields
+    sample_md_fields = { k: {} for k in get_sample_metadata_fields() }
+    sample_md = {}
+    for md in sample_md_fields:
+        if md in settings.sample_metadata_fields:
+            if settings.sample_metadata_fields[md].get('hidden', False):
+                continue
+            sample_md[md] = settings.sample_metadata_fields[md]
+        else:
+            sample_md[md] = {}
+        if 'priority' not in sample_md[md]:
+            sample_md[md]['priority'] = 1
+        if 'nicename' not in sample_md[md]:
+            sample_md[md]['nicename'] = md.replace('_', ' ')
+    sample_md_sorted = OrderedDict(sorted(sample_md.items(), key=lambda x: x[1]['priority'], reverse=True))
+
+    # Render the template
+    return render_template(
+        'public/report_plot_select_samples.html',
+        db=db,
+        User=User,
+        reports=reports,
+        user_token=current_user.api_token,
+        num_samples=get_samples(count=True),
+        report_md=report_md_sorted,
+        sample_md=sample_md_sorted
+        )
 
 
 @blueprint.route('/report_plot/plot/')
 @login_required
 def report_plot():
     reports = db.session.query(Report).all()
-    return render_template('public/report_plot.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)
+    # Get the filters JSON from the URL
+    get_string = request.query_string.partition('&')[0]
+    if len(get_string) > 0:
+        urldata = json.loads(unquote_plus(request.query_string.partition('&')[0]))
+        filters = urldata['filters']
+    else:
+        filters = []
+    return render_template(
+        'public/report_plot.html',
+        db=db,
+        User=User,
+        filters = filters
+        )
 
