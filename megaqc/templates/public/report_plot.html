@@ -1,54 +1,11 @@
 
 {% extends "plot_walkthrough.html" %}
-{% block css %}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
-{% endblock %}
-{% set plotType = 'public.report_plot_select_samples' %}
+{% set plotTypeName = 'Report Plot' %}
+{% set plotTypeSelectSamples = 'public.report_plot_select_samples' %}
+{% set plotTypePlot = 'public.report_plot' %}
+{% set selectSamplesSmall = '{} samples'.format(filtered_num_samples) %}
 {% block plotData %}
-    <div id="available_plots">
-        <form>
-        {% for one_type in plot_types%}
-            <input type="button" class="btn btn-primary plot_btns" value="{{one_type}}"id="btn_{{one_type}}"/>
-        {% endfor %}
-        </form>
-    </div>
-    <div id="sample_chooser">
-        <table class="table" id="report_table">
-            <thead>
-            <tr>
-                <th>Report Id</th><th>Report Name</th><th>Report Date</th><th>User</th><th>Select</th>
-            </tr>
-            </thead>
-            <tbody>
-                {% for report in reports %}
-                <tr data-id="{{ report.report_id}}">
-                    <td>{{report.hash}}</td>
-                    <td>{{report.title}}</td>
-                    <td>{{report.created_at}}</td>
-                    <td>{{db.session.query(User).filter(User.user_id == report.user_id).first().username}}</td>
-                    <td><input type="checkbox" class="form-control checkbox_report" id="select_report_{{ report.report_id }}"data-id="{{report.report_id}}"/></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <table class="table" id="sample_table">
-            <thead>
-            <tr>
-                <th>Sample Name</th><th>Report Name</th><th>Select</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    <div id="validation">
-        <input type="button" class="btn btn-success" value="Make Plot" id="make_plot_btn" />
-    </div>
-    <div id="plot_location">
-    </div>
-{% endblock %}
-{% block js %}
-    <script type="text/javascript">window.token="{{user_token}}"</script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/plot_choice.js') }}"></script>
+
+<p><samp>The plot page stuff will go here..</samp></p>
+
 {% endblock %}

@@ -11,7 +11,7 @@ from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
 from megaqc.api.utils import get_samples, get_report_metadata_fields
-from megaqc.utils import config, flash_errors
+from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
 
@@ -98,10 +98,10 @@ def report_plot_select_samples():
     report_fields = { k: {} for k in get_report_metadata_fields() }
     report_md = {}
     for md in report_fields:
-        if md in config.report_metadata_fields:
-            if config.report_metadata_fields[md].get('hidden', False):
+        if md in settings.report_metadata_fields:
+            if settings.report_metadata_fields[md].get('hidden', False):
                 continue
-            report_md[md] = config.report_metadata_fields[md]
+            report_md[md] = settings.report_metadata_fields[md]
         else:
             report_md[md] = {}
         if 'priority' not in report_md[md]:
@@ -110,6 +110,8 @@ def report_plot_select_samples():
             report_md[md]['nicename'] = md.replace('_', ' ')
     report_md_sorted = OrderedDict(sorted(report_md.items(), key=lambda x: x[1]['priority'], reverse=True))
 
+    total_num_samples=get_samples(count=True),
+
     # Render the template
     return render_template(
         'public/report_plot_select_samples.html',
@@ -117,7 +119,8 @@ def report_plot_select_samples():
         User=User,
         reports=reports,
         user_token=current_user.api_token,
-        num_samples=get_samples(count=True),
+        total_num_samples=total_num_samples,
+        filtered_num_samples=total_num_samples,
         report_md=report_md_sorted
         )
 
@@ -128,9 +131,9 @@ def report_plot():
     reports = db.session.query(Report).all()
     return render_template(
         'public/report_plot.html',
-        db=db,User=User,
-        reports=reports,
-        user_token=current_user.api_token,
-        plot_types=plot_types
+        db=db,
+        User=User,
+        total_num_samples=get_samples(count=True),
+        filtered_num_samples='???'
         )
 

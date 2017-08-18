@@ -8,7 +8,7 @@
   </div>
   <div class="col-md-6 megaqc-header-samplecount">
     Data available from<br>
-    {{ num_samples }} samples, ??? reports
+    {{ total_num_samples }} samples, ??? reports
   </div>
 </div>
 <p class="lead">MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.</p>
@@ -30,7 +30,7 @@
 
 
 <h2 class="megaqc-step-header">
-  {% if plotType %}<a href="{{ url_for(plotType) }}">{% endif %}
+  {% if plotTypeSelectSamples %}<a href="{{ url_for(plotTypeSelectSamples) }}">{% endif %}
     <span class="fa-stack">
       <i class="fa fa-circle-thin fa-stack-2x"></i>
       <strong class="fa-stack-1x calendar-text">2</strong>
@@ -39,16 +39,18 @@
     {% if selectSamplesSmall %}
         <small id="selectSamplesSmall">[ {{ selectSamplesSmall }} ]</small>
     {% endif %}
-  {% if plotType %}</a>{% endif %}
+  {% if plotTypeSelectSamples %}</a>{% endif %}
 </h2>
 {% block selectSamples %}{% endblock %}
 
 <h2 class="megaqc-step-header">
-  <span class="fa-stack">
-    <i class="fa fa-circle-thin fa-stack-2x"></i>
-    <strong class="fa-stack-1x calendar-text">3</strong>
-  </span>
-  Plot data
+  {% if plotTypePlot %}<a href="{{ url_for(plotTypePlot) }}">{% endif %}
+    <span class="fa-stack">
+      <i class="fa fa-circle-thin fa-stack-2x"></i>
+      <strong class="fa-stack-1x calendar-text">3</strong>
+    </span>
+    Plot data
+  {% if plotTypePlot %}</a>{% endif %}
 </h2>
 {% block plotData %}{% endblock %}
 

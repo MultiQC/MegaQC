@@ -1,8 +1,9 @@
 
 {% extends "plot_walkthrough.html" %}
 {% set plotTypeName = 'Report Plot' %}
-{% set plotType = 'public.report_plot_select_samples' %}
-{% set selectSamplesSmall = '{} samples'.format(num_samples) %}
+{% set plotTypeSelectSamples = 'public.report_plot_select_samples' %}
+{% set plotTypePlot = 'public.report_plot' %}
+{% set selectSamplesSmall = '{} samples'.format(filtered_num_samples) %}
 {% block selectSamples %}
 
 <div class="card new-filter">
