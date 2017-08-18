@@ -1,230 +1,224 @@
 
-{% extends "plot_walkthrough.html" %}
-{% set plotTypeName = 'Report Plot' %}
-{% set plotTypeSelectSamples = 'public.report_plot_select_samples' %}
-{% set plotTypePlot = 'public.report_plot' %}
-{% set selectSamplesSmall = '{} samples'.format(filtered_num_samples) %}
-{% block selectSamples %}
+{% extends "layout.html" %}
 
-<div class="card new-filter">
-    <div class="card-body">
+{% block content %}
 
-        <div id="activeFilters">
-            <div class="pull-right activeFiltersActions">
-                With checked:
-                <button class="btn btn-sm btn-outline-info" id="sampleFiltersFavouriteBtn"><i class="fa fa-heart" aria-hidden="true"></i> Favourite</button>
-                <button class="btn btn-sm btn-outline-danger" id="sampleFiltersDeleteBtn"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
-            </div>
-            <h5 class="mt-0">Active Filters</h5>
-            <div id="noActiveFiltersAlert" class="alert alert-info">No active filters</div>
-            <table id="activeFiltersTable" class="table table-hover" style="display: none;">
-                <thead>
-                    <tr>
-                        <th style="width:20px;"><input type="checkbox" id="filtersCheckAll"></th>
-                        <th>Type</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+<h1>
+    <a href="{{ url_for('public.report_plot') }}" class="pull-right btn btn-lg btn-outline-primary plot-link">Make Plot</a>
+    Report Plot: Filter Samples
+    <span class="num_filtered_samples badge badge-pill badge-secondary">{{ num_samples }} samples</span>
+</h1>
 
-        <div id="filter-type">
-            <h5>Add Filter</h5>
-            <div class="row">
-                <div class="col">
-                    <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-dateRange">
-                        Date range<br>
-                        <small><em>e.g.</em> Last six months</small>
-                    </button>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div id="activeFilters" class="card-body">
+                <div class="pull-right activeFiltersActions">
+                    With checked:
+                    <button class="btn btn-sm btn-outline-info" id="sampleFiltersFavouriteBtn"><i class="fa fa-heart" aria-hidden="true"></i> Favourite</button>
+                    <button class="btn btn-sm btn-outline-danger" id="sampleFiltersDeleteBtn"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
                 </div>
-                <div class="col">
-                    <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-reportMeta">
-                        Report metadata<br>
-                        <small><em>e.g.</em> Submitted by <code>{{current_user.username}}</code></small>
-                    </button>
-                </div>
-                <div class="col">
-                    <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-sampleData">
-                        Sample data query<br>
-                        <small><em>e.g.</em> Where <code>%&nbsp;aligned &le;&nbsp;50%</code></small>
-                    </button>
-                </div>
-                <div class="col">
-                    <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-favouriteFilters">
-                        Favourite filters<br>
-                        <small>Apply your favourite filters</small>
-                    </button>
-                </div>
+                <h3 class="mt-0">Active Filters</h3>
+                <table id="activeFiltersTable" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width:20px;"><input type="checkbox" id="filtersCheckAll"></th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody><tr id="noactivefiltersrow"><td colspan="3">No active filters</td></tr></tbody>
+                </table>
             </div>
         </div>
-        <div id="filter-dateRange" class="filter-filterTypeBox">
-            <h5>Add Date Filter</h5>
-            <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
-            <div class="row">
-                <div class="col-sm-6 col-md-5 col-lg-4">
-                    <div class="card">
-                        <div class="card-header">Dynamic date ranges</div>
-                        <div class="card-body">
-                            <div class="form-group row">
-                                <label for="filterDatePresetType" class="col-sm-4 col-form-label">Filter type</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" id="filterDatePresetType">
-                                        <option value="le">Within dates</option>
-                                        <option value="gt">Except dates</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="list-group filterDatePreset">
-                                <button type="button" class="list-group-item list-group-item-action" value="7">Last 7 days</button>
-                                <button type="button" class="list-group-item list-group-item-action" value="30">Last 30 days</button>
-                                <button type="button" class="list-group-item list-group-item-action" value="183">Last 6 months</button>
-                                <button type="button" class="list-group-item list-group-item-action" value="365">Last 12 months</button>
-                            </div>
+    </div>
+
+
+    <div class="col-lg-6">
+        <div class="card new-filter">
+            <div class="card-body">
+                <h3 class="mt-0">Add Filter</h3>
+                <div id="filter-type">
+                    <div class="row">
+                        <div class="col">
+                            <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-dateRange">
+                                Date range<br>
+                                <small><em>e.g.</em> Last six months</small>
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-reportMeta">
+                                Report metadata<br>
+                                <small><em>e.g.</em> Submitted by <code>{{current_user.username}}</code></small>
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-sampleData">
+                                Sample data query<br>
+                                <small><em>e.g.</em> Where <code>%&nbsp;aligned &le;&nbsp;50%</code></small>
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-favouriteFilters">
+                                Favourite filters<br>
+                                <small>Apply your favourite filters</small>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-5 col-lg-4">
-                    <div class="card">
-                        <div class="card-header">Specific dates</div>
-                        <div class="card-body">
-                            <form id="filterExactDateForm">
-                                <div class="form-group row">
-                                    <label for="filterDateType" class="col-sm-4 col-form-label">Filter type</label>
-                                    <div class="col-sm-8">
-                                        <select class="form-control" id="filterDateType">
-                                            <option value="in">Within dates</option>
-                                            <option value="not in">Except dates</option>
+                <div id="filter-dateRange" class="filter-filterTypeBox">
+                    <p class="small pull-right"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
+                    <h5 class="mt-0">Add Date Filter</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">Dynamic date ranges</div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="filterDatePresetType">Filter type</label>
+                                        <select class="form-control" id="filterDatePresetType">
+                                            <option value="le">Within dates</option>
+                                            <option value="gt">Except dates</option>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="filterDateTo" class="col-sm-4 col-form-label">End date</label>
-                                    <div class="col-sm-8">
-                                        <input type="date" class="form-control" id="filterDateTo" placeholder="yyyy-mm-dd">
+                                    <div class="list-group filterDatePreset">
+                                        <button type="button" class="list-group-item list-group-item-action" value="7">Last 7 days</button>
+                                        <button type="button" class="list-group-item list-group-item-action" value="30">Last 30 days</button>
+                                        <button type="button" class="list-group-item list-group-item-action" value="183">Last 6 months</button>
+                                        <button type="button" class="list-group-item list-group-item-action" value="365">Last 12 months</button>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label for="filterDateFrom" class="col-sm-4 col-form-label">Start date</label>
-                                    <div class="col-sm-8">
-                                        <input type="date" class="form-control" id="filterDateFrom" placeholder="yyyy-mm-dd">
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">Specific dates</div>
+                                <div class="card-body">
+                                    <form id="filterExactDateForm">
+                                        <div class="form-group">
+                                            <label for="filterDateType">Filter type</label>
+                                            <select class="form-control" id="filterDateType">
+                                                <option value="in">Within dates</option>
+                                                <option value="not in">Except dates</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="filterDateTo">End date</label>
+                                            <input type="date" class="form-control" id="filterDateTo" placeholder="yyyy-mm-dd">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="filterDateFrom">Start date</label>
+                                            <input type="date" class="form-control" id="filterDateFrom" placeholder="yyyy-mm-dd">
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-primary">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                            Add filter
+                                        </button>
+                                    </form>
                                 </div>
-                                <button type="submit" class="btn btn-outline-primary">
-                                    <i class="fa fa-plus" aria-hidden="true"></i>
-                                    Add filter
-                                </button>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div id="filter-reportMeta" class="filter-filterTypeBox">
-            <h5>Add Report Metadata Filter</h5>
-            <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
-            <div class="col-sm-6 col-md-5 col-lg-4">
-                <form id="filter-reportMetaForm">
-                    <div class="form-group row">
-                        <label for="reportMeta_field" class="col-sm-4 col-form-label">Field</label>
-                        <div class="col-sm-8">
-                            <select class="form-control" id="reportMeta_key">
-                                <option value="">[ select field ]</option>
-                                {% for field in report_md %}
-                                <option value="{{ field }}">{{ report_md[field].nicename }}</option>
-                                {% endfor %}
-                            </select>
+                <div id="filter-reportMeta" class="filter-filterTypeBox">
+                    <p class="small pull-right"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
+                    <h5 class="mt-0">Add Report Metadata Filter</h5>
+                    <form id="filter-reportMetaForm">
+                        <div class="form-group row">
+                            <label for="reportMeta_field" class="col-sm-4 col-form-label">Field</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="reportMeta_key">
+                                    <option value="">[ select field ]</option>
+                                    {% for field in report_md %}
+                                    <option value="{{ field }}">{{ report_md[field].nicename }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="reportMeta_cmp" class="col-sm-4 col-form-label">Comparison</label>
-                        <div class="col-sm-8">
-                            <select class="form-control" id="reportMeta_cmp">
-                                <option value="in">Contains string</option>
-                                <option value="not in">Does not contain string</option>
-                                <option value="eq">(=) Equal to</option>
-                                <option value="ne">(!=) Not equal to</option>
-                                <option value="le">(&le;) Less than or equal to</option>
-                                <option value="lt">(&lt;) Less than</option>
-                                <option value="ge">(&ge;) Greater than or equal to</option>
-                                <option value="gt">(&gt;) Greater than</option>
-                            </select>
+                        <div class="form-group row">
+                            <label for="reportMeta_cmp" class="col-sm-4 col-form-label">Comparison</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="reportMeta_cmp">
+                                    <option value="in">Contains string</option>
+                                    <option value="not in">Does not contain string</option>
+                                    <option value="eq">(=) Equal to</option>
+                                    <option value="ne">(!=) Not equal to</option>
+                                    <option value="le">(&le;) Less than or equal to</option>
+                                    <option value="lt">(&lt;) Less than</option>
+                                    <option value="ge">(&ge;) Greater than or equal to</option>
+                                    <option value="gt">(&gt;) Greater than</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="reportMeta_value" class="col-sm-4 col-form-label">Value</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="reportMeta_value" placeholder="Enter value here">
+                        <div class="form-group row">
+                            <label for="reportMeta_value" class="col-sm-4 col-form-label">Value</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="reportMeta_value" placeholder="Enter value here">
+                            </div>
                         </div>
-                    </div>
-                    <button id="filterDateAddBtn" type="submit" class="btn btn-outline-primary">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        Add filter
-                    </button>
-                </form>
-            </div>
-        </div>
-        <div id="filter-sampleData" class="filter-filterTypeBox">
-            <h5>Add Sample Data Filter</h5>
-            <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
-            <div class="col-sm-6 col-md-5 col-lg-4">
-                <form id="filter-reportMetaForm">
-                    <div class="form-group row">
-                        <label for="reportMeta_field" class="col-sm-4 col-form-label">Field</label>
-                        <div class="col-sm-8">
-                            <select class="form-control" id="reportMeta_key">
-                                <option value="">[ select field ]</option>
-                                {% for field in sample_md %}
-                                <option value="{{ field }}">{{ sample_md[field].nicename }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="reportMeta_cmp" class="col-sm-4 col-form-label">Comparison</label>
-                        <div class="col-sm-8">
-                            <select class="form-control" id="reportMeta_cmp">
-                                <option value="in">Contains string</option>
-                                <option value="not in">Does not contain string</option>
-                                <option value="eq">(=) Equal to</option>
-                                <option value="ne">(!=) Not equal to</option>
-                                <option value="le">(&le;) Less than or equal to</option>
-                                <option value="lt">(&lt;) Less than</option>
-                                <option value="ge">(&ge;) Greater than or equal to</option>
-                                <option value="gt">(&gt;) Greater than</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="reportMeta_value" class="col-sm-4 col-form-label">Value</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="reportMeta_value" placeholder="Enter value here">
-                        </div>
-                    </div>
-                    <button id="filterDateAddBtn" type="submit" class="btn btn-outline-primary">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        Add filter
-                    </button>
-                </form>
-            </div>
-        </div>
-        <div id="filter-favouriteFilters" class="filter-filterTypeBox">
-            <h5>Add Favourite Filters</h5>
-            <p class="small"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
-            <span class="filter-favourites">
-                <div class="alert alert-secondary">
-                    You don't have any favourite filters saved yet. To save a set of filters as a favourite, add them then tick their checkboxes and finally click the <em>Favourite</em> button.
+                        <button id="filterDateAddBtn" type="submit" class="btn btn-outline-primary">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Add filter
+                        </button>
+                        <a href="#" class="btn btn-outline-secondary ml-2 filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">Cancel</a>
+                    </form>
                 </div>
-                <p>Click a favourite to add those filters:</p>
-                <div class="list-group filterDatePreset">
-                    <button type="button" class="list-group-item list-group-item-action" >[placeholder] Date: From 2015-01-01 until 2016-01-01</button>
-                    <button type="button" class="list-group-item list-group-item-action" >[placeholder] Our group's development projects</button>
+                <div id="filter-sampleData" class="filter-filterTypeBox">
+                    <p class="small pull-right"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
+                    <h5 class="mt-0">Add Sample Data Filter</h5>
+                    <form id="filter-reportMetaForm">
+                        <div class="form-group row">
+                            <label for="reportMeta_field" class="col-sm-4 col-form-label">Field</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="reportMeta_key">
+                                    <option value="">[ select field ]</option>
+                                    {% for field in sample_md %}
+                                    <option value="{{ field }}">{{ sample_md[field].nicename }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="reportMeta_cmp" class="col-sm-4 col-form-label">Comparison</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="reportMeta_cmp">
+                                    <option value="in">Contains string</option>
+                                    <option value="not in">Does not contain string</option>
+                                    <option value="eq">(=) Equal to</option>
+                                    <option value="ne">(!=) Not equal to</option>
+                                    <option value="le">(&le;) Less than or equal to</option>
+                                    <option value="lt">(&lt;) Less than</option>
+                                    <option value="ge">(&ge;) Greater than or equal to</option>
+                                    <option value="gt">(&gt;) Greater than</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="reportMeta_value" class="col-sm-4 col-form-label">Value</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="reportMeta_value" placeholder="Enter value here">
+                            </div>
+                        </div>
+                        <button id="filterDateAddBtn" type="submit" class="btn btn-outline-primary">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Add filter
+                        </button>
+                    </form>
                 </div>
-            </span>
+                <div id="filter-favouriteFilters" class="filter-filterTypeBox">
+                    <p class="small pull-right"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
+                    <h5 class="mt-0">Add Favourite Filters</h5>
+                    <span class="filter-favourites">
+                        <div class="alert alert-secondary">
+                            You don't have any favourite filters saved yet. To save a set of filters as a favourite, add them then tick their checkboxes and finally click the <em>Favourite</em> button.
+                        </div>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<p class="text-center"><a href="{{ url_for(plotTypePlot) }}" class="mt-3 btn btn-outline-primary btn-lg plot-link" style="width:150px;">Make Plot</a></p>
+<p class="text-center"><a href="{{ url_for('public.report_plot') }}" class="mt-3 btn btn-outline-primary btn-lg plot-link" style="width:150px;">Make Plot</a></p>
 
 {% endblock %}
 {% block js %}
@@ -366,11 +360,9 @@ $(function(){
 
 function init_filters_table(){
     if( $('#activeFiltersTable tbody tr').length == 0 ){
-        $('#noActiveFiltersAlert').slideDown();
-        $('#activeFiltersTable').slideUp();
+        $('#activeFiltersTable tbody').html('<tr id="noactivefiltersrow"><td colspan="3">No active filters</td></tr>');
     } else {
-        $('#noActiveFiltersAlert').slideUp();
-        $('#activeFiltersTable').slideDown();
+        $('#noactivefiltersrow').remove();
     }
     get_sample_count();
 }
@@ -391,7 +383,7 @@ function get_sample_count(){
         contentType: 'application/json; charset=UTF-8',
         success: function(data){
             if (data['success']){
-                $('#selectSamplesSmall').text('[ '+data['count']+' samples ]');
+                $('num_filtered_samples').text(data['count']+' samples');
             } else {
                 $('#selectSamplesSmall').text('???');
             }
@@ -402,7 +394,7 @@ function get_sample_count(){
     });
     // Refresh the "plot" URL
     //  would be nicer to use $.param(filters) but a little tricky to get flask to decode this
-    $('.plot-link').attr('href', '{{ url_for(plotTypePlot) }}?' + encodeURIComponent(JSON.stringify(filters)));
+    $('.plot-link').attr('href', '{{ url_for("public.report_plot") }}?' + encodeURIComponent(JSON.stringify(filters)));
 }
 
 </script>

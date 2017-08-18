@@ -27,7 +27,7 @@ def load_user(user_id):
 @blueprint.route('/', methods=['GET', 'POST'])
 def home():
     """Home page."""
-    return render_template('public/plot_type.html', num_samples=get_samples(count=True))
+    return render_template('public/home.html', num_samples=get_samples(count=True))
 
 @blueprint.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -90,6 +90,11 @@ def new_plot():
     plot_types.sort()
     return render_template('public/plot_choice.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)
 
+@blueprint.route('/plot_type/')
+def choose_plot_type():
+    """Choose plot type."""
+    return render_template('public/plot_type.html', num_samples=get_samples(count=True))
+
 @blueprint.route('/report_plot/')
 @login_required
 def report_plot_select_samples():
@@ -127,8 +132,6 @@ def report_plot_select_samples():
             sample_md[md]['nicename'] = md.replace('_', ' ')
     sample_md_sorted = OrderedDict(sorted(sample_md.items(), key=lambda x: x[1]['priority'], reverse=True))
 
-    total_num_samples=get_samples(count=True)
-
     # Render the template
     return render_template(
         'public/report_plot_select_samples.html',
@@ -136,8 +139,7 @@ def report_plot_select_samples():
         User=User,
         reports=reports,
         user_token=current_user.api_token,
-        total_num_samples=total_num_samples,
-        filtered_num_samples=total_num_samples,
+        num_samples=get_samples(count=True),
         report_md=report_md_sorted,
         sample_md=sample_md_sorted
         )
@@ -148,14 +150,16 @@ def report_plot_select_samples():
 def report_plot():
     reports = db.session.query(Report).all()
     # Get the filters JSON from the URL
-    urldata = json.loads(unquote_plus(request.query_string.partition('&')[0]))
-    filters = urldata['filters']
+    get_string = request.query_string.partition('&')[0]
+    if len(get_string) > 0:
+        urldata = json.loads(unquote_plus(request.query_string.partition('&')[0]))
+        filters = urldata['filters']
+    else:
+        filters = []
     return render_template(
         'public/report_plot.html',
         db=db,
         User=User,
-        total_num_samples=get_samples(count=True),
-        filtered_num_samples=get_samples(filters, count=True),
         filters = filters
         )
 
