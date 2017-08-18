@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from megaqc.model.models import *
 from megaqc.extensions import db
 from megaqc.utils import multiqc_colors
+from megaqc.api.constants import comparators, type_to_fields
 from sqlalchemy import func, distinct
 from sqlalchemy.sql import not_, or_
 from collections import defaultdict
@@ -346,7 +347,9 @@ def get_samples(filters=None, count=False):
     else:
         sample_query = db.session.query(distinct(PlotData.sample_name)).join(Report)
 
-    sample_query = filter_builder(sample_query, filters, {'daterange': Report.created_at, 'timedelta':Report.created_at})
+    sample_query = build_filter(sample_query, filters)
+    print sample_query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
+
 
     if count:
         samples = sample_query.first()[0]
@@ -359,7 +362,7 @@ def get_report_metadata_fields(filters=None):
     if not filters:
         filters=[]
     report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
-    report_metadata_query = filter_builder(report_metadata_query, filters, {'name':ReportMeta.report_meta_key, 'daterange': Report.created_at, 'timedelta':Report.created_at})
+    report_metadata_query = filter_builder(report_metadata_query, filters)
     fields = [row[0] for row in report_metadata_query.all()]
     return fields
 
@@ -367,61 +370,60 @@ def get_sample_metadata_fields(filters=None):
     if not filters:
         filters=[]
     sample_metadata_query = db.session.query(distinct(SampleDataType.data_key)).join(SampleData).join(Report)
-    sample_metadata_query = filter_builder(sample_metadata_query, filters, {'name':SampleDataType.data_key, 'daterange': Report.created_at, 'timedelta':Report.created_at})
+    sample_metadata_query = filter_builder(sample_metadata_query, filters)
     fields = [row[0] for row in sample_metadata_query.all()]
     return fields
 
-
-def filter_builder(query, filters, type_to_key):
+def build_filter(query, filters):
+    #Build sqlalchemy filters for the provided query based on constants and the provided filters
     for one_filter in filters:
-        try: 
-            if one_filter['type'] == 'daterange':
-                #daterange : make values actual datetimes
-                val = [datetime.strptime(x, "%Y-%m-%d") for x in one_filter['value']]
-            elif one_filter['type'] == 'date':
-                val = datetime.strptime(one_filter['value'], "%Y-%m-%d")
-            elif one_filter['type'] == 'timedelta':
-                #timedeltarange : make datetime based on now and reverse the cmp,
-                #because time <7 days == time > _date_seven_days_ago
-                val = datetime.now() - timedelta(int(one_filter['value']))
-                if one_filter['cmp'] in ['gt', '>']:
-                    one_filter['cmp']='<='
-                elif one_filter['cmp'] in ['lt', '<']:
-                    one_filter['cmp']='>='
-                elif one_filter['cmp'] in ['ge', '>=']:
-                    one_filter['cmp']='<'
-                elif one_filter['cmp'] in ['le', '<=']:
-                    one_filter['cmp']='>'
+        params=[]
+        cmps=[]
+        if one_filter['type'] == 'daterange':
+            #daterange : make values actual datetimes
+            params = [datetime.strptime(x, "%Y-%m-%d") for x in one_filter['value']]
+            #in and not in are handled by making 2 filters, default is "in"
+            if one_filter['cmp'] == "not in":
+                cmps=["<=", ">="]
             else:
-                val = one_filter['value']
-            if one_filter['cmp'] in ['eq', '==']:
-                query = query.filter(type_to_key[one_filter['type']] == val)
-            elif one_filter['cmp'] in ['ne', '!=']:
-                query = query.filter(type_to_key[one_filter['type']] != val)
-            elif one_filter['cmp'] == 'in':
-                if one_filter['type'] == 'daterange':
-                    query = query.filter(type_to_key[one_filter['type']]>=val[0], type_to_key[one_filter['type']]<=val[1])
-                else:
-                    query = query.filter(type_to_key[one_filter['type']].like("%{0}%".format(val)))
-            elif one_filter['cmp'] == 'not in':
-                if one_filter['type'] == 'daterange':
-                    query = query.filter(or_(type_to_key[one_filter['type']]<val[0], type_to_key[one_filter['type']]>val[1]))
-                else:
-                    query = query.filter(not_(type_to_key[one_filter['type']].like("%{0}%".format(val))))
-            elif one_filter['cmp'] in ['gt', '>']:
-                query = query.filter(type_to_key[one_filter['type']] > val)
+                cmps=[">=", "<="]
+
+        elif one_filter['type'] == 'date':
+            params = [datetime.strptime(one_filter['value'], "%Y-%m-%d")]
+            cmps=[one_filter['cmp']]
+        elif one_filter['type'] == 'timedelta':
+            #timedeltarange : make datetime based on now and reverse the cmp,
+            #because time <7 days == time > _date_seven_days_ago
+            params = [datetime.now() - timedelta(int(one_filter['value']))]
+            if one_filter['cmp'] in ['gt', '>']:
+                cmps=['<=']
             elif one_filter['cmp'] in ['lt', '<']:
-                query = query.filter(type_to_key[one_filter['type']] < val)
+                cmps=['>=']
             elif one_filter['cmp'] in ['ge', '>=']:
-                query = query.filter(type_to_key[one_filter['type']] >= val)
+                cmps=['<']
             elif one_filter['cmp'] in ['le', '<=']:
-                query = query.filter(type_to_key[one_filter['type']] <= val)
+                cmps=['>']
+        else:
+            #default behaviour
+            cmps=[one_filter['cmp']]
+            if 'not in' == one_filter['cmp']:
+                #not in is a special case, there is no sqlalchemy operator to deal with it, although there is one for "in" and "notlike"
+                params=['%{0}%'.format(one_filter['value'])]
             else:
-                raise KeyError
-        except KeyError:
-            raise
-        #    raise Exception("Malformed filter in {0}".format(json.dumps(one_filter)))
+                params=[one_filter['value']]
+            key = one_filter.get('key', None)
+            if key:
+                params.append(key)
+                cmps.append("==")
+                #if there is a key/value pair, the cmp only applies to the value, the key should be matched
 
-        print query
 
+        alchemy_cmps=[]
+        for idx, param in enumerate(params):
+            #field is a db_column
+            field = type_to_fields[one_filter['type']][idx]
+            #sql_cmp is a comparison function
+            sql_cmp = getattr(field, comparators[cmps[idx]])
+            alchemy_cmps.append(sql_cmp(param))
+    query = query.filter(*alchemy_cmps)
     return query
