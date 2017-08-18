@@ -383,12 +383,12 @@ def filter_builder(query, filters, type_to_key):
             elif one_filter['type'] == 'timedelta':
                 #timedeltarange : make datetime based on now and reverse the cmp,
                 #because time <7 days == time > _date_seven_days_ago
-                val = datetime.now() - timedelta(one_filter['value'])
+                val = datetime.now() - timedelta(int(one_filter['value']))
                 if one_filter['cmp'] in ['gt', '>']:
                     one_filter['cmp']='<='
                 elif one_filter['cmp'] in ['lt', '<']:
                     one_filter['cmp']='>='
-                elif one_filter['cmp']  ['ge', '>=']:
+                elif one_filter['cmp'] in ['ge', '>=']:
                     one_filter['cmp']='<'
                 elif one_filter['cmp'] in ['le', '<=']:
                     one_filter['cmp']='>'
