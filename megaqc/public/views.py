@@ -110,7 +110,7 @@ def report_plot_select_samples():
             report_md[md]['nicename'] = md.replace('_', ' ')
     report_md_sorted = OrderedDict(sorted(report_md.items(), key=lambda x: x[1]['priority'], reverse=True))
 
-    total_num_samples=get_samples(count=True),
+    total_num_samples=get_samples(count=True)
 
     # Render the template
     return render_template(

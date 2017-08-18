@@ -247,9 +247,9 @@ $(function(){
         e.preventDefault();
         var filter_id = 'filter_'+Math.random().toString(36).substring(2);
         window.active_filters[filter_id] = {
-            'type': 'timedeltarange',
-            'key': 'timedeltarange',
-            'value': $(this).val(),
+            'type': 'timedelta',
+            'key': 'timedelta',
+            'value': parseInt($(this).val()),
             'cmp': $('#filterDatePresetType').val()
         };
         var trow = '<tr id="'+filter_id+'">' +

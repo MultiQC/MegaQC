@@ -374,16 +374,16 @@ def get_sample_metadata_fields(filters=None):
 
 def filter_builder(query, filters, type_to_key):
     for one_filter in filters:
-        try: 
+        try:
             if one_filter['type'] == 'daterange':
-                #daterange : make values actual datetimes
+                # daterange : make values actual datetimes
                 val = [datetime.strptime(x, "%Y-%m-%d") for x in one_filter['value']]
             elif one_filter['type'] == 'date':
                 val = datetime.strptime(one_filter['value'], "%Y-%m-%d")
             elif one_filter['type'] == 'timedelta':
-                #timedeltarange : make datetime based on now and reverse the cmp,
-                #because time <7 days == time > _date_seven_days_ago
-                val = datetime.now() - timedelta(one_filter['value'])
+                # timedeltarange : make datetime based on now and reverse the cmp,
+                # because time <7 days == time > _date_seven_days_ago
+                val = datetime.now() - timedelta(int(one_filter['value']))
                 if one_filter['cmp'] in ['gt', '>']:
                     one_filter['cmp']='<='
                 elif one_filter['cmp'] in ['lt', '<']:
