@@ -383,6 +383,7 @@ def build_filter(query, filters):
         if one_filter['type'] == 'daterange':
             #daterange : make values actual datetimes
             params = [datetime.strptime(x, "%Y-%m-%d") for x in one_filter['value']]
+            params[1] = params[1] + timedelta(1) #right border is midnight, you usually want to include the date you use as right border
             #in and not in are handled by making 2 filters, default is "in"
             if one_filter['cmp'] == "not in":
                 cmps=["<=", ">="]
