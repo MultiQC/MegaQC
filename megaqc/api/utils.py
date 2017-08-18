@@ -362,7 +362,7 @@ def get_report_metadata_fields(filters=None):
     if not filters:
         filters=[]
     report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
-    report_metadata_query = filter_builder(report_metadata_query, filters)
+    report_metadata_query = build_filter(report_metadata_query, filters)
     fields = [row[0] for row in report_metadata_query.all()]
     return fields
 
@@ -370,7 +370,7 @@ def get_sample_metadata_fields(filters=None):
     if not filters:
         filters=[]
     sample_metadata_query = db.session.query(distinct(SampleDataType.data_key)).join(SampleData).join(Report)
-    sample_metadata_query = filter_builder(sample_metadata_query, filters)
+    sample_metadata_query = build_filter(sample_metadata_query, filters)
     fields = [row[0] for row in sample_metadata_query.all()]
     return fields
 
