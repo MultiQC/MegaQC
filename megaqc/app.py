@@ -6,12 +6,11 @@ from __future__ import print_function
 from flask import Flask, jsonify, render_template, request
 from flask.helpers import get_debug_flag
 
-from megaqc import commands, public, user, version, api, model
+from megaqc import commands, public, user, version, api, model, utils
+from megaqc.utils import settings
 from megaqc.assets import assets
 from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager
 from megaqc.settings import DevConfig, ProdConfig
-
-from multiqc import __version__
 
 def create_app(config_object=ProdConfig):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -103,6 +102,7 @@ def register_commands(app):
 
 # Run the app!
 CONFIG = DevConfig if get_debug_flag() else ProdConfig
+settings.mqc_load_userconfig()
 app = create_app(CONFIG)
 
 # Live reload

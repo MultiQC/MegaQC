@@ -1,0 +1,43 @@
+#################################################################
+# MegaQC Defaults
+#################################################################
+# This file contains the default configuration options
+# for MegaQC. IT SHOULD NOT BE EDITED. If you want to
+# change any of these config options, create a new file
+# in any of the following locations:
+#  1. <installation_dir>/megaqc_config.yaml (not pip or conda)
+#  2. ~/.megaqc_config.yaml
+#  3. <working directory>/megaqc_config.yaml
+#################################################################
+
+# Customise the report metadata fields
+# nicename: Specify user-friendly name for field
+# priority: customise position in list. Default priority: 0
+# hidden: True to remove from the filter-samples UI
+report_metadata_fields:
+    config_title:
+        priority: 5
+        nicename: Report title
+    config_subtitle:
+        priority: 4
+        nicename: Report subtitle
+    config_report_comment:
+        priority: 3
+        nicename: Report comment
+    config_intro_text:
+        priority: 2
+        nicename: Report intro text
+    config_creation_date:
+        priority: 1
+        nicename: Report creation date & time
+    config_short_version:
+        priority: -1
+        nicename: MultiQC version
+    config_version:
+        hidden: True
+    config_script_path:
+        hidden: True
+    config_git_hash:
+        hidden: True
+
+sample_metadata_fields: {}
