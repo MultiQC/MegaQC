@@ -376,6 +376,7 @@ def get_sample_metadata_fields(filters=None):
 
 def build_filter(query, filters):
     #Build sqlalchemy filters for the provided query based on constants and the provided filters
+    alchemy_cmps=[]
     for one_filter in filters:
         params=[]
         cmps=[]
@@ -418,7 +419,6 @@ def build_filter(query, filters):
                 #if there is a key/value pair, the cmp only applies to the value, the key should be matched
 
 
-        alchemy_cmps=[]
         for idx, param in enumerate(params):
             #field is a db_column
             field = type_to_fields[one_filter['type']][idx]
