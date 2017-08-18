@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for, abort
+from flask import Blueprint, flash, redirect, render_template, request, url_for, abort, json, Request
 from flask_login import login_required, login_user, logout_user, current_user
 
 from collections import OrderedDict
@@ -14,6 +14,7 @@ from megaqc.api.utils import get_samples, get_report_metadata_fields
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
+from urllib import unquote_plus
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 
@@ -129,11 +130,15 @@ def report_plot_select_samples():
 @login_required
 def report_plot():
     reports = db.session.query(Report).all()
+    # Get the filters JSON from the URL
+    urldata = json.loads(unquote_plus(request.query_string.partition('&')[0]))
+    filters = urldata['filters']
     return render_template(
         'public/report_plot.html',
         db=db,
         User=User,
         total_num_samples=get_samples(count=True),
-        filtered_num_samples='???'
+        filtered_num_samples=get_samples(filters, count=True),
+        filters = filters
         )
 

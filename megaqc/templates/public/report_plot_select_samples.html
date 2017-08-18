@@ -99,8 +99,8 @@
                                     <label for="filterDateType" class="col-sm-4 col-form-label">Filter type</label>
                                     <div class="col-sm-8">
                                         <select class="form-control" id="filterDateType">
-                                            <option value="le">Within dates</option>
-                                            <option value="gt">Except dates</option>
+                                            <option value="in">Within dates</option>
+                                            <option value="not in">Except dates</option>
                                         </select>
                                     </div>
                                 </div>
@@ -191,6 +191,7 @@
         </div>
     </div>
 </div>
+<p class="text-center"><a href="{{ url_for(plotTypePlot) }}" class="mt-3 btn btn-outline-primary btn-lg plot-link" style="width:150px;">Make Plot</a></p>
 
 {% endblock %}
 {% block js %}
@@ -311,10 +312,12 @@ function init_filters_table(){
 }
 
 function get_sample_count(){
+    // Build the filter JSON
     var filters = {'filters': []}
     $.each(window.active_filters, function(k, d){
         filters.filters.push(d);
     });
+    // Count how many samples match the filters
     $.ajax({
         url: '/api/count_samples',
         type: 'post',
@@ -333,6 +336,9 @@ function get_sample_count(){
             toastr.error('There was an error applying the sample filters.')
         }
     });
+    // Refresh the "plot" URL
+    //  would be nicer to use $.param(filters) but a little tricky to get flask to decode this
+    $('.plot-link').attr('href', '{{ url_for(plotTypePlot) }}?' + encodeURIComponent(JSON.stringify(filters)));
 }
 
 </script>
