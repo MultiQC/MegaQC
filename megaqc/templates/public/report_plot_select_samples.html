@@ -368,11 +368,13 @@ function init_filters_table(){
 }
 
 function get_sample_count(){
+
     // Build the filter JSON
     var filters = {'filters': []}
     $.each(window.active_filters, function(k, d){
         filters.filters.push(d);
     });
+
     // Count how many samples match the filters
     $.ajax({
         url: '/api/count_samples',
@@ -383,7 +385,7 @@ function get_sample_count(){
         contentType: 'application/json; charset=UTF-8',
         success: function(data){
             if (data['success']){
-                $('num_filtered_samples').text(data['count']+' samples');
+                $('.num_filtered_samples').text(data['count']+' samples');
             } else {
                 $('#selectSamplesSmall').text('???');
             }
@@ -392,9 +394,44 @@ function get_sample_count(){
             toastr.error('There was an error applying the sample filters.')
         }
     });
+
     // Refresh the "plot" URL
     //  would be nicer to use $.param(filters) but a little tricky to get flask to decode this
     $('.plot-link').attr('href', '{{ url_for("public.report_plot") }}?' + encodeURIComponent(JSON.stringify(filters)));
+
+    // Update the report meta filter dropdowns
+    $.ajax({
+        url: '/api/report_metadata_fields',
+        type: 'post',
+        data:JSON.stringify( filters ),
+        headers : { access_token:window.token },
+        dataType: 'json',
+        contentType: 'application/json; charset=UTF-8',
+        success: function(data){
+            toastr.info("Got new report meta fields!")
+            console.log(data);
+        },
+        error: function(data){
+            toastr.error('There was an error fetching the new report and sample filter types.')
+        }
+    });
+
+    // Update the sample data filter dropdowns
+    $.ajax({
+        url: '/api/sample_metadata_fields',
+        type: 'post',
+        data:JSON.stringify( filters ),
+        headers : { access_token:window.token },
+        dataType: 'json',
+        contentType: 'application/json; charset=UTF-8',
+        success: function(data){
+            toastr.info("Got new sample data filter fields!")
+            console.log(data);
+        },
+        error: function(data){
+            toastr.error('There was an error fetching the new report and sample filter types.')
+        }
+    });
 }
 
 </script>
