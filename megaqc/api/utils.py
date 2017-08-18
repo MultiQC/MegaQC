@@ -1,9 +1,10 @@
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from megaqc.model.models import *
 from megaqc.extensions import db
 from megaqc.utils import multiqc_colors
 from sqlalchemy import func, distinct
+from sqlalchemy.sql import not_, or_
 from collections import defaultdict
 from math import log
 
@@ -344,16 +345,9 @@ def get_samples(filters=None, count=False):
         sample_query = db.session.query(func.count(distinct(PlotData.sample_name))).join(Report)
     else:
         sample_query = db.session.query(distinct(PlotData.sample_name)).join(Report)
-    for one_filter in filters:
-        if one_filter['type'] == 'daterange':
-            date_from = datetime.strptime(one_filter['value'][0], "%Y-%m-%d")
-            date_to = datetime.strptime(one_filter['value'][1], "%Y-%m-%d")
-            if one_filter['cmp'] == 'in':
-                sample_query = sample_query.filter(Report.created_at >= date_from, Report.created_at <= date_to)
-            elif one_filter['cmp'] == 'not in':
-                sample_query = sample_query.filter(Report.created_at <= date_from, Report.created_at >= date_to)
-            else:
-                raise Exception("Unexpected operator")
+
+    sample_query = filter_builder(sample_query, filters, {'daterange': Report.created_at, 'timedelta':Report.created_at})
+
     if count:
         samples = sample_query.first()[0]
     else:
@@ -364,18 +358,70 @@ def get_samples(filters=None, count=False):
 def get_report_metadata_fields(filters=None):
     if not filters:
         filters=[]
-    report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key))
-    for one_filter in filters:
-        if one_filter['type'] == 'name':
-            if one_filter['cmp'] in ['eq', '==']:
-                report_metadata_query = report_metadata_query.filter(ReportMeta.report_meta_key == one_filter['value'])
-            elif one_filter['cmp'] in ['ne', '!=']:
-                report_metadata_query = report_metadata_query.filter(ReportMeta.report_meta_key != one_filter['value'])
-            elif one_filter['cmp'] == 'in':
-                report_metadata_query = report_metadata_query.filter(  ReportMeta.report_meta_key.like("%{0}%".format(one_filter['value'])))
+    report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
+    report_metadata_query = filter_builder(report_metadata_query, filters, {'name':ReportMeta.report_meta_key, 'daterange': Report.created_at, 'timedelta':Report.created_at})
     fields = [row[0] for row in report_metadata_query.all()]
     return fields
 
+def get_sample_metadata_fields(filters=None):
+    if not filters:
+        filters=[]
+    sample_metadata_query = db.session.query(distinct(SampleDataType.data_key)).join(SampleData).join(Report)
+    sample_metadata_query = filter_builder(sample_metadata_query, filters, {'name':SampleDataType.data_key, 'daterange': Report.created_at, 'timedelta':Report.created_at})
+    fields = [row[0] for row in sample_metadata_query.all()]
+    return fields
 
-def filter_builder(query, filters):
-    pass
+
+def filter_builder(query, filters, type_to_key):
+    for one_filter in filters:
+        try: 
+            if one_filter['type'] == 'daterange':
+                #daterange : make values actual datetimes
+                val = [datetime.strptime(x, "%Y-%m-%d") for x in one_filter['value']]
+            elif one_filter['type'] == 'date':
+                val = datetime.strptime(one_filter['value'], "%Y-%m-%d")
+            elif one_filter['type'] == 'timedelta':
+                #timedeltarange : make datetime based on now and reverse the cmp,
+                #because time <7 days == time > _date_seven_days_ago
+                val = datetime.now() - timedelta(one_filter['value'])
+                if one_filter['cmp'] in ['gt', '>']:
+                    one_filter['cmp']='<='
+                elif one_filter['cmp'] in ['lt', '<']:
+                    one_filter['cmp']='>='
+                elif one_filter['cmp']  ['ge', '>=']:
+                    one_filter['cmp']='<'
+                elif one_filter['cmp'] in ['le', '<=']:
+                    one_filter['cmp']='>'
+            else:
+                val = one_filter['value']
+            if one_filter['cmp'] in ['eq', '==']:
+                query = query.filter(type_to_key[one_filter['type']] == val)
+            elif one_filter['cmp'] in ['ne', '!=']:
+                query = query.filter(type_to_key[one_filter['type']] != val)
+            elif one_filter['cmp'] == 'in':
+                if one_filter['type'] == 'daterange':
+                    query = query.filter(type_to_key[one_filter['type']]>=val[0], type_to_key[one_filter['type']]<=val[1])
+                else:
+                    query = query.filter(type_to_key[one_filter['type']].like("%{0}%".format(val)))
+            elif one_filter['cmp'] == 'not in':
+                if one_filter['type'] == 'daterange':
+                    query = query.filter(or_(type_to_key[one_filter['type']]<val[0], type_to_key[one_filter['type']]>val[1]))
+                else:
+                    query = query.filter(not_(type_to_key[one_filter['type']].like("%{0}%".format(val))))
+            elif one_filter['cmp'] in ['gt', '>']:
+                query = query.filter(type_to_key[one_filter['type']] > val)
+            elif one_filter['cmp'] in ['lt', '<']:
+                query = query.filter(type_to_key[one_filter['type']] < val)
+            elif one_filter['cmp'] in ['ge', '>=']:
+                query = query.filter(type_to_key[one_filter['type']] >= val)
+            elif one_filter['cmp'] in ['le', '<=']:
+                query = query.filter(type_to_key[one_filter['type']] <= val)
+            else:
+                raise KeyError
+        except KeyError:
+            raise
+        #    raise Exception("Malformed filter in {0}".format(json.dumps(one_filter)))
+
+        print query
+
+    return query
