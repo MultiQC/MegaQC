@@ -388,7 +388,7 @@ def filter_builder(query, filters, type_to_key):
                     one_filter['cmp']='<='
                 elif one_filter['cmp'] in ['lt', '<']:
                     one_filter['cmp']='>='
-                elif one_filter['cmp']  ['ge', '>=']:
+                elif one_filter['cmp'] in ['ge', '>=']:
                     one_filter['cmp']='<'
                 elif one_filter['cmp'] in ['le', '<=']:
                     one_filter['cmp']='>'
