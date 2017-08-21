@@ -4,7 +4,7 @@ MegaQC is a web application that collects results from multiple runs of MultiQC 
 
 See the MultiQC website for installation instructions and documentation: http://multiqc.info/db/
 
-MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) at SciLifeLab Sweden (http://www.scilifelab.se)
+MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at SciLifeLab Sweden (http://www.scilifelab.se)
 """
 
 from setuptools import setup
