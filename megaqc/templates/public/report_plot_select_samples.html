@@ -418,8 +418,10 @@ function get_sample_count(){
         dataType: 'json',
         contentType: 'application/json; charset=UTF-8',
         success: function(data){
-            toastr.info("Got new report meta fields!")
-            console.log(data);
+            $('#reportMeta_key').html('<option value="">[ select field ]</option>');
+            $.each(data['fields'], function(idx, field){
+                $('#reportMeta_key').append('<option value="'+field['key']+'">'+field['nicename']+'</option>')
+            });
         },
         error: function(data){
             toastr.error('There was an error fetching the new report and sample filter types.')

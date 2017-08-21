@@ -7,15 +7,10 @@ from megaqc.api.constants import comparators, type_to_fields
 from sqlalchemy import func, distinct
 from sqlalchemy.sql import not_, or_
 from collections import defaultdict
-from math import log
 
-
-
-import colorlover as clv
 import plotly.offline as py
 import plotly.graph_objs as go
 
-import string
 import json
 
 
@@ -23,6 +18,11 @@ def handle_report_data(user, report_data):
     report_id = Report.get_next_id()
     new_report = Report(user_id=user.user_id)
     new_report.save()
+
+    # Save the user as a report meta value
+    user_report_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key='username', report_meta_value=user.username, report_id=new_report.report_id)
+    user_report_meta.save()
+
     for key in report_data:
         if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict):
             new_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key=key, report_meta_value=report_data[key], report_id=new_report.report_id)
@@ -368,12 +368,12 @@ def get_report_metadata_fields(filters=None):
     # Add a priority and nice name, check in config
     fields = []
     for f in field_keys:
-        if settings.report_metadata_fields[f].get('hidden', False):
+        if settings.report_metadata_fields.get(f, {}).get('hidden', False):
             continue
         fields.append({
             'key': f,
-            'nicename': settings.report_metadata_fields[f].get('nicename', f.replace('_', ' ')),
-            'priority': settings.report_metadata_fields[f].get('priority', 1)
+            'nicename': settings.report_metadata_fields.get(f, {}).get('nicename', f.replace('_', ' ')),
+            'priority': settings.report_metadata_fields.get(f, {}).get('priority', 1)
         })
     fields = sorted(fields, key=lambda k: k['priority'], reverse=True)
 
