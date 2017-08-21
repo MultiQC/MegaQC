@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 from megaqc.model.models import *
 from megaqc.extensions import db
-from megaqc.utils import multiqc_colors
+from megaqc.utils import multiqc_colors, settings
 from megaqc.api.constants import comparators, type_to_fields
 from sqlalchemy import func, distinct
 from sqlalchemy.sql import not_, or_
@@ -363,7 +363,20 @@ def get_report_metadata_fields(filters=None):
         filters=[]
     report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
     report_metadata_query = build_filter(report_metadata_query, filters)
-    fields = [row[0] for row in report_metadata_query.all()]
+    field_keys = [row[0] for row in report_metadata_query.all()]
+
+    # Add a priority and nice name, check in config
+    fields = []
+    for f in field_keys:
+        if settings.report_metadata_fields[f].get('hidden', False):
+            continue
+        fields.append({
+            'key': f,
+            'nicename': settings.report_metadata_fields[f].get('nicename', f.replace('_', ' ')),
+            'priority': settings.report_metadata_fields[f].get('priority', 1)
+        })
+    fields = sorted(fields, key=lambda k: k['priority'], reverse=True)
+
     return fields
 
 def get_sample_metadata_fields(filters=None):

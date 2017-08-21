@@ -100,22 +100,6 @@ def choose_plot_type():
 def report_plot_select_samples():
     reports = db.session.query(Report).all()
 
-    # Get the report metadata fields
-    report_fields = { k: {} for k in get_report_metadata_fields() }
-    report_md = {}
-    for md in report_fields:
-        if md in settings.report_metadata_fields:
-            if settings.report_metadata_fields[md].get('hidden', False):
-                continue
-            report_md[md] = settings.report_metadata_fields[md]
-        else:
-            report_md[md] = {}
-        if 'priority' not in report_md[md]:
-            report_md[md]['priority'] = 1
-        if 'nicename' not in report_md[md]:
-            report_md[md]['nicename'] = md.replace('_', ' ')
-    report_md_sorted = OrderedDict(sorted(report_md.items(), key=lambda x: x[1]['priority'], reverse=True))
-
     # Get the sample metadata fields
     sample_md_fields = { k: {} for k in get_sample_metadata_fields() }
     sample_md = {}
@@ -140,7 +124,7 @@ def report_plot_select_samples():
         reports=reports,
         user_token=current_user.api_token,
         num_samples=get_samples(count=True),
-        report_md=report_md_sorted,
+        report_fields=get_report_metadata_fields(),
         sample_md=sample_md_sorted
         )
 

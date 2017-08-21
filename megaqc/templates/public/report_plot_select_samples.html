@@ -6,7 +6,9 @@
 <h1>
     <a href="{{ url_for('public.report_plot') }}" class="pull-right btn btn-lg btn-outline-primary plot-link">Make Plot</a>
     Report Plot: Filter Samples
-    <span class="num_filtered_samples badge badge-pill badge-secondary">{{ num_samples }} samples</span>
+    <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
+        {{ num_samples }} samples
+    </span>
 </h1>
 
 <div class="row">
@@ -129,8 +131,8 @@
                             <div class="col-sm-8">
                                 <select class="form-control" id="reportMeta_key">
                                     <option value="">[ select field ]</option>
-                                    {% for field in report_md %}
-                                    <option value="{{ field }}">{{ report_md[field].nicename }}</option>
+                                    {% for field in report_fields %}
+                                    <option value="{{ field.key }}">{{ field.nicename }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -386,6 +388,14 @@ function get_sample_count(){
         success: function(data){
             if (data['success']){
                 $('.num_filtered_samples').text(data['count']+' samples');
+                $('.num_filtered_samples').removeClass('badge-danger badge-success badge-warning');
+                if(parseInt(data['count']) == 0){
+                    $('.num_filtered_samples').addClass('badge-danger');
+                } else if(parseInt(data['count']) > 100){
+                    $('.num_filtered_samples').addClass('badge-warning');
+                } else {
+                    $('.num_filtered_samples').addClass('badge-success');
+                }
             } else {
                 $('#selectSamplesSmall').text('???');
             }
