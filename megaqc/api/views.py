@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for, jsonify, abort
+from flask import Blueprint, request, jsonify, abort
 
 from megaqc.extensions import db
 from megaqc.user.models import User
 from megaqc.model.models import PlotData, Report
-from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, get_sample_metadata_fields
+from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, get_sample_metadata_fields, get_report_plot_types
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -165,25 +165,15 @@ def count_samples(user, *args, **kwargs):
         'count': count
     })
 
-@api_blueprint.route('/api/report_metadata_fields', methods=['GET', 'POST'])
+@api_blueprint.route('/api/report_filter_fields', methods=['GET', 'POST'])
 @check_user
-def report_metadata_fields(user, *args, **kwargs):
+def report_filter_fields(user, *args, **kwargs):
     data = request.get_json()
     filters = data.get("filters", [])
-    fields = get_report_metadata_fields(filters)
     return jsonify({
         'success': True,
-        'fields': fields
+        'num_samples': get_samples(filters, count=True),
+        'report_metadata_fields': get_report_metadata_fields(filters),
+        'sample_metadata_fields': get_sample_metadata_fields(filters),
+        'report_plot_types': get_report_plot_types(filters)
     })
-
-@api_blueprint.route('/api/sample_metadata_fields', methods=['GET', 'POST'])
-@check_user
-def sample_metadata_fields(user, *args, **kwargs):
-    data = request.get_json()
-    filters = data.get("filters", [])
-    fields = get_sample_metadata_fields(filters)
-    return jsonify({
-        'success': True,
-        'fields': fields
-    })
-

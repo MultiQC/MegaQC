@@ -4,9 +4,10 @@
 {% block content %}
 
 <h1>
-    <a href="{{ url_for('public.report_plot') }}" class="pull-right btn btn-lg btn-outline-primary plot-link">Make Plot</a>
-    Report Plot: Filter Samples
-    <span class="num_filtered_samples badge badge-pill badge-secondary">{{ num_samples }} samples</span>
+    Configure Report Plot
+    <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
+        {{ num_samples }} samples
+    </span>
 </h1>
 
 <div class="row">
@@ -40,25 +41,27 @@
                 <h3 class="mt-0">Add Filter</h3>
                 <div id="filter-type">
                     <div class="row">
-                        <div class="col">
+                        <div class="col-sm-6">
                             <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-dateRange">
                                 Date range<br>
                                 <small><em>e.g.</em> Last six months</small>
                             </button>
                         </div>
-                        <div class="col">
+                        <div class="col-sm-6">
                             <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-reportMeta">
                                 Report metadata<br>
                                 <small><em>e.g.</em> Submitted by <code>{{current_user.username}}</code></small>
                             </button>
                         </div>
-                        <div class="col">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
                             <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-sampleData">
                                 Sample data query<br>
                                 <small><em>e.g.</em> Where <code>%&nbsp;aligned &le;&nbsp;50%</code></small>
                             </button>
                         </div>
-                        <div class="col">
+                        <div class="col-sm-6">
                             <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-favouriteFilters">
                                 Favourite filters<br>
                                 <small>Apply your favourite filters</small>
@@ -129,8 +132,8 @@
                             <div class="col-sm-8">
                                 <select class="form-control" id="reportMeta_key">
                                     <option value="">[ select field ]</option>
-                                    {% for field in report_md %}
-                                    <option value="{{ field }}">{{ report_md[field].nicename }}</option>
+                                    {% for field in report_fields %}
+                                    <option value="{{ field.key }}">{{ field.nicename }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -218,7 +221,23 @@
         </div>
     </div>
 </div>
-<p class="text-center"><a href="{{ url_for('public.report_plot') }}" class="mt-3 btn btn-outline-primary btn-lg plot-link" style="width:150px;">Make Plot</a></p>
+<div class="card mt-3">
+    <div class="card-body">
+        <h3 class="mt-0">Choose Plot</h3>
+        <form id="createReportPlotForm" method="get" action="{{ url_for('public.report_plot') }}">
+            <div class="form-group">
+                <label for="selectPlotType">Plot Type</label>
+                <select class="form-control" id="selectPlotType">
+                    <option value="">[ select plot type ]</option>
+                    {% for plot in report_plot_types%}
+                    <option value="{{ plot['name'] }}">{{ plot['name'] }} ({{ plot['type'] }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg">Create Plot</button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}
 {% block js %}
@@ -368,14 +387,23 @@ function init_filters_table(){
 }
 
 function get_sample_count(){
-    // Build the filter JSON
+
+    // Build the filter JSON and update the "Create Plot" form
     var filters = {'filters': []}
+    var idx = 0;
+    $('.report_sample_filter').remove();
     $.each(window.active_filters, function(k, d){
         filters.filters.push(d);
+        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="f'+idx+'_k" value="'+d['key']+'">');
+        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="f'+idx+'_t" value="'+d['type']+'">');
+        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="f'+idx+'_c" value="'+d['cmp']+'">');
+        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="f'+idx+'_v" value="'+d['value']+'">');
+        idx += 1;
     });
-    // Count how many samples match the filters
+
+    // Update the page when a new filter is added
     $.ajax({
-        url: '/api/count_samples',
+        url: '/api/report_filter_fields',
         type: 'post',
         data:JSON.stringify( filters ),
         headers : { access_token:window.token },
@@ -383,18 +411,41 @@ function get_sample_count(){
         contentType: 'application/json; charset=UTF-8',
         success: function(data){
             if (data['success']){
-                $('num_filtered_samples').text(data['count']+' samples');
+
+                // Update number of matching samples
+                $('.num_filtered_samples').text(data['num_samples']+' samples');
+                $('.num_filtered_samples').removeClass('badge-danger badge-success badge-warning');
+                if(parseInt(data['num_samples']) == 0){
+                    $('.num_filtered_samples').addClass('badge-danger');
+                } else if(parseInt(data['num_samples']) > 100){
+                    $('.num_filtered_samples').addClass('badge-warning');
+                } else {
+                    $('.num_filtered_samples').addClass('badge-success');
+                }
+
+                // Update the report metadata dropdown
+                $('#reportMeta_key').html('<option value="">[ select field ]</option>');
+                $.each(data['report_metadata_fields'], function(idx, field){
+                    $('#reportMeta_key').append('<option value="'+field['key']+'">'+field['nicename']+'</option>')
+                });
+
+                // Update the sample metadata dropdown
+                console.log(data['sample_metadata_fields']);
+
+                // Update the report plot type dropdown
+                console.log(data['report_plot_types']);
+
+            // data['success'] was false
             } else {
-                $('#selectSamplesSmall').text('???');
+                console.log(data);
+                toastr.error('There was an error applying the sample filters.');
             }
         },
         error: function(data){
             toastr.error('There was an error applying the sample filters.')
         }
     });
-    // Refresh the "plot" URL
-    //  would be nicer to use $.param(filters) but a little tricky to get flask to decode this
-    $('.plot-link').attr('href', '{{ url_for("public.report_plot") }}?' + encodeURIComponent(JSON.stringify(filters)));
+
 }
 
 </script>

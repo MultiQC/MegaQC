@@ -39,7 +39,7 @@
           {% if current_user.is_admin %}
           <a class="dropdown-item" href="{{ url_for('user.admin_panel') }}">Admin Panel</a>
           {% endif %}
-          <a class="dropdown-item" href="{{ url_for('public.logout') }}">Log Out</a>
+          <a class="dropdown-item text-danger" href="{{ url_for('public.logout') }}">Log Out</a>
         </div>
       </li>
     {% else %}

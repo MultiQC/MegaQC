@@ -4,13 +4,10 @@ This file contains the app module, with the app factory function."""
 
 from __future__ import print_function
 from flask import Flask, jsonify, render_template, request
-from flask.helpers import get_debug_flag
 
-from megaqc import commands, public, user, version, api, model, utils
-from megaqc.utils import settings
-from megaqc.assets import assets
+from megaqc import commands, public, user, version, api
 from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager
-from megaqc.settings import DevConfig, ProdConfig
+from megaqc.settings import ProdConfig
 
 def create_app(config_object=ProdConfig):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -29,7 +26,6 @@ def create_app(config_object=ProdConfig):
 
 def register_extensions(app):
     """Register Flask extensions."""
-    assets.init_app(app)
     cache.init_app(app)
     db.init_app(app)
     csrf_protect.init_app(app)
@@ -99,15 +95,3 @@ def register_commands(app):
     app.cli.add_command(commands.clean)
     app.cli.add_command(commands.urls)
     app.cli.add_command(commands.initdb)
-
-# Run the app!
-CONFIG = DevConfig if get_debug_flag() else ProdConfig
-settings.mqc_load_userconfig()
-app = create_app(CONFIG)
-
-# Live reload
-if False and get_debug_flag():
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
-    from livereload import Server
-    server = Server(app.wsgi_app)
-    server.serve()

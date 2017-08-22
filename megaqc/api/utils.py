@@ -2,20 +2,15 @@
 from datetime import datetime, timedelta
 from megaqc.model.models import *
 from megaqc.extensions import db
-from megaqc.utils import multiqc_colors
+from megaqc.utils import multiqc_colors, settings
 from megaqc.api.constants import comparators, type_to_fields
 from sqlalchemy import func, distinct
 from sqlalchemy.sql import not_, or_
 from collections import defaultdict
-from math import log
 
-
-
-import colorlover as clv
 import plotly.offline as py
 import plotly.graph_objs as go
 
-import string
 import json
 
 
@@ -23,6 +18,11 @@ def handle_report_data(user, report_data):
     report_id = Report.get_next_id()
     new_report = Report(user_id=user.user_id)
     new_report.save()
+
+    # Save the user as a report meta value
+    user_report_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key='username', report_meta_value=user.username, report_id=new_report.report_id)
+    user_report_meta.save()
+
     for key in report_data:
         if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict):
             new_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key=key, report_meta_value=report_data[key], report_id=new_report.report_id)
@@ -246,7 +246,7 @@ def generate_plot(plot_type, sample_names):
             )
             plots.append(my_trace)
         layout = go.Layout(
-                xaxis={'type':'category'} 
+                xaxis={'type':'category'}
             )
         updated_layout = config_translate('xy_line', config, len(rows), layout)
         fig = go.Figure(data=plots, layout=updated_layout)
@@ -363,7 +363,20 @@ def get_report_metadata_fields(filters=None):
         filters=[]
     report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
     report_metadata_query = build_filter(report_metadata_query, filters)
-    fields = [row[0] for row in report_metadata_query.all()]
+    field_keys = [row[0] for row in report_metadata_query.all()]
+
+    # Add a priority and nice name, check in config
+    fields = []
+    for f in field_keys:
+        if settings.report_metadata_fields.get(f, {}).get('hidden', False):
+            continue
+        fields.append({
+            'key': f,
+            'nicename': settings.report_metadata_fields.get(f, {}).get('nicename', f.replace('_', ' ')),
+            'priority': settings.report_metadata_fields.get(f, {}).get('priority', 1)
+        })
+    fields = sorted(fields, key=lambda k: k['priority'], reverse=True)
+
     return fields
 
 def get_sample_metadata_fields(filters=None):
@@ -374,6 +387,37 @@ def get_sample_metadata_fields(filters=None):
     fields = [{'key':row[0], 'section':row[1]} for row in sample_metadata_query.all()]
     fields.sort(key=lambda x: x['section'])
     return fields
+
+def get_report_plot_types(filters=None):
+    if not filters:
+        filters= []
+    plot_types = []
+
+    # Get bar graphs
+    bg_pt_query = db.session.query(distinct(PlotConfig.section))
+    bg_pt_query = build_filter(bg_pt_query, filters)
+    bg_pt_query = bg_pt_query.filter(PlotConfig.name == 'bar_graph')
+    for row in bg_pt_query.all():
+        plot_types.append({
+            'name': row[0],
+            'type': 'bargraph'
+        })
+
+    # Get line graphs
+    lg_pt_query = db.session.query(distinct(PlotConfig.section), PlotCategory.category_name).join(PlotCategory)
+    lg_pt_query = build_filter(lg_pt_query, filters)
+    lg_pt_query = lg_pt_query.filter(PlotConfig.name == 'xy_line')
+    for row in lg_pt_query.all():
+        plot_types.append({
+            'name': '{} -- {}'.format(row[0], row[1]),
+            'plot_id': row[0],
+            'plot_ds_name': row[1],
+            'type': 'linegraph'
+        })
+
+    # Sort and return the results
+    plot_types = sorted(plot_types, key=lambda k: k['name'], reverse=True)
+    return plot_types
 
 def build_filter(query, filters):
     #Build sqlalchemy filters for the provided query based on constants and the provided filters
