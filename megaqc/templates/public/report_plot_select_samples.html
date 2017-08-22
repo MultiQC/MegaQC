@@ -394,10 +394,10 @@ function get_sample_count(){
     $('.report_sample_filter').remove();
     $.each(window.active_filters, function(k, d){
         filters.filters.push(d);
-        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="filter['+idx+'][key]" value="'+d['key']+'">');
-        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="filter['+idx+'][type]" value="'+d['type']+'">');
-        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="filter['+idx+'][cmp]" value="'+d['cmp']+'">');
-        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="filter['+idx+'][value]" value="'+d['value']+'">');
+        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="f'+idx+'_k" value="'+d['key']+'">');
+        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="f'+idx+'_t" value="'+d['type']+'">');
+        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="f'+idx+'_c" value="'+d['cmp']+'">');
+        $('#createReportPlotForm').append('<input type="hidden" class="report_sample_filter" name="f'+idx+'_v" value="'+d['value']+'">');
         idx += 1;
     });
 

@@ -133,18 +133,10 @@ def report_plot_select_samples():
 @blueprint.route('/report_plot/plot/')
 @login_required
 def report_plot():
-    reports = db.session.query(Report).all()
-    # Get the filters JSON from the URL
-    get_string = request.query_string.partition('&')[0]
-    if len(get_string) > 0:
-        urldata = json.loads(unquote_plus(request.query_string.partition('&')[0]))
-        filters = urldata['filters']
-    else:
-        filters = []
     return render_template(
         'public/report_plot.html',
         db=db,
         User=User,
-        filters = filters
+        filters = request.values
         )
 
