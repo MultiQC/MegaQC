@@ -49,7 +49,7 @@ class  PlotConfig(db.Model, CRUDMixin):
     config_id = Column(Integer, primary_key=True)
     name = Column(String(80),  nullable=False)
     section = Column(String(80), nullable=False)
-    data = Column(String(80), nullable=False)
+    data = Column(String(2048), nullable=False)
 
     @staticmethod
     def get_next_id():

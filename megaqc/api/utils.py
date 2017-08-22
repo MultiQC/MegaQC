@@ -246,7 +246,7 @@ def generate_plot(plot_type, sample_names):
             )
             plots.append(my_trace)
         layout = go.Layout(
-                xaxis={'type':'category'} 
+                xaxis={'type':'category'}
             )
         updated_layout = config_translate('xy_line', config, len(rows), layout)
         fig = go.Figure(data=plots, layout=updated_layout)
@@ -386,6 +386,37 @@ def get_sample_metadata_fields(filters=None):
     sample_metadata_query = build_filter(sample_metadata_query, filters)
     fields = [row[0] for row in sample_metadata_query.all()]
     return fields
+
+def get_report_plot_types(filters=None):
+    if not filters:
+        filters= []
+    plot_types = []
+
+    # Get bar graphs
+    bg_pt_query = db.session.query(distinct(PlotConfig.section))
+    bg_pt_query = build_filter(bg_pt_query, filters)
+    bg_pt_query = bg_pt_query.filter(PlotConfig.name == 'bar_graph')
+    for row in bg_pt_query.all():
+        plot_types.append({
+            'name': row[0],
+            'type': 'bargraph'
+        })
+
+    # Get line graphs
+    lg_pt_query = db.session.query(distinct(PlotConfig.section), PlotCategory.category_name).join(PlotCategory)
+    lg_pt_query = build_filter(lg_pt_query, filters)
+    lg_pt_query = lg_pt_query.filter(PlotConfig.name == 'xy_line')
+    for row in lg_pt_query.all():
+        plot_types.append({
+            'name': '{} -- {}'.format(row[0], row[1]),
+            'plot_id': row[0],
+            'plot_ds_name': row[1],
+            'type': 'linegraph'
+        })
+
+    # Sort and return the results
+    plot_types = sorted(plot_types, key=lambda k: k['name'], reverse=True)
+    return plot_types
 
 def build_filter(query, filters):
     #Build sqlalchemy filters for the provided query based on constants and the provided filters

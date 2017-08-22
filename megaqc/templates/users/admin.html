@@ -7,7 +7,7 @@
 
     <h3 class="mt-4">Manage users</h3>
     {{ form.csrf_token}}
-    <table id="user_table" class="table table-bordered">
+    <table id="user_table" class="table">
       <tr>
         <th>Username</th>
         <th>Email</th>
@@ -17,7 +17,7 @@
         <th>Active</th>
         <th>Admin</th>
         <th>Update</th>
-        <th>Reset Password</th>
+        <th>Password</th>
         <th>Delete</th>
       </tr>
       {% for user in users_data %}
@@ -37,7 +37,7 @@
     </table>
 
     <h3 class="mt-4">Add new user</h3>
-    <table id="add_table" class="table table-bordered">
+    <table id="add_table" class="table">
       <tr>
         <th>Username</th>
         <th>Email</th>

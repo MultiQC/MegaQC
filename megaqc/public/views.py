@@ -10,7 +10,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples, get_report_metadata_fields, get_sample_metadata_fields
+from megaqc.api.utils import get_samples, get_report_metadata_fields, get_sample_metadata_fields, get_report_plot_types
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -125,6 +125,7 @@ def report_plot_select_samples():
         user_token=current_user.api_token,
         num_samples=get_samples(count=True),
         report_fields=get_report_metadata_fields(),
+        report_plot_types=get_report_plot_types(),
         sample_md=sample_md_sorted
         )
 
