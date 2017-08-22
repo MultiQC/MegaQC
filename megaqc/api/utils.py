@@ -1,5 +1,6 @@
 
 from datetime import datetime, timedelta
+from hashlib import md5
 from megaqc.model.models import *
 from megaqc.extensions import db
 from megaqc.utils import multiqc_colors, settings
@@ -13,10 +14,20 @@ import plotly.graph_objs as go
 
 import json
 
+def generate_hash(data):
+    data.pop("config_creation_date")
+    string=json.dumps(data)
+    md5er=md5()
+    md5er.update(string)
+    ret = md5er.hexdigest()
+    return ret
 
 def handle_report_data(user, report_data):
     report_id = Report.get_next_id()
-    new_report = Report(user_id=user.user_id)
+    report_hash=generate_hash(report_data)
+    if db.session.query(Report).filter(Report.report_hash==report_hash).first():
+        raise Exception("Report already uploaded")
+    new_report = Report(report_hash=report_hash, user_id=user.user_id)
     new_report.save()
 
     # Save the user as a report meta value
