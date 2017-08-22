@@ -227,7 +227,7 @@
         <form id="createReportPlotForm" method="get" action="{{ url_for('public.report_plot') }}">
             <div class="form-group">
                 <label for="selectPlotType">Plot Type</label>
-                <select class="form-control" id="selectPlotType">
+                <select class="form-control" id="selectPlotType" name="plot_type">
                     <option value="">[ select plot type ]</option>
                     {% for plot in report_plot_types%}
                     <option value="{{ plot['name'] }}">{{ plot['name'] }} ({{ plot['type'] }})</option>
