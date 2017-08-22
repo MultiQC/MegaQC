@@ -8,7 +8,6 @@ from flask.helpers import get_debug_flag
 
 from megaqc import commands, public, user, version, api, model, utils
 from megaqc.utils import settings
-from megaqc.assets import assets
 from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager
 from megaqc.settings import DevConfig, ProdConfig
 
@@ -29,7 +28,6 @@ def create_app(config_object=ProdConfig):
 
 def register_extensions(app):
     """Register Flask extensions."""
-    assets.init_app(app)
     cache.init_app(app)
     db.init_app(app)
     csrf_protect.init_app(app)
