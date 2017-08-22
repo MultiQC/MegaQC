@@ -24,7 +24,7 @@ def handle_report_data(user, report_data):
     user_report_meta.save()
 
     for key in report_data:
-        if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict):
+        if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict) and report_data[key]:
             new_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key=key, report_meta_value=report_data[key], report_id=new_report.report_id)
             new_meta.save()
 
@@ -63,7 +63,8 @@ def handle_report_data(user, report_data):
 
 
     for plot in report_data.get('report_plot_data'):
-        config = json.dumps(report_data['report_plot_data'][plot]['config'])
+        if report_data['report_plot_data'][plot]['plot_type' not in ["bar_graph", "xy_line"]:
+            config = json.dumps(report_data['report_plot_data'][plot]['config'])
         existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
         if not existing_plot_config:
             config_id = PlotConfig.get_next_id()
