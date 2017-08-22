@@ -375,7 +375,7 @@ def get_report_metadata_fields(filters=None):
             'nicename': settings.report_metadata_fields.get(f, {}).get('nicename', f.replace('_', ' ')),
             'priority': settings.report_metadata_fields.get(f, {}).get('priority', 1)
         })
-    fields = sorted(fields, key=lambda k: k['priority'], reverse=True)
+    fields.sort(key=lambda k: k['priority'], reverse=True)
 
     return fields
 
@@ -384,8 +384,22 @@ def get_sample_metadata_fields(filters=None):
         filters=[]
     sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData).join(Report)
     sample_metadata_query = build_filter(sample_metadata_query, filters)
-    fields = [{'key':row[0], 'section':row[1]} for row in sample_metadata_query.all()]
+    fields = []
+    for row in sample_metadata_query.all():
+        if settings.sample_metadata_fields.get(row[0], {}).get('hidden', False):
+            continue
+        nicename = "{0}: {1}".format(row[1].replace('_', ' '), row[0].replace('_', ' '))
+        fields.append({
+            'key': row[0],
+            'section': row[1],
+            'nicename': settings.report_metadata_fields.get(row[0], {}).get('nicename', nicename),
+            'priority': settings.report_metadata_fields.get(row[0], {}).get('priority', 1)
+        })
+
+    # Sort first by section (default) and then overwrite with priority if given
     fields.sort(key=lambda x: x['section'])
+    fields.sort(key=lambda x: x['priority'], reverse=True)
+
     return fields
 
 def get_report_plot_types(filters=None):

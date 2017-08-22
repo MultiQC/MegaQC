@@ -48,7 +48,7 @@
                             </button>
                         </div>
                         <div class="col-sm-6">
-                            <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-reportMeta">
+                            <button type="button" class="btn-light btn-block btn-filter-type filterShowHide" data-hide="#filter-type" data-show="#filter-report_meta">
                                 Report metadata<br>
                                 <small><em>e.g.</em> Submitted by <code>{{current_user.username}}</code></small>
                             </button>
@@ -123,14 +123,14 @@
                         </div>
                     </div>
                 </div>
-                <div id="filter-reportMeta" class="filter-filterTypeBox">
+                <div id="filter-report_meta" class="filter-filterTypeBox">
                     <p class="small pull-right"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
                     <h5 class="mt-0">Add Report Metadata Filter</h5>
-                    <form id="filter-reportMetaForm">
+                    <form id="filter-report_meta_form">
                         <div class="form-group row">
-                            <label for="reportMeta_field" class="col-sm-4 col-form-label">Field</label>
+                            <label for="report_meta_field" class="col-sm-4 col-form-label">Field</label>
                             <div class="col-sm-8">
-                                <select class="form-control" id="reportMeta_key">
+                                <select class="form-control" id="report_meta_key">
                                     <option value="">[ select field ]</option>
                                     {% for field in report_fields %}
                                     <option value="{{ field.key }}">{{ field.nicename }}</option>
@@ -139,9 +139,9 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="reportMeta_cmp" class="col-sm-4 col-form-label">Comparison</label>
+                            <label for="report_meta_cmp" class="col-sm-4 col-form-label">Comparison</label>
                             <div class="col-sm-8">
-                                <select class="form-control" id="reportMeta_cmp">
+                                <select class="form-control" id="report_meta_cmp">
                                     <option value="in">Contains string</option>
                                     <option value="not in">Does not contain string</option>
                                     <option value="eq">(=) Equal to</option>
@@ -154,12 +154,12 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="reportMeta_value" class="col-sm-4 col-form-label">Value</label>
+                            <label for="report_meta_value" class="col-sm-4 col-form-label">Value</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="reportMeta_value" placeholder="Enter value here">
+                                <input type="text" class="form-control" id="report_meta_value" placeholder="Enter value here">
                             </div>
                         </div>
-                        <button id="filterDateAddBtn" type="submit" class="btn btn-outline-primary">
+                        <button type="submit" class="btn btn-outline-primary">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                             Add filter
                         </button>
@@ -169,22 +169,22 @@
                 <div id="filter-sampleData" class="filter-filterTypeBox">
                     <p class="small pull-right"><a href="#" class="filterShowHide" data-show="#filter-type" data-hide=".filter-filterTypeBox">&laquo; Back to filter types</a></p>
                     <h5 class="mt-0">Add Sample Data Filter</h5>
-                    <form id="filter-reportMetaForm">
+                    <form id="filter-sample_data_form">
                         <div class="form-group row">
-                            <label for="reportMeta_field" class="col-sm-4 col-form-label">Field</label>
+                            <label for="sample_data_field" class="col-sm-4 col-form-label">Field</label>
                             <div class="col-sm-8">
-                                <select class="form-control" id="reportMeta_key">
+                                <select class="form-control" id="sample_data_key">
                                     <option value="">[ select field ]</option>
-                                    {% for field in sample_md %}
-                                    <option value="{{ field }}">{{ sample_md[field].nicename }}</option>
+                                    {% for field in sample_fields %}
+                                    <option value="{{ field.key }}">{{ field.nicename }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="reportMeta_cmp" class="col-sm-4 col-form-label">Comparison</label>
+                            <label for="sample_data_cmp" class="col-sm-4 col-form-label">Comparison</label>
                             <div class="col-sm-8">
-                                <select class="form-control" id="reportMeta_cmp">
+                                <select class="form-control" id="sample_data_cmp">
                                     <option value="in">Contains string</option>
                                     <option value="not in">Does not contain string</option>
                                     <option value="eq">(=) Equal to</option>
@@ -197,12 +197,12 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="reportMeta_value" class="col-sm-4 col-form-label">Value</label>
+                            <label for="sample_data_value" class="col-sm-4 col-form-label">Value</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="reportMeta_value" placeholder="Enter value here">
+                                <input type="text" class="form-control" id="sample_data_value" placeholder="Enter value here">
                             </div>
                         </div>
-                        <button id="filterDateAddBtn" type="submit" class="btn btn-outline-primary">
+                        <button type="submit" class="btn btn-outline-primary">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                             Add filter
                         </button>
@@ -346,33 +346,64 @@ $(function(){
     });
 
     // Add a report meta filter
-    $('#filter-reportMetaForm').submit(function(e){
+    $('#filter-report_meta_form').submit(function(e){
         e.preventDefault();
-        $('#reportMeta_key').removeClass('is-invalid');
+        $('#report_meta_key').removeClass('is-invalid');
         // Check that field has been picked
-        if($('#reportMeta_key').val() == ''){
+        if($('#report_meta_key').val() == ''){
             toastr.error("You must choose a field to filter on");
-            $('#reportMeta_key').addClass('is-invalid');
+            $('#report_meta_key').addClass('is-invalid');
             return false;
         }
         // Add the filter
         var filter_id = 'filter_'+Math.random().toString(36).substring(2);
         window.active_filters[filter_id] = {
-            'type': 'reportmeta',
-            'key': $('#reportMeta_key').val(),
-            'value': $('#reportMeta_value').val(),
-            'cmp': $('#reportMeta_cmp').val()
+            'type': 'report_meta',
+            'key': $('#report_meta_key').val(),
+            'value': $('#report_meta_value').val(),
+            'cmp': $('#report_meta_cmp').val()
         };
         var trow = '<tr id="'+filter_id+'">' +
             '<td><input type="checkbox" class="filterCheckbox"></td>' +
             '<td>Report Metadata</td>' +
-            '<td><code>' + $('#reportMeta_key option:selected').text() + '</code> '+$('#reportMeta_cmp option:selected').text().toLowerCase()+' <code>'+$('#reportMeta_value').val()+'</code></td>' +
+            '<td><code>' + $('#report_meta_key option:selected').text() + '</code> '+$('#report_meta_cmp option:selected').text().toLowerCase()+' <code>'+$('#report_meta_value').val()+'</code></td>' +
         '</tr>';
         $(trow).appendTo('#activeFiltersTable tbody').hide().slideDown();
         $('.filter-filterTypeBox').slideUp();
         $('#filter-type').slideDown();
-        $('#reportMeta_key, #reportMeta_value').val('');
-        $('#reportMeta_cmp').prop('selectedIndex',0);
+        $('#report_meta_key, #report_meta_value').val('');
+        $('#report_meta_cmp').prop('selectedIndex',0);
+        init_filters_table();
+    });
+
+    // Add a sample data filter
+    $('#filter-sample_data_form').submit(function(e){
+        e.preventDefault();
+        $('#sample_data_key').removeClass('is-invalid');
+        // Check that field has been picked
+        if($('#sample_data_key').val() == ''){
+            toastr.error("You must choose a field to filter on");
+            $('#sample_data_key').addClass('is-invalid');
+            return false;
+        }
+        // Add the filter
+        var filter_id = 'filter_'+Math.random().toString(36).substring(2);
+        window.active_filters[filter_id] = {
+            'type': 'samplemeta',
+            'key': $('#sample_data_key').val(),
+            'value': $('#sample_data_value').val(),
+            'cmp': $('#sample_data_cmp').val()
+        };
+        var trow = '<tr id="'+filter_id+'">' +
+            '<td><input type="checkbox" class="filterCheckbox"></td>' +
+            '<td>Report Metadata</td>' +
+            '<td><code>' + $('#sample_data_key option:selected').text() + '</code> '+$('#sample_data_cmp option:selected').text().toLowerCase()+' <code>'+$('#sample_data_value').val()+'</code></td>' +
+        '</tr>';
+        $(trow).appendTo('#activeFiltersTable tbody').hide().slideDown();
+        $('.filter-filterTypeBox').slideUp();
+        $('#filter-type').slideDown();
+        $('#sample_data_key, #sample_data_value').val('');
+        $('#sample_data_cmp').prop('selectedIndex',0);
         init_filters_table();
     });
 });
@@ -424,13 +455,16 @@ function get_sample_count(){
                 }
 
                 // Update the report metadata dropdown
-                $('#reportMeta_key').html('<option value="">[ select field ]</option>');
+                $('#report_meta_key').html('<option value="">[ select field ]</option>');
                 $.each(data['report_metadata_fields'], function(idx, field){
-                    $('#reportMeta_key').append('<option value="'+field['key']+'">'+field['nicename']+'</option>')
+                    $('#report_meta_key').append('<option value="'+field['key']+'">'+field['nicename']+'</option>')
                 });
 
                 // Update the sample metadata dropdown
-                console.log(data['sample_metadata_fields']);
+                $('#sample_data_key').html('<option value="">[ select field ]</option>');
+                $.each(data['sample_metadata_fields'], function(idx, field){
+                    $('#sample_data_key').append('<option value="'+field['key']+'">'+field['nicename']+'</option>')
+                });
 
                 // Update the report plot type dropdown
                 console.log(data['report_plot_types']);
