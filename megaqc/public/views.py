@@ -156,7 +156,6 @@ def report_plot():
         db=db,
         User=User,
         filters = filters,
-        plot_html = plot_html,
-        # samples = samples
+        plot_html = plot_html
         )
 

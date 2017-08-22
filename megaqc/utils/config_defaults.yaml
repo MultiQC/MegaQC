@@ -43,7 +43,7 @@ report_metadata_fields:
 sample_metadata_fields: {}
 
 # Same defaults as HighCharts for consistency
-default_colors:
+default_plot_colors:
     - '#7cb5ec'
     - '#434348'
     - '#90ed7d'

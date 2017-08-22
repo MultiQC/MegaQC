@@ -166,7 +166,7 @@ def generate_plot(plot_type, sample_names):
                 plot_data_perc[key][sample] = 100 * plot_data[key][sample] / total_per_sample[sample]
         plots=[]
         if not colors:
-            colors = settings.multiqc_colors
+            colors = settings.default_plot_colors
         for idx, d in enumerate(series):
             my_trace = go.Bar(
                 y=samples,
@@ -231,7 +231,7 @@ def generate_plot(plot_type, sample_names):
             if 'color' in category_conf:
                 line_color = category_conf['color']
             else:
-                line_color = settings.multiqc_colors[idx%(len(settings.multiqc_colors)+1)]
+                line_color = settings.default_plot_colors[idx%(len(settings.default_plot_colors)+1)]
             my_trace = go.Scatter(
                 y=ys,
                 x=xs,
