@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 from megaqc.model.models import *
 from megaqc.extensions import db
-from megaqc.utils import multiqc_colors, settings
+from megaqc.utils import settings
 from megaqc.api.constants import comparators, type_to_fields
 from sqlalchemy import func, distinct
 from sqlalchemy.sql import not_, or_
@@ -166,7 +166,7 @@ def generate_plot(plot_type, sample_names):
                 plot_data_perc[key][sample] = 100 * plot_data[key][sample] / total_per_sample[sample]
         plots=[]
         if not colors:
-            colors = multiqc_colors()
+            colors = settings.multiqc_colors
         for idx, d in enumerate(series):
             my_trace = go.Bar(
                 y=samples,
@@ -231,7 +231,7 @@ def generate_plot(plot_type, sample_names):
             if 'color' in category_conf:
                 line_color = category_conf['color']
             else:
-                line_color = multiqc_colors()[idx%11]
+                line_color = settings.multiqc_colors[idx%(len(settings.multiqc_colors)+1)]
             my_trace = go.Scatter(
                 y=ys,
                 x=xs,
