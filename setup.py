@@ -38,6 +38,7 @@ setup(
     packages = ['megaqc'],
     include_package_data = True,
     zip_safe = False,
+    scripts = ['scripts/megaqc'],
     install_requires = install_requires,
     classifiers = [
         'Development Status :: 4 - Beta',

@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+""" MegaQC: a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.
+"""
+
+import click
+from flask.cli import FlaskGroup
+
+def create_megaqc_app(info):
+    from flask.helpers import get_debug_flag
+    from megaqc.app import create_app
+    from megaqc.settings import DevConfig, ProdConfig
+    CONFIG = DevConfig if get_debug_flag() else ProdConfig
+    return create_app(CONFIG)
+
+@click.group(cls=FlaskGroup, create_app=create_megaqc_app)
+def cli():
+    """Welcome to the MegaQC command line interface!\n
+    MegaQC is built using the Flask Python web framework.
+    See below for the available commands - for example,
+    to start the MegaQC server, use the command: megaqc run"""
+
+if __name__ == '__main__':
+    import pkg_resources
+    version = pkg_resources.get_distribution("megaqc").version
+    print("This is MegaQC v{}\n".format(version))
+    cli()
