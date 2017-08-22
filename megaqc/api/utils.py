@@ -6,7 +6,7 @@ from megaqc.utils import multiqc_colors, settings
 from megaqc.api.constants import comparators, type_to_fields
 from sqlalchemy import func, distinct
 from sqlalchemy.sql import not_, or_
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 import plotly.offline as py
 import plotly.graph_objs as go
@@ -35,9 +35,10 @@ def handle_report_data(user, report_data):
             existing_key = db.session.query(SampleDataType).filter(SampleDataType.data_id==general_headers[general_header].get('rid')).first()
             if not existing_key:
                 new_id = (db.session.query(func.max(SampleDataType.sample_data_type_id)).first()[0] or 0) +1
+                section=general_headers[general_header].get('namespace')
                 new_type = SampleDataType(sample_data_type_id=new_id,
-                                            data_key=data_key,
-                                            data_section=general_headers[general_header].get('namespace'),
+                                            data_key="{}__{}".format(section, data_key),
+                                            data_section=section,
                                             data_id=general_headers[general_header].get('rid'))
                 new_type.save()
                 type_id = new_id
@@ -384,8 +385,19 @@ def get_sample_metadata_fields(filters=None):
         filters=[]
     sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData).join(Report)
     sample_metadata_query = build_filter(sample_metadata_query, filters)
-    fields = [{'key':row[0], 'section':row[1]} for row in sample_metadata_query.all()]
-    fields.sort(key=lambda x: x['section'])
+    # Get the sample metadata fields
+    fields = {row[0]: {'section':row[1]} for row in sample_metadata_query.all()}
+    for md in fields:
+        if md in settings.sample_metadata_fields:
+            if settings.sample_metadata_fields[md].get('hidden', False):
+                continue
+            fields[md].update(settings.sample_metadata_fields[md])
+        if 'priority' not in fields[md]:
+            fields[md]['priority'] = 1
+        if 'nicename' not in fields[md]:
+            fields[md]['nicename'] = "{0}: {1}".format(fields[md]['section'].replace('_', ' '),md.replace('_', ' '))
+    fields = OrderedDict(sorted(fields.items(), key=lambda x: x[1]['priority'], reverse=True))
+
     return fields
 
 def get_report_plot_types(filters=None):
@@ -394,22 +406,24 @@ def get_report_plot_types(filters=None):
     plot_types = []
 
     # Get bar graphs
-    bg_pt_query = db.session.query(distinct(PlotConfig.section))
+    bg_pt_query = db.session.query(distinct(PlotConfig.section), PlotConfig.data)
     bg_pt_query = build_filter(bg_pt_query, filters)
     bg_pt_query = bg_pt_query.filter(PlotConfig.name == 'bar_graph')
     for row in bg_pt_query.all():
         plot_types.append({
             'name': row[0],
+            'nicename':json.loads(row[1]).get('title', row[0].replace('_', ' ')),
             'type': 'bargraph'
         })
 
     # Get line graphs
-    lg_pt_query = db.session.query(distinct(PlotConfig.section), PlotCategory.category_name).join(PlotCategory)
+    lg_pt_query = db.session.query(distinct(PlotConfig.section), PlotConfig.data, PlotCategory.category_name).join(PlotCategory)
     lg_pt_query = build_filter(lg_pt_query, filters)
     lg_pt_query = lg_pt_query.filter(PlotConfig.name == 'xy_line')
     for row in lg_pt_query.all():
         plot_types.append({
             'name': '{} -- {}'.format(row[0], row[1]),
+            'nicename':json.loads(row[1]).get('title', row[0].replace('_', ' ')),
             'plot_id': row[0],
             'plot_ds_name': row[1],
             'type': 'linegraph'

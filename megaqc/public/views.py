@@ -90,19 +90,7 @@ def choose_plot_type():
 @login_required
 def report_plot_select_samples():
     reports = db.session.query(Report).all()
-
-    # Get the sample metadata fields
-    sample_md_fields = { k['key']: {'section':k['section']} for k in get_sample_metadata_fields() }
-    for md in sample_md_fields:
-        if md in settings.sample_metadata_fields:
-            if settings.sample_metadata_fields[md].get('hidden', False):
-                continue
-            sample_md_fields[md].update(settings.sample_metadata_fields[md])
-        if 'priority' not in sample_md_fields[md]:
-            sample_md_fields[md]['priority'] = 1
-        if 'nicename' not in sample_md_fields[md]:
-            sample_md_fields[md]['nicename'] = "{0}: {1}".format(sample_md_fields[md]['section'].replace('_', ' '),md.replace('_', ' '))
-    sample_md_sorted = OrderedDict(sorted(sample_md_fields.items(), key=lambda x: x[1]['priority'], reverse=True))
+    sample_md_fields = get_sample_metadata_fields()
 
     # Render the template
     return render_template(
@@ -114,7 +102,7 @@ def report_plot_select_samples():
         num_samples=get_samples(count=True),
         report_fields=get_report_metadata_fields(),
         report_plot_types=get_report_plot_types(),
-        sample_md=sample_md_sorted
+        sample_md=sample_md_fields
         )
 
 
