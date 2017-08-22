@@ -63,18 +63,19 @@ def handle_report_data(user, report_data):
 
 
     for plot in report_data.get('report_plot_data'):
-        if report_data['report_plot_data'][plot]['plot_type' not in ["bar_graph", "xy_line"]:
-            config = json.dumps(report_data['report_plot_data'][plot]['config'])
+        if report_data['report_plot_data'][plot]['plot_type'] not in ["bar_graph", "xy_line"]:
+                continue
+        config = json.dumps(report_data['report_plot_data'][plot]['config'])
         existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
         if not existing_plot_config:
             config_id = PlotConfig.get_next_id()
-        else:
-            config_id = existing_plot_config.config_id
-        new_plot_config = PlotConfig(config_id=config_id,
+            new_plot_config = PlotConfig(config_id=config_id,
                 name=report_data['report_plot_data'][plot]['plot_type'],
                 section=plot,
                 data=config)
-        new_plot_config.save()
+            new_plot_config.save()
+        else:
+            config_id = existing_plot_config.config_id
 
         if report_data['report_plot_data'][plot]['plot_type']=="bar_graph":
 
@@ -114,15 +115,17 @@ def handle_report_data(user, report_data):
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
-                    else:
-                        category_id = existing_category.plot_category_id
-                    data=json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
-                    existing_category = PlotCategory(plot_category_id=PlotCategory.get_next_id(),
+                        data=json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
+                        existing_category = PlotCategory(plot_category_id=PlotCategory.get_next_id(),
                                                     report_id=report_id,
                                                     config_id=config_id,
                                                     category_name=data_key,
                                                     data=data)
-                    existing_category.save()
+                        existing_category.save()
+                    else:
+                        existing_category.data=data
+                        existing_category.save()
+                        category_id = existing_category.plot_category_id
 
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
                        new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
