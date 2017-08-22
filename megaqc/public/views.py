@@ -81,15 +81,6 @@ def about():
     form = LoginForm(request.form)
     return render_template('public/about.html', form=form)
 
-@blueprint.route('/new_plot/')
-@login_required
-def new_plot():
-    reports = db.session.query(Report).all()
-    plot_types = [x[0] for x in db.session.query(distinct(PlotConfig.section)).filter(PlotConfig.name == 'bar_graph').all()]
-    plot_types.extend(['{} -- {}'.format(x[0], x[1]) for x in db.session.query(distinct(PlotConfig.section), PlotCategory.category_name).join(PlotCategory).filter(PlotConfig.name == 'xy_line').all()])
-    plot_types.sort()
-    return render_template('public/plot_choice.html', db=db,User=User, reports=reports, user_token=current_user.api_token, plot_types=plot_types)
-
 @blueprint.route('/plot_type/')
 def choose_plot_type():
     """Choose plot type."""
@@ -101,20 +92,17 @@ def report_plot_select_samples():
     reports = db.session.query(Report).all()
 
     # Get the sample metadata fields
-    sample_md_fields = { k: {} for k in get_sample_metadata_fields() }
-    sample_md = {}
+    sample_md_fields = { k['key']: {'section':k['section']} for k in get_sample_metadata_fields() }
     for md in sample_md_fields:
         if md in settings.sample_metadata_fields:
             if settings.sample_metadata_fields[md].get('hidden', False):
                 continue
-            sample_md[md] = settings.sample_metadata_fields[md]
-        else:
-            sample_md[md] = {}
-        if 'priority' not in sample_md[md]:
-            sample_md[md]['priority'] = 1
-        if 'nicename' not in sample_md[md]:
-            sample_md[md]['nicename'] = md.replace('_', ' ')
-    sample_md_sorted = OrderedDict(sorted(sample_md.items(), key=lambda x: x[1]['priority'], reverse=True))
+            sample_md_fields[md].update(settings.sample_metadata_fields[md])
+        if 'priority' not in sample_md_fields[md]:
+            sample_md_fields[md]['priority'] = 1
+        if 'nicename' not in sample_md_fields[md]:
+            sample_md_fields[md]['nicename'] = "{0}: {1}".format(sample_md_fields[md]['section'].replace('_', ' '),md.replace('_', ' '))
+    sample_md_sorted = OrderedDict(sorted(sample_md_fields.items(), key=lambda x: x[1]['priority'], reverse=True))
 
     # Render the template
     return render_template(
