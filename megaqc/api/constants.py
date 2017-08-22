@@ -5,7 +5,7 @@ type_to_fields={
         'daterange': [Report.created_at,Report.created_at],
         'timedelta':[Report.created_at],
         'reportmeta':[ReportMeta.report_meta_value, ReportMeta.report_meta_key],
-        'samplemeta':[SampleData.value, SampleDataType.data_key]
+        'samplemeta':[SampleData.value, SampleDataType.data_key, SampleDataType.data_section]
 }
 comparators={
         'gt':'__gt__',
