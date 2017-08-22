@@ -7,10 +7,11 @@ import click
 from flask.cli import FlaskGroup
 
 def create_megaqc_app(info):
-    from flask.helpers import get_debug_flag
+    import os
     from megaqc.app import create_app
     from megaqc.settings import DevConfig, ProdConfig
-    CONFIG = DevConfig if get_debug_flag() else ProdConfig
+    MEGAQC_DEBUG = os.environ.get('MEGAQC_DEBUG', False)
+    CONFIG = DevConfig if MEGAQC_DEBUG else ProdConfig
     return create_app(CONFIG)
 
 @click.group(cls=FlaskGroup, create_app=create_megaqc_app)
