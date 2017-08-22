@@ -369,9 +369,10 @@ def get_report_metadata_fields(filters=None):
 def get_sample_metadata_fields(filters=None):
     if not filters:
         filters=[]
-    sample_metadata_query = db.session.query(distinct(SampleDataType.data_key)).join(SampleData).join(Report)
+    sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData).join(Report)
     sample_metadata_query = build_filter(sample_metadata_query, filters)
-    fields = [row[0] for row in sample_metadata_query.all()]
+    fields = [{'key':row[0], 'section':row[1]} for row in sample_metadata_query.all()]
+    fields.sort(key=lambda x: x['section'])
     return fields
 
 def build_filter(query, filters):
@@ -418,6 +419,10 @@ def build_filter(query, filters):
                 params.append(key)
                 cmps.append("==")
                 #if there is a key/value pair, the cmp only applies to the value, the key should be matched
+            key = one_filter.get('section', None)
+            if one_filter.get('section'):
+                params.append(one_filter['section'])
+                cmps.append("==")
 
 
         for idx, param in enumerate(params):
