@@ -404,6 +404,12 @@ def get_report_metadata_fields(filters=None):
 def get_sample_metadata_fields(filters=None):
     if not filters:
         filters=[]
+    else:
+        valid_samples = get_samples(filters)
+        filters = [x for x in filters if x['type'] != "samplemeta"]
+        filters.append({'type':'samplenames',
+                        'cmp':'inlist',
+                        'value': valid_samples})
     sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData).join(Report)
     sample_metadata_query = build_filter(sample_metadata_query, filters)
     fields = []
