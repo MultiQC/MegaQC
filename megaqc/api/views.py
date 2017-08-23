@@ -57,11 +57,14 @@ def test_post(user, *args, **kwargs):
 @check_user
 def handle_multiqc_data(user, *args, **kwargs):
     data = request.get_json().get('data')
-    handle_report_data(user, data)
-    return jsonify({
-        'success': True,
-        'message': 'Data upload successful'
+    success, msg = handle_report_data(user, data)
+    response = jsonify({
+        'success': success,
+        'message': msg
     })
+    if not success:
+        response.status_code = 400
+    return response
 
 
 @api_blueprint.route('/api/update_users', methods=['POST'])

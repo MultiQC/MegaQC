@@ -26,7 +26,7 @@ def handle_report_data(user, report_data):
     report_id = Report.get_next_id()
     report_hash=generate_hash(report_data)
     if db.session.query(Report).filter(Report.report_hash==report_hash).first():
-        raise Exception("Report already uploaded")
+        return (False, 'Report already uploaded')
     new_report = Report(report_hash=report_hash, user_id=user.user_id)
     new_report.save()
 
@@ -148,6 +148,8 @@ def handle_report_data(user, report_data):
                                 )
                     new_dataset_row.save()
 
+    # We made it this far - everything must have worked!
+    return (True, 'Data upload successful')
 
 
 def generate_plot(plot_type, sample_names):
