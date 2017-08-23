@@ -230,7 +230,7 @@
                 <select class="form-control" id="selectPlotType" name="plot_type">
                     <option value="">[ select plot type ]</option>
                     {% for plot in report_plot_types%}
-                    <option value="{{ plot['name'] }}">{{ plot['name'] }} ({{ plot['type'] }})</option>
+                    <option value="{{ plot['name'] }}">{{ plot['nicename'] }} ({{ plot['type'] }})</option>
                     {% endfor %}
                 </select>
             </div>

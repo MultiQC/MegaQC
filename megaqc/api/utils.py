@@ -1,22 +1,33 @@
 
 from datetime import datetime, timedelta
+from hashlib import md5
 from megaqc.model.models import *
 from megaqc.extensions import db
 from megaqc.utils import settings
 from megaqc.api.constants import comparators, type_to_fields
 from sqlalchemy import func, distinct
 from sqlalchemy.sql import not_, or_
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 import plotly.offline as py
 import plotly.graph_objs as go
 
 import json
 
+def generate_hash(data):
+    data.pop("config_creation_date")
+    string=json.dumps(data)
+    md5er=md5()
+    md5er.update(string)
+    ret = md5er.hexdigest()
+    return ret
 
 def handle_report_data(user, report_data):
     report_id = Report.get_next_id()
-    new_report = Report(user_id=user.user_id)
+    report_hash=generate_hash(report_data)
+    if db.session.query(Report).filter(Report.report_hash==report_hash).first():
+        raise Exception("Report already uploaded")
+    new_report = Report(report_hash=report_hash, user_id=user.user_id)
     new_report.save()
 
     # Save the user as a report meta value
@@ -24,7 +35,7 @@ def handle_report_data(user, report_data):
     user_report_meta.save()
 
     for key in report_data:
-        if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict):
+        if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict) and report_data[key]:
             new_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key=key, report_meta_value=report_data[key], report_id=new_report.report_id)
             new_meta.save()
 
@@ -35,9 +46,10 @@ def handle_report_data(user, report_data):
             existing_key = db.session.query(SampleDataType).filter(SampleDataType.data_id==general_headers[general_header].get('rid')).first()
             if not existing_key:
                 new_id = (db.session.query(func.max(SampleDataType.sample_data_type_id)).first()[0] or 0) +1
+                section=general_headers[general_header].get('namespace')
                 new_type = SampleDataType(sample_data_type_id=new_id,
-                                            data_key=data_key,
-                                            data_section=general_headers[general_header].get('namespace'),
+                                            data_key="{}__{}".format(section, data_key),
+                                            data_section=section,
                                             data_id=general_headers[general_header].get('rid'))
                 new_type.save()
                 type_id = new_id
@@ -62,17 +74,19 @@ def handle_report_data(user, report_data):
 
 
     for plot in report_data.get('report_plot_data'):
+        if report_data['report_plot_data'][plot]['plot_type'] not in ["bar_graph", "xy_line"]:
+                continue
         config = json.dumps(report_data['report_plot_data'][plot]['config'])
         existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
         if not existing_plot_config:
             config_id = PlotConfig.get_next_id()
-        else:
-            config_id = existing_plot_config.config_id
-        new_plot_config = PlotConfig(config_id=config_id,
+            new_plot_config = PlotConfig(config_id=config_id,
                 name=report_data['report_plot_data'][plot]['plot_type'],
                 section=plot,
                 data=config)
-        new_plot_config.save()
+            new_plot_config.save()
+        else:
+            config_id = existing_plot_config.config_id
 
         if report_data['report_plot_data'][plot]['plot_type']=="bar_graph":
 
@@ -112,15 +126,17 @@ def handle_report_data(user, report_data):
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
-                    else:
-                        category_id = existing_category.plot_category_id
-                    data=json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
-                    existing_category = PlotCategory(plot_category_id=PlotCategory.get_next_id(),
+                        data=json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
+                        existing_category = PlotCategory(plot_category_id=PlotCategory.get_next_id(),
                                                     report_id=report_id,
                                                     config_id=config_id,
                                                     category_name=data_key,
                                                     data=data)
-                    existing_category.save()
+                        existing_category.save()
+                    else:
+                        existing_category.data=data
+                        existing_category.save()
+                        category_id = existing_category.plot_category_id
 
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
                        new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
@@ -408,22 +424,24 @@ def get_report_plot_types(filters=None):
     plot_types = []
 
     # Get bar graphs
-    bg_pt_query = db.session.query(distinct(PlotConfig.section))
+    bg_pt_query = db.session.query(distinct(PlotConfig.section), PlotConfig.data)
     bg_pt_query = build_filter(bg_pt_query, filters)
     bg_pt_query = bg_pt_query.filter(PlotConfig.name == 'bar_graph')
     for row in bg_pt_query.all():
         plot_types.append({
             'name': row[0],
+            'nicename':json.loads(row[1]).get('title', row[0].replace('_', ' ')),
             'type': 'bargraph'
         })
 
     # Get line graphs
-    lg_pt_query = db.session.query(distinct(PlotConfig.section), PlotCategory.category_name).join(PlotCategory)
+    lg_pt_query = db.session.query(distinct(PlotConfig.section), PlotConfig.data, PlotCategory.category_name).join(PlotCategory)
     lg_pt_query = build_filter(lg_pt_query, filters)
     lg_pt_query = lg_pt_query.filter(PlotConfig.name == 'xy_line')
     for row in lg_pt_query.all():
         plot_types.append({
             'name': '{} -- {}'.format(row[0], row[1]),
+            'nicename':json.loads(row[1]).get('title', row[0].replace('_', ' ')),
             'plot_id': row[0],
             'plot_ds_name': row[1],
             'type': 'linegraph'

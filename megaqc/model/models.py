@@ -13,6 +13,7 @@ class Report(db.Model, CRUDMixin):
 
     __tablename__ = 'report'
     report_id = Column(Integer, primary_key=True)
+    report_hash = Column(String)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     user_id = Column(Integer, ForeignKey('users.user_id'))
 
