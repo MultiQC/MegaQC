@@ -2,7 +2,7 @@ colorlover>=0.2.1
 multiqc>=1.0
 Flask==0.12
 MarkupSafe==0.23
-Werkzeug==0.11.15
+Werkzeug>=0.11.15
 Jinja2==2.9.5
 itsdangerous==0.24
 click>=5.0

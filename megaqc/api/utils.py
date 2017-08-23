@@ -370,13 +370,19 @@ def get_samples(filters=None, count=False):
     if count:
         samples = sample_query.first()[0]
     else:
-        samples = sample_query.all()
+        samples = [x[0] for x in sample_query.all()]
 
     return samples
 
 def get_report_metadata_fields(filters=None):
     if not filters:
         filters=[]
+    else:
+        valid_samples = get_samples(filters)
+        filters = [x for x in filters if x['type'] != "reportmeta"]
+        filters.append({'type':'samplenames',
+                        'cmp':'inlist',
+                        'value': valid_samples})
     report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
     report_metadata_query = build_filter(report_metadata_query, filters)
     field_keys = [row[0] for row in report_metadata_query.all()]
