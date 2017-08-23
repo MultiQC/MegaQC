@@ -160,6 +160,9 @@ def generate_plot(plot_type, sample_names):
     else:
         rows = db.session.query(PlotConfig, PlotData, PlotCategory).join(PlotData).join(PlotCategory).filter(PlotConfig.section==plot_type,PlotData.sample_name.in_(sample_names)).all()
 
+    if len(rows) == 0:
+        return '<div class="alert alert-danger">No samples found</div>'
+
     if rows[0][0].name == "bar_graph":
         #not using sets to keep the order
         samples = []
@@ -449,13 +452,13 @@ def get_report_plot_types(filters=None):
         })
 
     # Get line graphs
-    lg_pt_query = db.session.query(distinct(PlotConfig.section), PlotConfig.data, PlotCategory.category_name).join(PlotCategory)
+    lg_pt_query = db.session.query(distinct(PlotConfig.section),PlotCategory.category_name, PlotConfig.data).join(PlotCategory)
     lg_pt_query = build_filter(lg_pt_query, filters)
     lg_pt_query = lg_pt_query.filter(PlotConfig.name == 'xy_line')
     for row in lg_pt_query.all():
         plot_types.append({
             'name': '{} -- {}'.format(row[0], row[1]),
-            'nicename':json.loads(row[1]).get('title', row[0].replace('_', ' ')),
+            'nicename':json.loads(row[2]).get('title', row[0].replace('_', ' ')),
             'plot_id': row[0],
             'plot_ds_name': row[1],
             'type': 'linegraph'

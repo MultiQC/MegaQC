@@ -120,8 +120,13 @@ def report_plot():
 
     # Generate the plot
     plot_type = request.values.get('plot_type')
-    samples = [s[0] for s in get_samples(filters)]
-    plot_html = generate_plot(plot_type, samples)
+    samples = get_samples(filters)
+    if plot_type is None:
+        plot_html = '<div class="alert alert-danger">Error: No plot type supplied.</div>'
+    elif len(samples) == 0:
+        plot_html = '<div class="alert alert-danger">Error: No matching samples found.</div>'
+    else:
+        plot_html = generate_plot(plot_type, samples)
 
     return render_template(
         'public/report_plot.html',
