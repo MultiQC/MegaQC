@@ -4,6 +4,7 @@ from megaqc.model.models import *
 type_to_fields={
         'daterange': [Report.created_at,Report.created_at],
         'timedelta':[Report.created_at],
+        'samplenames':[SampleData.sample_name],
         'reportmeta':[ReportMeta.report_meta_value, ReportMeta.report_meta_key],
         'samplemeta':[SampleData.value, SampleDataType.data_key, SampleDataType.data_section]
 }
@@ -20,6 +21,7 @@ comparators={
         '==':'__eq__',
         '=':'__eq__',
         'in':'contains',
+        'inlist':'in_',
         'ne':'__ne__',
         '!=':'__ne__',
         'not in':'notlike'

@@ -124,9 +124,9 @@ def handle_report_data(user, report_data):
                         data_key = report_data['report_plot_data'][plot]['config']['ylab']
 
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
+                    data=json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
-                        data=json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
                         existing_category = PlotCategory(plot_category_id=PlotCategory.get_next_id(),
                                                     report_id=report_id,
                                                     config_id=config_id,
@@ -372,13 +372,19 @@ def get_samples(filters=None, count=False):
     if count:
         samples = sample_query.first()[0]
     else:
-        samples = sample_query.all()
+        samples = [x[0] for x in sample_query.all()]
 
     return samples
 
 def get_report_metadata_fields(filters=None):
     if not filters:
         filters=[]
+    else:
+        valid_samples = get_samples(filters)
+        filters = [x for x in filters if x['type'] != "reportmeta"]
+        filters.append({'type':'samplenames',
+                        'cmp':'inlist',
+                        'value': valid_samples})
     report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
     report_metadata_query = build_filter(report_metadata_query, filters)
     field_keys = [row[0] for row in report_metadata_query.all()]
@@ -400,6 +406,12 @@ def get_report_metadata_fields(filters=None):
 def get_sample_metadata_fields(filters=None):
     if not filters:
         filters=[]
+    else:
+        valid_samples = get_samples(filters)
+        filters = [x for x in filters if x['type'] != "samplemeta"]
+        filters.append({'type':'samplenames',
+                        'cmp':'inlist',
+                        'value': valid_samples})
     sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData).join(Report)
     sample_metadata_query = build_filter(sample_metadata_query, filters)
     fields = []
