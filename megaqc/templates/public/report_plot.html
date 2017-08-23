@@ -4,10 +4,8 @@
 
 <h1>MultiQC Report Plot</h1>
 
-<p><samp>The plot page stuff will go here..</samp></p>
-
-<pre><code>{% for f in filters -%}
-{{ f }} = {{ filters[f] }}
-{% endfor %}</code></pre>
+<div id="reportPlot">
+    {{ plot_html | safe }}
+</div>
 
 {% endblock %}

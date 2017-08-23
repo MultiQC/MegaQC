@@ -8,9 +8,3 @@ def flash_errors(form, category='warning'):
     for field, errors in form.errors.items():
         for error in errors:
             flash('{0} - {1}'.format(getattr(form, field).label.text, error), category)
-
-
-
-def multiqc_colors():
-    return ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-                       '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1']

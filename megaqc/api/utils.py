@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from hashlib import md5
 from megaqc.model.models import *
 from megaqc.extensions import db
-from megaqc.utils import multiqc_colors, settings
+from megaqc.utils import settings
 from megaqc.api.constants import comparators, type_to_fields
 from sqlalchemy import func, distinct
 from sqlalchemy.sql import not_, or_
@@ -182,7 +182,7 @@ def generate_plot(plot_type, sample_names):
                 plot_data_perc[key][sample] = 100 * plot_data[key][sample] / total_per_sample[sample]
         plots=[]
         if not colors:
-            colors = multiqc_colors()
+            colors = settings.default_plot_colors
         for idx, d in enumerate(series):
             my_trace = go.Bar(
                 y=samples,
@@ -247,7 +247,7 @@ def generate_plot(plot_type, sample_names):
             if 'color' in category_conf:
                 line_color = category_conf['color']
             else:
-                line_color = multiqc_colors()[idx%11]
+                line_color = settings.default_plot_colors[idx%(len(settings.default_plot_colors)+1)]
             my_trace = go.Scatter(
                 y=ys,
                 x=xs,
@@ -397,7 +397,7 @@ def get_report_metadata_fields(filters=None):
             'nicename': settings.report_metadata_fields.get(f, {}).get('nicename', f.replace('_', ' ')),
             'priority': settings.report_metadata_fields.get(f, {}).get('priority', 1)
         })
-    fields = sorted(fields, key=lambda k: k['priority'], reverse=True)
+    fields.sort(key=lambda k: k['priority'], reverse=True)
 
     return fields
 
@@ -406,18 +406,21 @@ def get_sample_metadata_fields(filters=None):
         filters=[]
     sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData).join(Report)
     sample_metadata_query = build_filter(sample_metadata_query, filters)
-    # Get the sample metadata fields
-    fields = {row[0]: {'section':row[1]} for row in sample_metadata_query.all()}
-    for md in fields:
-        if md in settings.sample_metadata_fields:
-            if settings.sample_metadata_fields[md].get('hidden', False):
-                continue
-            fields[md].update(settings.sample_metadata_fields[md])
-        if 'priority' not in fields[md]:
-            fields[md]['priority'] = 1
-        if 'nicename' not in fields[md]:
-            fields[md]['nicename'] = "{0}: {1}".format(fields[md]['section'].replace('_', ' '),md.replace('_', ' '))
-    fields = OrderedDict(sorted(fields.items(), key=lambda x: x[1]['priority'], reverse=True))
+    fields = []
+    for row in sample_metadata_query.all():
+        if settings.sample_metadata_fields.get(row[0], {}).get('hidden', False):
+            continue
+        nicename = "{0}: {1}".format(row[1].replace('_', ' '), row[0].replace('_', ' '))
+        fields.append({
+            'key': row[0],
+            'section': row[1],
+            'nicename': settings.report_metadata_fields.get(row[0], {}).get('nicename', nicename),
+            'priority': settings.report_metadata_fields.get(row[0], {}).get('priority', 1)
+        })
+
+    # Sort first by section (default) and then overwrite with priority if given
+    fields.sort(key=lambda x: x['section'])
+    fields.sort(key=lambda x: x['priority'], reverse=True)
 
     return fields
 
@@ -451,7 +454,7 @@ def get_report_plot_types(filters=None):
         })
 
     # Sort and return the results
-    plot_types = sorted(plot_types, key=lambda k: k['name'], reverse=True)
+    plot_types = sorted(plot_types, key=lambda k: k['name'])
     return plot_types
 
 def build_filter(query, filters):
