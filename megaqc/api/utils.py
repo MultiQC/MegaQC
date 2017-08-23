@@ -448,7 +448,7 @@ def get_report_plot_types(filters=None):
         })
 
     # Sort and return the results
-    plot_types = sorted(plot_types, key=lambda k: k['name'], reverse=True)
+    plot_types = sorted(plot_types, key=lambda k: k['name'])
     return plot_types
 
 def build_filter(query, filters):

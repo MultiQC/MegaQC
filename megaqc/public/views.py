@@ -92,13 +92,13 @@ def report_plot_select_samples():
     # Render the template
     return render_template(
         'public/report_plot_select_samples.html',
-        db=db,
-        User=User,
-        user_token=current_user.api_token,
-        num_samples=get_samples(count=True),
-        report_fields=get_report_metadata_fields(),
-        sample_fields=get_sample_metadata_fields(),
-        report_plot_types=get_report_plot_types()
+        db = db,
+        User = User,
+        user_token = current_user.api_token,
+        num_samples = get_samples(count=True),
+        report_fields = get_report_metadata_fields(),
+        sample_fields = get_sample_metadata_fields(),
+        report_plot_types = get_report_plot_types()
         )
 
 
