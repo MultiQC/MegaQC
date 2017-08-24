@@ -4,8 +4,9 @@ from hashlib import md5
 from megaqc.model.models import *
 from megaqc.extensions import db
 from megaqc.utils import settings
-from megaqc.api.constants import comparators, type_to_fields
-from sqlalchemy import func, distinct
+from megaqc.api.constants import comparators, type_to_tables_fields
+from sqlalchemy import func, distinct, cast, Numeric
+from sqlalchemy.orm import aliased
 from sqlalchemy.sql import not_, or_
 from collections import defaultdict, OrderedDict
 
@@ -62,13 +63,23 @@ def handle_report_data(user, report_data):
             config_id = new_id
 
             for sample in report_data.get('report_general_stats_data')[idx]:
+                existing_sample = db.session.query(Sample).filter(Sample.sample_name==sample).first()
+                if existing_sample:
+                    sample_id = existing_sample.sample_id
+                else:
+                    try:
+                        new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sample)
+                        new_sample.save()
+                    except:
+                        import pdb;pdb.set_trace()
+                    sample_id=new_sample.sample_id
                 new_data_id = (db.session.query(func.max(SampleData.sample_data_id)).first()[0] or 0) +1
                 value = report_data.get('report_general_stats_data')[idx][sample][data_key]
                 new_data = SampleData(sample_data_id=new_data_id,
                                     report_id=report_id,
                                     sample_data_type_id=type_id,
                                     data_config_id=config_id,
-                                    sample_name=sample,
+                                    sample_id=sample_id,
                                     value=str(value))
                 new_data.save()
 
@@ -106,10 +117,17 @@ def handle_report_data(user, report_data):
                                                         data=data)
                     existing_category.save()
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
+                        existing_sample = db.session.query(Sample).filter(Sample.sample_name==report_data['report_plot_data'][plot]['samples'][dst_idx][sa_idx]).first()
+                        if existing_sample:
+                            sample_id = existing_sample.sample_id
+                        else:
+                            new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sample, report_id=report_id)
+                            new_sample.save()
+                            sample_id=new_sample.sample_id
                         new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
                                        report_id=report_id,
                                        config_id=config_id,
-                                       sample_name=report_data['report_plot_data'][plot]['samples'][dst_idx][sa_idx],
+                                       sample_id=sample_id,
                                        plot_category_id=existing_category.plot_category_id,
                                        data=json.dumps(actual_data)
                                 )
@@ -139,10 +157,17 @@ def handle_report_data(user, report_data):
                         category_id = existing_category.plot_category_id
 
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
-                       new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
+                        existing_sample = db.session.query(Sample).filter(Sample.sample_name==sub_dict['name']).first()
+                        if existing_sample:
+                            sample_id = existing_sample.sample_id
+                        else:
+                            new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sample, report_id=report_id)
+                            new_sample.save()
+                            sample_id=new_sample.sample_id
+                        new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
                                        report_id=report_id,
                                        config_id=config_id,
-                                       sample_name=sub_dict['name'],
+                                       sample_id=sample_id,
                                        plot_category_id=existing_category.plot_category_id,
                                        data=json.dumps(sub_dict['data'])
                                 )
@@ -156,9 +181,9 @@ def generate_plot(plot_type, sample_names):
     if " -- " in plot_type:
         # Plot type also contains data_key : True for most xy_lines
         plot_type=plot_type.split(" -- ")
-        rows = db.session.query(PlotConfig, PlotData, PlotCategory).join(PlotData).join(PlotCategory).filter(PlotConfig.section==plot_type[0],PlotCategory.category_name==plot_type[1],PlotData.sample_name.in_(sample_names)).all()
+        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.section==plot_type[0],PlotCategory.category_name==plot_type[1],Sample.sample_name.in_(sample_names)).all()
     else:
-        rows = db.session.query(PlotConfig, PlotData, PlotCategory).join(PlotData).join(PlotCategory).filter(PlotConfig.section==plot_type,PlotData.sample_name.in_(sample_names)).all()
+        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.section==plot_type,Sample.sample_name.in_(sample_names)).all()
 
     if len(rows) == 0:
         return '<div class="alert alert-danger">No samples found</div>'
@@ -173,15 +198,15 @@ def generate_plot(plot_type, sample_names):
         plot_data_perc=defaultdict(lambda:defaultdict(lambda:0))
         config = json.loads(rows[-1][0].data)#grab latest config
         for row in rows:
-            if row[1].sample_name not in samples:
-                samples.append(row[1].sample_name)
+            if row[3].sample_name not in samples:
+                samples.append(row[3].sample_name)
             if row[2].category_name not in series:
                 series.append(row[2].category_name)
                 cat_config = json.loads(row[2].data)
                 if 'color' in cat_config:
                     colors.append(cat_config['color'])
-            plot_data[row[2].category_name][row[1].sample_name]=float(row[1].data)
-            total_per_sample[row[1].sample_name] = total_per_sample[row[1].sample_name] + float(row[1].data) # count total per sample for percentages
+            plot_data[row[2].category_name][row[3].sample_name]=float(row[1].data)
+            total_per_sample[row[3].sample_name] = total_per_sample[row[3].sample_name] + float(row[1].data) # count total per sample for percentages
         for key in plot_data:
             for sample in plot_data[key]:
                 plot_data_perc[key][sample] = 100 * plot_data[key][sample] / total_per_sample[sample]
@@ -364,9 +389,9 @@ def get_samples(filters=None, count=False):
     if not filters:
         filters=[]
     if count:
-        sample_query = db.session.query(func.count(distinct(PlotData.sample_name))).join(Report)
+        sample_query = db.session.query(func.count(distinct(Sample.sample_name))).join(Report)
     else:
-        sample_query = db.session.query(distinct(PlotData.sample_name)).join(Report)
+        sample_query = db.session.query(distinct(Sample.sample_name)).join(Report)
 
     sample_query = build_filter(sample_query, filters)
     print sample_query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
@@ -471,7 +496,8 @@ def get_report_plot_types(filters=None):
 def build_filter(query, filters):
     #Build sqlalchemy filters for the provided query based on constants and the provided filters
     alchemy_cmps=[]
-    for one_filter in filters:
+    for filter_idx, one_filter in enumerate(filters):
+
         params=[]
         cmps=[]
         if one_filter['type'] == 'daterange':
@@ -506,7 +532,11 @@ def build_filter(query, filters):
                 #not in is a special case, there is no sqlalchemy operator to deal with it, although there is one for "in" and "notlike"
                 params=['%{0}%'.format(one_filter['value'])]
             else:
-                params=[one_filter['value']]
+                try:
+                    val=float(one_filter['value'])
+                    params=[val]
+                except:
+                    params=[one_filter['value']]
             key = one_filter.get('key', None)
             if key:
                 params.append(key)
@@ -518,9 +548,24 @@ def build_filter(query, filters):
                 cmps.append("==")
 
 
+        #make named joins
+        aliased_fields = []
+        for table in type_to_tables_fields[one_filter['type']]:
+            print table
+            aliased_table=aliased(table)
+            try:
+                query.join(aliased_table)
+            except:
+                print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
+                import pdb;pdb.set_trace()
+            for field in type_to_tables_fields[one_filter['type']][table]:
+                aliased_fields.append(getattr(aliased_table, field))
+
         for idx, param in enumerate(params):
             #field is a db_column
-            field = type_to_fields[one_filter['type']][idx]
+            field = aliased_fields[idx]
+            if isinstance(params[idx], float):
+                field=cast(field, Numeric)
             #sql_cmp is a comparison function
             sql_cmp = getattr(field, comparators[cmps[idx]])
             alchemy_cmps.append(sql_cmp(param))

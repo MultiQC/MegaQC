@@ -1,12 +1,13 @@
 
 from megaqc.model.models import *
+from collections import OrderedDict
 
-type_to_fields={
-        'daterange': [Report.created_at,Report.created_at],
-        'timedelta':[Report.created_at],
-        'samplenames':[SampleData.sample_name],
-        'reportmeta':[ReportMeta.report_meta_value, ReportMeta.report_meta_key],
-        'samplemeta':[SampleData.value, SampleDataType.data_key, SampleDataType.data_section]
+type_to_tables_fields={
+        'daterange': {Report:['created_at','created_at']},
+        'timedelta':{Report:['created_at']},
+        'samplenames':{Sample:['sample_name']},
+        'reportmeta':{ReportMeta:['report_meta_value', 'report_meta_key']},
+        'samplemeta':OrderedDict([(SampleData,['value']), (SampleDataType,['data_key', 'data_section'])])
 }
 comparators={
         'gt':'__gt__',

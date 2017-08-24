@@ -62,7 +62,7 @@ class PlotData(db.Model, CRUDMixin):
     report_id = Column(Integer, ForeignKey('report.report_id'))
     config_id = Column(Integer, ForeignKey('plot_config.config_id'))
     plot_category_id = Column(Integer(), ForeignKey('plot_category.plot_category_id'))
-    sample_name = Column(String(80), nullable=False)
+    sample_id = Column(Integer, ForeignKey('sample.sample_id'))
     data = Column(String(2048), nullable=False)
 
     @staticmethod
@@ -99,7 +99,7 @@ class SampleData(db.Model, CRUDMixin):
     report_id = Column(Integer, ForeignKey('report.report_id'))
     sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id'))
     data_config_id = Column(Integer, ForeignKey('sample_data_config.sample_data_config_id'))
-    sample_name = Column(String(80))
+    sample_id = Column(Integer, ForeignKey('sample.sample_id'))
     value = Column(String(80))
 
     @staticmethod
@@ -107,3 +107,11 @@ class SampleData(db.Model, CRUDMixin):
         return (db.session.query(func.max(SampleData.sample_data_id)).first()[0] or 0) + 1
 
 
+class Sample(db.Model, CRUDMixin):
+    __tablename__ ="sample"
+    sample_id=Column(Integer, primary_key=True)
+    sample_name=sample_name = Column(String(80)) 
+    report_id = Column(Integer, ForeignKey('report.report_id'))
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(Sample.sample_id)).first()[0] or 0) + 1
