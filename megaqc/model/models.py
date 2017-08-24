@@ -81,11 +81,6 @@ class PlotCategory(db.Model, CRUDMixin):
     def get_next_id():
         return (db.session.query(func.max(PlotData.plot_data_id)).first()[0] or 0) + 1
 
-class SampleDataConfig(db.Model, CRUDMixin):
-    __tablename__ = "sample_data_config"
-    sample_data_config_id = Column(Integer, primary_key=True)
-    sample_data_config_value = Column(String(2048), nullable=False)
-
 class SampleDataType(db.Model, CRUDMixin):
     __tablename__ = "sample_data_type"
     sample_data_type_id = Column(Integer, primary_key=True)
@@ -98,7 +93,6 @@ class SampleData(db.Model, CRUDMixin):
     sample_data_id = Column(Integer, primary_key=True)
     report_id = Column(Integer, ForeignKey('report.report_id'))
     sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id'))
-    data_config_id = Column(Integer, ForeignKey('sample_data_config.sample_data_config_id'))
     sample_id = Column(Integer, ForeignKey('sample.sample_id'))
     value = Column(String(80))
 

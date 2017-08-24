@@ -32,74 +32,85 @@ def handle_report_data(user, report_data):
     new_report.save()
 
     # Save the user as a report meta value
-    user_report_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key='username', report_meta_value=user.username, report_id=new_report.report_id)
+    # TODO: Replace this with special cases in get_report_metadata_fields()
+    user_report_meta = ReportMeta(
+                            report_meta_id = ReportMeta.get_next_id(),
+                            report_meta_key = 'username',
+                            report_meta_value = user.username,
+                            report_id = new_report.report_id
+                        )
     user_report_meta.save()
 
+    # Get top-level `config_` JSON keys (strings only).
+    # eg. config_title / config_short_version / config_creation_date etc
     for key in report_data:
         if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict) and report_data[key]:
             new_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key=key, report_meta_value=report_data[key], report_id=new_report.report_id)
             new_meta.save()
 
-    for idx, general_headers in enumerate(report_data.get('report_general_stats_headers')):
-        for general_header in general_headers:
-            data_key = general_header
-            config = json.dumps(general_headers[general_header])
-            existing_key = db.session.query(SampleDataType).filter(SampleDataType.data_id==general_headers[general_header].get('rid')).first()
-            if not existing_key:
-                new_id = (db.session.query(func.max(SampleDataType.sample_data_type_id)).first()[0] or 0) +1
-                section=general_headers[general_header].get('namespace')
-                new_type = SampleDataType(sample_data_type_id=new_id,
-                                            data_key="{}__{}".format(section, data_key),
-                                            data_section=section,
-                                            data_id=general_headers[general_header].get('rid'))
-                new_type.save()
-                type_id = new_id
-            else:
-                type_id = existing_key.sample_data_type_id
-
-            new_id = (db.session.query(func.max(SampleDataConfig.sample_data_config_id)).first()[0] or 0) +1
-            new_config = SampleDataConfig(sample_data_config_id=new_id,sample_data_config_value=config)
-            new_config.save()
-            config_id = new_id
-
-            for sample in report_data.get('report_general_stats_data')[idx]:
-                existing_sample = db.session.query(Sample).filter(Sample.sample_name==sample).first()
+    # Save the raw parsed data (stuff that ends up in the multiqc_data directory)
+    for s_key in report_data.get('report_saved_raw_data', {}):
+        section = s_key.replace('multiqc_', '')
+        # Go through each sample
+        for s_name in report_data['report_saved_raw_data'][s_key]:
+                existing_sample = db.session.query(Sample).filter(Sample.sample_name==s_name).first()
                 if existing_sample:
                     sample_id = existing_sample.sample_id
                 else:
-                    try:
-                        new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sample)
-                        new_sample.save()
-                    except:
-                        import pdb;pdb.set_trace()
+                    new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=s_name, report_id=report_id)
+                    new_sample.save()
                     sample_id=new_sample.sample_id
-                new_data_id = (db.session.query(func.max(SampleData.sample_data_id)).first()[0] or 0) +1
-                value = report_data.get('report_general_stats_data')[idx][sample][data_key]
-                new_data = SampleData(sample_data_id=new_data_id,
-                                    report_id=report_id,
-                                    sample_data_type_id=type_id,
-                                    data_config_id=config_id,
-                                    sample_id=sample_id,
-                                    value=str(value))
+            # Go through each data key
+            for d_key in report_data['report_saved_raw_data'][s_key][s_name]:
+                # Save / load the data type
+                existing_key = db.session.query(SampleDataType).filter(SampleDataType.data_id==d_key).first()
+                if not existing_key:
+                    new_id = (db.session.query(func.max(SampleDataType.sample_data_type_id)).first()[0] or 0) +1
+                    new_type = SampleDataType(
+                                    sample_data_type_id=new_id,
+                                    data_key="{}__{}".format(section, d_key),
+                                    data_section=section,
+                                    data_id=d_key
+                                )
+                    new_type.save()
+                    type_id = new_id
+                else:
+                    type_id = existing_key.sample_data_type_id
+
+                # Save the data value
+                new_data_id = (db.session.query(func.max(SampleData.sample_data_id)).first()[0] or 0) + 1
+                value = report_data['report_saved_raw_data'][s_key][s_name][d_key]
+                new_data = SampleData(
+                                sample_data_id=new_data_id,
+                                report_id=report_id,
+                                sample_data_type_id=type_id,
+                                sample_id=sample_id,
+                                value=str(value)
+                            )
                 new_data.save()
 
-
+    # Save report plot data and configs
     for plot in report_data.get('report_plot_data'):
+        # TODO: Add support for scatter / beeswarm / heatmap
         if report_data['report_plot_data'][plot]['plot_type'] not in ["bar_graph", "xy_line"]:
-                continue
+            continue
+        # Save the plot config as a JSON string
         config = json.dumps(report_data['report_plot_data'][plot]['config'])
         existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
         if not existing_plot_config:
             config_id = PlotConfig.get_next_id()
-            new_plot_config = PlotConfig(config_id=config_id,
-                name=report_data['report_plot_data'][plot]['plot_type'],
-                section=plot,
-                data=config)
+            new_plot_config = PlotConfig(
+                config_id=config_id,
+                name = report_data['report_plot_data'][plot]['plot_type'],
+                section = plot,
+                data = config
+            )
             new_plot_config.save()
         else:
             config_id = existing_plot_config.config_id
 
-        if report_data['report_plot_data'][plot]['plot_type']=="bar_graph":
+        # Save bar graph data
+        if report_data['report_plot_data'][plot]['plot_type'] == "bar_graph":
 
             for dst_idx, dataset in enumerate(report_data['report_plot_data'][plot]['datasets']):
                 for sub_dict in dataset:
@@ -109,12 +120,14 @@ def handle_report_data(user, report_data):
                         category_id = PlotCategory.get_next_id()
                     else:
                         category_id = existing_category.plot_category_id
-                    data=json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
-                    existing_category = PlotCategory(plot_category_id=PlotCategory.get_next_id(),
-                                                        report_id=report_id,
-                                                        config_id=config_id,
-                                                        category_name=data_key,
-                                                        data=data)
+                    data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
+                    existing_category = PlotCategory(
+                                            plot_category_id = PlotCategory.get_next_id(),
+                                            report_id = report_id,
+                                            config_id = config_id,
+                                            category_name = data_key,
+                                            data = data
+                                        )
                     existing_category.save()
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
                         existing_sample = db.session.query(Sample).filter(Sample.sample_name==report_data['report_plot_data'][plot]['samples'][dst_idx][sa_idx]).first()
@@ -133,7 +146,8 @@ def handle_report_data(user, report_data):
                                 )
                         new_dataset_row.save()
 
-        elif report_data['report_plot_data'][plot]['plot_type']=="xy_line":
+        # Save line plot data
+        elif report_data['report_plot_data'][plot]['plot_type'] == "xy_line":
             for dst_idx, dataset in enumerate(report_data['report_plot_data'][plot]['datasets']):
                 for sub_dict in dataset:
                     try:
@@ -142,17 +156,19 @@ def handle_report_data(user, report_data):
                         data_key = report_data['report_plot_data'][plot]['config']['ylab']
 
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
-                    data=json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
+                    data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
-                        existing_category = PlotCategory(plot_category_id=PlotCategory.get_next_id(),
-                                                    report_id=report_id,
-                                                    config_id=config_id,
-                                                    category_name=data_key,
-                                                    data=data)
+                        existing_category = PlotCategory(
+                                                plot_category_id = PlotCategory.get_next_id(),
+                                                report_id = report_id,
+                                                config_id = config_id,
+                                                category_name = data_key,
+                                                data = data
+                                            )
                         existing_category.save()
                     else:
-                        existing_category.data=data
+                        existing_category.data = data
                         existing_category.save()
                         category_id = existing_category.plot_category_id
 
@@ -168,7 +184,7 @@ def handle_report_data(user, report_data):
                                        report_id=report_id,
                                        config_id=config_id,
                                        sample_id=sample_id,
-                                       plot_category_id=existing_category.plot_category_id,
+                                       plot_category_id=category_id,
                                        data=json.dumps(sub_dict['data'])
                                 )
                     new_dataset_row.save()
@@ -277,17 +293,18 @@ def generate_plot(plot_type, sample_names):
             if 'color' in category_conf:
                 line_color = category_conf['color']
             else:
-                line_color = settings.default_plot_colors[idx%(len(settings.default_plot_colors)+1)]
+                line_color = settings.default_plot_colors[ idx % len(settings.default_plot_colors) ]
             my_trace = go.Scatter(
-                y=ys,
-                x=xs,
-                name=row[2].category_name,
-                mode='lines',
+                y = ys,
+                x = xs,
+                name = row[2].category_name,
+                mode = 'lines',
                 marker = dict(
                     color = line_color,
                     line = dict(
                         color = line_color,
-                        width = 1)
+                        width = 1
+                    )
                 )
             )
             plots.append(my_trace)
@@ -446,7 +463,10 @@ def get_sample_metadata_fields(filters=None):
     for row in sample_metadata_query.all():
         if settings.sample_metadata_fields.get(row[0], {}).get('hidden', False):
             continue
-        nicename = "{0}: {1}".format(row[1].replace('_', ' '), row[0].replace('_', ' '))
+        # Generate a default nice name (can be overwritten by config below)
+        nicename = row[0][len(row[1]):] if row[0].startswith(row[1]) else row[0]
+        nice_section = row[1].title() if row[1].islower() else row[1]
+        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
         fields.append({
             'key': row[0],
             'section': row[1],
@@ -454,7 +474,8 @@ def get_sample_metadata_fields(filters=None):
             'priority': settings.report_metadata_fields.get(row[0], {}).get('priority', 1)
         })
 
-    # Sort first by section (default) and then overwrite with priority if given
+    # Sort alphabetically, then by section and then overwrite with priority if given
+    fields.sort(key=lambda x: x['nicename'].lower())
     fields.sort(key=lambda x: x['section'])
     fields.sort(key=lambda x: x['priority'], reverse=True)
 

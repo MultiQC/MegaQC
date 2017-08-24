@@ -176,7 +176,7 @@
                                 <select class="form-control" id="sample_data_key">
                                     <option value="">[ select field ]</option>
                                     {% for field in sample_fields %}
-                                    <option value="{{ field.key }}">{{ field.nicename }}</option>
+                                    <option value="{{ field.key }}" data-section="{{ field.section }}">{{ field.nicename }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -391,6 +391,7 @@ $(function(){
         window.active_filters[filter_id] = {
             'type': 'samplemeta',
             'key': $('#sample_data_key').val(),
+            'section': $('#sample_data_key option:selected').data('section'),
             'value': $('#sample_data_value').val(),
             'cmp': $('#sample_data_cmp').val()
         };
