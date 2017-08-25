@@ -53,13 +53,13 @@ def handle_report_data(user, report_data):
         section = s_key.replace('multiqc_', '')
         # Go through each sample
         for s_name in report_data['report_saved_raw_data'][s_key]:
-                existing_sample = db.session.query(Sample).filter(Sample.sample_name==s_name).first()
-                if existing_sample:
-                    sample_id = existing_sample.sample_id
-                else:
-                    new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=s_name, report_id=report_id)
-                    new_sample.save()
-                    sample_id=new_sample.sample_id
+            existing_sample = db.session.query(Sample).filter(Sample.sample_name==s_name).first()
+            if existing_sample:
+                sample_id = existing_sample.sample_id
+            else:
+                new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=s_name, report_id=report_id)
+                new_sample.save()
+                sample_id=new_sample.sample_id
             # Go through each data key
             for d_key in report_data['report_saved_raw_data'][s_key][s_name]:
                 # Save / load the data type
@@ -406,9 +406,9 @@ def get_samples(filters=None, count=False):
     if not filters:
         filters=[]
     if count:
-        sample_query = db.session.query(func.count(distinct(Sample.sample_name))).join(Report)
+        sample_query = db.session.query(func.count(distinct(Sample.sample_name)))
     else:
-        sample_query = db.session.query(distinct(Sample.sample_name)).join(Report)
+        sample_query = db.session.query(distinct(Sample.sample_name))
 
     sample_query = build_filter(sample_query, filters)
     print sample_query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
@@ -514,6 +514,67 @@ def get_report_plot_types(filters=None):
     plot_types = sorted(plot_types, key=lambda k: k['name'])
     return plot_types
 
+def aggregate_new_parameters(filters):
+    print filters
+    ###  TODO: Split in functions
+    sample_query = db.session.query(distinct(Sample.sample_name))
+    sample_query = build_filter(sample_query, filters)
+    samples = [x[0] for x in sample_query.all()]
+    ######
+    new_filters=[{'type':'samplenames',
+                  'cmp':'inlist',
+                  'value': samples}]
+    ######
+    report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
+    report_metadata_query = build_filter(report_metadata_query, new_filters)
+    report_field_keys = [row[0] for row in report_metadata_query.all()]
+    ######
+    sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData)
+    sample_metadata_query = build_filter(sample_metadata_query, new_filters)
+    sample_fields = []
+    for row in sample_metadata_query.all():
+        if settings.sample_metadata_fields.get(row[0], {}).get('hidden', False):
+            continue
+        # Generate a default nice name (can be overwritten by config below)
+        nicename = row[0][len(row[1]):] if row[0].startswith(row[1]) else row[0]
+        nice_section = row[1].title() if row[1].islower() else row[1]
+        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
+        sample_fields.append({
+            'key': row[0],
+            'section': row[1],
+            'nicename': settings.report_metadata_fields.get(row[0], {}).get('nicename', nicename),
+            'priority': settings.report_metadata_fields.get(row[0], {}).get('priority', 1)
+        })
+
+    # Sort alphabetically, then by section and then overwrite with priority if given
+    sample_fields.sort(key=lambda x: x['nicename'].lower())
+    sample_fields.sort(key=lambda x: x['section'])
+    sample_fields.sort(key=lambda x: x['priority'], reverse=True)
+    ######
+    pt_query = db.session.query(distinct(PlotConfig.section),PlotCategory.category_name, PlotConfig.data, PlotConfig.name).join(PlotCategory).join(PlotData)
+    pt_query = build_filter(pt_query, new_filters)
+    plot_types=[]
+    for row in pt_query.all():
+        if row[3]=='xy_line':
+            plot_type_obj={
+                'name': '{} -- {}'.format(row[0], row[1]),
+                'nicename':json.loads(row[2]).get('title', row[0].replace('_', ' ')),
+                'plot_id': row[0],
+                'plot_ds_name': row[1],
+                'type': 'linegraph'
+            }
+        elif row[3]=='bar_graph':
+            plot_type_obj={
+                'name': row[1],
+                'nicename':json.loads(row[2]).get('title', row[0].replace('_', ' ')),
+                'type':'bargraph'}
+
+        plot_types.append(plot_type_obj)
+
+    plot_types = sorted(plot_types, key=lambda k: k['name'])
+    ######
+    return len(samples), report_field_keys, sample_fields, plot_types
+
 def build_filter(query, filters):
     #Build sqlalchemy filters for the provided query based on constants and the provided filters
     alchemy_cmps=[]
@@ -572,13 +633,8 @@ def build_filter(query, filters):
         #make named joins
         aliased_fields = []
         for table in type_to_tables_fields[one_filter['type']]:
-            print table
             aliased_table=aliased(table)
-            try:
-                query.join(aliased_table)
-            except:
-                print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
-                import pdb;pdb.set_trace()
+            query.join(aliased_table)
             for field in type_to_tables_fields[one_filter['type']][table]:
                 aliased_fields.append(getattr(aliased_table, field))
 
