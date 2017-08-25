@@ -10,7 +10,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples, get_report_metadata_fields, get_sample_metadata_fields, get_report_plot_types, generate_plot
+from megaqc.api.utils import get_samples, aggregate_new_parameters, generate_plot
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -89,16 +89,18 @@ def choose_plot_type():
 @blueprint.route('/report_plot/')
 @login_required
 def report_plot_select_samples():
+    # Get the fields for the form
+    return_data = aggregate_new_parameters([])
     # Render the template
     return render_template(
         'public/report_plot_select_samples.html',
         db = db,
         User = User,
         user_token = current_user.api_token,
-        num_samples = get_samples(count=True),
-        report_fields = get_report_metadata_fields(),
-        sample_fields = get_sample_metadata_fields(),
-        report_plot_types = get_report_plot_types()
+        num_samples = return_data[0],
+        report_fields = return_data[1],
+        sample_fields = return_data[2],
+        report_plot_types = return_data[3]
         )
 
 

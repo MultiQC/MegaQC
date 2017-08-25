@@ -567,11 +567,12 @@ def aggregate_new_parameters(filters):
             plot_type_obj={
                 'name': row[1],
                 'nicename':json.loads(row[2]).get('title', row[0].replace('_', ' ')),
+                'plot_id': row[0],
                 'type':'bargraph'}
 
         plot_types.append(plot_type_obj)
 
-    plot_types = sorted(plot_types, key=lambda k: k['name'])
+    plot_types = sorted(plot_types, key=lambda k: k['nicename'])
     ######
     return len(samples), report_field_keys, sample_fields, plot_types
 

@@ -80,6 +80,11 @@ footer p a {
     text-decoration: underline;
 }
 
+.loading-spinner {
+    color: #999;
+    font-size: 1rem;
+}
+
 .modal-xl {
     height:600px;
     width:90%;
