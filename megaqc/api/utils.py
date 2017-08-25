@@ -635,7 +635,7 @@ def build_filter(query, filters):
         aliased_fields = []
         for table in type_to_tables_fields[one_filter['type']]:
             aliased_table=aliased(table)
-            query.join(aliased_table)
+            query = query.join(aliased_table)
             for field in type_to_tables_fields[one_filter['type']][table]:
                 aliased_fields.append(getattr(aliased_table, field))
 
