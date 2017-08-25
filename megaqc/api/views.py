@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify, abort
 from megaqc.extensions import db
 from megaqc.user.models import User
 from megaqc.model.models import PlotData, Report
-from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, get_sample_metadata_fields, get_report_plot_types
+from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, get_sample_metadata_fields, aggregate_new_parameters
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -173,10 +173,11 @@ def count_samples(user, *args, **kwargs):
 def report_filter_fields(user, *args, **kwargs):
     data = request.get_json()
     filters = data.get("filters", [])
+    return_data = aggregate_new_parameters(filters)
     return jsonify({
         'success': True,
-        'num_samples': get_samples(filters, count=True),
-        'report_metadata_fields': get_report_metadata_fields(filters),
-        'sample_metadata_fields': get_sample_metadata_fields(filters),
-        'report_plot_types': get_report_plot_types(filters)
+        'num_samples': return_data[0],
+        'report_metadata_fields': return_data[1],
+        'sample_metadata_fields': return_data[2],
+        'report_plot_types': return_data[3]
     })
