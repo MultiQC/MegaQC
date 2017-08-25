@@ -114,6 +114,21 @@ footer p a {
     padding: 0.8rem;
 }
 
+.new-filter-group-card {
+    margin-bottom: 1rem;
+}
+.new-filter-group-card .card-body {
+    padding: 0;
+}
+.new-filter-add button {
+    margin: .25rem 0;
+}
+.new-filter-group-add-btn {
+    margin-left: 0.5rem;
+}
+.new-filter-group-add-btn i {
+    margin-right: 6px;
+}
 
 .num_filtered_samples {
     font-size: 50%;

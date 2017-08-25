@@ -17,9 +17,9 @@
 <p>Filters within a filter group are applied with <code>AND</code> logic. Tables across
 different filter groups have <code>OR</code> logic. <a href="#">[ more help ]</a></p>
 
-<div class="card mb-3">
+<div class="card new-filter-group-card">
     <div class="card-header">Filter Group 1</div>
-    <div class="card-body" style="padding:0;">
+    <div class="card-body">
         <table class="table table-hover table-responsive" id="filter-group-table">
             <thead>
                 <tr>
@@ -35,7 +35,7 @@ different filter groups have <code>OR</code> logic. <a href="#">[ more help ]</a
             <tfoot>
                 <tr>
                     <td class="new-filter-add">
-                        <button class="btn btn-sm btn-primary" style="margin: .25rem;" disabled>
+                        <button class="btn btn-sm btn-primary" disabled>
                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                         </button>
                     </td>
@@ -56,6 +56,10 @@ different filter groups have <code>OR</code> logic. <a href="#">[ more help ]</a
         </table>
     </div>
 </div>
+<button class="new-filter-group-add-btn btn btn-secondary">
+    <i class="fa fa-plus-square" aria-hidden="true"></i>
+    Add new filter group
+</button>
 
 
 <h3>Choose Plot</h3>
@@ -95,8 +99,8 @@ window.num_matching_samples = {{ num_samples }};
 window.filter_error = false;
 $(function(){
 
-    // New filter - Type
-    $('.new-filter-type select').change(function(e){
+    // Add new filter - Type dropdown
+    $('body').on('change', '.new-filter-type select', function(e){
         // Reset downstream selectors
         var button_e = $(this).closest('tfoot').find('.new-filter-add .btn');
         var key_e = $(this).closest('tfoot').find('.new-filter-key');
@@ -140,6 +144,30 @@ $(function(){
                 val_e.find('input').prop('disabled', true).attr('placeholder', '[ please select a filter type ]');
                 break;
         }
+    });
+
+    // Add new filter - submit
+
+
+    // Add new filter group button
+    $('.new-filter-group-add-btn').click(function(e){
+        new_group_card = $('.new-filter-group-card').first().clone();
+        var new_idx = $('.new-filter-group-card').length + 1;
+        new_group_card.find('.card-header').html(
+            '<button class="new-filter-group-delete btn btn-sm btn-outline-secondary float-right">Delete</button>' +
+            'Filter Group '+new_idx);
+        new_group_card.find('.new-filter-add .btn').prop('disabled', true);
+        new_group_card.find('.new-filter-key').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        new_group_card.find('.new-filter-cmp').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        new_group_card.find('.new-filter-value').html('<input disabled class="form-control" type="text" placeholder="[ please select a filter type ]">');
+        new_group_card.hide().insertBefore($(this)).slideDown();
+    });
+
+    // Delete new filter group
+    $('body').on('click', '.new-filter-group-delete', function(e){
+        $(this).closest('.new-filter-group-card').slideUp(function(){
+            $(this).remove();
+        });
     });
 
 
