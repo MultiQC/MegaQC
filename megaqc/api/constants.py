@@ -2,6 +2,29 @@
 from megaqc.model.models import *
 from collections import OrderedDict
 
+valid_join_conditions={Sample:{
+                            Report:
+                                ("report_id","report_id"),
+                            SampleData:
+                                ("sample_id", "sample_id")
+                            },
+                        Report:{
+                            ReportMeta:
+                                ("report_id", "report_id"),
+                            Sample:
+                                ("report_id", "report_id")
+                            },
+                        PlotData:{
+                            Sample:
+                                ("report_id", "report_id")
+                            },
+                        SampleData:{
+                            SampleDataType:
+                                ("sample_data_type_id", "sample_data_type_id"),
+                            Sample:
+                                ("report_id", "report_id")
+                            }
+                      }
 type_to_tables_fields={
         'daterange': {Report:['created_at','created_at']},
         'timedelta':{Report:['created_at']},

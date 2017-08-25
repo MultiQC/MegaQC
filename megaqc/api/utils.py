@@ -4,7 +4,7 @@ from hashlib import md5
 from megaqc.model.models import *
 from megaqc.extensions import db
 from megaqc.utils import settings
-from megaqc.api.constants import comparators, type_to_tables_fields
+from megaqc.api.constants import comparators, type_to_tables_fields, valid_join_conditions
 from sqlalchemy import func, distinct, cast, Numeric
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import not_, or_
@@ -516,10 +516,9 @@ def get_report_plot_types(filters=None):
     return plot_types
 
 def aggregate_new_parameters(filters):
-    print filters
     ###  TODO: Split in functions
     sample_query = db.session.query(distinct(Sample.sample_name))
-    sample_query = build_filter(sample_query, filters)
+    sample_query = build_filter(sample_query, filters, Sample)
     samples = [x[0] for x in sample_query.all()]
     ######
     new_filters=[{'type':'samplenames',
@@ -527,11 +526,11 @@ def aggregate_new_parameters(filters):
                   'value': samples}]
     ######
     report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
-    report_metadata_query = build_filter(report_metadata_query, new_filters)
+    report_metadata_query = build_filter(report_metadata_query, new_filters, Report)
     report_field_keys = [row[0] for row in report_metadata_query.all()]
     ######
     sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData)
-    sample_metadata_query = build_filter(sample_metadata_query, new_filters)
+    sample_metadata_query = build_filter(sample_metadata_query, new_filters, SampleData)
     sample_fields = []
     for row in sample_metadata_query.all():
         if settings.sample_metadata_fields.get(row[0], {}).get('hidden', False):
@@ -553,7 +552,7 @@ def aggregate_new_parameters(filters):
     sample_fields.sort(key=lambda x: x['priority'], reverse=True)
     ######
     pt_query = db.session.query(distinct(PlotConfig.section),PlotCategory.category_name, PlotConfig.data, PlotConfig.name).join(PlotCategory).join(PlotData)
-    pt_query = build_filter(pt_query, new_filters)
+    pt_query = build_filter(pt_query, new_filters, PlotData)
     plot_types=[]
     for row in pt_query.all():
         if row[3]=='xy_line':
@@ -576,7 +575,7 @@ def aggregate_new_parameters(filters):
     ######
     return len(samples), report_field_keys, sample_fields, plot_types
 
-def build_filter(query, filters):
+def build_filter(query, filters, source_table):
     #Build sqlalchemy filters for the provided query based on constants and the provided filters
     alchemy_cmps=[]
     for filter_idx, one_filter in enumerate(filters):
@@ -633,9 +632,18 @@ def build_filter(query, filters):
 
         #make named joins
         aliased_fields = []
-        for table in type_to_tables_fields[one_filter['type']]:
+        current_source=source_table
+        current_alias=source_table
+        for idx, table in enumerate(type_to_tables_fields[one_filter['type']]):
             aliased_table=aliased(table)
-            query = query.join(aliased_table)
+            on_clause =  getattr(current_alias, valid_join_conditions[current_source][table][0]).__eq__(getattr(aliased_table,  valid_join_conditions[current_source][table][1]))
+            if idx == 0:
+                query = query.join(aliased_table, on_clause)
+            else:
+                query = query.join(aliased_table)
+
+            current_source=table
+            current_alias=aliased_table
             for field in type_to_tables_fields[one_filter['type']][table]:
                 aliased_fields.append(getattr(aliased_table, field))
 
@@ -648,4 +656,5 @@ def build_filter(query, filters):
             sql_cmp = getattr(field, comparators[cmps[idx]])
             alchemy_cmps.append(sql_cmp(param))
     query = query.filter(*alchemy_cmps)
+    print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
     return query
