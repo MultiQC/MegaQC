@@ -53,13 +53,14 @@ def handle_report_data(user, report_data):
         section = s_key.replace('multiqc_', '')
         # Go through each sample
         for s_name in report_data['report_saved_raw_data'][s_key]:
-                existing_sample = db.session.query(Sample).filter(Sample.sample_name==s_name).first()
-                if existing_sample:
-                    sample_id = existing_sample.sample_id
-                else:
-                    new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=s_name, report_id=report_id)
-                    new_sample.save()
-                    sample_id=new_sample.sample_id
+            existing_sample = db.session.query(Sample).filter(Sample.sample_name==s_name).first()
+            if existing_sample:
+                sample_id = existing_sample.sample_id
+            else:
+                new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=s_name, report_id=report_id)
+                new_sample.save()
+                sample_id=new_sample.sample_id
+
             # Go through each data key
             for d_key in report_data['report_saved_raw_data'][s_key][s_name]:
                 # Save / load the data type
