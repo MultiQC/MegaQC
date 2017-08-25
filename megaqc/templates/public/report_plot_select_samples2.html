@@ -23,22 +23,17 @@ different filter groups have <code>OR</code> logic. <a href="#">[ more help ]</a
         <table class="table table-hover table-responsive" id="filter-group-table">
             <thead>
                 <tr>
-                    <th class="text-center" style="width:20px;"><input type="checkbox" id="filtersCheckAll"></th>
-                    <th>Type</th>
-                    <th>Key</th>
-                    <th>Comparison</th>
-                    <th>Value</th>
+                    <th style="width:25%;">Type</th>
+                    <th style="width:25%;">Key</th>
+                    <th style="width:25%;">Comparison</th>
+                    <th style="width:25%;">Value</th>
+                    <th style="width:100px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
             <tfoot>
                 <tr>
-                    <td class="new-filter-add">
-                        <button class="btn btn-sm btn-primary" disabled>
-                            <i class="fa fa-plus-square" aria-hidden="true"></i>
-                        </button>
-                    </td>
                     <td class="new-filter-type">
                         <select class="form-control">
                             <option value="">[ select a filter type ]</option>
@@ -51,13 +46,19 @@ different filter groups have <code>OR</code> logic. <a href="#">[ more help ]</a
                     <td class="new-filter-key"><select class="form-control" disabled="true"><option value="">[ please select a filter type ]<option></select></td>
                     <td class="new-filter-cmp"><select class="form-control" disabled="true"><option value="">[ please select a filter type ]<option></select></td>
                     <td class="new-filter-value"><input class="form-control" disabled="true" type="text" placeholder="[ please select a filter type ]"></td>
+                    <td class="new-filter-actions">
+                        <button class="new-filter-add btn btn-sm btn-primary" disabled>
+                            <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
+                            Add
+                        </button>
+                    </td>
                 </td>
             </tfoot>
         </table>
     </div>
 </div>
-<button class="new-filter-group-add-btn btn btn-secondary">
-    <i class="fa fa-plus-square" aria-hidden="true"></i>
+<button class="new-filter-group-add-btn btn btn-outline-secondary">
+    <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
     Add new filter group
 </button>
 
@@ -102,7 +103,7 @@ $(function(){
     // Add new filter - Type dropdown
     $('body').on('change', '.new-filter-type select', function(e){
         // Reset downstream selectors
-        var button_e = $(this).closest('tfoot').find('.new-filter-add .btn');
+        var button_e = $(this).closest('tfoot').find('.new-filter-add');
         var key_e = $(this).closest('tfoot').find('.new-filter-key');
         var cmp_e = $(this).closest('tfoot').find('.new-filter-cmp');
         var val_e = $(this).closest('tfoot').find('.new-filter-value');
@@ -147,16 +148,47 @@ $(function(){
     });
 
     // Add new filter - submit
+    $('body').on('click', '.new-filter-add', function(e){
+        // Clone the row, copy across the select dropdown statuses
+        new_filter_row = $(this).closest('tr').clone();
+        $(this).closest('tr').find('select').each(function(i) {
+            new_filter_row.find("select").eq(i).val($(this).val());
+        });
+        // Change to a delete button and add to table.
+        new_filter_row.find('.new-filter-actions').html('<button class="filter-delete btn btn-sm btn-outline-danger">Delete</button>');
+        // Animate table row sliddown - https://stackoverflow.com/a/3410943/713980
+        new_filter_row.appendTo($(this).closest('table').find('tbody'))
+            .find('td').wrapInner('<div style="display: none;" />')
+            .parent().find('td > div')
+            .slideDown(function(){
+                $(this).replaceWith($(this).contents());
+            });
+        // Reset new filter row
+        $(this).closest('tr').find('.new-filter-type select').val('');
+        $(this).closest('tr').find('.new-filter-key').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        $(this).closest('tr').find('.new-filter-cmp').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        $(this).closest('tr').find('.new-filter-value').html('<input disabled class="form-control" type="text" placeholder="[ please select a filter type ]">');
+        $(this).closest('tr').find('.new-filter-add').prop('disabled', true);
+    });
 
+    // Delete new filter row
+    $('body').on('click', '.filter-delete', function(e){
+        $(this).closest('tr')
+            .find('td').wrapInner('<div style="display: block;" />')
+            .parent().find('td > div')
+            .slideUp(function(){
+                $(this).parent().parent().remove();
+            });
+    });
 
     // Add new filter group button
-    $('.new-filter-group-add-btn').click(function(e){
+    $('body').on('click', '.new-filter-group-add-btn', function(e){
         new_group_card = $('.new-filter-group-card').first().clone();
         var new_idx = $('.new-filter-group-card').length + 1;
         new_group_card.find('.card-header').html(
             '<button class="new-filter-group-delete btn btn-sm btn-outline-secondary float-right">Delete</button>' +
             'Filter Group '+new_idx);
-        new_group_card.find('.new-filter-add .btn').prop('disabled', true);
+        new_group_card.find('.new-filter-add').prop('disabled', true);
         new_group_card.find('.new-filter-key').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
         new_group_card.find('.new-filter-cmp').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
         new_group_card.find('.new-filter-value').html('<input disabled class="form-control" type="text" placeholder="[ please select a filter type ]">');
