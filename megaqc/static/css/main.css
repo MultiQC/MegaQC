@@ -3,6 +3,9 @@
 input[type=button], button {
     cursor: pointer;
 }
+button.disabled, .btn.disabled, button:disabled, .btn:disabled {
+    cursor: not-allowed !important;
+}
 img {
     max-width: 100%;
 }

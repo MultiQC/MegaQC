@@ -103,6 +103,23 @@ def report_plot_select_samples():
         report_plot_types = return_data[3]
         )
 
+@blueprint.route('/report_plot2/')
+@login_required
+def report_plot_select_samples2():
+    # Get the fields for the form
+    return_data = aggregate_new_parameters([])
+    # Render the template
+    return render_template(
+        'public/report_plot_select_samples2.html',
+        db = db,
+        User = User,
+        user_token = current_user.api_token,
+        num_samples = return_data[0],
+        report_fields = json.dumps(return_data[1]),
+        sample_fields = json.dumps(return_data[2]),
+        report_plot_types = return_data[3]
+        )
+
 
 @blueprint.route('/report_plot/plot/')
 @login_required
