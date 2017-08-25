@@ -8,6 +8,8 @@
     <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
         {{ num_samples }} samples
     </span>
+    <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
+    <span class="loading-spinner" style="display:none;">Updating...</span>
 </h1>
 
 <div class="row">
@@ -420,6 +422,9 @@ function init_filters_table(){
 
 function get_sample_count(){
 
+    // Show the loading spinner
+    $('.loading-spinner').show();
+
     // Build the filter JSON and update the "Create Plot" form
     var filters = {'filters': []}
     var idx = 0;
@@ -470,14 +475,21 @@ function get_sample_count(){
                 // Update the report plot type dropdown
                 console.log(data['report_plot_types']);
 
-            // data['success'] was false
+                // Hide the loading spinner
+                $('.loading-spinner').hide();
+
+            // AJAX data['success'] was false
             } else {
                 console.log(data);
                 toastr.error('There was an error applying the sample filters.');
+                $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
+                $('.loading-spinner').hide();
             }
         },
         error: function(data){
-            toastr.error('There was an error applying the sample filters.')
+            toastr.error('There was an error applying the sample filters.');
+            $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
+            $('.loading-spinner').hide();
         }
     });
 
