@@ -246,6 +246,8 @@
 <script type="text/javascript">
 window.token = "{{user_token}}";
 window.active_filters = {};
+window.num_matching_samples = {{ num_samples }};
+window.filter_error = false;
 $(function(){
 
     // Check / uncheck all active filters
@@ -409,6 +411,27 @@ $(function(){
         $('#sample_data_cmp').prop('selectedIndex',0);
         init_filters_table();
     });
+
+    // Submit form to make a plot
+    $('#createReportPlotForm').submit(function(e){
+        // Check that there wasn't an error with the filters
+        if(window.filter_error){
+            toastr.error('There was an error applying your filters. Cannot make a plot.');
+            e.preventDefault();
+            return false;
+        }
+        // Check that some samples match the filters
+        if(window.num_matching_samples == 0){
+            toastr.error('Some samples must match your filters to make a plot.');
+            e.preventDefault();
+            return false;
+        }
+        // Check that a plot type has been selected
+        if($('#selectPlotType').val() == ''){
+            toastr.error('Please select a plot type.');
+            e.preventDefault();
+        }
+    });
 });
 
 function init_filters_table(){
@@ -449,6 +472,10 @@ function get_sample_count(){
         success: function(data){
             if (data['success']){
 
+                // Update the Javascript variables
+                window.num_matching_samples = data['num_samples'];
+                window.filter_error = false;
+
                 // Update number of matching samples
                 $('.num_filtered_samples').text(data['num_samples']+' samples');
                 $('.num_filtered_samples').removeClass('badge-danger badge-success badge-warning');
@@ -461,19 +488,35 @@ function get_sample_count(){
                 }
 
                 // Update the report metadata dropdown
-                $('#report_meta_key').html('<option value="">[ select field ]</option>');
-                $.each(data['report_metadata_fields'], function(idx, field){
-                    $('#report_meta_key').append('<option value="'+field['key']+'">'+field['nicename']+'</option>')
-                });
+                if(data['report_metadata_fields'].length > 0){
+                    $('#report_meta_key').html('<option value="">[ select field ]</option>').attr('disabled', false);
+                    $.each(data['report_metadata_fields'], function(idx, field){
+                        $('#report_meta_key').append('<option value="'+field['key']+'">'+field['nicename']+'</option>')
+                    });
+                } else {
+                    $('#report_meta_key').html('<option value="">[ no available fields ]</option>').attr('disabled', true);
+                }
 
                 // Update the sample metadata dropdown
-                $('#sample_data_key').html('<option value="">[ select field ]</option>');
-                $.each(data['sample_metadata_fields'], function(idx, field){
-                    $('#sample_data_key').append('<option value="'+field['key']+'">'+field['nicename']+'</option>')
-                });
+                if(data['sample_metadata_fields'].length > 0){
+                    $('#sample_data_key').html('<option value="">[ select field ]</option>').attr('disabled', false);
+                    $.each(data['sample_metadata_fields'], function(idx, field){
+                        $('#sample_data_key').append('<option value="'+field['key']+'">'+field['nicename']+'</option>')
+                    });
+                } else {
+                    $('#sample_data_key').html('<option value="">[ no available fields ]</option>').attr('disabled', true);
+                }
 
                 // Update the report plot type dropdown
-                console.log(data['report_plot_types']);
+                console.log(data);
+                if(data['report_plot_types'].length > 0){
+                    $('#selectPlotType').html('<option value="">[ select plot type ]</option>').attr('disabled', false);
+                    $.each(data['report_plot_types'], function(idx, field){
+                        $('#selectPlotType').append('<option value="'+field['name']+'">'+field['nicename']+' ('+field['type']+')</option>')
+                    });
+                } else {
+                    $('#selectPlotType').html('<option value="">[ no available fields ]</option>').attr('disabled', true);
+                }
 
                 // Hide the loading spinner
                 $('.loading-spinner').hide();
@@ -484,12 +527,16 @@ function get_sample_count(){
                 toastr.error('There was an error applying the sample filters.');
                 $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
                 $('.loading-spinner').hide();
+                window.num_matching_samples = 0;
+                window.filter_error = true;
             }
         },
         error: function(data){
             toastr.error('There was an error applying the sample filters.');
             $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
             $('.loading-spinner').hide();
+            window.num_matching_samples = 0;
+            window.filter_error = true;
         }
     });
 
