@@ -97,18 +97,24 @@ def handle_report_data(user, report_data):
             continue
         # Save the plot config as a JSON string
         config = json.dumps(report_data['report_plot_data'][plot]['config'])
-        existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.data==config).first()
-        if not existing_plot_config:
-            config_id = PlotConfig.get_next_id()
-            new_plot_config = PlotConfig(
-                config_id=config_id,
-                name = report_data['report_plot_data'][plot]['plot_type'],
-                section = plot,
-                data = config
-            )
-            new_plot_config.save()
-        else:
-            config_id = existing_plot_config.config_id
+        for dst_idx, dataset in enumerate(report_data['report_plot_data'][plot]['datasets']):
+            try:
+                dataset = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]['ylab']
+            except KeyError:
+                dataset = report_data['report_plot_data'][plot]['config']['ylab']
+            existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.config_type==report_data['report_plot_data'][plot]['plot_type'], PlotConfig.config_name==plot, PlotConfig.config_dataset==dataset).first()
+            if not existing_plot_config:
+                config_id = PlotConfig.get_next_id()
+                new_plot_config = PlotConfig(
+                    config_id=config_id,
+                    config_type = report_data['report_plot_data'][plot]['plot_type'],
+                    config_name = plot,
+                    config_dataset = dataset,
+                    data = config
+                )
+                new_plot_config.save()
+            else:
+                config_id = existing_plot_config.config_id
 
         # Save bar graph data
         if report_data['report_plot_data'][plot]['plot_type'] == "bar_graph":
@@ -198,14 +204,14 @@ def generate_plot(plot_type, sample_names):
     if " -- " in plot_type:
         # Plot type also contains data_key : True for most xy_lines
         plot_type=plot_type.split(" -- ")
-        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.section==plot_type[0],PlotCategory.category_name==plot_type[1],Sample.sample_name.in_(sample_names)).all()
+        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.config_name==plot_type[0],PlotCategory.category_name==plot_type[1],Sample.sample_name.in_(sample_names)).all()
     else:
-        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.section==plot_type,Sample.sample_name.in_(sample_names)).all()
+        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.config_name==plot_type,Sample.sample_name.in_(sample_names)).all()
 
     if len(rows) == 0:
         return '<div class="alert alert-danger">No samples found</div>'
 
-    if rows[0][0].name == "bar_graph":
+    if rows[0][0].config_type == "bar_graph":
         #not using sets to keep the order
         samples = []
         series = []
@@ -273,7 +279,7 @@ def generate_plot(plot_type, sample_names):
         plot_div = py.plot(fig, output_type='div')
         return plot_div
 
-    elif rows[0][0].name == "xy_line":
+    elif rows[0][0].config_type == "xy_line":
         plots=[]
         config = json.loads(rows[-1][0].data)#grab latest config
         for idx, row in enumerate(rows):
@@ -403,134 +409,37 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
 
     return plotly_layout
 
-def get_samples(filters=None, count=False):
+def get_samples(filters=None, count=False, ids=False):
     if not filters:
         filters=[]
     if count:
         sample_query = db.session.query(func.count(distinct(Sample.sample_name)))
+        sample_query = build_filter(sample_query, filters, Sample)
+        print sample_query.one()
+        return sample_query.one()[0]
+    elif ids:
+        sample_query = db.session.query(distinct(Sample.sample_id))
+        sample_query = build_filter(sample_query, filters, Sample)
+        samples = [x[0] for x in sample_query.all()]
+        return samples
     else:
         sample_query = db.session.query(distinct(Sample.sample_name))
-
-    sample_query = build_filter(sample_query, filters)
-    print sample_query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
-
-
-    if count:
-        samples = sample_query.first()[0]
-    else:
+        sample_query = build_filter(sample_query, filters, Sample)
         samples = [x[0] for x in sample_query.all()]
-
-    return samples
+        return samples
 
 def get_report_metadata_fields(filters=None):
     if not filters:
         filters=[]
-    else:
-        valid_samples = get_samples(filters)
-        filters = [x for x in filters if x['type'] != "reportmeta"]
-        filters.append({'type':'samplenames',
-                        'cmp':'inlist',
-                        'value': valid_samples})
     report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
-    report_metadata_query = build_filter(report_metadata_query, filters)
-    field_keys = [row[0] for row in report_metadata_query.all()]
-
-    # Add a priority and nice name, check in config
-    fields = []
-    for f in field_keys:
-        if settings.report_metadata_fields.get(f, {}).get('hidden', False):
-            continue
-        fields.append({
-            'key': f,
-            'nicename': settings.report_metadata_fields.get(f, {}).get('nicename', f.replace('_', ' ')),
-            'priority': settings.report_metadata_fields.get(f, {}).get('priority', 1)
-        })
-    fields.sort(key=lambda k: k['priority'], reverse=True)
-
-    return fields
+    report_metadata_query = build_filter(report_metadata_query, filters, Report)
+    return [row[0] for row in report_metadata_query.all()]
 
 def get_sample_metadata_fields(filters=None):
     if not filters:
         filters=[]
-    else:
-        valid_samples = get_samples(filters)
-        filters = [x for x in filters if x['type'] != "samplemeta"]
-        filters.append({'type':'samplenames',
-                        'cmp':'inlist',
-                        'value': valid_samples})
-    sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData).join(Report)
-    sample_metadata_query = build_filter(sample_metadata_query, filters)
-    fields = []
-    for row in sample_metadata_query.all():
-        if settings.sample_metadata_fields.get(row[0], {}).get('hidden', False):
-            continue
-        # Generate a default nice name (can be overwritten by config below)
-        nicename = row[0][len(row[1]):] if row[0].startswith(row[1]) else row[0]
-        nice_section = row[1].title() if row[1].islower() else row[1]
-        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
-        fields.append({
-            'key': row[0],
-            'section': row[1],
-            'nicename': settings.report_metadata_fields.get(row[0], {}).get('nicename', nicename),
-            'priority': settings.report_metadata_fields.get(row[0], {}).get('priority', 1)
-        })
-
-    # Sort alphabetically, then by section and then overwrite with priority if given
-    fields.sort(key=lambda x: x['nicename'].lower())
-    fields.sort(key=lambda x: x['section'])
-    fields.sort(key=lambda x: x['priority'], reverse=True)
-
-    return fields
-
-def get_report_plot_types(filters=None):
-    if not filters:
-        filters= []
-    plot_types = []
-
-    # Get bar graphs
-    bg_pt_query = db.session.query(distinct(PlotConfig.section), PlotConfig.data)
-    bg_pt_query = build_filter(bg_pt_query, filters)
-    bg_pt_query = bg_pt_query.filter(PlotConfig.name == 'bar_graph')
-    for row in bg_pt_query.all():
-        plot_types.append({
-            'name': row[0],
-            'nicename':json.loads(row[1]).get('title', row[0].replace('_', ' ')),
-            'type': 'bargraph'
-        })
-
-    # Get line graphs
-    lg_pt_query = db.session.query(distinct(PlotConfig.section),PlotCategory.category_name, PlotConfig.data).join(PlotCategory)
-    lg_pt_query = build_filter(lg_pt_query, filters)
-    lg_pt_query = lg_pt_query.filter(PlotConfig.name == 'xy_line')
-    for row in lg_pt_query.all():
-        plot_types.append({
-            'name': '{} -- {}'.format(row[0], row[1]),
-            'nicename':json.loads(row[2]).get('title', row[0].replace('_', ' ')),
-            'plot_id': row[0],
-            'plot_ds_name': row[1],
-            'type': 'linegraph'
-        })
-
-    # Sort and return the results
-    plot_types = sorted(plot_types, key=lambda k: k['name'])
-    return plot_types
-
-def aggregate_new_parameters(filters):
-    ###  TODO: Split in functions
-    sample_query = db.session.query(distinct(Sample.sample_name))
-    sample_query = build_filter(sample_query, filters, Sample)
-    samples = [x[0] for x in sample_query.all()]
-    ######
-    new_filters=[{'type':'samplenames',
-                  'cmp':'inlist',
-                  'value': samples}]
-    ######
-    report_metadata_query = db.session.query(distinct(ReportMeta.report_meta_key)).join(Report)
-    report_metadata_query = build_filter(report_metadata_query, new_filters, Report)
-    report_field_keys = [row[0] for row in report_metadata_query.all()]
-    ######
     sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData)
-    sample_metadata_query = build_filter(sample_metadata_query, new_filters, SampleData)
+    sample_metadata_query = build_filter(sample_metadata_query, filters, SampleData)
     sample_fields = []
     for row in sample_metadata_query.all():
         if settings.sample_metadata_fields.get(row[0], {}).get('hidden', False):
@@ -550,9 +459,13 @@ def aggregate_new_parameters(filters):
     sample_fields.sort(key=lambda x: x['nicename'].lower())
     sample_fields.sort(key=lambda x: x['section'])
     sample_fields.sort(key=lambda x: x['priority'], reverse=True)
-    ######
-    pt_query = db.session.query(distinct(PlotConfig.section),PlotCategory.category_name, PlotConfig.data, PlotConfig.name).join(PlotCategory).join(PlotData)
-    pt_query = build_filter(pt_query, new_filters, PlotData)
+    return sample_fields
+
+def get_plot_types(filters=None):
+    if not filters:
+        filters=[]
+    pt_query = db.session.query(distinct(PlotConfig.config_name),PlotConfig.config_dataset, PlotConfig.data, PlotConfig.config_type).join(PlotCategory).join(PlotData)
+    pt_query = build_filter(pt_query, filters, PlotData)
     plot_types=[]
     for row in pt_query.all():
         if row[3]=='xy_line':
@@ -565,15 +478,24 @@ def aggregate_new_parameters(filters):
             }
         elif row[3]=='bar_graph':
             plot_type_obj={
-                'name': row[1],
+                'name': row[0],
                 'nicename':json.loads(row[2]).get('title', row[0].replace('_', ' ')),
-                'plot_id': row[0],
                 'type':'bargraph'}
 
         plot_types.append(plot_type_obj)
 
-    plot_types = sorted(plot_types, key=lambda k: k['nicename'])
-    ######
+    plot_types = sorted(plot_types, key=lambda k: k['name'])
+    return plot_types
+
+def aggregate_new_parameters(filters):
+    sample_ids = get_samples(filters, ids=True)
+    samples = get_samples(filters)
+    new_filters=[{'type':'sampleids',
+                  'cmp':'inlist',
+                  'value': sample_ids}]
+    report_field_keys = get_report_metadata_fields(new_filters)
+    sample_fields = get_sample_metadata_fields(new_filters)
+    plot_types  =get_plot_types(new_filters)
     return len(samples), report_field_keys, sample_fields, plot_types
 
 def build_filter(query, filters, source_table):

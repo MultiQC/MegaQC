@@ -29,6 +29,7 @@ type_to_tables_fields={
         'daterange': {Report:['created_at','created_at']},
         'timedelta':{Report:['created_at']},
         'samplenames':{Sample:['sample_name']},
+        'sampleids':{Sample:['sample_id']},
         'reportmeta':{ReportMeta:['report_meta_value', 'report_meta_key']},
         'samplemeta':OrderedDict([(SampleData,['value']), (SampleDataType,['data_key', 'data_section'])])
 }

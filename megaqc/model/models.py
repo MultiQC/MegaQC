@@ -48,8 +48,9 @@ class ReportMeta(db.Model, CRUDMixin):
 class  PlotConfig(db.Model, CRUDMixin):
     __tablename__ =  'plot_config'
     config_id = Column(Integer, primary_key=True)
-    name = Column(String(80),  nullable=False)
-    section = Column(String(80), nullable=False)
+    config_type = Column(String(80),  nullable=False)
+    config_name = Column(String(80), nullable=False)
+    config_dataset = Column(String(80), nullable=True)
     data = Column(String(2048), nullable=False)
 
     @staticmethod
