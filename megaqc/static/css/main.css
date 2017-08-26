@@ -22,6 +22,12 @@ blockquote {
 .monospace {
     font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
+code {
+    color: #666;
+}
+div.alert.alert-light {
+    border-color: #ededed;
+}
 
 @font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Thin.ttf); font-weight: 100; }
 @font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Light.ttf); font-weight: 300; }
@@ -120,10 +126,26 @@ footer p a {
 .new-filter-group-card .card-body {
     padding: 0;
 }
-.new-filter-group-card .card-body table {
+.new-filter-group-card .card-body .filter-group-table {
     margin: 0;
 }
-.new-filter-add button {
+.new-filter-group-card .card-body .filter-group-table td {
+    min-width: 200px;
+}
+.new-filter-group-card .card-body .filter-group-table td:last-child {
+    min-width: 0;
+}
+.new-filter-group-card .card-body .filter-group-table tbody td {
+    padding: 0;
+}
+.new-filter-group-card .card-body .filter-group-table tbody td div {
+    padding: .75rem;
+}
+.new-filter-group-card .card-body .filter-group-table tbody td:last-child div {
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+}
+.new-filter-add {
     margin: .25rem 0;
 }
 .new-filter-group-add-btn {
