@@ -20,7 +20,7 @@ different filter groups have <code>OR</code> logic. <a href="#">[ more help ]</a
 <div class="card new-filter-group-card">
     <div class="card-header">Filter Group 1</div>
     <div class="card-body">
-        <table class="table table-hover table-responsive" id="filter-group-table">
+        <table class="table table-hover table-responsive filter-group-table">
             <thead>
                 <tr>
                     <th style="width:25%;">Type</th>
@@ -98,15 +98,16 @@ window.sample_fields = {{ sample_fields | safe }};
 window.active_filters = {};
 window.num_matching_samples = {{ num_samples }};
 window.filter_error = false;
+window.ajax_update = false;
 $(function(){
 
     // Add new filter - Type dropdown
     $('body').on('change', '.new-filter-type select', function(e){
         // Reset downstream selectors
-        var button_e = $(this).closest('tfoot').find('.new-filter-add');
-        var key_e = $(this).closest('tfoot').find('.new-filter-key');
-        var cmp_e = $(this).closest('tfoot').find('.new-filter-cmp');
-        var val_e = $(this).closest('tfoot').find('.new-filter-value');
+        var button_e = $(this).closest('tr').find('.new-filter-add');
+        var key_e = $(this).closest('tr').find('.new-filter-key');
+        var cmp_e = $(this).closest('tr').find('.new-filter-cmp');
+        var val_e = $(this).closest('tr').find('.new-filter-value');
         button_e.prop('disabled', false);
         key_e.html('<select class="form-control"></select>');
         cmp_e.html('<select class="form-control"></select>');
@@ -147,31 +148,53 @@ $(function(){
         }
     });
 
-    // Add new filter - submit
+    // Add new filter ROW
     $('body').on('click', '.new-filter-add', function(e){
+        add_filter_row($(this));
+    });
+    // Pressing enter on a value input
+    $('body').on('keyup', '.new-filter-value input', function (e) {
+        if (e.keyCode == 13) {
+            add_filter_row($(this));
+        }
+    });
+    function add_filter_row(el){
         // Clone the row, copy across the select dropdown statuses
-        new_filter_row = $(this).closest('tr').clone();
-        $(this).closest('tr').find('select').each(function(i) {
+        new_filter_row = el.closest('tr').clone();
+        el.closest('tr').find('select').each(function(i) {
             new_filter_row.find("select").eq(i).val($(this).val());
         });
-        // Change to a delete button and add to table.
-        new_filter_row.find('.new-filter-actions').html('<button class="filter-delete btn btn-sm btn-outline-danger">Delete</button>');
-        // Animate table row sliddown - https://stackoverflow.com/a/3410943/713980
-        new_filter_row.appendTo($(this).closest('table').find('tbody'))
+        // Change Add button to edit + delete buttons
+        new_filter_row.find('.new-filter-actions').html(
+            '<button class="filter-edit btn btn-sm btn-outline-info">' +
+                '<i class="fa fa-pencil" aria-hidden="true"></i>' +
+            '</button> ' +
+            '<button class="filter-delete btn btn-sm btn-outline-danger">' +
+                '<i class="fa fa-trash" aria-hidden="true"></i>' +
+            '</button>'
+        );
+        // Hide the form elements and show static representations
+        $.each(['.new-filter-type select', '.new-filter-key select', '.new-filter-cmp select', '.new-filter-value input'], function(idx, e){
+            var fval = new_filter_row.find(e+' option:selected').text();
+            if(fval == ''){ fval = new_filter_row.find(e).val(); }
+            new_filter_row.find(e).hide().before('<p class="new-filter-static">'+fval+'</p>');
+        });
+        // Animate table row slidedown - https://stackoverflow.com/a/3410943/713980
+        new_filter_row.appendTo(el.closest('table').find('tbody'))
             .find('td').wrapInner('<div style="display: none;" />')
             .parent().find('td > div')
             .slideDown(function(){
                 $(this).replaceWith($(this).contents());
             });
         // Reset new filter row
-        $(this).closest('tr').find('.new-filter-type select').val('');
-        $(this).closest('tr').find('.new-filter-key').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
-        $(this).closest('tr').find('.new-filter-cmp').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
-        $(this).closest('tr').find('.new-filter-value').html('<input disabled class="form-control" type="text" placeholder="[ please select a filter type ]">');
-        $(this).closest('tr').find('.new-filter-add').prop('disabled', true);
-    });
+        el.closest('tr').find('.new-filter-type select').val('');
+        el.closest('tr').find('.new-filter-key').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        el.closest('tr').find('.new-filter-cmp').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        el.closest('tr').find('.new-filter-value').html('<input disabled class="form-control" type="text" placeholder="[ please select a filter type ]">');
+        el.closest('tr').find('.new-filter-add').prop('disabled', true);
+    }
 
-    // Delete new filter row
+    // Delete new filter ROW
     $('body').on('click', '.filter-delete', function(e){
         $(this).closest('tr')
             .find('td').wrapInner('<div style="display: block;" />')
@@ -181,7 +204,7 @@ $(function(){
             });
     });
 
-    // Add new filter group button
+    // Add new filter GROUP button
     $('body').on('click', '.new-filter-group-add-btn', function(e){
         new_group_card = $('.new-filter-group-card').first().clone();
         var new_idx = $('.new-filter-group-card').length + 1;
@@ -195,64 +218,39 @@ $(function(){
         new_group_card.hide().insertBefore($(this)).slideDown();
     });
 
-    // Delete new filter group
+    // Delete new filter GROUP
     $('body').on('click', '.new-filter-group-delete', function(e){
         $(this).closest('.new-filter-group-card').slideUp(function(){
             $(this).remove();
         });
     });
 
-
-
-
-
-
-
-
-
-
-    // Check / uncheck all active filters
-    $('#filtersCheckAll').change(function(e){
-        if($(this).is(':checked')){
-            $('.filterCheckbox').prop('checked', true);
-        } else {
-            $('.filterCheckbox').prop('checked', false);
-        }
-    });
-
-    // Delete checked filters
-    $('#sampleFiltersDeleteBtn').click(function(e){
-        var checked_rows = $('#activeFiltersTable tbody tr').filter(':has(.filterCheckbox:checked)');
-        if(checked_rows.length > 0){
-            checked_rows.each(function(){
-                delete window.active_filters[ $(this).attr('id') ];
-                $(this).remove();
-            });
-            init_filters_table();
-        }
-    });
-
-    // Save favourite filters
-    $('#sampleFiltersFavouriteBtn').click(function(e){
-        var checked_rows = $('#activeFiltersTable tbody tr').filter(':has(.filterCheckbox:checked)');
-        var save_filters = [];
-        if(checked_rows.length > 0){
-            checked_rows.each(function(){
-                save_filters.push($(this).text());
-            });
-            if(confirm("Are you sure that you want to add "+save_filters.length+" filters to your favourites?")){
-                alert("Sorry, not yet implemented. Try again soon!");
+    // Update filters
+    function update_filters(){
+        window.ajax_update.abort();
+        window.active_filters = {};
+        $('.loading-spinner').show();
+        $('.filter-group-table tbody tr').each(function(){
+            var filter_id = 'filter_'+Math.random().toString(36).substring(2);
+            var fval = parseFloat( $(this).find('.new-filter-cmp').val() );
+            if ( isNaN(val) ){ fval = $(this).find('.new-filter-cmp').val(); }
+            window.active_filters[filter_id] = {
+                'type': $(this).find('.new-filter-type').val(),
+                'key': $(this).find('.new-filter-key').val(),
+                'value': fval,
+                'cmp': $(this).find('.new-filter-value').val()
+            };
+            var fsection = $(this).find('.new-filter-key option:selected').data('section');
+            if( fsection !== undefined ){
+                window.active_filters[filter_id]['section'] = fsection;
             }
-        }
-    });
+        });
+    }
 
-    // Change panel in the add filter dialogue
-    $('.filterShowHide').click(function(e){
-        e.preventDefault();
-        $('body').css('min-height', $('body').height() );
-        $( $(this).data('hide') ).slideUp();
-        $( $(this).data('show') ).slideDown();
-    });
+
+
+
+
 
     // Add date delta preset
     $('.filterDatePreset button').click(function(e){
