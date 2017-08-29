@@ -86,9 +86,9 @@ def choose_plot_type():
     """Choose plot type."""
     return render_template('public/plot_type.html', num_samples=get_samples(count=True))
 
-@blueprint.route('/report_plot/')
+@blueprint.route('/report_plot2/')
 @login_required
-def report_plot_select_samples():
+def report_plot_select_samples2():
     # Get the fields for the form
     return_data = aggregate_new_parameters([])
     # Render the template
@@ -103,9 +103,9 @@ def report_plot_select_samples():
         report_plot_types = return_data[3]
         )
 
-@blueprint.route('/report_plot2/')
+@blueprint.route('/report_plot/')
 @login_required
-def report_plot_select_samples2():
+def report_plot_select_samples():
     # Get the fields for the form
     return_data = aggregate_new_parameters([])
     # Render the template

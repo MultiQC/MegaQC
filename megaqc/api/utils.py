@@ -7,7 +7,7 @@ from megaqc.utils import settings
 from megaqc.api.constants import comparators, type_to_tables_fields, valid_join_conditions
 from sqlalchemy import func, distinct, cast, Numeric
 from sqlalchemy.orm import aliased
-from sqlalchemy.sql import not_, or_
+from sqlalchemy.sql import not_, or_, and_
 from collections import defaultdict, OrderedDict
 
 import plotly.offline as py
@@ -506,9 +506,9 @@ def aggregate_new_parameters(filters=None):
     sample_ids = get_samples(filters, ids=True)
     samples = get_samples(filters)
     if filters:
-        new_filters=[{'type':'sampleids',
+        new_filters=[[{'type':'sampleids',
                   'cmp':'inlist',
-                  'value': sample_ids}]
+                  'value': sample_ids}]]
     else:
         new_filters=[]
 
@@ -519,84 +519,88 @@ def aggregate_new_parameters(filters=None):
 
 def build_filter(query, filters, source_table):
     #Build sqlalchemy filters for the provided query based on constants and the provided filters
-    alchemy_cmps=[]
-    for filter_idx, one_filter in enumerate(filters):
+    print filters
+    alchemy_or_cmps=[]
+    for filter_group in filters:
+        alchemy_and_cmps=[]
+        for filter_idx, one_filter in enumerate(filter_group):
+            params=[]
+            cmps=[]
+            if one_filter['type'] == 'daterange':
+                #daterange : make values actual datetimes
+                params = [datetime.strptime(x, "%Y-%m-%d") for x in one_filter['value']]
+                params[1] = params[1] + timedelta(1) #right border is midnight, you usually want to include the date you use as right border
+                #in and not in are handled by making 2 filters, default is "in"
+                if one_filter['cmp'] == "not in":
+                    cmps=["<=", ">="]
+                else:
+                    cmps=[">=", "<="]
 
-        params=[]
-        cmps=[]
-        if one_filter['type'] == 'daterange':
-            #daterange : make values actual datetimes
-            params = [datetime.strptime(x, "%Y-%m-%d") for x in one_filter['value']]
-            params[1] = params[1] + timedelta(1) #right border is midnight, you usually want to include the date you use as right border
-            #in and not in are handled by making 2 filters, default is "in"
-            if one_filter['cmp'] == "not in":
-                cmps=["<=", ">="]
+            elif one_filter['type'] == 'date':
+                params = [datetime.strptime(one_filter['value'], "%Y-%m-%d")]
+                cmps=[one_filter['cmp']]
+            elif one_filter['type'] == 'timedelta':
+                #timedeltarange : make datetime based on now and reverse the cmp,
+                #because time <7 days == time > _date_seven_days_ago
+                params = [datetime.now() - timedelta(int(one_filter['value']))]
+                if one_filter['cmp'] in ['gt', '>']:
+                    cmps=['<=']
+                elif one_filter['cmp'] in ['lt', '<']:
+                    cmps=['>=']
+                elif one_filter['cmp'] in ['ge', '>=']:
+                    cmps=['<']
+                elif one_filter['cmp'] in ['le', '<=']:
+                    cmps=['>']
             else:
-                cmps=[">=", "<="]
-
-        elif one_filter['type'] == 'date':
-            params = [datetime.strptime(one_filter['value'], "%Y-%m-%d")]
-            cmps=[one_filter['cmp']]
-        elif one_filter['type'] == 'timedelta':
-            #timedeltarange : make datetime based on now and reverse the cmp,
-            #because time <7 days == time > _date_seven_days_ago
-            params = [datetime.now() - timedelta(int(one_filter['value']))]
-            if one_filter['cmp'] in ['gt', '>']:
-                cmps=['<=']
-            elif one_filter['cmp'] in ['lt', '<']:
-                cmps=['>=']
-            elif one_filter['cmp'] in ['ge', '>=']:
-                cmps=['<']
-            elif one_filter['cmp'] in ['le', '<=']:
-                cmps=['>']
-        else:
-            #default behaviour
-            cmps=[one_filter['cmp']]
-            if 'not in' == one_filter['cmp']:
-                #not in is a special case, there is no sqlalchemy operator to deal with it, although there is one for "in" and "notlike"
-                params=['%{0}%'.format(one_filter['value'])]
-            else:
-                try:
-                    val=float(one_filter['value'])
-                    params=[val]
-                except:
-                    params=[one_filter['value']]
-            key = one_filter.get('key', None)
-            if key:
-                params.append(key)
-                cmps.append("==")
-                #if there is a key/value pair, the cmp only applies to the value, the key should be matched
-            key = one_filter.get('section', None)
-            if one_filter.get('section'):
-                params.append(one_filter['section'])
-                cmps.append("==")
+                #default behaviour
+                cmps=[one_filter['cmp']]
+                if 'not in' == one_filter['cmp']:
+                    #not in is a special case, there is no sqlalchemy operator to deal with it, although there is one for "in" and "notlike"
+                    params=['%{0}%'.format(one_filter['value'])]
+                else:
+                    try:
+                        val=float(one_filter['value'])
+                        params=[val]
+                    except:
+                        params=[one_filter['value']]
+                key = one_filter.get('key', None)
+                if key:
+                    params.append(key)
+                    cmps.append("==")
+                    #if there is a key/value pair, the cmp only applies to the value, the key should be matched
+                key = one_filter.get('section', None)
+                if one_filter.get('section'):
+                    params.append(one_filter['section'])
+                    cmps.append("==")
 
 
-        #make named joins
-        aliased_fields = []
-        current_source=source_table
-        current_alias=source_table
-        for idx, table in enumerate(type_to_tables_fields[one_filter['type']]):
-            aliased_table=aliased(table)
-            on_clause =  getattr(current_alias, valid_join_conditions[current_source][table][0]).__eq__(getattr(aliased_table,  valid_join_conditions[current_source][table][1]))
-            if idx == 0:
-                query = query.join(aliased_table, on_clause)
-            else:
-                query = query.join(aliased_table)
+            #make named joins
+            aliased_fields = []
+            current_source=source_table
+            current_alias=source_table
+            for idx, table in enumerate(type_to_tables_fields[one_filter['type']]):
+                aliased_table=aliased(table)
+                on_clause =  getattr(current_alias, valid_join_conditions[current_source][table][0]).__eq__(getattr(aliased_table,  valid_join_conditions[current_source][table][1]))
+                if idx == 0:
+                    query = query.join(aliased_table, on_clause)
+                else:
+                    query = query.join(aliased_table)
 
-            current_source=table
-            current_alias=aliased_table
-            for field in type_to_tables_fields[one_filter['type']][table]:
-                aliased_fields.append(getattr(aliased_table, field))
+                current_source=table
+                current_alias=aliased_table
+                for field in type_to_tables_fields[one_filter['type']][table]:
+                    aliased_fields.append(getattr(aliased_table, field))
 
-        for idx, param in enumerate(params):
-            #field is a db_column
-            field = aliased_fields[idx]
-            if isinstance(params[idx], float):
-                field=cast(field, Numeric)
-            #sql_cmp is a comparison function
-            sql_cmp = getattr(field, comparators[cmps[idx]])
-            alchemy_cmps.append(sql_cmp(param))
-    query = query.filter(*alchemy_cmps)
+            for idx, param in enumerate(params):
+                #field is a db_column
+                field = aliased_fields[idx]
+                if isinstance(params[idx], float):
+                    field=cast(field, Numeric)
+                #sql_cmp is a comparison function
+                sql_cmp = getattr(field, comparators[cmps[idx]])
+                alchemy_and_cmps.append(sql_cmp(param))
+        alchemy_or_cmps.append(and_(*alchemy_and_cmps))
+
+    query = query.filter(or_(*alchemy_or_cmps))
     #print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
     return query
