@@ -3,6 +3,9 @@
 input[type=button], button {
     cursor: pointer;
 }
+button.disabled, .btn.disabled, button:disabled, .btn:disabled {
+    cursor: not-allowed !important;
+}
 img {
     max-width: 100%;
 }
@@ -18,6 +21,12 @@ blockquote {
 }
 .monospace {
     font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+code {
+    color: #666;
+}
+div.alert.alert-light {
+    border-color: #ededed;
 }
 
 @font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Thin.ttf); font-weight: 100; }
@@ -111,6 +120,37 @@ footer p a {
     padding: 0.8rem;
 }
 
+.new-filter-group-card {
+    margin-bottom: 1rem;
+}
+.new-filter-group-card .card-body {
+    padding: 0;
+}
+.new-filter-group-card .card-body .filter-group-table {
+    margin: 0;
+}
+.new-filter-group-card .card-body .filter-group-table td {
+    min-width: 200px;
+}
+.new-filter-group-card .card-body .filter-group-table td:last-child {
+    min-width: 0;
+}
+.new-filter-group-card .card-body .filter-group-table tbody td {
+    padding: 0;
+}
+.new-filter-group-card .card-body .filter-group-table tbody td div {
+    padding: .75rem;
+}
+.new-filter-group-card .card-body .filter-group-table tbody td:last-child div {
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+}
+.new-filter-add {
+    margin: .25rem 0;
+}
+.new-filter-group-add-btn {
+    margin-left: 0.5rem;
+}
 
 .num_filtered_samples {
     font-size: 50%;

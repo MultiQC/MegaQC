@@ -1,0 +1,352 @@
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1>
+    Sample Filters: New Set
+    <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
+        {{ num_samples }} samples
+    </span>
+    <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
+    <span class="loading-spinner" style="display:none;">Updating...</span>
+</h1>
+<p>Create a new sample filter set. You can use these filter sets when creating plots.
+    Remember to save at the bottom when you're finished!</p>
+<div class="alert alert-light">
+    <i class="fa fa-info-circle" aria-hidden="true"></i> &nbsp;
+    Filters within a group are applied with <code>AND</code> logic.
+    Different filter groups have <code>OR</code> logic.
+</div>
+
+<div class="card new-filter-group-card">
+    <div class="card-header">Filter Group 1</div>
+    <div class="card-body">
+        <table class="table table-responsive filter-group-table">
+            <thead>
+                <tr>
+                    <th style="width:25%;">Type</th>
+                    <th style="width:25%;">Key</th>
+                    <th style="width:25%;">Comparison</th>
+                    <th style="width:25%;">Value</th>
+                    <th style="width:100px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="new-filter-type">
+                        <select class="form-control">
+                            <option value="">[ select a filter type ]</option>
+                            <option value="timedelta">Dynamic date range</option>
+                            <option value="daterange">Specific dates</option>
+                            <option value="reportmeta">Report metadata</option>
+                            <option value="samplemeta">Sample data</option>
+                        </select>
+                    </td>
+                    <td class="new-filter-key"><select class="form-control" disabled="true"><option value="">[ please select a filter type ]<option></select></td>
+                    <td class="new-filter-cmp"><select class="form-control" disabled="true"><option value="">[ please select a filter type ]<option></select></td>
+                    <td class="new-filter-value"><input class="form-control" disabled="true" type="text" placeholder="[ please select a filter type ]"></td>
+                    <td class="new-filter-actions">
+                        <button class="new-filter-add btn btn-sm btn-primary" disabled>
+                            <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
+                            Add
+                        </button>
+                    </td>
+                </td>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<button class="new-filter-group-add-btn btn btn-outline-primary">
+    <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
+    Add new filter group
+</button>
+
+
+<h3>Save Filters</h3>
+<form>
+    <div class="form-row">
+        <div class="form-group col-sm">
+            <label for="filters_name">Name</label>
+            <input type="text" class="form-control" id="filters_name" placeholder="Name of filters">
+        </div>
+        <div class="form-group col-sm">
+            <label for="filters_set">Set</label>
+            <select class="form-control" id="filters_set">
+                <option>[ new set ]</option>
+            </select>
+        </div>
+        <!-- TODO: ONLY ADMINISTRATORS -->
+        <div class="form-group col-sm">
+            <label for="filters_visiblity">Visibility</label>
+            <select class="form-control" id="filters_visiblity">
+                <option>Just me</option>
+                <option>Everyone</option>
+            </select>
+        </div>
+        <!-- END ONLY ADMINS -->
+        <div class="form-group col-sm">
+            <label for="filters_visiblity">Save</label>
+            <button type="submit" class="form-control btn btn-primary">Save Filters</button>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+window.token = "{{ user_token }}";
+window.data_cmp = {
+    "in": "Contains string",
+    "not in": "Does not contain string",
+    "eq": "(=) Equal to",
+    "ne": "(!=) Not equal to",
+    "le": "(&le;) Less than or equal to",
+    "lt": "(&lt;) Less than",
+    "ge": "(&ge;) Greater than or equal to",
+    "gt": "(&gt;) Greater than"
+};
+window.report_fields = {{ report_fields | safe }};
+window.sample_fields = {{ sample_fields | safe }};
+window.active_filters = {'filters': []};
+window.num_matching_samples = {{ num_samples }};
+window.filter_error = false;
+window.ajax_update = false;
+$(function(){
+
+    // Add new filter - Type dropdown
+    $('body').on('change', '.new-filter-type select', function(e){
+        // Reset downstream selectors
+        var button_e = $(this).closest('tr').find('.new-filter-add');
+        var key_e = $(this).closest('tr').find('.new-filter-key');
+        var cmp_e = $(this).closest('tr').find('.new-filter-cmp');
+        var val_e = $(this).closest('tr').find('.new-filter-value');
+        button_e.prop('disabled', false);
+        key_e.html('<select class="form-control"></select>');
+        cmp_e.html('<select class="form-control"></select>');
+        val_e.html('<input class="form-control" type="text">');
+        switch($(this).val()) {
+            case 'timedelta':
+                key_e.html('<input type="text" readonly class="form-control-plaintext" value="Dynamic dates">');
+                cmp_e.find('select').html('<option value="le">Within dates</option><option value="gt">Except dates</option>');
+                val_e.find('input').attr('placeholder', 'Number of days');
+                break;
+            case 'daterange':
+                key_e.html('<input type="text" readonly class="form-control-plaintext" value="Specific dates">');
+                cmp_e.find('select').html('<option value="le">Within dates</option><option value="gt">Except dates</option>');
+                val_e.html('<input class="form-control" type="date"> <input class="form-control" type="date">')
+                break;
+            case 'reportmeta':
+                $.each(window.report_fields, function(idx, field){
+                    key_e.find('select').append('<option value="'+field+'">'+field+'</option>');
+                });
+                $.each(window.data_cmp, function(val, txt){
+                    cmp_e.find('select').append('<option value="'+val+'">'+txt+'</option>');
+                });
+                break;
+            case 'samplemeta':
+                $.each(window.sample_fields, function(idx, field){
+                    key_e.find('select').append('<option value="'+field['key']+'">'+field['nicename']+'</option>');
+                });
+                $.each(window.data_cmp, function(val, txt){
+                    cmp_e.find('select').append('<option value="'+val+'">'+txt+'</option>');
+                });
+                break;
+            default:
+                button_e.prop('disabled', true);
+                key_e.find('select').prop('disabled', true).html('<option value="">[ please select a filter type ]<option>');
+                cmp_e.find('select').prop('disabled', true).html('<option value="">[ please select a filter type ]<option>');
+                val_e.find('input').prop('disabled', true).attr('placeholder', '[ please select a filter type ]');
+                break;
+        }
+    });
+
+    // Add new filter ROW
+    $('body').on('click', '.new-filter-add', function(e){
+        add_filter_row($(this));
+    });
+    // Pressing enter on a value input
+    $('body').on('keyup', '.new-filter-value input', function (e) {
+        if (e.keyCode == 13) {
+            add_filter_row($(this));
+        }
+    });
+    function add_filter_row(el){
+        var ftype_val = el.closest('tr').find('.new-filter-type select').val();
+        var fkey_val = el.closest('tr').find('.new-filter-key select').val();
+        var fcmp_val = el.closest('tr').find('.new-filter-cmp select').val();
+        var fvalue_val = el.closest('tr').find('.new-filter-value input').val();
+        var ftype_txt = el.closest('tr').find('.new-filter-type option:selected').text();
+        var fkey_txt = el.closest('tr').find('.new-filter-key option:selected').text();
+        var fcmp_txt = el.closest('tr').find('.new-filter-cmp option:selected').text();
+        if(fkey_val == undefined){
+            fkey_val = fkey_txt = el.closest('tr').find('.new-filter-key input').val();
+        }
+        new_filter_row = $('<tr>' +
+            '<td><div class="new-filter-type" data-value="'+ftype_val+'">'+ftype_txt+'</div></td>' +
+            '<td><div class="new-filter-key" data-value="'+fkey_val+'">'+fkey_txt+'</div></td>' +
+            '<td><div class="new-filter-cmp" data-value="'+fcmp_val+'">'+fcmp_txt+'</div></td>' +
+            '<td><div class="new-filter-value" data-value="'+fvalue_val+'"><code>'+fvalue_val+'</code></div></td>' +
+            '<td><div>' +
+                '<button class="new-filter-edit btn btn-sm btn-outline-info">' +
+                    '<i class="fa fa-pencil" aria-hidden="true"></i>' +
+                '</button> ' +
+                '<button class="new-filter-delete btn btn-sm btn-outline-danger">' +
+                    '<i class="fa fa-trash" aria-hidden="true"></i>' +
+                '</button>' +
+            '</div></td>' +
+        '</tr>');
+        // Animate table row slidedown - https://stackoverflow.com/a/3410943/713980
+        new_filter_row.appendTo( el.closest('table').find('tbody') )
+            .find('td div').hide().slideDown();
+        // Reset new filter row
+        el.closest('tr').find('.new-filter-type select').val('');
+        el.closest('tr').find('.new-filter-key').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        el.closest('tr').find('.new-filter-cmp').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        el.closest('tr').find('.new-filter-value').html('<input disabled class="form-control" type="text" placeholder="[ please select a filter type ]">');
+        el.closest('tr').find('.new-filter-add').prop('disabled', true);
+        // Update matched samples count
+        update_filters();
+    }
+
+    // Delete new filter ROW
+    $('body').on('click', '.new-filter-delete', function(e){
+        $(this).closest('tr').find('td div').slideUp(function(){
+            $(this).closest('tr').remove();
+        });
+    });
+
+    // Add new filter GROUP button
+    $('body').on('click', '.new-filter-group-add-btn', function(e){
+        new_group_card = $('.new-filter-group-card').first().clone();
+        var new_idx = $('.new-filter-group-card').length + 1;
+        new_group_card.find('.card-header').html(
+            '<button class="new-filter-group-delete btn btn-sm btn-outline-secondary float-right">Delete</button>' +
+            'Filter Group '+new_idx);
+        new_group_card.find('tbody').html('');
+        new_group_card.find('.new-filter-add').prop('disabled', true);
+        new_group_card.find('.new-filter-key').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        new_group_card.find('.new-filter-cmp').html('<select disabled class="form-control"><option value="">[ please select a filter type ]<option></select>');
+        new_group_card.find('.new-filter-value').html('<input disabled class="form-control" type="text" placeholder="[ please select a filter type ]">');
+        new_group_card.hide().insertBefore($(this)).slideDown();
+    });
+
+    // Delete new filter GROUP
+    $('body').on('click', '.new-filter-group-delete', function(e){
+        $(this).closest('.new-filter-group-card').slideUp(function(){
+            $(this).remove();
+        });
+    });
+
+    // Update filters
+    function update_filters(){
+        $('.loading-spinner').show();
+        // Cancel any running update_filters ajax call
+        if(window.ajax_update !== false){
+            window.ajax_update.abort();
+        }
+        // Build active_filters object from tables
+        window.active_filters = {'filters': []};
+        $('.filter-group-table').each(function(){
+            var t_filters = [];
+            $(this).find('tbody tr').each(function(){
+                var filter = {
+                    'type': $(this).find('.new-filter-type').data('value'),
+                    'key': $(this).find('.new-filter-key').data('value'),
+                    'cmp': $(this).find('.new-filter-cmp').data('value'),
+                    'value': $(this).find('.new-filter-value').data('value')
+                };
+                var fsection = $(this).find('.new-filter-key').data('section');
+                if( fsection !== undefined ){
+                    filter['section'] = fsection;
+                }
+                t_filters.push(filter);
+            });
+            window.active_filters['filters'].push(t_filters);
+        });
+        // Call the AJAX endpoint to update the page
+        // Update the page when a new filter is added
+        window.ajax_update = $.ajax({
+            url: '/api/report_filter_fields',
+            type: 'post',
+            data:JSON.stringify( window.active_filters ),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+
+                    // Update the Javascript variables
+                    window.num_matching_samples = data['num_samples'];
+                    window.filter_error = false;
+
+                    // Update number of matching samples
+                    $('.num_filtered_samples').text(data['num_samples']+' samples');
+                    $('.num_filtered_samples').removeClass('badge-danger badge-success badge-warning');
+                    if(parseInt(data['num_samples']) == 0){
+                        $('.num_filtered_samples').addClass('badge-danger');
+                    } else if(parseInt(data['num_samples']) > 100){
+                        $('.num_filtered_samples').addClass('badge-warning');
+                    } else {
+                        $('.num_filtered_samples').addClass('badge-success');
+                    }
+
+                    // Update the report plot type dropdown
+                    if(data['report_plot_types'].length > 0){
+                        $('#selectPlotType').html('<option value="">[ select plot type ]</option>').attr('disabled', false);
+                        $.each(data['report_plot_types'], function(idx, field){
+                            $('#selectPlotType').append('<option value="'+field['name']+'">'+field['nicename']+' ('+field['type']+')</option>')
+                        });
+                    } else {
+                        $('#selectPlotType').html('<option value="">[ no available fields ]</option>').attr('disabled', true);
+                    }
+
+                    // Hide the loading spinner
+                    $('.loading-spinner').hide();
+
+                // AJAX data['success'] was false
+                } else {
+                    console.log(data);
+                    toastr.error('There was an error applying the sample filters.');
+                    $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
+                    $('.loading-spinner').hide();
+                    window.num_matching_samples = 0;
+                    window.filter_error = true;
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error applying the sample filters.');
+                $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
+                $('.loading-spinner').hide();
+                window.num_matching_samples = 0;
+                window.filter_error = true;
+            }
+        });
+    }
+
+    // Submit form to make a plot
+    $('#createReportPlotForm').submit(function(e){
+        // Check that there wasn't an error with the filters
+        if(window.filter_error){
+            toastr.error('There was an error applying your filters. Cannot make a plot.');
+            e.preventDefault();
+            return false;
+        }
+        // Check that some samples match the filters
+        if(window.num_matching_samples == 0){
+            toastr.error('Some samples must match your filters to make a plot.');
+            e.preventDefault();
+            return false;
+        }
+        // Check that a plot type has been selected
+        if($('#selectPlotType').val() == ''){
+            toastr.error('Please select a plot type.');
+            e.preventDefault();
+        }
+    });
+});
+
+</script>
+{% endblock %}
