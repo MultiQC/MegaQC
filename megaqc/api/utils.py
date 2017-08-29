@@ -92,6 +92,9 @@ def handle_report_data(user, report_data):
 
     # Save report plot data and configs
     for plot in report_data.get('report_plot_data'):
+        #  skip custom plots
+        if 'mqc_hcplot_' in plot:
+            continue
         # TODO: Add support for scatter / beeswarm / heatmap
         if report_data['report_plot_data'][plot]['plot_type'] not in ["bar_graph", "xy_line"]:
             continue
@@ -99,9 +102,17 @@ def handle_report_data(user, report_data):
         config = json.dumps(report_data['report_plot_data'][plot]['config'])
         for dst_idx, dataset in enumerate(report_data['report_plot_data'][plot]['datasets']):
             try:
-                dataset = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]['ylab']
+                if isinstance(report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx], dict):
+                    dataset = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]['ylab']
+                else:
+                    dataset = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]
             except KeyError:
-                dataset = report_data['report_plot_data'][plot]['config']['ylab']
+                try:
+                    dataset = report_data['report_plot_data'][plot]['config']['ylab']
+                except KeyError:
+                    dataset = report_data['report_plot_data'][plot]['config']['title']
+            except:
+                import pdb;pdb.set_trace()
             existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.config_type==report_data['report_plot_data'][plot]['plot_type'], PlotConfig.config_name==plot, PlotConfig.config_dataset==dataset).first()
             if not existing_plot_config:
                 config_id = PlotConfig.get_next_id()
@@ -125,23 +136,25 @@ def handle_report_data(user, report_data):
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
+                        data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
+                        existing_category = PlotCategory(
+                                                plot_category_id = PlotCategory.get_next_id(),
+                                                report_id = report_id,
+                                                config_id = config_id,
+                                                category_name = data_key,
+                                                data = data
+                                            )
+                        existing_category.save()
                     else:
+                        existing_category.data = data
+                        existing_category.save()
                         category_id = existing_category.plot_category_id
-                    data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
-                    existing_category = PlotCategory(
-                                            plot_category_id = PlotCategory.get_next_id(),
-                                            report_id = report_id,
-                                            config_id = config_id,
-                                            category_name = data_key,
-                                            data = data
-                                        )
-                    existing_category.save()
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
                         existing_sample = db.session.query(Sample).filter(Sample.sample_name==report_data['report_plot_data'][plot]['samples'][dst_idx][sa_idx]).first()
                         if existing_sample:
                             sample_id = existing_sample.sample_id
                         else:
-                            new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sample, report_id=report_id)
+                            new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sub_dict['name'], report_id=report_id)
                             new_sample.save()
                             sample_id=new_sample.sample_id
                         new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
@@ -184,7 +197,7 @@ def handle_report_data(user, report_data):
                         if existing_sample:
                             sample_id = existing_sample.sample_id
                         else:
-                            new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sample, report_id=report_id)
+                            new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sub_dict['name'], report_id=report_id)
                             new_sample.save()
                             sample_id=new_sample.sample_id
                         new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
@@ -415,7 +428,6 @@ def get_samples(filters=None, count=False, ids=False):
     if count:
         sample_query = db.session.query(func.count(distinct(Sample.sample_name)))
         sample_query = build_filter(sample_query, filters, Sample)
-        print sample_query.one()
         return sample_query.one()[0]
     elif ids:
         sample_query = db.session.query(distinct(Sample.sample_id))
@@ -487,12 +499,19 @@ def get_plot_types(filters=None):
     plot_types = sorted(plot_types, key=lambda k: k['name'])
     return plot_types
 
-def aggregate_new_parameters(filters):
+def aggregate_new_parameters(filters=None):
+    if not filters:
+        filters=[]
+
     sample_ids = get_samples(filters, ids=True)
     samples = get_samples(filters)
-    new_filters=[{'type':'sampleids',
+    if filters:
+        new_filters=[{'type':'sampleids',
                   'cmp':'inlist',
                   'value': sample_ids}]
+    else:
+        new_filters=[]
+
     report_field_keys = get_report_metadata_fields(new_filters)
     sample_fields = get_sample_metadata_fields(new_filters)
     plot_types  =get_plot_types(new_filters)
@@ -579,5 +598,5 @@ def build_filter(query, filters, source_table):
             sql_cmp = getattr(field, comparators[cmps[idx]])
             alchemy_cmps.append(sql_cmp(param))
     query = query.filter(*alchemy_cmps)
-    print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
+    #print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
     return query

@@ -80,7 +80,7 @@ class PlotCategory(db.Model, CRUDMixin):
 
     @staticmethod
     def get_next_id():
-        return (db.session.query(func.max(PlotData.plot_data_id)).first()[0] or 0) + 1
+        return (db.session.query(func.max(PlotCategory.plot_category_id)).first()[0] or 0) + 1
 
 class SampleDataType(db.Model, CRUDMixin):
     __tablename__ = "sample_data_type"

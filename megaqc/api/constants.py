@@ -1,6 +1,9 @@
 
 from megaqc.model.models import *
 from collections import OrderedDict
+import re
+
+custom_plots_re=re.compile("^mqc_hcplot_[a-z]{10}$")
 
 valid_join_conditions={Sample:{
                             Report:
