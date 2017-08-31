@@ -178,10 +178,20 @@ footer p a {
     display: none;
 }
 
-
-.report-plot-card-deck .card .card-body {
-    max-height: 300px;
+.report-plot-setup .card {
+    margin-bottom: 2rem;
+}
+.report-plot-setup .card .card-body {
+    height: 300px;
     overflow-y: auto;
+}
+
+.sample-filter-group-select .nav-link.active {
+    color: #007bff;
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #007bff;
+    margin: 0 -1px;
 }
 
 #report_plot .card-body {

@@ -8,58 +8,61 @@
     <span class="loading-spinner" style="display:none;">Loading...</span>
 </h1>
 
-<div class="card-deck report-plot-card-deck mb-3">
-    <div class="card">
-        <h4 class="card-header">
-            Filter Samples
-            <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
-                {{ num_samples }} samples
-            </span>
-            <button class="btn btn-sm btn-outline-secondary float-right" data-toggle="modal" data-target="#create_filter_modal">
-                <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
-                Add
-            </button>
-        </h4>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-sm-4">
-                    <nav class="nav flex-column nav-pills">
-                        <a class="nav-link active" href="#">Global Filters</a>
-                        <a class="nav-link" href="#">My Filters</a>
-                        <a class="nav-link" href="#">Lab Filters</a>
-                    </nav>
-                </div>
-                <div class="col-sm-8">
-                    <div class="tab-content">
+<div class="row report-plot-setup">
+    <div class="col-md-6">
+        <div class="card">
+            <h4 class="card-header">
+                Filter Samples
+                <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
+                    {{ num_samples }} samples
+                </span>
+                <button class="btn btn-sm btn-outline-secondary float-right" data-toggle="modal" data-target="#create_filter_modal">
+                    <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
+                    Add
+                </button>
+            </h4>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <nav class="nav flex-column nav-pills sample-filter-group-select">
+                            <a class="nav-link active" href="#">Global Filters</a>
+                            <a class="nav-link" href="#">My Filters</a>
+                            <a class="nav-link" href="#">Lab Filters</a>
+                        </nav>
                     </div>
-                    <ul class="list-group">
-                        <li class="list-group-item active" data-filterid="0">All Samples</li>
-                    </ul>
+                    <div class="col-sm-8">
+                        <hr class="d-md-none">
+                        <ul class="list-group">
+                            <li class="list-group-item active" data-filterid="0">All Samples</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="card">
-        <h4 class="card-header">Choose Plot Type</h4>
-        <div class="card-body">
-            <form class="mb-3">
-                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Filter plots">
-                    <div class="input-group-btn">
-                        <button class="btn btn-outline-info" data-toggle="button">
-                            <i class="fa fa-heart" aria-hidden="true"></i>
-                            Favs Only
-                        </button>
+    <div class="col-md-6">
+        <div class="card">
+            <h4 class="card-header">Choose Plot Type</h4>
+            <div class="card-body">
+                <form class="mb-3">
+                     <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Filter plots">
+                        <div class="input-group-btn">
+                            <button class="btn btn-outline-info" data-toggle="button">
+                                <i class="fa fa-heart" aria-hidden="true"></i>
+                                Favs Only
+                            </button>
+                        </div>
                     </div>
+                </form>
+                <div class="list-group">
+                    {% for pt in report_plot_types %}
+                    <a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="{{ pt.plot_id }}">
+                        {{ pt.nicename }}
+                        <i class="fa fa-heart-o float-right" aria-hidden="true"></i>
+                    </a>
+                    {% endfor %}
                 </div>
-            </form>
-            <div class="list-group">
-                {% for pt in report_plot_types %}
-                <a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="{{ pt.plot_id }}">
-                    {{ pt.nicename }}
-                    <i class="fa fa-heart-o float-right" aria-hidden="true"></i>
-                </a>
-                {% endfor %}
             </div>
         </div>
     </div>
@@ -88,9 +91,8 @@ $(function(){
         $(this).addClass('active');
         $('html, body').animate({
             scrollTop: $($(this).attr('href')).offset().top
-        }, 300).promise().then(function() {
-            create_plot();
-        });
+        }, 300);
+        create_plot();
     });
 
     // Create a plot
@@ -125,11 +127,14 @@ $(function(){
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
                 if (data['success']){
-                    $('#report_plot .card-body').html(data['plot']);
-                    $('.loading-spinner').hide();
-
+                    // Wait 300ms to ensure the page scroll has finished
+                    setTimeout(function(){
+                        $('#report_plot .card-body').html(data['plot']);
+                        $('.loading-spinner').hide();
+                    }, 300);
+                }
                 // AJAX data['success'] was false
-                } else {
+                else {
                     console.log(data);
                     toastr.error('There was an error whilst generating this plot.');
                     $('#report_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
