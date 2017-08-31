@@ -175,7 +175,12 @@ def count_samples(user, *args, **kwargs):
 @check_user
 def report_filter_fields(user, *args, **kwargs):
     data = request.get_json()
-    filters = data.get("filters", [])
+    filter_id = int(data.get("filters_id", 0))
+    if filter_id:
+        my_filter=db.session.query(SampleFilter).filter(SampleFilter.sample_filter_id == filter_id).first()
+        filters=json.loads(my_filter.data)
+    else:
+        filters = data.get("filters", [])
     return_data = aggregate_new_parameters(filters, True)
     return jsonify({
         'success': True,
