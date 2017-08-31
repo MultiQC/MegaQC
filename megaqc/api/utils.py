@@ -499,7 +499,7 @@ def get_plot_types(filters=None):
     plot_types = sorted(plot_types, key=lambda k: k['name'])
     return plot_types
 
-def aggregate_new_parameters(filters=None):
+def aggregate_new_parameters(filters=None, short=True):
     if not filters:
         filters=[]
 
@@ -512,10 +512,14 @@ def aggregate_new_parameters(filters=None):
     else:
         new_filters=[]
 
-    report_field_keys = get_report_metadata_fields(new_filters)
-    sample_fields = get_sample_metadata_fields(new_filters)
     plot_types  =get_plot_types(new_filters)
-    return len(samples), report_field_keys, sample_fields, plot_types
+    if not short:
+        report_field_keys = get_report_metadata_fields(new_filters)
+        sample_fields = get_sample_metadata_fields(new_filters)
+        return len(samples), report_field_keys, sample_fields, plot_types
+    else:
+        return len(samples), plot_types
+
 
 def build_filter(query, filters, source_table):
     #Build sqlalchemy filters for the provided query based on constants and the provided filters

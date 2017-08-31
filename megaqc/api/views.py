@@ -176,13 +176,11 @@ def count_samples(user, *args, **kwargs):
 def report_filter_fields(user, *args, **kwargs):
     data = request.get_json()
     filters = data.get("filters", [])
-    return_data = aggregate_new_parameters(filters)
+    return_data = aggregate_new_parameters(filters, True)
     return jsonify({
         'success': True,
         'num_samples': return_data[0],
-        'report_metadata_fields': return_data[1],
-        'sample_metadata_fields': return_data[2],
-        'report_plot_types': return_data[3]
+        'report_plot_types': return_data[1]
     })
 
 @api_blueprint.route('/api/save_filter', methods=['POST'])
