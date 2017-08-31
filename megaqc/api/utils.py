@@ -134,9 +134,9 @@ def handle_report_data(user, report_data):
                 for sub_dict in dataset:
                     data_key = sub_dict['name']
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
+                    data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
-                        data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
                         existing_category = PlotCategory(
                                                 plot_category_id = PlotCategory.get_next_id(),
                                                 report_id = report_id,
