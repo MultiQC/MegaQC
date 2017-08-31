@@ -4,8 +4,73 @@
 
 <h1>MultiQC Report Plot</h1>
 
-<div id="reportPlot">
-    {{ plot_html | safe }}
+<div class="card-deck report-plot-card-deck mb-3">
+    <div class="card">
+        <h4 class="card-header">
+            Filter Samples
+            <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
+                {{ num_samples }} samples
+            </span>
+            <button class="btn btn-sm btn-outline-secondary float-right" data-toggle="modal" data-target="#create_filter_modal">
+                <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
+                Add
+            </button>
+        </h4>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-4">
+                    <nav class="nav flex-column nav-pills">
+                        <a class="nav-link active" href="#">Global Filters</a>
+                        <a class="nav-link" href="#">My Filters</a>
+                        <a class="nav-link" href="#">Lab Filters</a>
+                    </nav>
+                </div>
+                <div class="col-sm-8">
+                    <div class="tab-content">
+                    </div>
+                    <ul class="list-group">
+                        <li class="list-group-item active" data-filterid="0">All Samples</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h4 class="card-header">Choose Plot Type</h4>
+        <div class="card-body">
+            <form class="mb-3">
+                 <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Filter plots">
+                    <div class="input-group-btn">
+                        <button class="btn btn-outline-info" data-toggle="button">
+                            <i class="fa fa-heart" aria-hidden="true"></i>
+                            Favs Only
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <ul class="list-group">
+                {% for pt in report_plot_types %}
+                <li class="list-group-item" data-plotid="{{ pt.plot_id }}">
+                    {{ pt.nicename }}
+                    <i class="fa fa-heart-o float-right" aria-hidden="true"></i>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
 
+<div class="card">
+    <div class="card-body" id="reportPlot">
+        <p class="text-secondary mb-0">Please choose a plot type</p>
+    </div>
+</div>
+
+<!-- Create New Filter Set -->
+{% include "public/filter_samples_modal.html" %}
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="/static/js/filter_samples.js"></script>
 {% endblock %}

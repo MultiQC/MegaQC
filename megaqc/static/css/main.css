@@ -47,7 +47,6 @@ div.alert.alert-light {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    margin: 20px 0;
     font-family: Roboto;
 }
 h5, h6 {
@@ -95,11 +94,8 @@ footer p a {
 }
 
 .modal-xl {
-    height:600px;
+    max-width: 1200px;
     width:90%;
-}
-.card .card-body pre {
-    margin-bottom: 0;
 }
 
 .plot-chooser-card {
@@ -116,6 +112,14 @@ footer p a {
     text-decoration: none;
 }
 
+.card-header .btn.btn-sm {
+    margin: -3px 0;
+}
+.card .card-body pre {
+    margin-bottom: 0;
+}
+
+
 .plot-chooser-card .card-body {
     padding: 0.8rem;
 }
@@ -130,7 +134,7 @@ footer p a {
     margin: 0;
 }
 .new-filter-group-card .card-body .filter-group-table td {
-    min-width: 200px;
+    /*min-width: 200px;*/
 }
 .new-filter-group-card .card-body .filter-group-table td:last-child {
     min-width: 0;
@@ -174,4 +178,9 @@ footer p a {
     display: none;
 }
 
+
+.report-plot-card-deck .card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
 

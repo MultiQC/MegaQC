@@ -1,103 +1,15 @@
+//
+// MegaQC: filter_samples.js
+// ---------------------------
+// Used by pages loading the Filter Samples modal dialogue
+// to create new sample filter sets.
 
-{% extends "layout.html" %}
+// To be set in the page using Python vars:
+//   window.token
+//   window.report_fields
+//   window.sample_fields
+//   window.num_matching_samples
 
-{% block content %}
-
-<h1>
-    Sample Filters: New Set
-    <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
-        {{ num_samples }} samples
-    </span>
-    <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
-    <span class="loading-spinner" style="display:none;">Updating...</span>
-</h1>
-<p>Create a new sample filter set. You can use these filter sets when creating plots.
-    Remember to save at the bottom when you're finished!</p>
-<div class="alert alert-light">
-    <i class="fa fa-info-circle" aria-hidden="true"></i> &nbsp;
-    Filters within a group are applied with <code>AND</code> logic.
-    Different filter groups have <code>OR</code> logic.
-</div>
-
-<div class="card new-filter-group-card">
-    <div class="card-header">Filter Group 1</div>
-    <div class="card-body">
-        <table class="table table-responsive filter-group-table">
-            <thead>
-                <tr>
-                    <th style="width:25%;">Type</th>
-                    <th style="width:25%;">Key</th>
-                    <th style="width:25%;">Comparison</th>
-                    <th style="width:25%;">Value</th>
-                    <th style="width:100px;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td class="new-filter-type">
-                        <select class="form-control">
-                            <option value="">[ select a filter type ]</option>
-                            <option value="timedelta">Dynamic date range</option>
-                            <option value="daterange">Specific dates</option>
-                            <option value="reportmeta">Report metadata</option>
-                            <option value="samplemeta">Sample data</option>
-                        </select>
-                    </td>
-                    <td class="new-filter-key"><select class="form-control" disabled="true"><option value="">[ please select a filter type ]<option></select></td>
-                    <td class="new-filter-cmp"><select class="form-control" disabled="true"><option value="">[ please select a filter type ]<option></select></td>
-                    <td class="new-filter-value"><input class="form-control" disabled="true" type="text" placeholder="[ please select a filter type ]"></td>
-                    <td class="new-filter-actions">
-                        <button class="new-filter-add btn btn-sm btn-primary" disabled>
-                            <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
-                            Add
-                        </button>
-                    </td>
-                </td>
-            </tfoot>
-        </table>
-    </div>
-</div>
-<button class="new-filter-group-add-btn btn btn-outline-primary">
-    <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
-    Add new filter group
-</button>
-
-
-<h3>Save Filters</h3>
-<form>
-    <div class="form-row">
-        <div class="form-group col-sm">
-            <label for="filters_name">Name</label>
-            <input type="text" class="form-control" id="filters_name" placeholder="Name of filters">
-        </div>
-        <div class="form-group col-sm">
-            <label for="filters_set">Set</label>
-            <select class="form-control" id="filters_set">
-                <option>[ new set ]</option>
-            </select>
-        </div>
-        <!-- TODO: ONLY ADMINISTRATORS -->
-        <div class="form-group col-sm">
-            <label for="filters_visiblity">Visibility</label>
-            <select class="form-control" id="filters_visiblity">
-                <option>Just me</option>
-                <option>Everyone</option>
-            </select>
-        </div>
-        <!-- END ONLY ADMINS -->
-        <div class="form-group col-sm">
-            <label for="filters_visiblity">Save</label>
-            <button type="submit" class="form-control btn btn-primary">Save Filters</button>
-        </div>
-    </div>
-</form>
-
-{% endblock %}
-{% block js %}
-<script type="text/javascript">
-window.token = "{{ user_token }}";
 window.data_cmp = {
     "in": "Contains string",
     "not in": "Does not contain string",
@@ -108,10 +20,7 @@ window.data_cmp = {
     "ge": "(&ge;) Greater than or equal to",
     "gt": "(&gt;) Greater than"
 };
-window.report_fields = {{ report_fields | safe }};
-window.sample_fields = {{ sample_fields | safe }};
 window.active_filters = {'filters': []};
-window.num_matching_samples = {{ num_samples }};
 window.filter_error = false;
 window.ajax_update = false;
 $(function(){
@@ -347,6 +256,3 @@ $(function(){
         }
     });
 });
-
-</script>
-{% endblock %}

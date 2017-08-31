@@ -58,6 +58,12 @@
 <script type="text/javascript" src="/static/js/libs/toastr.min.js"></script>
 <script type="text/javascript" src="/static/js/libs/clipboard.min.js"></script>
 <script type="text/javascript" src="/static/js/megaqc.js"></script>
+<script type="text/javascript">
+{% if user_token %}window.token = "{{ user_token }}";{%- endif %}
+{% if report_fields %}window.report_fields = {{ report_fields | safe }};{%- endif %}
+{% if sample_fields %}window.sample_fields = {{ sample_fields | safe }};{%- endif %}
+{% if num_samples %}window.num_matching_samples = {{ num_samples }};{%- endif %}
+</script>
 {% block js %}{% endblock %}
 
 </body>
