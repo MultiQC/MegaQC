@@ -174,6 +174,7 @@ $(function(){
                 t_filters.push(filter);
             });
             window.active_filters['filters'].push(t_filters);
+            window.active_filters['meta']={name:$('#filters_name').val(), set:$('#filters_name').val(), is_public:($('#filters_visibility').val() == 'Everyone')};
         });
         // Call the AJAX endpoint to update the page
         // Update the page when a new filter is added
