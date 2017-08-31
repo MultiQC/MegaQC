@@ -176,12 +176,10 @@ $(function(){
             window.active_filters.push(t_filters);
         });
         // Call the AJAX endpoint to update the page
-        // Update the page when a new filter is added
-        var meta={name:$('#filters_name').val(), set:$('#filters_name').val(), is_public:($('#filters_visibility').val() == 'Everyone')};
         window.ajax_update = $.ajax({
             url: '/api/report_filter_fields',
             type: 'post',
-            data:JSON.stringify( {'filters': window.active_filters, meta:meta} ),
+            data:JSON.stringify( {'filters': window.active_filters} ),
             headers : { access_token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
@@ -203,23 +201,13 @@ $(function(){
                         $('.num_filtered_samples').addClass('badge-success');
                     }
 
-                    // Update the report plot type dropdown
-                    if(data['report_plot_types'].length > 0){
-                        $('#selectPlotType').html('<option value="">[ select plot type ]</option>').attr('disabled', false);
-                        $.each(data['report_plot_types'], function(idx, field){
-                            $('#selectPlotType').append('<option value="'+field['name']+'">'+field['nicename']+' ('+field['type']+')</option>')
-                        });
-                    } else {
-                        $('#selectPlotType').html('<option value="">[ no available fields ]</option>').attr('disabled', true);
-                    }
-
                     // Hide the loading spinner
                     $('.loading-spinner').hide();
 
                 // AJAX data['success'] was false
                 } else {
                     console.log(data);
-                    toastr.error('There was an error applying the sample filters.');
+                    toastr.error('There was an error applying the sample filters: '+data['message']);
                     $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
                     $('.loading-spinner').hide();
                     window.num_matching_samples = 0;
@@ -236,24 +224,60 @@ $(function(){
         });
     }
 
-    // Submit form to make a plot
-    $('#createReportPlotForm').submit(function(e){
+    // Save report filters
+    $('#sample-filters-save').submit(function(e){
+        e.preventDefault();
         // Check that there wasn't an error with the filters
         if(window.filter_error){
-            toastr.error('There was an error applying your filters. Cannot make a plot.');
-            e.preventDefault();
+            toastr.error('There was an error applying your filters.');
             return false;
         }
-        // Check that some samples match the filters
-        if(window.num_matching_samples == 0){
-            toastr.error('Some samples must match your filters to make a plot.');
-            e.preventDefault();
+        // Check that there are some filters to save
+        if(window.active_filters.length == 0){
+            toastr.error('You must add some filters before saving.');
             return false;
         }
-        // Check that a plot type has been selected
-        if($('#selectPlotType').val() == ''){
-            toastr.error('Please select a plot type.');
-            e.preventDefault();
+        // Check that we have a name
+        if($('#filters_name').val().trim().length == 0){
+            toastr.error('Please enter a name for these filters.');
+            return false;
         }
+        if($('#filters_set').val().trim().length == 0){
+            toastr.error('Please choose a filter group for these filters.');
+            return false;
+        }
+        // Cancel any running update_filters ajax call
+        if(window.ajax_update !== false){
+            window.ajax_update.abort();
+        }
+        // Call the AJAX endpoint to save the filters
+        window.ajax_update = $.ajax({
+            url: '/api/save_filter',
+            type: 'post',
+            data:JSON.stringify( {
+                'filters': window.active_filters,
+                'meta': {
+                    'name': $('#filters_name').val(),
+                    'set': $('#filters_set').val(),
+                    'is_public': ($('#filters_visiblity').val() == 'Everyone')
+                }
+            }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    $('body').trigger('sample-filter-saved');
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error saving the sample filters: '+data['message']);
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error saving the sample filters.');
+            }
+        });
     });
 });

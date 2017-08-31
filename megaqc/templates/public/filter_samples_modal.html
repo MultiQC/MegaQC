@@ -69,7 +69,7 @@
                 </button>
 
                 <h3 class="mt-5">Save Filters</h3>
-                <form>
+                <form id="sample-filters-save">
                     <div class="form-row">
                         <div class="form-group col-sm">
                             <label for="filters_name">Name</label>
@@ -78,11 +78,13 @@
                         <div class="form-group col-sm">
                             <label for="filters_set">Grouping</label>
                             <select class="form-control" id="filters_set">
+                                {% if User.is_admin %}
+                                <option>Global</option>
+                                {%- endif %}
                                 <option>My Filters</option>
-                                <option>[ new filter set ]</option>
+                                <option value="">[ new filter set ]</option>
                             </select>
                         </div>
-                        <!-- TODO: ONLY ADMINISTRATORS -->
                         <div class="form-group col-sm">
                             <label for="filters_visiblity">Visibility</label>
                             <select class="form-control" id="filters_visiblity">
@@ -90,7 +92,6 @@
                                 <option>Everyone</option>
                             </select>
                         </div>
-                        <!-- END ONLY ADMINS -->
                         <div class="form-group col-sm">
                             <label for="filters_visiblity">Save</label>
                             <button type="submit" class="form-control btn btn-primary">Save Filters</button>

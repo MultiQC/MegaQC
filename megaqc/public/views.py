@@ -10,7 +10,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples, aggregate_new_parameters, generate_plot
+from megaqc.api.utils import get_samples, get_user_filters, aggregate_new_parameters, generate_plot
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -91,11 +91,22 @@ def choose_plot_type():
 def report_plot():
     # Get the fields for the add-new-filters form
     return_data = aggregate_new_parameters([], False)
+    sample_filters = OrderedDict()
+    sample_filters['Global'] = [{
+        'id': -1,
+        'set': 'Global',
+        'name': 'All Samples'
+    }]
+    for sf in get_user_filters(User):
+        if sf['set'] not in sample_filters:
+            sample_filters[sf['set']] = list()
+        sample_filters[sf['set']].append(sf)
     return render_template(
         'public/report_plot.html',
         db = db,
         User = User,
         user_token = current_user.api_token,
+        sample_filters = sample_filters,
         num_samples = return_data[0],
         report_fields = json.dumps(return_data[1]),
         sample_fields = json.dumps(return_data[2]),

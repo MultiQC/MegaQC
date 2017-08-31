@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h1>
+<h1 class="mt-4 mb-4">
     MultiQC Report Plot
     <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
     <span class="loading-spinner" style="display:none;">Loading...</span>
@@ -24,17 +24,25 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-4">
-                        <nav class="nav flex-column nav-pills sample-filter-group-select">
-                            <a class="nav-link active" href="#">Global Filters</a>
-                            <a class="nav-link" href="#">My Filters</a>
-                            <a class="nav-link" href="#">Lab Filters</a>
+                        <nav class="nav flex-column nav-pills" id="sample-filter-group-select" role="tablist">
+                            {% for sfg in sample_filters.keys() | sort %}
+                            <a class="nav-link {% if loop.first %}active{% endif %}" data-toggle="pill" href="#sample_filter_group_{{ loop.index }}" role="tab">{{ sfg }}</a>
+                            {% endfor %}
                         </nav>
                     </div>
                     <div class="col-sm-8">
                         <hr class="d-md-none">
-                        <ul class="list-group">
-                            <li class="list-group-item active" data-filterid="0">All Samples</li>
-                        </ul>
+                        <div class="tab-content">
+                        {% for sfg in sample_filters.keys() | sort %}
+                            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="sample_filter_group_{{ loop.index }}" role="tabpanel">
+                                <div class="list-group">
+                                    {% for sf in sample_filters[sfg] %}
+                                    <button type="button" class="sample-filter-btn list-group-item list-group-item-action {% if loop.first %}active{% endif %}" data-filterid="{{ sf.id }}">{{ sf.name }}</button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -57,9 +65,9 @@
                 </form>
                 <div class="list-group">
                     {% for pt in report_plot_types %}
-                    <a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="{{ pt.plot_id }}">
+                    <a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="{{ pt.name }}">
                         {{ pt.nicename }}
-                        <i class="fa fa-heart-o float-right" aria-hidden="true"></i>
+                        <i class="fa fa-heart-o float-right report-plot-type-save-fav" aria-hidden="true"></i>
                     </a>
                     {% endfor %}
                 </div>
@@ -83,6 +91,38 @@
 <script type="text/javascript" src="/static/js/filter_samples.js"></script>
 <script type="text/javascript">
 $(function(){
+
+//////// TODO
+// - Handle sample filters being clicked
+// - Fix dodgy sample filter group interactivity
+// - Add filtering by name for plot types
+// - Add filtering by favourites for plot type
+// - Actually save plot type favourites when asked to do so
+// - Handle modal etc when new filter sets saved
+
+
+    // Sample filter clicked
+    $('.sample-filter-btn').click(function(e){
+        e.preventDefault();
+        $('.sample-filter-btn').removeClass('active');
+        $(this).addClass('active');
+        // TODO: Get new sample count and list of plot types
+        // call /api/report_filter_fields with:
+        // { "filter_id": 1 }
+        // - Update sample count
+        // - Update list of available plots
+    });
+
+    // Save plot type as a favourite
+    $('body').on('click', '.report-plot-type-btn .report-plot-type-save-fav', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if($(this).hasClass('fa-heart-o')){
+            $(this).removeClass('fa-heart-o').addClass('fa-heart');
+        } else {
+            $(this).removeClass('fa-heart').addClass('fa-heart-o');
+        }
+    });
 
     // A plot type is chosen
     $('body').on('click', '.report-plot-type-btn', function(e){

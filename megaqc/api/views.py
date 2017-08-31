@@ -214,7 +214,7 @@ def save_filter(user, *args, **kwargs):
 @api_blueprint.route('/api/get_filters', methods=['GET', 'POST'])
 @check_user
 def get_filters(user, *args, **kwargs):
-    data=get_user_filters(user)
+    data = get_user_filters(user)
     return jsonify({
             'success': True,
             'data': data

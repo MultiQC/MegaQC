@@ -615,7 +615,7 @@ def get_user_filters(user):
     clauses.append(SampleFilter.user_id==user.user_id)
     if not user.is_admin:
         clauses.append(SampleFilter.is_public==True)
-    sfq.filter(_or(*clauses))
+    sfq.filter(or_(*clauses))
     sfs = sfq.all()
     data=[{'name':x.sample_filter_name,'set':x.sample_filter_tag, 'id':x.sample_filter_id, 'filters':json.loads(x.sample_filter_data)} for x in sfs]
     return data
