@@ -14,7 +14,6 @@ from passlib.utils import getrandstr, rng
 
 import string
 
-
 class Role(db.Model, CRUDMixin):
     """A role for a user."""
 

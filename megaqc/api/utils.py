@@ -604,3 +604,15 @@ def build_filter(query, filters, source_table):
     query = query.filter(or_(*alchemy_or_cmps))
     #print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
     return query
+
+def get_user_filters(user):
+    clauses=[]
+    sfq = db.session.query(SampleFilter)
+    clauses.append(SampleFilter.user_id==user.user_id)
+    if not user.is_admin:
+        clauses.append(SampleFilter.is_public==True)
+    sfq.filter(_or(*clauses))
+    sfs = sfq.all()
+    data=[{'name':x.sample_filter_name,'set':x.sample_filter_tag, 'id':x.sample_filter_id, 'filters':json.loads(x.sample_filter_data)} for x in sfs]
+    return data
+

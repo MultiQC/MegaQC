@@ -4,13 +4,15 @@ from flask import Blueprint, request, jsonify, abort
 
 from megaqc.extensions import db
 from megaqc.user.models import User
-from megaqc.model.models import PlotData, Report
-from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, get_sample_metadata_fields, aggregate_new_parameters
+from megaqc.model.models import PlotData, Report, SampleFilter
+from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, get_sample_metadata_fields, aggregate_new_parameters, get_user_filters
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
 
 from functools import  wraps
+
+import json
 
 api_blueprint = Blueprint('api', __name__, static_folder='../static')
 
@@ -181,3 +183,43 @@ def report_filter_fields(user, *args, **kwargs):
         'sample_metadata_fields': return_data[2],
         'report_plot_types': return_data[3]
     })
+
+@api_blueprint.route('/api/save_filter', methods=['POST'])
+@check_user
+def save_filter(user, *args, **kwargs):
+    data = request.get_json()
+    one_filter = data.get("filter", [])
+    meta = data.get("meta", {})
+    data = json.dumps(one_filter)
+    existing_filter = db.session.query(SampleFilter).filter(SampleFilter.sample_filter_data == data).filter(SampleFilter.is_public == meta.get('is_public', True)).first()
+    if existing_filter:
+        return jsonify({
+                'success': False,
+                'message': "Filter already exists"
+            })
+    else:
+        new_sf = SampleFilter(
+                sample_filter_id=SampleFilter.get_next_id(),
+                sample_filter_name=meta.get('name'),
+                sample_filter_tag=meta.get('set'),
+                is_public=meta.get('is_public', True),
+                sample_filter_data=data,
+                user_id=user.user_id)
+        new_sf.save()
+        return jsonify({
+                'success': True,
+                'message': "Filter created successfully"
+            })
+
+
+@api_blueprint.route('/api/get_filters', methods=['GET', 'POST'])
+@check_user
+def get_filters(user, *args, **kwargs):
+    data=get_user_filters(user)
+    return jsonify({
+            'success': True,
+            'data': data
+            })
+
+
+

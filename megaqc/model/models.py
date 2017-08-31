@@ -8,6 +8,7 @@ from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Strin
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
 
+
 class Report(db.Model, CRUDMixin):
     """a MultiQC report"""
 
@@ -104,9 +105,23 @@ class SampleData(db.Model, CRUDMixin):
 
 class Sample(db.Model, CRUDMixin):
     __tablename__ ="sample"
-    sample_id=Column(Integer, primary_key=True)
-    sample_name=sample_name = Column(String(80)) 
+    sample_id = Column(Integer, primary_key=True)
+    sample_name = Column(String(80))
     report_id = Column(Integer, ForeignKey('report.report_id'))
     @staticmethod
     def get_next_id():
         return (db.session.query(func.max(Sample.sample_id)).first()[0] or 0) + 1
+
+
+class SampleFilter(db.Model, CRUDMixin):
+    __tablename__="sample_filter"
+    sample_filter_id = Column(Integer, primary_key=True)
+    sample_filter_name = Column(String(80))
+    sample_filter_tag = Column(String(80))
+    is_public = Column(Boolean)
+    sample_filter_data = Column(String(2048), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(SampleFilter.sample_filter_id)).first()[0] or 0) + 1
