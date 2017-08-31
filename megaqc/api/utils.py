@@ -111,8 +111,6 @@ def handle_report_data(user, report_data):
                     dataset = report_data['report_plot_data'][plot]['config']['ylab']
                 except KeyError:
                     dataset = report_data['report_plot_data'][plot]['config']['title']
-            except:
-                import pdb;pdb.set_trace()
             existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.config_type==report_data['report_plot_data'][plot]['plot_type'], PlotConfig.config_name==plot, PlotConfig.config_dataset==dataset).first()
             if not existing_plot_config:
                 config_id = PlotConfig.get_next_id()
@@ -615,7 +613,7 @@ def get_user_filters(user):
     clauses.append(SampleFilter.user_id==user.user_id)
     if not user.is_admin:
         clauses.append(SampleFilter.is_public==True)
-    sfq.filter(_or(*clauses))
+    sfq.filter(or_(*clauses))
     sfs = sfq.all()
     data=[{'name':x.sample_filter_name,'set':x.sample_filter_tag, 'id':x.sample_filter_id, 'filters':json.loads(x.sample_filter_data)} for x in sfs]
     return data
