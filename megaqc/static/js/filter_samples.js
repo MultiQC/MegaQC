@@ -20,7 +20,7 @@ window.data_cmp = {
     "ge": "(&ge;) Greater than or equal to",
     "gt": "(&gt;) Greater than"
 };
-window.active_filters = {'filters': []};
+window.active_filters = [];
 window.filter_error = false;
 window.ajax_update = false;
 $(function(){
@@ -157,7 +157,7 @@ $(function(){
             window.ajax_update.abort();
         }
         // Build active_filters object from tables
-        window.active_filters = {'filters': []};
+        window.active_filters = [];
         $('.filter-group-table').each(function(){
             var t_filters = [];
             $(this).find('tbody tr').each(function(){
@@ -173,15 +173,15 @@ $(function(){
                 }
                 t_filters.push(filter);
             });
-            window.active_filters['filters'].push(t_filters);
-            window.active_filters['meta']={name:$('#filters_name').val(), set:$('#filters_name').val(), is_public:($('#filters_visibility').val() == 'Everyone')};
+            window.active_filters.push(t_filters);
         });
         // Call the AJAX endpoint to update the page
         // Update the page when a new filter is added
+        var meta={name:$('#filters_name').val(), set:$('#filters_name').val(), is_public:($('#filters_visibility').val() == 'Everyone')};
         window.ajax_update = $.ajax({
             url: '/api/report_filter_fields',
             type: 'post',
-            data:JSON.stringify( window.active_filters ),
+            data:JSON.stringify( {'filters': window.active_filters, meta:meta} ),
             headers : { access_token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',

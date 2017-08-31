@@ -2,7 +2,11 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h1>MultiQC Report Plot</h1>
+<h1>
+    MultiQC Report Plot
+    <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
+    <span class="loading-spinner" style="display:none;">Loading...</span>
+</h1>
 
 <div class="card-deck report-plot-card-deck mb-3">
     <div class="card">
@@ -49,21 +53,21 @@
                     </div>
                 </div>
             </form>
-            <ul class="list-group">
+            <div class="list-group">
                 {% for pt in report_plot_types %}
-                <li class="list-group-item" data-plotid="{{ pt.plot_id }}">
+                <a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="{{ pt.plot_id }}">
                     {{ pt.nicename }}
                     <i class="fa fa-heart-o float-right" aria-hidden="true"></i>
-                </li>
+                </a>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body" id="reportPlot">
-        <p class="text-secondary mb-0">Please choose a plot type</p>
+<div class="card" id="report_plot">
+    <div class="card-body">
+        <p class="text-secondary">Please choose a plot type</p>
     </div>
 </div>
 
@@ -73,4 +77,65 @@
 {% endblock %}
 {% block js %}
 <script type="text/javascript" src="/static/js/filter_samples.js"></script>
+<script type="text/javascript">
+$(function(){
+
+    // A plot type is chosen
+    $('body').on('click', '.report-plot-type-btn', function(){
+        $('.report-plot-type-btn').removeClass('active');
+        $(this).addClass('active');
+        create_plot();
+    });
+
+    // Create a plot
+    function create_plot(){
+        // Show the loading spinners
+        $('.loading-spinner').show();
+        $('#report_plot .card-body').html('<p>' +
+            '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
+            '<span class="loading-spinner">Loading...</span>' +
+        '</p>');
+        // Get the active plot type
+        plot_type = $('.report-plot-type-btn.active').data('plotid');
+        if(plot_type == undefined){
+            toastr.error('Please select a plot type.');
+            return;
+        }
+        // Cancel any running update_filters ajax call
+        if(window.ajax_update !== false){
+            window.ajax_update.abort();
+        }
+        // Get the plot HTML
+        window.ajax_update = $.ajax({
+            url: '/api/get_plot',
+            type: 'post',
+            data:JSON.stringify( {
+                'filters': window.active_filters,
+                'plot_type': plot_type
+            }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    $('#report_plot .card-body').html(data['plot']);
+                    $('.loading-spinner').hide();
+
+                // AJAX data['success'] was false
+                } else {
+                    console.log(data);
+                    toastr.error('There was an error whilst generating this plot.');
+                    $('#report_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                    $('.loading-spinner').hide();
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error retrieving this plot.');
+                $('#report_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                $('.loading-spinner').hide();
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

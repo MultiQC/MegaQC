@@ -184,3 +184,11 @@ footer p a {
     overflow-y: auto;
 }
 
+#report_plot .card-body {
+    min-height:490px;
+    text-align: center;
+}
+#report_plot .card-body p {
+    margin-top: 100px;
+}
+
