@@ -66,6 +66,7 @@
 </div>
 
 <div class="card" id="report_plot">
+    <h4 class="card-header">Report Plot</h4>
     <div class="card-body">
         <p class="text-secondary">Please choose a plot type</p>
     </div>
@@ -81,10 +82,15 @@
 $(function(){
 
     // A plot type is chosen
-    $('body').on('click', '.report-plot-type-btn', function(){
+    $('body').on('click', '.report-plot-type-btn', function(e){
+        e.preventDefault();
         $('.report-plot-type-btn').removeClass('active');
         $(this).addClass('active');
-        create_plot();
+        $('html, body').animate({
+            scrollTop: $($(this).attr('href')).offset().top
+        }, 300).promise().then(function() {
+            create_plot();
+        });
     });
 
     // Create a plot
@@ -101,6 +107,7 @@ $(function(){
             toastr.error('Please select a plot type.');
             return;
         }
+        $('#report_plot .card-header').text($('.report-plot-type-btn.active').text());
         // Cancel any running update_filters ajax call
         if(window.ajax_update !== false){
             window.ajax_update.abort();
