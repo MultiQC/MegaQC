@@ -90,7 +90,7 @@ def choose_plot_type():
 @login_required
 def report_plot():
     # Get the fields for the add-new-filters form
-    return_data = aggregate_new_parameters([])
+    return_data = aggregate_new_parameters([], False)
     return render_template(
         'public/report_plot.html',
         db = db,
