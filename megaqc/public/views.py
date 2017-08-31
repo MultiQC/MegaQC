@@ -86,31 +86,13 @@ def choose_plot_type():
     """Choose plot type."""
     return render_template('public/plot_type.html', num_samples=get_samples(count=True))
 
-@blueprint.route('/report_plot2/')
-@login_required
-def report_plot_select_samples2():
-    # Get the fields for the form
-    return_data = aggregate_new_parameters([])
-    # Render the template
-    return render_template(
-        'public/report_plot_select_samples.html',
-        db = db,
-        User = User,
-        user_token = current_user.api_token,
-        num_samples = return_data[0],
-        report_fields = return_data[1],
-        sample_fields = return_data[2],
-        report_plot_types = return_data[3]
-        )
-
 @blueprint.route('/report_plot/')
 @login_required
-def report_plot_select_samples():
-    # Get the fields for the form
+def report_plot():
+    # Get the fields for the add-new-filters form
     return_data = aggregate_new_parameters([])
-    # Render the template
     return render_template(
-        'public/report_plot_select_samples2.html',
+        'public/report_plot.html',
         db = db,
         User = User,
         user_token = current_user.api_token,
@@ -118,40 +100,5 @@ def report_plot_select_samples():
         report_fields = json.dumps(return_data[1]),
         sample_fields = json.dumps(return_data[2]),
         report_plot_types = return_data[3]
-        )
-
-
-@blueprint.route('/report_plot/plot/')
-@login_required
-def report_plot():
-
-    # Get the filters
-    filters = []
-    idx = 0
-    while all(['f{}_{}'.format(idx, k) in request.values for k in ['k','t','c','v']]):
-        filters.append({
-            'key': request.values['f{}_k'.format(idx)],
-            'type': request.values['f{}_t'.format(idx)],
-            'cmp': request.values['f{}_c'.format(idx)],
-            'value': request.values['f{}_v'.format(idx)]
-        })
-        idx += 1
-
-    # Generate the plot
-    plot_type = request.values.get('plot_type')
-    samples = get_samples(filters)
-    if plot_type is None:
-        plot_html = '<div class="alert alert-danger">Error: No plot type supplied.</div>'
-    elif len(samples) == 0:
-        plot_html = '<div class="alert alert-danger">Error: No matching samples found.</div>'
-    else:
-        plot_html = generate_plot(plot_type, samples)
-
-    return render_template(
-        'public/report_plot.html',
-        db=db,
-        User=User,
-        filters = filters,
-        plot_html = plot_html
         )
 
