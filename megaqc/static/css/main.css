@@ -195,8 +195,9 @@ footer p a {
 }
 
 #report_plot .card-body {
-    min-height:490px;
+    min-height:500px;
     text-align: center;
+    padding: 0;
 }
 #report_plot .card-body p {
     margin-top: 100px;
