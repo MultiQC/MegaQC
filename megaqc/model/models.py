@@ -9,6 +9,11 @@ from megaqc.database import CRUDMixin
 from megaqc.extensions import db
 
 
+user_plotconfig_map = db.Table('user_plotconfig_map',
+            db.Column('user_id', Integer, db.ForeignKey('users.user_id')),
+            db.Column('plot_config_id', Integer, db.ForeignKey('plot_config.config_id'))
+            )
+
 class Report(db.Model, CRUDMixin):
     """a MultiQC report"""
 

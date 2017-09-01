@@ -521,7 +521,6 @@ def aggregate_new_parameters(filters=None, short=True):
 
 def build_filter(query, filters, source_table):
     #Build sqlalchemy filters for the provided query based on constants and the provided filters
-    print filters
     alchemy_or_cmps=[]
     for filter_group in filters:
         alchemy_and_cmps=[]
@@ -618,3 +617,18 @@ def get_user_filters(user):
     data=[{'name':x.sample_filter_name,'set':x.sample_filter_tag, 'id':x.sample_filter_id, 'filters':json.loads(x.sample_filter_data)} for x in sfs]
     return data
 
+def update_fav_plot(method, user, plot_info):
+
+    existing_plot_config_q = db.session.query(PlotConfig).filter(PlotConfig.config_name==plot_info[0])
+    if len(plot_info)==2:
+        existing_plot_config_q = existing_plot_config_q.filter(PlotConfig.config_dataset==plot_info[1]))
+    existing_plot_config = existing_plot_config_q.first()
+    if not existing_plot_config:
+        raise Exception("No such plot")
+    if method == 'save':
+        db.session.execute(user_plotconfig_map.insert().values(user_id=user.user_id, plot_config_id=existing_plot_config.config_id))
+    elif method == 'delete':
+        db.session.execute(user_plotconfig_map.delete().where(and_(user_plotconfig_map.c.user_id==user.user_id, user_plotconfig_map.c.plot_config_id==existing_plot_config.config_id)))
+    else:
+        raise Exception("No such method")
+    db.session.commit()

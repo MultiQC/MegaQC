@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify, abort
 from megaqc.extensions import db
 from megaqc.user.models import User
 from megaqc.model.models import PlotData, Report, SampleFilter
-from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, get_sample_metadata_fields, aggregate_new_parameters, get_user_filters
+from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -233,4 +233,20 @@ def get_filters(user, *args, **kwargs):
             })
 
 
-
+@api_blueprint.route('/api/update_favourite_plot', methods=['GET', 'POST'])
+@check_user
+def update_favourite_plot(user, *args, **kwargs):
+    data = request.get_json()
+    plot_info = data.get("plot_id","").split(" -- ")
+    method = data.get('method', None)
+    if plot_info and method:
+        try:
+            update_fav_plot(method, user, plot_info)
+        except Exception as e:
+            return jsonify({
+                'success':False,
+                'message':e.message
+            })
+    return jsonify({
+        'success': True
+    })
