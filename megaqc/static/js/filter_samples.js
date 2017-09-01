@@ -25,6 +25,9 @@ window.filter_error = false;
 window.ajax_update = false;
 $(function(){
 
+    // Initialise the chosen select boxes
+    $('.form-control-chosen').chosen({'disable_search_threshold': 10});
+
     // Add new filter - Type dropdown
     $('body').on('change', '.new-filter-type select', function(e){
         // Reset downstream selectors
@@ -33,8 +36,8 @@ $(function(){
         var cmp_e = $(this).closest('tr').find('.new-filter-cmp');
         var val_e = $(this).closest('tr').find('.new-filter-value');
         button_e.prop('disabled', false);
-        key_e.html('<select class="form-control"></select>');
-        cmp_e.html('<select class="form-control"></select>');
+        key_e.html('<select class="form-control form-control-chosen" data-placeholder="[ please select key ]"><option></option></select>');
+        cmp_e.html('<select class="form-control form-control-chosen" data-placeholder="[ please select comparison ]"><option></option></select>');
         val_e.html('<input class="form-control" type="text">');
         switch($(this).val()) {
             case 'timedelta':
@@ -70,6 +73,8 @@ $(function(){
                 val_e.find('input').prop('disabled', true).attr('placeholder', '[ please select a filter type ]');
                 break;
         }
+        $('.form-control-chosen').trigger("chosen:updated");
+        $('.form-control-chosen').chosen({'disable_search_threshold': 10});
     });
 
     // Add new filter ROW

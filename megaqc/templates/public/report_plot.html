@@ -95,7 +95,7 @@ $(function(){
 
 //////// TODO
 // - Actually save plot type favourites when asked to do so
-// - Popover info box for filter sets showing what the filters are
+// - Popover info box for filter sets showing what the filters are...?
 
 
     // New sample filter set saved
@@ -125,7 +125,7 @@ $(function(){
     });
 
     // Sample filter clicked
-    $('.sample-filter-btn').click(function(e){
+    $('#sample-filter-groups').on('click', '.sample-filter-btn', function(e){
         e.preventDefault();
         $('.sample-filter-btn').removeClass('active');
         $(this).addClass('active');
