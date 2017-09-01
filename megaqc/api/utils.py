@@ -228,9 +228,10 @@ def generate_plot(plot_type, sample_names):
         series = []
         colors = []
         total_per_sample = defaultdict(lambda:0)
-        plot_data=defaultdict(lambda:defaultdict(lambda:0))
-        plot_data_perc=defaultdict(lambda:defaultdict(lambda:0))
-        config = json.loads(rows[-1][0].data)#grab latest config
+        plot_data = defaultdict(lambda:defaultdict(lambda:0))
+        plot_data_perc = defaultdict(lambda:defaultdict(lambda:0))
+        # get the latest config
+        config = json.loads(rows[-1][0].data)
         for row in rows:
             if row[3].sample_name not in samples:
                 samples.append(row[3].sample_name)
@@ -239,14 +240,19 @@ def generate_plot(plot_type, sample_names):
                 cat_config = json.loads(row[2].data)
                 if 'color' in cat_config:
                     colors.append(cat_config['color'])
-            plot_data[row[2].category_name][row[3].sample_name]=float(row[1].data)
-            total_per_sample[row[3].sample_name] = total_per_sample[row[3].sample_name] + float(row[1].data) # count total per sample for percentages
+            plot_data[row[2].category_name][row[3].sample_name] = float(row[1].data)
+            # count total per sample for percentages
+            total_per_sample[row[3].sample_name] = total_per_sample[row[3].sample_name] + float(row[1].data)
         for key in plot_data:
             for sample in plot_data[key]:
                 plot_data_perc[key][sample] = 100 * plot_data[key][sample] / total_per_sample[sample]
+
+        # Build the plot bars
         plots = []
         if not colors:
             colors = settings.default_plot_colors
+
+        # Make the plot bars for the main count datasets
         for idx, d in enumerate(series):
             my_trace = go.Bar(
                 y = samples,
@@ -263,10 +269,9 @@ def generate_plot(plot_type, sample_names):
                 ),
                 hoverinfo = 'text+x'
             )
-            if config.get('tt_percentages', True) is False: #default is True
-                my_trace.text=['{:.2f}%'.format(plot_data[d][x]/total_per_sample[x] * 100) for x in samples]
             plots.append(my_trace)
 
+        # Make the plot traces for the bar graph percentages
         for idx, d in enumerate(series):
             my_trace = go.Bar(
                 y = samples,
@@ -283,8 +288,6 @@ def generate_plot(plot_type, sample_names):
                 ),
                 hoverinfo = 'text+x'
             )
-            if config.get('tt_percentages', True) is False: #default is True
-                my_trace.text=['{:.2f}%'.format(plot_data[d][x]/total_per_sample[x] * 100) for x in samples]
             plots.append(my_trace)
 
         updated_layout = config_translate(
@@ -298,7 +301,7 @@ def generate_plot(plot_type, sample_names):
                 margin = dict(
                     t = 80,
                     b = 80,
-                    l = 80,
+                    l = 100,
                     r = 40
                 )
             )
@@ -306,7 +309,7 @@ def generate_plot(plot_type, sample_names):
         fig = go.Figure(data=plots, layout=updated_layout)
         plot_div = py.plot(
             fig,
-            output_type='div',
+            output_type = 'div',
             show_link = False,
             config = dict(
                 modeBarButtonsToRemove = [
@@ -401,11 +404,11 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
             my_range = map(math.log, my_range)
     #TODO : Figure out how yfloor and yceiling should be handled
     if plot_type=="bar_graph":
-        # for stacked bar graphs, axes are reversed Plotly
-        plotly_layout.yaxis= xaxis
-        plotly_layout.xaxis= yaxis
+        # For stacked bar graphs, axes are reversed in Plotly
+        plotly_layout.yaxis = xaxis
+        plotly_layout.xaxis = yaxis
 
-        updatemenus=list([
+        updatemenus = list([
             dict(
                 buttons=list([
                     dict(
@@ -424,7 +427,7 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
                 type = 'buttons',
                 x = -0.1,
                 xanchor = 'left',
-                y = -0.1,
+                y = 1.15,
                 yanchor = 'top'
             ),
         ])
