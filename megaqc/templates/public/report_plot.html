@@ -226,11 +226,39 @@ $(function(){
     $('body').on('click', '.report-plot-type-btn .report-plot-type-save-fav', function(e){
         e.preventDefault();
         e.stopPropagation();
+        var pdata = {'plot_id': $(this).parent().data('plotid')}
         if($(this).hasClass('fa-heart-o')){
             $(this).removeClass('fa-heart-o').addClass('fa-heart');
+            pdata['method'] = 'save';
         } else {
             $(this).removeClass('fa-heart').addClass('fa-heart-o');
+            pdata['method'] = 'delete';
         }
+        $('.loading-spinner').show();
+        $.ajax({
+            url: '/api/update_favourite_plot',
+            type: 'post',
+            data:JSON.stringify(pdata),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    toastr.success('Saved');
+                    $('.loading-spinner').hide();
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error saving this plot type favourite:<br><em>'+data['message']+'</em>');
+                    $('.loading-spinner').hide();
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error saving this plot type favourite.');
+                $('.loading-spinner').hide();
+            }
+        });
     });
 
     // A plot type is chosen
