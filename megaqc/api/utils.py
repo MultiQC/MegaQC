@@ -244,21 +244,24 @@ def generate_plot(plot_type, sample_names):
         for key in plot_data:
             for sample in plot_data[key]:
                 plot_data_perc[key][sample] = 100 * plot_data[key][sample] / total_per_sample[sample]
-        plots=[]
+        plots = []
         if not colors:
             colors = settings.default_plot_colors
         for idx, d in enumerate(series):
             my_trace = go.Bar(
-                y=samples,
-                x=[plot_data[d][x] for x in samples],
-                name=d,
+                y = samples,
+                x = [plot_data[d][x] for x in samples],
+                name = d,
+                text = row[3].sample_name,
                 orientation = 'h',
                 marker = dict(
                     color = colors[idx%(len(colors)+1)],
                     line = dict(
                         color = colors[idx%(len(colors)+1)],
-                        width = 3)
-                )
+                        width = 3
+                    )
+                ),
+                hoverinfo = 'text+x'
             )
             if config.get('tt_percentages', True) is False: #default is True
                 my_trace.text=['{:.2f}%'.format(plot_data[d][x]/total_per_sample[x] * 100) for x in samples]
@@ -266,36 +269,64 @@ def generate_plot(plot_type, sample_names):
 
         for idx, d in enumerate(series):
             my_trace = go.Bar(
-                y=samples,
-                x=[plot_data_perc[d][x] for x in samples],
-                name=d,
+                y = samples,
+                x = [plot_data_perc[d][x] for x in samples],
+                name = d,
+                text = row[3].sample_name,
                 orientation = 'h',
-                visible=False,
+                visible = False,
                 marker = dict(
                     color = colors[idx%11],#there are 10 defaults
                     line = dict(
                         color = colors[idx%11],
                         width = 3)
-                )
+                ),
+                hoverinfo = 'text+x'
             )
             if config.get('tt_percentages', True) is False: #default is True
                 my_trace.text=['{:.2f}%'.format(plot_data[d][x]/total_per_sample[x] * 100) for x in samples]
             plots.append(my_trace)
 
-        layout = go.Layout(
-                barmode='stack'
+        updated_layout = config_translate(
+            'bar_graph',
+            config,
+            len(series),
+            go.Layout(
+                barmode='stack',
+                hovermode = 'closest',
+                height = 500,
+                margin = dict(
+                    t = 80,
+                    b = 80,
+                    l = 80,
+                    r = 40
+                )
+            )
         )
-        updated_layout = config_translate('bar_graph', config, len(series), layout )
         fig = go.Figure(data=plots, layout=updated_layout)
-        plot_div = py.plot(fig, output_type='div')
+        plot_div = py.plot(
+            fig,
+            output_type='div',
+            show_link = False,
+            config = dict(
+                modeBarButtonsToRemove = [
+                    'sendDataToCloud',
+                    'resetScale2d',
+                    'hoverClosestCartesian',
+                    'hoverCompareCartesian',
+                    'toggleSpikelines'
+                ],
+                displaylogo = False
+            )
+        )
         return plot_div
 
     elif rows[0][0].config_type == "xy_line":
-        plots=[]
-        config = json.loads(rows[-1][0].data)#grab latest config
+        plots = []
+        config = json.loads(rows[-1][0].data) # grab latest config
         for idx, row in enumerate(rows):
-            xs=[]
-            ys=[]
+            xs = []
+            ys = []
             data = json.loads(row[1].data)
             config = json.loads(row[0].data)
             if "categories" in config:
@@ -307,15 +338,12 @@ def generate_plot(plot_type, sample_names):
                 for d in data:
                     xs.append(d[0])
                     ys.append(d[1])
-            category_conf = json.loads(row[2].data)
-            if 'color' in category_conf:
-                line_color = category_conf['color']
-            else:
-                line_color = settings.default_plot_colors[ idx % len(settings.default_plot_colors) ]
-            my_trace = go.Scatter(
+            line_color = settings.default_plot_colors[ idx % len(settings.default_plot_colors) ]
+            plots.append(go.Scatter(
                 y = ys,
                 x = xs,
-                name = row[2].category_name,
+                name = row[3].sample_name,
+                text = row[3].sample_name,
                 mode = 'lines',
                 marker = dict(
                     color = line_color,
@@ -323,15 +351,42 @@ def generate_plot(plot_type, sample_names):
                         color = line_color,
                         width = 1
                     )
+                ),
+                hoverinfo = 'text'
+            ))
+        updated_layout = config_translate(
+            'xy_line',
+            config,
+            len(rows),
+            go.Layout(
+                xaxis = {'type': 'category'},
+                showlegend = False,
+                hovermode = 'closest',
+                height = 500,
+                margin = dict(
+                    t = 80,
+                    b = 80,
+                    l = 80,
+                    r = 40
                 )
             )
-            plots.append(my_trace)
-        layout = go.Layout(
-                xaxis={'type':'category'}
-            )
-        updated_layout = config_translate('xy_line', config, len(rows), layout)
+        )
         fig = go.Figure(data=plots, layout=updated_layout)
-        plot_div = py.plot(fig, output_type='div')
+        plot_div = py.plot(
+            fig,
+            output_type = 'div',
+            show_link = False,
+            config = dict(
+                modeBarButtonsToRemove = [
+                    'sendDataToCloud',
+                    'resetScale2d',
+                    'hoverClosestCartesian',
+                    'hoverCompareCartesian',
+                    'toggleSpikelines'
+                ],
+                displaylogo = False
+            )
+        )
         return plot_div
 
 def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
@@ -346,7 +401,7 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
             my_range = map(math.log, my_range)
     #TODO : Figure out how yfloor and yceiling should be handled
     if plot_type=="bar_graph":
-        #for stacked bar graphs, axes are reversed between Highcharts and Plotly
+        # for stacked bar graphs, axes are reversed Plotly
         plotly_layout.yaxis= xaxis
         plotly_layout.xaxis= yaxis
 
@@ -379,7 +434,7 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
         plotly_layout.xaxis= xaxis
 
         if 'xPlotBands' in config:
-            #Treat them as shapes
+            # Treat them as shapes
             shapes=[]
             for band in config['xPlotBands']:
                 shape = {'type': 'rect',

@@ -25,6 +25,9 @@ window.filter_error = false;
 window.ajax_update = false;
 $(function(){
 
+    // Initialise the chosen select boxes
+    $('.form-control-chosen-required').chosen({'disable_search_threshold': 10});
+
     // Add new filter - Type dropdown
     $('body').on('change', '.new-filter-type select', function(e){
         // Reset downstream selectors
@@ -33,8 +36,8 @@ $(function(){
         var cmp_e = $(this).closest('tr').find('.new-filter-cmp');
         var val_e = $(this).closest('tr').find('.new-filter-value');
         button_e.prop('disabled', false);
-        key_e.html('<select class="form-control"></select>');
-        cmp_e.html('<select class="form-control"></select>');
+        key_e.html('<select class="form-control form-control-chosen-required" required data-placeholder="[ please select key ]"><option></option></select>');
+        cmp_e.html('<select class="form-control form-control-chosen-required" required data-placeholder="[ please select comparison ]"><option></option></select>');
         val_e.html('<input class="form-control" type="text">');
         switch($(this).val()) {
             case 'timedelta':
@@ -70,6 +73,8 @@ $(function(){
                 val_e.find('input').prop('disabled', true).attr('placeholder', '[ please select a filter type ]');
                 break;
         }
+        $('.form-control-chosen-required').trigger("chosen:updated");
+        $('.form-control-chosen-required').chosen({'disable_search_threshold': 10});
     });
 
     // Add new filter ROW
@@ -93,6 +98,12 @@ $(function(){
         if(fkey_val == undefined){
             fkey_val = fkey_txt = el.closest('tr').find('.new-filter-key input').val();
         }
+        // Check that we have everything that we need
+        if(ftype_val.trim() == ''){ toastr.error('Please select a filter type'); return;  }
+        if(fkey_val.trim() == ''){ toastr.error('Please select a filter key'); return;  }
+        if(fcmp_val.trim() == ''){ toastr.error('Please select a comparison type'); return;  }
+        if(fvalue_val.trim() == ''){ toastr.error('Please select a filter value'); return;  }
+
         new_filter_row = $('<tr>' +
             '<td><div class="new-filter-type" data-value="'+ftype_val+'">'+ftype_txt+'</div></td>' +
             '<td><div class="new-filter-key" data-value="'+fkey_val+'">'+fkey_txt+'</div></td>' +
