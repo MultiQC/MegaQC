@@ -103,22 +103,22 @@ def handle_report_data(user, report_data):
         for dst_idx, dataset in enumerate(report_data['report_plot_data'][plot]['datasets']):
             try:
                 if isinstance(report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx], dict):
-                    dataset = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]['ylab']
+                    dataset_name = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]['ylab']
                 else:
-                    dataset = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]
+                    dataset_name = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]
             except KeyError:
                 try:
-                    dataset = report_data['report_plot_data'][plot]['config']['ylab']
+                    dataset_name = report_data['report_plot_data'][plot]['config']['ylab']
                 except KeyError:
-                    dataset = report_data['report_plot_data'][plot]['config']['title']
-            existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.config_type==report_data['report_plot_data'][plot]['plot_type'], PlotConfig.config_name==plot, PlotConfig.config_dataset==dataset).first()
+                    dataset_name = report_data['report_plot_data'][plot]['config']['title']
+            existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.config_type==report_data['report_plot_data'][plot]['plot_type'], PlotConfig.config_name==plot, PlotConfig.config_dataset==dataset_name).first()
             if not existing_plot_config:
                 config_id = PlotConfig.get_next_id()
                 new_plot_config = PlotConfig(
                     config_id=config_id,
                     config_type = report_data['report_plot_data'][plot]['plot_type'],
                     config_name = plot,
-                    config_dataset = dataset,
+                    config_dataset = dataset_name,
                     data = config
                 )
                 new_plot_config.save()
@@ -126,9 +126,8 @@ def handle_report_data(user, report_data):
                 config_id = existing_plot_config.config_id
 
         # Save bar graph data
-        if report_data['report_plot_data'][plot]['plot_type'] == "bar_graph":
+            if report_data['report_plot_data'][plot]['plot_type'] == "bar_graph":
 
-            for dst_idx, dataset in enumerate(report_data['report_plot_data'][plot]['datasets']):
                 for sub_dict in dataset:
                     data_key = sub_dict['name']
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
@@ -165,8 +164,7 @@ def handle_report_data(user, report_data):
                         new_dataset_row.save()
 
         # Save line plot data
-        elif report_data['report_plot_data'][plot]['plot_type'] == "xy_line":
-            for dst_idx, dataset in enumerate(report_data['report_plot_data'][plot]['datasets']):
+            elif report_data['report_plot_data'][plot]['plot_type'] == "xy_line":
                 for sub_dict in dataset:
                     try:
                         data_key = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]['ylab']
@@ -215,7 +213,7 @@ def generate_plot(plot_type, sample_names):
     if " -- " in plot_type:
         # Plot type also contains data_key : True for most xy_lines
         plot_type=plot_type.split(" -- ")
-        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.config_name==plot_type[0],PlotCategory.category_name==plot_type[1],Sample.sample_name.in_(sample_names)).all()
+        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.config_name==plot_type[0],PlotConfig.config_dataset==plot_type[1],Sample.sample_name.in_(sample_names)).all()
     else:
         rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.config_name==plot_type,Sample.sample_name.in_(sample_names)).all()
 
@@ -255,9 +253,9 @@ def generate_plot(plot_type, sample_names):
                 text = row[3].sample_name,
                 orientation = 'h',
                 marker = dict(
-                    color = colors[idx%(len(colors)+1)],
+                    color = colors[idx%len(colors)],
                     line = dict(
-                        color = colors[idx%(len(colors)+1)],
+                        color = colors[idx%len(colors)],
                         width = 3
                     )
                 ),
@@ -276,9 +274,9 @@ def generate_plot(plot_type, sample_names):
                 orientation = 'h',
                 visible = False,
                 marker = dict(
-                    color = colors[idx%11],#there are 10 defaults
+                    color = colors[idx%len(colors)],
                     line = dict(
-                        color = colors[idx%11],
+                        color = colors[idx%len(colors)],
                         width = 3)
                 ),
                 hoverinfo = 'text+x'
@@ -543,8 +541,8 @@ def get_plot_types(filters=None):
             }
         elif row[3]=='bar_graph':
             plot_type_obj={
-                'name': row[0],
-                'nicename':json.loads(row[2]).get('title', row[0].replace('_', ' ')),
+                'name': '{} -- {}'.format(row[0], row[1]),
+                'nicename':"{0} ({1})".format(json.loads(row[2]).get('title', row[0].replace('_', ' ')),row[1]),
                 'type':'bargraph'}
 
         plot_types.append(plot_type_obj)
@@ -676,7 +674,7 @@ def update_fav_plot(method, user, plot_info):
 
     existing_plot_config_q = db.session.query(PlotConfig).filter(PlotConfig.config_name==plot_info[0])
     if len(plot_info)==2:
-        existing_plot_config_q = existing_plot_config_q.filter(PlotConfig.config_dataset==plot_info[1]))
+        existing_plot_config_q = existing_plot_config_q.filter(PlotConfig.config_dataset==plot_info[1])
     existing_plot_config = existing_plot_config_q.first()
     if not existing_plot_config:
         raise Exception("No such plot")
