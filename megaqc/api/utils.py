@@ -258,6 +258,7 @@ def generate_plot(plot_type, sample_names):
                 name = d,
                 text = row[3].sample_name,
                 orientation = 'h',
+                visible = config.get('cpswitch_c_active', True),
                 marker = dict(
                     color = colors[idx%len(colors)],
                     line = dict(
@@ -277,7 +278,7 @@ def generate_plot(plot_type, sample_names):
                 name = d,
                 text = row[3].sample_name,
                 orientation = 'h',
-                visible = False,
+                visible = not config.get('cpswitch_c_active', True),
                 marker = dict(
                     color = colors[idx%len(colors)],
                     line = dict(
@@ -410,17 +411,18 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
             dict(
                 buttons=list([
                     dict(
-                        args=[{'visible': [i<series_nb for i in xrange(series_nb*2)]}],
-                        label='Count',
-                        method='restyle'
+                        args = [{'visible': [i<series_nb for i in xrange(series_nb*2)]}],
+                        label = 'Count',
+                        method = 'restyle',
                     ),
                     dict(
-                        args=[{'visible': [i>=series_nb for i in xrange(series_nb*2)]}],
-                        label='Percentage',
-                        method='restyle'
+                        args = [{'visible': [i>=series_nb for i in xrange(series_nb*2)]}],
+                        label = 'Percentage',
+                        method = 'restyle',
                     )
                 ]),
                 direction = 'left',
+                active = 0 if config.get('cpswitch_c_active', True) else 1,
                 showactive = True,
                 type = 'buttons',
                 x = -0.1,
