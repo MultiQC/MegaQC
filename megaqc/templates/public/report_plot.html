@@ -63,7 +63,7 @@
                         </div>
                     </div>
                 </form>
-                <div class="list-group">
+                <div class="list-group" id="report-plot-type-list-group">
                     {% for pt in report_plot_types %}
                     <a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="{{ pt.name }}">
                         {{ pt.nicename }}
@@ -93,7 +93,6 @@
 $(function(){
 
 //////// TODO
-// - Handle sample filters being clicked
 // - Fix dodgy sample filter group interactivity
 // - Add filtering by name for plot types
 // - Add filtering by favourites for plot type
@@ -101,16 +100,63 @@ $(function(){
 // - Handle modal etc when new filter sets saved
 
 
+    // New sample filter set saved
+    $(document).on('sample-filter-saved', function(e, new_filters){
+        console.log('New filters', new_filters);
+    });
+
     // Sample filter clicked
     $('.sample-filter-btn').click(function(e){
         e.preventDefault();
         $('.sample-filter-btn').removeClass('active');
         $(this).addClass('active');
-        // TODO: Get new sample count and list of plot types
-        // call /api/report_filter_fields with:
-        // { "filter_id": 1 }
-        // - Update sample count
-        // - Update list of available plots
+        // Update the number of samples and available plot types
+        $('.loading-spinner').show();
+        $.ajax({
+            url: '/api/report_filter_fields',
+            type: 'post',
+            data:JSON.stringify( { "filter_id": $(this).data('filterid') }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    $('#report_plot .card-body').html(data['plot']);
+                    // Update the number of samples badge
+                    $('.num_filtered_samples').text(data['num_samples']+' samples');
+                    $('.num_filtered_samples').removeClass('badge-danger badge-success badge-warning');
+                    if(parseInt(data['num_samples']) == 0){
+                        $('.num_filtered_samples').addClass('badge-danger');
+                    } else if(parseInt(data['num_samples']) > 100){
+                        $('.num_filtered_samples').addClass('badge-warning');
+                    } else {
+                        $('.num_filtered_samples').addClass('badge-success');
+                    }
+                    // Update the list of available plots
+                    $('#report-plot-type-list-group').html('');
+                    $.each(data['report_plot_types'], function(idx, pt){
+                        $('#report-plot-type-list-group').append(
+                            '<a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="'+pt['name']+'">' +
+                                pt['nicename'] + '<i class="fa fa-heart-o float-right report-plot-type-save-fav" aria-hidden="true"></i>' +
+                            '</a>');
+                    });
+                    // Hide the loading spinner
+                    $('.loading-spinner').hide();
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error fetching plot type for these fitlers: '+data['message']);
+                    $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
+                    $('.loading-spinner').hide();
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error retrieving this plot.');
+                $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
+                $('.loading-spinner').hide();
+            }
+        });
     });
 
     // Save plot type as a favourite

@@ -267,12 +267,13 @@ $(function(){
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
                 if (data['success']){
-                    $('body').trigger('sample-filter-saved');
+                    $(document).trigger('sample-filter-saved', window.active_filters);
+                    console.log(data);
                 }
                 // AJAX data['success'] was false
                 else {
                     console.log(data);
-                    toastr.error('There was an error saving the sample filters: '+data['message']);
+                    toastr.error('There was an error saving the sample filters:<br><em>'+data['message']+'</em>');
                 }
             },
             error: function(data){
