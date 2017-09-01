@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h3 class="modal-title">
                     Sample Filters: New Set
-                    <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
+                    <span class="newfilter_num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
                         {{ num_samples }} samples
                     </span>
                     <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
@@ -78,10 +78,9 @@
                         <div class="form-group col-sm">
                             <label for="filters_set">Grouping</label>
                             <select class="form-control" id="filters_set">
-                                {% if User.is_admin %}
-                                <option>Global</option>
-                                {%- endif %}
-                                <option>My Filters</option>
+                                {% for sfg in sample_filters.keys() | sort %}
+                                <option>{{ sfg }}</option>
+                                {% endfor %}
                                 <option value="">[ new filter set ]</option>
                             </select>
                         </div>

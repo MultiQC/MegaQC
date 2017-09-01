@@ -16,7 +16,7 @@
                 <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
                     {{ num_samples }} samples
                 </span>
-                <button class="btn btn-sm btn-outline-secondary float-right" data-toggle="modal" data-target="#create_filter_modal">
+                <button class="btn btn-sm btn-outline-primary float-right" data-toggle="modal" data-target="#create_filter_modal">
                     <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
                     Add
                 </button>
@@ -26,18 +26,19 @@
                     <div class="col-sm-4">
                         <nav class="nav flex-column nav-pills" id="sample-filter-group-select" role="tablist">
                             {% for sfg in sample_filters.keys() | sort %}
-                            <a class="nav-link {% if loop.first %}active{% endif %}" data-toggle="pill" href="#sample_filter_group_{{ loop.index }}" role="tab">{{ sfg }}</a>
+                            <a class="nav-link {% if loop.first %}active{% endif %}" href="#sample_filter_group_{{ loop.index }}">{{ sfg }}</a>
                             {% endfor %}
                         </nav>
                     </div>
                     <div class="col-sm-8">
                         <hr class="d-md-none">
-                        <div class="tab-content">
+                        <div id="sample-filter-groups">
                         {% for sfg in sample_filters.keys() | sort %}
-                            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="sample_filter_group_{{ loop.index }}" role="tabpanel">
+                        {% set sfg_loop = loop %}
+                            <div class="sample-filters-group" {% if not loop.first %}style="display:none;"{% endif %} id="sample_filter_group_{{ loop.index }}" data-filtergroup="{{ sfg }}">
                                 <div class="list-group">
                                     {% for sf in sample_filters[sfg] %}
-                                    <button type="button" class="sample-filter-btn list-group-item list-group-item-action {% if loop.first %}active{% endif %}" data-filterid="{{ sf.id }}">{{ sf.name }}</button>
+                                    <button type="button" class="sample-filter-btn list-group-item list-group-item-action {% if sfg_loop.first and loop.first %}active{% endif %}" data-filterid="{{ sf.id }}">{{ sf.name }}</button>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -54,9 +55,9 @@
             <div class="card-body">
                 <form class="mb-3">
                      <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Filter plots">
+                        <input type="text" class="form-control" placeholder="Filter plots" id="plot_type_filter_input">
                         <div class="input-group-btn">
-                            <button class="btn btn-outline-info" data-toggle="button">
+                            <button class="btn btn-outline-info" id="plot_type_favourite_toggle">
                                 <i class="fa fa-heart" aria-hidden="true"></i>
                                 Favs Only
                             </button>
@@ -93,16 +94,34 @@
 $(function(){
 
 //////// TODO
-// - Fix dodgy sample filter group interactivity
-// - Add filtering by name for plot types
-// - Add filtering by favourites for plot type
 // - Actually save plot type favourites when asked to do so
-// - Handle modal etc when new filter sets saved
+// - Popover info box for filter sets showing what the filters are
 
 
     // New sample filter set saved
-    $(document).on('sample-filter-saved', function(e, new_filters){
-        console.log('New filters', new_filters);
+    $(document).on('sample-filter-saved', function(e, fs){
+        // Hide the modal window
+        $('#create_filter_modal').modal('hide');
+        // Select the correct sample filter group
+        $('#sample-filter-group-select .nav-link').removeClass('active');
+        $('#sample-filter-group-select .nav-link').filter(function(index) { return $(this).text() === fs['meta']['set']; }).addClass('active');
+        // Insert the new filters and select them
+        $('.sample-filter-btn').removeClass('active');
+        $('.sample-filters-group[data-filtergroup="'+fs['meta']['set']+'"] .list-group').append(
+            '<button type="button" class="sample-filter-btn list-group-item list-group-item-action active" data-filterid="'+fs['filter_id']+'">'+fs['meta']['name']+'</button>'
+        );
+        update_filter_set();
+    });
+
+    // Change visible sample groups
+    $('#sample-filter-group-select').on('click', 'a', function(e){
+        e.preventDefault();
+        $('#sample-filter-group-select a').removeClass('active');
+        $(this).addClass('active');
+        var target = $(this).attr('href');
+        $('.sample-filters-group:visible').fadeOut(100, function(){
+            $(target).fadeIn(100);
+        });
     });
 
     // Sample filter clicked
@@ -110,12 +129,18 @@ $(function(){
         e.preventDefault();
         $('.sample-filter-btn').removeClass('active');
         $(this).addClass('active');
+        update_filter_set();
+    });
+
+    // Function to update the active filter set
+    function update_filter_set(){
         // Update the number of samples and available plot types
         $('.loading-spinner').show();
+        var filter_id = $('.sample-filter-btn.active').first().data('filterid');
         $.ajax({
             url: '/api/report_filter_fields',
             type: 'post',
-            data:JSON.stringify( { "filter_id": $(this).data('filterid') }),
+            data:JSON.stringify( { "filters_id": filter_id }),
             headers : { access_token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
@@ -157,7 +182,45 @@ $(function(){
                 $('.loading-spinner').hide();
             }
         });
+    }
+
+    // Filter plot types by typing
+    $('#plot_type_filter_input').keyup(function(e){
+        filter_report_plot_types();
     });
+
+    // Toggle plot favourite types
+    $('#plot_type_favourite_toggle').click(function(e){
+        e.preventDefault();
+        if($(this).hasClass('active')){
+            $(this).removeClass('active');
+            filter_report_plot_types();
+        } else {
+            $(this).addClass('active');
+            filter_report_plot_types();
+        }
+    });
+
+    // Function to filter the list of available plot types
+    function filter_report_plot_types(){
+        var favs_only = $('#plot_type_favourite_toggle').hasClass('active');
+        $('#report-plot-type-list-group a').each(function(e){
+            var display = true;
+            if(favs_only && $(this).find('.report-plot-type-save-fav').hasClass('fa-heart-o')){
+                display = false;
+            }
+            var ft = $('#plot_type_filter_input').val().trim().toLowerCase();
+            var pt_name = $(this).text().trim().toLowerCase();
+            if(ft.length > 0 && pt_name.indexOf(ft) == -1){
+                display = false;
+            }
+            if(display){
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
 
     // Save plot type as a favourite
     $('body').on('click', '.report-plot-type-btn .report-plot-type-save-fav', function(e){

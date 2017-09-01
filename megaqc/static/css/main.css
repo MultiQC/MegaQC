@@ -186,7 +186,7 @@ footer p a {
     overflow-y: auto;
 }
 
-.sample-filter-group-select .nav-link.active {
+#sample-filter-group-select .nav-link.active {
     color: #007bff;
     background-color: transparent;
     background-image: none;

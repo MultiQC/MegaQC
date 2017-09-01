@@ -191,14 +191,14 @@ $(function(){
                     window.filter_error = false;
 
                     // Update number of matching samples
-                    $('.num_filtered_samples').text(data['num_samples']+' samples');
-                    $('.num_filtered_samples').removeClass('badge-danger badge-success badge-warning');
+                    $('.newfilter_num_filtered_samples').text(data['num_samples']+' samples');
+                    $('.newfilter_num_filtered_samples').removeClass('badge-danger badge-success badge-warning');
                     if(parseInt(data['num_samples']) == 0){
-                        $('.num_filtered_samples').addClass('badge-danger');
+                        $('.newfilter_num_filtered_samples').addClass('badge-danger');
                     } else if(parseInt(data['num_samples']) > 100){
-                        $('.num_filtered_samples').addClass('badge-warning');
+                        $('.newfilter_num_filtered_samples').addClass('badge-warning');
                     } else {
-                        $('.num_filtered_samples').addClass('badge-success');
+                        $('.newfilter_num_filtered_samples').addClass('badge-success');
                     }
 
                     // Hide the loading spinner
@@ -208,7 +208,7 @@ $(function(){
                 } else {
                     console.log(data);
                     toastr.error('There was an error applying the sample filters: '+data['message']);
-                    $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
+                    $('.newfilter_num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
                     $('.loading-spinner').hide();
                     window.num_matching_samples = 0;
                     window.filter_error = true;
@@ -216,7 +216,7 @@ $(function(){
             },
             error: function(data){
                 toastr.error('There was an error applying the sample filters.');
-                $('.num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
+                $('.newfilter_num_filtered_samples').text('Error applying filters').removeClass('badge-success badge-warning').addClass('badge-danger');
                 $('.loading-spinner').hide();
                 window.num_matching_samples = 0;
                 window.filter_error = true;
@@ -251,24 +251,27 @@ $(function(){
             window.ajax_update.abort();
         }
         // Call the AJAX endpoint to save the filters
+        var new_filters = {
+            'filters': window.active_filters,
+            'meta': {
+                'name': $('#filters_name').val(),
+                'set': $('#filters_set').val(),
+                'is_public': ($('#filters_visiblity').val() == 'Everyone')
+            }
+        };
         window.ajax_update = $.ajax({
-            url: '/api/save_filter',
+            url: '/api/save_filters',
             type: 'post',
-            data:JSON.stringify( {
-                'filters': window.active_filters,
-                'meta': {
-                    'name': $('#filters_name').val(),
-                    'set': $('#filters_set').val(),
-                    'is_public': ($('#filters_visiblity').val() == 'Everyone')
-                }
-            }),
+            data:JSON.stringify(new_filters),
             headers : { access_token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
+                console.log(data);
                 if (data['success']){
-                    $(document).trigger('sample-filter-saved', window.active_filters);
-                    console.log(data);
+                    new_filters['filter_id'] = data['filter_id'];
+                    $(document).trigger('sample-filter-saved', new_filters);
+                    toastr.success(data['message']);
                 }
                 // AJAX data['success'] was false
                 else {
