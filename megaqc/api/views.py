@@ -185,7 +185,7 @@ def report_filter_fields(user, *args, **kwargs):
             filters = json.loads(my_filter.sample_filter_data)
     else:
         filters = data.get("filters", [])
-    return_data = aggregate_new_parameters(filters, True)
+    return_data = aggregate_new_parameters(user, filters, True)
     return jsonify({
         'success': True,
         'num_samples': return_data[0],
