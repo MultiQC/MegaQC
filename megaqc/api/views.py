@@ -175,7 +175,12 @@ def count_samples(user, *args, **kwargs):
 @check_user
 def report_filter_fields(user, *args, **kwargs):
     data = request.get_json()
-    filters = data.get("filters", [])
+    filter_id = int(data.get("filters_id", 0))
+    if filter_id:
+        my_filter=db.session.query(SampleFilter).filter(SampleFilter.sample_filter_id == filter_id).first()
+        filters=json.loads(my_filter.data)
+    else:
+        filters = data.get("filters", [])
     return_data = aggregate_new_parameters(filters, True)
     return jsonify({
         'success': True,
@@ -190,25 +195,32 @@ def save_filter(user, *args, **kwargs):
     one_filter = data.get("filter", [])
     meta = data.get("meta", {})
     data = json.dumps(one_filter)
-    existing_filter = db.session.query(SampleFilter).filter(SampleFilter.sample_filter_data == data).filter(SampleFilter.is_public == meta.get('is_public', True)).first()
-    if existing_filter:
-        return jsonify({
-                'success': False,
-                'message': "Filter already exists"
-            })
+    if one_filter:
+        existing_filter = db.session.query(SampleFilter).filter(SampleFilter.sample_filter_data == data).filter(SampleFilter.is_public == meta.get('is_public', True)).first()
+        if existing_filter:
+            return jsonify({
+                    'success': False,
+                    'message': "Filter already exists"
+                })
+        else:
+            new_sf = SampleFilter(
+                    sample_filter_id=SampleFilter.get_next_id(),
+                    sample_filter_name=meta.get('name'),
+                    sample_filter_tag=meta.get('set'),
+                    is_public=meta.get('is_public', True),
+                    sample_filter_data=data,
+                    user_id=user.user_id)
+            new_sf.save()
+            return jsonify({
+                    'success': True,
+                    'message': "Filter created successfully"
+                })
     else:
-        new_sf = SampleFilter(
-                sample_filter_id=SampleFilter.get_next_id(),
-                sample_filter_name=meta.get('name'),
-                sample_filter_tag=meta.get('set'),
-                is_public=meta.get('is_public', True),
-                sample_filter_data=data,
-                user_id=user.user_id)
-        new_sf.save()
         return jsonify({
                 'success': True,
-                'message': "Filter created successfully"
+                'message': "Empty filter ignored successfully"
             })
+
 
 
 @api_blueprint.route('/api/get_filters', methods=['GET', 'POST'])
