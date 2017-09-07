@@ -1,0 +1,33 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<h1>Edit filters</h1>
+
+<table class="table" id="filter_table">
+    <thead>
+        <tr>
+            <td>Filter name</td>
+            <td>Filter set</td>
+            <td>Open</td>
+        </tr>
+    {% for one_set in sample_filters %}
+    {% for one_filter in sample_filters[one_set] %}
+    
+        <tr>
+            <td>{{ one_filter['name']}}</td>
+            <td>{{one_filter['set']}}</td>
+            <td><button class="btn btn-sm btn-outline-primary float-right" data-toggle="modal" data-target="#create_filter_modal" data-myfilter="{{one_filter['filters']}}" data-filterid={{one_filter['id']}}>Open</button></td>
+        </tr>
+    {% endfor %}
+    {% endfor %}
+</table>
+
+{% include "public/filter_samples_modal.html" %}
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+window.token="{{user_token}}";
+
+</script>
+{% endblock %}

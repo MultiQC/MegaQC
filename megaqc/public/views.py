@@ -91,16 +91,7 @@ def choose_plot_type():
 def report_plot():
     # Get the fields for the add-new-filters form
     return_data = aggregate_new_parameters(current_user,[], False)
-    sample_filters = OrderedDict()
-    sample_filters['Global'] = [{
-        'id': -1,
-        'set': 'Global',
-        'name': 'All Samples'
-    }]
-    for sf in get_user_filters(User):
-        if sf['set'] not in sample_filters:
-            sample_filters[sf['set']] = list()
-        sample_filters[sf['set']].append(sf)
+    sample_filters=order_sample_filters()
     return render_template(
         'public/report_plot.html',
         db = db,
@@ -112,4 +103,23 @@ def report_plot():
         sample_fields = json.dumps(return_data[2]),
         report_plot_types = return_data[3]
         )
+@blueprint.route('/edit_filters/')
+@login_required
+def edit_filters():
+    """Edit saved filters."""
+    sample_filters=order_sample_filters()
+    del(sample_filters['Global'])
+    return render_template('public/organize_filters.html', sample_filters=sample_filters, user_token=current_user.api_token, num_samples=get_samples(count=True))
 
+def order_sample_filters():
+    sample_filters = OrderedDict()
+    sample_filters['Global'] = [{
+        'id': -1,
+        'set': 'Global',
+        'name': 'All Samples'
+    }]
+    for sf in get_user_filters(current_user):
+        if sf['set'] not in sample_filters:
+            sample_filters[sf['set']] = list()
+        sample_filters[sf['set']].append(sf)
+    return sample_filters
