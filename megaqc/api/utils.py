@@ -529,12 +529,13 @@ def get_sample_metadata_fields(filters=None):
     sample_fields.sort(key=lambda x: x['priority'], reverse=True)
     return sample_fields
 
-def get_plot_types(filters=None):
+def get_plot_types(user,filters=None):
+    plot_types=[]
     if not filters:
         filters=[]
     pt_query = db.session.query(distinct(PlotConfig.config_name),PlotConfig.config_dataset, PlotConfig.data, PlotConfig.config_type).join(PlotCategory).join(PlotData)
     pt_query = build_filter(pt_query, filters, PlotData)
-    plot_types=[]
+    fav_plot_types=[(x.config_name, x.config_dataset) for x in user.favourite_plotconfigs]
     for row in pt_query.all():
         if row[3]=='xy_line':
             plot_type_obj={
@@ -542,20 +543,22 @@ def get_plot_types(filters=None):
                 'nicename':json.loads(row[2]).get('title', row[0].replace('_', ' ')),
                 'plot_id': row[0],
                 'plot_ds_name': row[1],
-                'type': 'linegraph'
+                'type': 'linegraph',
+                'favourite':(row[0], row[1]) in fav_plot_types
             }
         elif row[3]=='bar_graph':
             plot_type_obj={
                 'name': '{} -- {}'.format(row[0], row[1]),
                 'nicename':"{0} ({1})".format(json.loads(row[2]).get('title', row[0].replace('_', ' ')),row[1]),
-                'type':'bargraph'}
+                'type':'bargraph',
+                'favourite':(row[0], row[1]) in fav_plot_types}
 
         plot_types.append(plot_type_obj)
 
     plot_types = sorted(plot_types, key=lambda k: k['name'])
     return plot_types
 
-def aggregate_new_parameters(filters=None, short=True):
+def aggregate_new_parameters(user, filters=None, short=True):
     if not filters:
         filters=[]
 
@@ -568,7 +571,7 @@ def aggregate_new_parameters(filters=None, short=True):
     else:
         new_filters=[]
 
-    plot_types  =get_plot_types(new_filters)
+    plot_types = get_plot_types(user, new_filters)
     if not short:
         report_field_keys = get_report_metadata_fields(new_filters)
         sample_fields = get_sample_metadata_fields(new_filters)

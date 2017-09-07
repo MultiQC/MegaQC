@@ -59,6 +59,8 @@ class  PlotConfig(db.Model, CRUDMixin):
     config_dataset = Column(String(80), nullable=True)
     data = Column(String(2048), nullable=False)
 
+    fav_users = db.relationship('User', secondary=user_plotconfig_map, backref="favourite_plotconfigs")
+
     @staticmethod
     def get_next_id():
         return (db.session.query(func.max(PlotConfig.config_id)).first()[0] or 0) + 1
