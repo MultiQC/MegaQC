@@ -90,7 +90,7 @@ def choose_plot_type():
 @login_required
 def report_plot():
     # Get the fields for the add-new-filters form
-    return_data = aggregate_new_parameters([], False)
+    return_data = aggregate_new_parameters(current_user,[], False)
     sample_filters = OrderedDict()
     sample_filters['Global'] = [{
         'id': -1,
