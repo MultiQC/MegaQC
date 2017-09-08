@@ -17,15 +17,16 @@ import json
 
 def generate_hash(data):
     data.pop("config_creation_date")
-    string=json.dumps(data)
-    md5er=md5()
+    string = json.dumps(data)
+    md5er = md5()
     md5er.update(string)
     ret = md5er.hexdigest()
     return ret
 
+
 def handle_report_data(user, report_data):
     report_id = Report.get_next_id()
-    report_hash=generate_hash(report_data)
+    report_hash = generate_hash(report_data)
     if db.session.query(Report).filter(Report.report_hash==report_hash).first():
         return (False, 'Report already uploaded')
     new_report = Report(report_hash=report_hash, user_id=user.user_id)
@@ -726,4 +727,14 @@ def get_sample_fields_values(keys, filters=None):
             results[row[2]][nicename]=row[3]
 
     return results
+
+def update_user_filter(user, method, filter_id, filter_object=None):
+    if not filter_object:
+        filter_object=[]
+
+    if method == "delete":
+        SampleFilter.query.filter_by(user_id=user.user_id, sample_filter_id=filter_id).delete()
+    elif method == "update":
+        SampleFilter.query.filter_by(user_id=user.user_id, sample_filter_id=filter_id).update("sample_filter_data":json.dumps(filter_object)})
+    db.session.commit()
 
