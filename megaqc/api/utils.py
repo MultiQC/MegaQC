@@ -506,7 +506,7 @@ def get_report_metadata_fields(filters=None):
 def get_sample_metadata_fields(filters=None):
     if not filters:
         filters=[]
-    sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section).join(SampleData)
+    sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section, SampleDataType.sample_data_type_id).join(SampleData)
     sample_metadata_query = build_filter(sample_metadata_query, filters, SampleData)
     sample_fields = []
     for row in sample_metadata_query.all():
@@ -519,6 +519,7 @@ def get_sample_metadata_fields(filters=None):
         sample_fields.append({
             'key': row[0],
             'section': row[1],
+            'type_id': row[2],
             'nicename': settings.report_metadata_fields.get(row[0], {}).get('nicename', nicename),
             'priority': settings.report_metadata_fields.get(row[0], {}).get('priority', 1)
         })
@@ -664,7 +665,7 @@ def build_filter(query, filters, source_table):
         alchemy_or_cmps.append(and_(*alchemy_and_cmps))
 
     query = query.filter(or_(*alchemy_or_cmps))
-    #print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
+    print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
     return query
 
 def get_user_filters(user):
@@ -693,3 +694,36 @@ def update_fav_plot(method, user, plot_info):
     else:
         raise Exception("No such method")
     db.session.commit()
+
+def get_sample_fields_values(keys, filters=None):
+    if not filters:
+        filters=[]
+    sample_ids = get_samples(filters, ids=True)
+    if filters:
+        new_filters=[[{'type':'sampleids',
+                  'cmp':'inlist',
+                  'value': sample_ids}, 
+                  {'type':'samplemetaids',
+                  'cmp':'inlist',
+                  'value':keys
+        }]]
+    else:
+        new_filters=[[{'type':'samplemetaids',
+            'cmp':'inlist',
+            'value':keys
+            }]]
+
+    sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section, Sample.sample_name, SampleData.value).join(SampleData)
+    sample_metadata_query = build_filter(sample_metadata_query, new_filters, SampleData)
+    results=defaultdict(lambda:{})
+    for row in sample_metadata_query.all():
+        nicename = row[0][len(row[1]):] if row[0].startswith(row[1]) else row[0]
+        nice_section = row[1].title() if row[1].islower() else row[1]
+        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
+        try:
+            results[row[2]][nicename]=float(row[3])
+        except ValueError:
+            results[row[2]][nicename]=row[3]
+
+    return results
+

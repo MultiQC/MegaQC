@@ -34,7 +34,8 @@ type_to_tables_fields={
         'samplenames':{Sample:['sample_name']},
         'sampleids':{Sample:['sample_id']},
         'reportmeta':OrderedDict([(Report,[]), (ReportMeta,['report_meta_value', 'report_meta_key'])]),
-        'samplemeta':OrderedDict([(SampleData,['value']), (SampleDataType,['data_key', 'data_section'])])
+        'samplemeta':OrderedDict([(SampleData,['value']), (SampleDataType,['data_key', 'data_section'])]),
+        'samplemetaids':OrderedDict([(SampleDataType,['sample_data_type_id'])])
 }
 comparators={
         'gt':'__gt__',
