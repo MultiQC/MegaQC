@@ -68,7 +68,7 @@
                     {% for pt in report_plot_types %}
                     <a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="{{ pt.name }}">
                         {{ pt.nicename }}
-                        <i class="fa fa-heart-o float-right report-plot-type-save-fav" aria-hidden="true"></i>
+                        <i class="fa fa-heart{% if not pt.favourite %}-o{% endif %} float-right report-plot-type-save-fav" aria-hidden="true"></i>
                     </a>
                     {% endfor %}
                 </div>
@@ -160,9 +160,14 @@ $(function(){
                     // Update the list of available plots
                     $('#report-plot-type-list-group').html('');
                     $.each(data['report_plot_types'], function(idx, pt){
+                        if(pt['favourite']){
+                            fc = '';
+                        } else {
+                            fc = '-o';
+                        }
                         $('#report-plot-type-list-group').append(
                             '<a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="'+pt['name']+'">' +
-                                pt['nicename'] + '<i class="fa fa-heart-o float-right report-plot-type-save-fav" aria-hidden="true"></i>' +
+                                pt['nicename'] + '<i class="fa fa-heart'+fc+' float-right report-plot-type-save-fav" aria-hidden="true"></i>' +
                             '</a>');
                     });
                     // Hide the loading spinner
@@ -246,6 +251,7 @@ $(function(){
                 if (data['success']){
                     toastr.success('Saved');
                     $('.loading-spinner').hide();
+                    filter_report_plot_types();
                 }
                 // AJAX data['success'] was false
                 else {
