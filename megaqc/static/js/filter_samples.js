@@ -114,11 +114,8 @@ $(function(){
             '<td><div class="new-filter-cmp" data-value="'+fcmp_val+'">'+fcmp_txt+'</div></td>' +
             '<td><div class="new-filter-value" data-value="'+fvalue_val+'"><code>'+fvalue_val+'</code></div></td>' +
             '<td><div>' +
-                '<button class="new-filter-edit btn btn-sm btn-outline-info">' +
-                    '<i class="fa fa-pencil" aria-hidden="true"></i>' +
-                '</button> ' +
                 '<button class="new-filter-delete btn btn-sm btn-outline-danger">' +
-                    '<i class="fa fa-trash" aria-hidden="true"></i>' +
+                    '<i class="fa fa-trash" aria-hidden="true"></i> Delete' +
                 '</button>' +
             '</div></td>' +
         '</tr>');
