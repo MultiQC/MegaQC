@@ -23,10 +23,14 @@ window.data_cmp = {
 window.active_filters = [];
 window.filter_error = false;
 window.ajax_update = false;
+window.original_filtermodal = false;
 $(function(){
 
     // Initialise the chosen select boxes
     $('.form-control-chosen-required').chosen({'disable_search_threshold': 10});
+
+    // Save a copy of the filter modal so that we can reset it easily later
+    window.original_filtermodal = $('#create_filter_modal').html();
 
     // Add new filter - Type dropdown
     $('body').on('change', '.new-filter-type select', function(e){
@@ -163,7 +167,7 @@ $(function(){
     // Update filters
     function update_filters(){
         $('.loading-spinner').show();
-        // Cancel any running update_filters ajax call
+        // Cancel any running ajax calls
         if(window.ajax_update !== false){
             window.ajax_update.abort();
         }
@@ -270,7 +274,7 @@ $(function(){
             $('#filters_set').addClass('is-invalid').focus();
             return false;
         }
-        // Cancel any running update_filters ajax call
+        // Cancel any running ajax calls
         if(window.ajax_update !== false){
             window.ajax_update.abort();
         }
@@ -296,6 +300,7 @@ $(function(){
                     new_filters['filter_id'] = data['filter_id'];
                     $(document).trigger('sample-filter-saved', new_filters);
                     toastr.success(data['message']);
+                    $('#create_filter_modal').html(window.original_filtermodal);
                 }
                 // AJAX data['success'] was false
                 else {
