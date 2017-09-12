@@ -104,7 +104,15 @@ $(function(){
         $('#create_filter_modal').modal('hide');
         // Select the correct sample filter group
         $('#sample-filter-group-select .nav-link').removeClass('active');
-        $('#sample-filter-group-select .nav-link').filter(function(index) { return $(this).text() === fs['meta']['set']; }).addClass('active');
+        var sfg = $('#sample-filter-group-select .nav-link').filter(function(index) { return $(this).text() === fs['meta']['set']; });
+        if(sfg.length > 0){
+            sfg.addClass('active');
+        } else {
+            var idx = $('#sample-filter-group-select .nav-link').length + 1;
+            $('#sample-filter-group-select').append('<a class="nav-link active" href="#sample_filter_group_'+idx+'">'+fs['meta']['set']+'</a>');
+            $('.sample-filters-group').hide();
+            $('#sample-filter-groups').append('<div class="sample-filters-group" id="sample_filter_group_'+idx+'" data-filtergroup="'+fs['meta']['set']+'"><div class="list-group"></div></div>');
+        }
         // Insert the new filters and select them
         $('.sample-filter-btn').removeClass('active');
         $('.sample-filters-group[data-filtergroup="'+fs['meta']['set']+'"] .list-group').append(

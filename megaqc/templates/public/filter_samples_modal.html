@@ -69,11 +69,14 @@
                 </button>
 
                 <h3 class="mt-5">Save Filters</h3>
-                <form id="sample-filters-save">
+                <form id="sample-filters-save" novalidate>
                     <div class="form-row">
                         <div class="form-group col-sm">
                             <label for="filters_name">Name</label>
-                            <input type="text" class="form-control" id="filters_name" placeholder="Name of filters">
+                            <input type="text" class="form-control" id="filters_name" placeholder="Name of filters" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+                            </div>
                         </div>
                         <div class="form-group col-sm">
                             <label for="filters_set">Grouping</label>

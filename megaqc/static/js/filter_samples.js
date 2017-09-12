@@ -235,9 +235,20 @@ $(function(){
         });
     }
 
+    // New group of filters
+    $('#filters_set').change(function(e){
+        if($(this).val() == ''){
+            var fs_name = prompt("Please enter a name for the new filter set:");
+            if(fs_name != null){
+                $('<option>'+fs_name+'</option>').appendTo($('#filters_set')).prop('selected', true);
+            }
+        }
+    });
+
     // Save report filters
     $('#sample-filters-save').submit(function(e){
         e.preventDefault();
+        $('#sample-filters-save input').removeClass('is-invalid')
         // Check that there wasn't an error with the filters
         if(window.filter_error){
             toastr.error('There was an error applying your filters.');
@@ -251,10 +262,12 @@ $(function(){
         // Check that we have a name
         if($('#filters_name').val().trim().length == 0){
             toastr.error('Please enter a name for these filters.');
+            $('#filters_name').addClass('is-invalid').focus();
             return false;
         }
         if($('#filters_set').val().trim().length == 0){
             toastr.error('Please choose a filter group for these filters.');
+            $('#filters_set').addClass('is-invalid').focus();
             return false;
         }
         // Cancel any running update_filters ajax call
