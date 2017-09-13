@@ -5,7 +5,9 @@ from flask import Blueprint, request, jsonify, abort
 from megaqc.extensions import db
 from megaqc.user.models import User
 from megaqc.model.models import PlotData, Report, SampleFilter
-from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot
+from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, \
+                            get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot, \
+                            get_sample_fields_values
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -250,3 +252,12 @@ def update_favourite_plot(user, *args, **kwargs):
     return jsonify({
         'success': True
     })
+@api_blueprint.route('/api/get_sample_data', methods=['POST'])
+@check_user
+def get_sample_data(user, *args, **kwargs):
+    data = request.get_json()
+    my_filters = data.get("filters", [])
+    data_keys = data.get("keys", {})
+    data = get_sample_fields_values(data_keys, my_filters)
+    return jsonify(data)
+
