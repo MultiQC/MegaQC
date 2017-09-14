@@ -714,17 +714,17 @@ def get_sample_fields_values(keys, filters=None):
             'value':keys
             }]]
 
-    sample_metadata_query = db.session.query(distinct(SampleDataType.data_key), SampleDataType.data_section, Sample.sample_name, SampleData.value).join(SampleData)
+    sample_metadata_query = db.session.query(Sample.sample_name).join(SampleData, Sample.sample_id==SampleData.sample_id).join(SampleDataType, SampleData.sample_data_type_id==SampleDataType.sample_data_type_id).add_columns(SampleDataType.data_key, SampleDataType.data_section, SampleData.value)
     sample_metadata_query = build_filter(sample_metadata_query, new_filters, SampleData)
     results=defaultdict(lambda:{})
     for row in sample_metadata_query.all():
-        nicename = row[0][len(row[1]):] if row[0].startswith(row[1]) else row[0]
-        nice_section = row[1].title() if row[1].islower() else row[1]
+        nicename = row[1][len(row[2]):] if row[1].startswith(row[2]) else row[1]
+        nice_section = row[2].title() if row[2].islower() else row[2]
         nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
         try:
-            results[row[2]][nicename]=float(row[3])
+            results[row[0]][nicename]=float(row[3])
         except ValueError:
-            results[row[2]][nicename]=row[3]
+            results[row[0]][nicename]=row[3]
 
     return results
 
@@ -735,6 +735,6 @@ def update_user_filter(user, method, filter_id, filter_object=None):
     if method == "delete":
         SampleFilter.query.filter_by(user_id=user.user_id, sample_filter_id=filter_id).delete()
     elif method == "update":
-        SampleFilter.query.filter_by(user_id=user.user_id, sample_filter_id=filter_id).update("sample_filter_data":json.dumps(filter_object)})
+        SampleFilter.query.filter_by(user_id=user.user_id, sample_filter_id=filter_id).update({"sample_filter_data":json.dumps(filter_object)})
     db.session.commit()
 
