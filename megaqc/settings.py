@@ -21,8 +21,8 @@ class ProdConfig(Config):
 
     ENV = 'prod'
     DEBUG = False
-    # SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/example'  # TODO: Change me
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(Config.PROJECT_ROOT, 'dev.db'))
+    SQLALCHEMY_DATABASE_URI = 'postgresql://megaqc_user:@localhost:5432/megaqc'  # TODO: Change me
+    #SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(Config.PROJECT_ROOT, 'dev.db'))
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
 
