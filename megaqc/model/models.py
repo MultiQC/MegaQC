@@ -57,7 +57,7 @@ class  PlotConfig(db.Model, CRUDMixin):
     config_type = Column(String(80),  nullable=False)
     config_name = Column(String(80), nullable=False)
     config_dataset = Column(String(80), nullable=True)
-    data = Column(String(2048), nullable=False)
+    data = Column(String, nullable=False)
 
     fav_users = db.relationship('User', secondary=user_plotconfig_map, backref="favourite_plotconfigs")
 
@@ -72,7 +72,7 @@ class PlotData(db.Model, CRUDMixin):
     config_id = Column(Integer, ForeignKey('plot_config.config_id'))
     plot_category_id = Column(Integer(), ForeignKey('plot_category.plot_category_id'))
     sample_id = Column(Integer, ForeignKey('sample.sample_id'))
-    data = Column(String(2048), nullable=False)
+    data = Column(String, nullable=False)
 
     @staticmethod
     def get_next_id():
@@ -83,7 +83,7 @@ class PlotCategory(db.Model, CRUDMixin):
     plot_category_id = Column(Integer, primary_key=True)
     report_id = Column(Integer, ForeignKey('report.report_id'))
     config_id = Column(Integer, ForeignKey('plot_config.config_id'))
-    category_name = Column(String(120), nullable=True)
+    category_name = Column(String(128), nullable=True)
     data = Column(String(2048), nullable=False)
 
     @staticmethod
@@ -93,9 +93,9 @@ class PlotCategory(db.Model, CRUDMixin):
 class SampleDataType(db.Model, CRUDMixin):
     __tablename__ = "sample_data_type"
     sample_data_type_id = Column(Integer, primary_key=True)
-    data_id = Column(Integer)
+    data_id = Column(String(128))
     data_section = Column(String(80))
-    data_key = Column(String(80), nullable=False)
+    data_key = Column(String(128), nullable=False)
 
 class SampleData(db.Model, CRUDMixin):
     __tablename__ = "sample_data"
@@ -103,7 +103,7 @@ class SampleData(db.Model, CRUDMixin):
     report_id = Column(Integer, ForeignKey('report.report_id'))
     sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id'))
     sample_id = Column(Integer, ForeignKey('sample.sample_id'))
-    value = Column(String(80))
+    value = Column(String(1024))
 
     @staticmethod
     def get_next_id():
