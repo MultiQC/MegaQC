@@ -68,7 +68,7 @@
                     {% for pt in report_plot_types %}
                     <a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="{{ pt.name }}">
                         {{ pt.nicename }}
-                        <i class="fa fa-heart-o float-right report-plot-type-save-fav" aria-hidden="true"></i>
+                        <i class="fa fa-heart{% if not pt.favourite %}-o{% endif %} float-right report-plot-type-save-fav" aria-hidden="true"></i>
                     </a>
                     {% endfor %}
                 </div>
@@ -104,7 +104,16 @@ $(function(){
         $('#create_filter_modal').modal('hide');
         // Select the correct sample filter group
         $('#sample-filter-group-select .nav-link').removeClass('active');
-        $('#sample-filter-group-select .nav-link').filter(function(index) { return $(this).text() === fs['meta']['set']; }).addClass('active');
+        var sfg = $('#sample-filter-group-select .nav-link').filter(function(index) { return $(this).text() === fs['meta']['set']; });
+        $('.sample-filters-group').hide();
+        if(sfg.length > 0){
+            sfg.addClass('active');
+            $('.sample-filters-group[data-filtergroup="'+fs['meta']['set']+'"]').show();
+        } else {
+            var idx = $('#sample-filter-group-select .nav-link').length + 1;
+            $('#sample-filter-group-select').append('<a class="nav-link active" href="#sample_filter_group_'+idx+'">'+fs['meta']['set']+'</a>');
+            $('#sample-filter-groups').append('<div class="sample-filters-group" id="sample_filter_group_'+idx+'" data-filtergroup="'+fs['meta']['set']+'"><div class="list-group"></div></div>');
+        }
         // Insert the new filters and select them
         $('.sample-filter-btn').removeClass('active');
         $('.sample-filters-group[data-filtergroup="'+fs['meta']['set']+'"] .list-group').append(
@@ -160,9 +169,14 @@ $(function(){
                     // Update the list of available plots
                     $('#report-plot-type-list-group').html('');
                     $.each(data['report_plot_types'], function(idx, pt){
+                        if(pt['favourite']){
+                            fc = '';
+                        } else {
+                            fc = '-o';
+                        }
                         $('#report-plot-type-list-group').append(
                             '<a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="'+pt['name']+'">' +
-                                pt['nicename'] + '<i class="fa fa-heart-o float-right report-plot-type-save-fav" aria-hidden="true"></i>' +
+                                pt['nicename'] + '<i class="fa fa-heart'+fc+' float-right report-plot-type-save-fav" aria-hidden="true"></i>' +
                             '</a>');
                     });
                     // Hide the loading spinner
@@ -246,6 +260,7 @@ $(function(){
                 if (data['success']){
                     toastr.success('Saved');
                     $('.loading-spinner').hide();
+                    filter_report_plot_types();
                 }
                 // AJAX data['success'] was false
                 else {

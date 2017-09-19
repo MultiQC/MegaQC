@@ -23,10 +23,14 @@ window.data_cmp = {
 window.active_filters = [];
 window.filter_error = false;
 window.ajax_update = false;
+window.original_filtermodal = false;
 $(function(){
 
     // Initialise the chosen select boxes
     $('.form-control-chosen-required').chosen({'disable_search_threshold': 10});
+
+    // Save a copy of the filter modal so that we can reset it easily later
+    window.original_filtermodal = $('#create_filter_modal').html();
 
     // Add new filter - Type dropdown
     $('body').on('change', '.new-filter-type select', function(e){
@@ -110,11 +114,8 @@ $(function(){
             '<td><div class="new-filter-cmp" data-value="'+fcmp_val+'">'+fcmp_txt+'</div></td>' +
             '<td><div class="new-filter-value" data-value="'+fvalue_val+'"><code>'+fvalue_val+'</code></div></td>' +
             '<td><div>' +
-                '<button class="new-filter-edit btn btn-sm btn-outline-info">' +
-                    '<i class="fa fa-pencil" aria-hidden="true"></i>' +
-                '</button> ' +
                 '<button class="new-filter-delete btn btn-sm btn-outline-danger">' +
-                    '<i class="fa fa-trash" aria-hidden="true"></i>' +
+                    '<i class="fa fa-trash" aria-hidden="true"></i> Delete' +
                 '</button>' +
             '</div></td>' +
         '</tr>');
@@ -163,7 +164,7 @@ $(function(){
     // Update filters
     function update_filters(){
         $('.loading-spinner').show();
-        // Cancel any running update_filters ajax call
+        // Cancel any running ajax calls
         if(window.ajax_update !== false){
             window.ajax_update.abort();
         }
@@ -235,9 +236,20 @@ $(function(){
         });
     }
 
+    // New group of filters
+    $('#filters_set').change(function(e){
+        if($(this).val() == ''){
+            var fs_name = prompt("Please enter a name for the new filter set:");
+            if(fs_name != null){
+                $('<option>'+fs_name+'</option>').appendTo($('#filters_set')).prop('selected', true);
+            }
+        }
+    });
+
     // Save report filters
     $('#sample-filters-save').submit(function(e){
         e.preventDefault();
+        $('#sample-filters-save input').removeClass('is-invalid')
         // Check that there wasn't an error with the filters
         if(window.filter_error){
             toastr.error('There was an error applying your filters.');
@@ -251,13 +263,15 @@ $(function(){
         // Check that we have a name
         if($('#filters_name').val().trim().length == 0){
             toastr.error('Please enter a name for these filters.');
+            $('#filters_name').addClass('is-invalid').focus();
             return false;
         }
         if($('#filters_set').val().trim().length == 0){
             toastr.error('Please choose a filter group for these filters.');
+            $('#filters_set').addClass('is-invalid').focus();
             return false;
         }
-        // Cancel any running update_filters ajax call
+        // Cancel any running ajax calls
         if(window.ajax_update !== false){
             window.ajax_update.abort();
         }
@@ -283,6 +297,7 @@ $(function(){
                     new_filters['filter_id'] = data['filter_id'];
                     $(document).trigger('sample-filter-saved', new_filters);
                     toastr.success(data['message']);
+                    $('#create_filter_modal').html(window.original_filtermodal);
                 }
                 // AJAX data['success'] was false
                 else {
