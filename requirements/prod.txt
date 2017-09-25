@@ -19,3 +19,4 @@ Flask-DebugToolbar==0.10.1
 passlib>=1.7.1
 argon2-cffi>=16.3.0
 gunicorn>=19.7.1
+plotly>=2.0.15
