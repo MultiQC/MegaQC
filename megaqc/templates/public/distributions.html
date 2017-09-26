@@ -1,0 +1,40 @@
+
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 class="mt-4 mb-4">
+    Data Distributions
+    <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
+    <span class="loading-spinner" style="display:none;">Loading...</span>
+</h1>
+
+<div class="row report-plot-setup">
+    <div class="col-md-6">
+        {% include "public/filter_samples_selectbox.html" %}
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h4 class="card-header">Choose Fields to Plot</h4>
+        </div>
+    </div>
+</div>
+
+<div class="card megaqc_plot" id="distribution_plot">
+    <h4 class="card-header">Distributions Plot</h4>
+    <div class="card-body">
+        <p class="text-secondary">Please choose fields to plot</p>
+    </div>
+</div>
+
+<!-- Create New Filter Set -->
+{% include "public/filter_samples_modal.html" %}
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="/static/js/filter_samples.js"></script>
+<script type="text/javascript">
+$(function(){
+
+});
+</script>
+{% endblock %}

@@ -237,12 +237,20 @@ $(function(){
     }
 
     // New group of filters
-    $('#filters_set').change(function(e){
+    $('#filters_set').on('focus', function () {
+        filters_set_previous = this.value;
+    }).change(function(e){
         if($(this).val() == ''){
             var fs_name = prompt("Please enter a name for the new filter set:");
             if(fs_name != null){
                 $('<option>'+fs_name+'</option>').appendTo($('#filters_set')).prop('selected', true);
+                filters_set_previous = fs_name;
+            } else {
+              // Cancelled - go back to previous value
+              $('#filters_set').val(filters_set_previous);
             }
+        } else {
+          filters_set_previous = $(this).val();
         }
     });
 
@@ -310,4 +318,48 @@ $(function(){
             }
         });
     });
+
+    // New sample filter set saved
+    $(document).on('sample-filter-saved', function(e, fs){
+        // Hide the modal window
+        $('#create_filter_modal').modal('hide');
+        // Select the correct sample filter group
+        $('#sample-filter-group-select .nav-link').removeClass('active');
+        var sfg = $('#sample-filter-group-select .nav-link').filter(function(index) { return $(this).text() === fs['meta']['set']; });
+        $('.sample-filters-group').hide();
+        if(sfg.length > 0){
+            sfg.addClass('active');
+            $('.sample-filters-group[data-filtergroup="'+fs['meta']['set']+'"]').show();
+        } else {
+            var idx = $('#sample-filter-group-select .nav-link').length + 1;
+            $('#sample-filter-group-select').append('<a class="nav-link active" href="#sample_filter_group_'+idx+'">'+fs['meta']['set']+'</a>');
+            $('#sample-filter-groups').append('<div class="sample-filters-group" id="sample_filter_group_'+idx+'" data-filtergroup="'+fs['meta']['set']+'"><div class="list-group"></div></div>');
+        }
+        // Insert the new filters and select them
+        $('.sample-filter-btn').removeClass('active');
+        $('.sample-filters-group[data-filtergroup="'+fs['meta']['set']+'"] .list-group').append(
+            '<button type="button" class="sample-filter-btn list-group-item list-group-item-action active" data-filterid="'+fs['filter_id']+'">'+fs['meta']['name']+'</button>'
+        );
+        $(document).trigger('sample-filter-added');
+    });
+
+    // Change visible sample groups
+    $('#sample-filter-group-select').on('click', 'a', function(e){
+        e.preventDefault();
+        $('#sample-filter-group-select a').removeClass('active');
+        $(this).addClass('active');
+        var target = $(this).attr('href');
+        $('.sample-filters-group:visible').fadeOut(100, function(){
+            $(target).fadeIn(100);
+        });
+    });
+
+    // Sample filter clicked
+    $('#sample-filter-groups').on('click', '.sample-filter-btn', function(e){
+        e.preventDefault();
+        $('.sample-filter-btn').removeClass('active');
+        $(this).addClass('active');
+        $(document).trigger('sample-filter-clicked');
+    });
+
 });

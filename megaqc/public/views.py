@@ -89,7 +89,7 @@ def choose_plot_type():
 @blueprint.route('/report_plot/')
 @login_required
 def report_plot():
-    # Get the fields for the add-new-filters form
+    # Get the fields from the add-new-filters form
     return_data = aggregate_new_parameters(current_user,[], False)
     sample_filters=order_sample_filters()
     return render_template(
@@ -103,6 +103,7 @@ def report_plot():
         sample_fields = json.dumps(return_data[2]),
         report_plot_types = return_data[3]
         )
+
 @blueprint.route('/edit_filters/')
 @login_required
 def edit_filters():
@@ -123,3 +124,21 @@ def order_sample_filters():
             sample_filters[sf['set']] = list()
         sample_filters[sf['set']].append(sf)
     return sample_filters
+
+
+@blueprint.route('/distributions/')
+@login_required
+def distributions():
+    # Get the fields from the add-new-filters form
+    return_data = aggregate_new_parameters(current_user, [], False)
+    sample_filters=order_sample_filters()
+    return render_template(
+        'public/distributions.html',
+        db = db,
+        User = User,
+        user_token = current_user.api_token,
+        sample_filters = sample_filters,
+        num_samples = return_data[0],
+        report_fields = json.dumps(return_data[1]),
+        sample_fields = json.dumps(return_data[2])
+        )
