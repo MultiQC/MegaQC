@@ -194,6 +194,27 @@ def report_filter_fields(user, *args, **kwargs):
         'report_plot_types': return_data[1]
     })
 
+@api_blueprint.route('/api/get_sample_meta_fields', methods=['GET', 'POST'])
+@check_user
+def get_sample_meta_fields(user, *args, **kwargs):
+    data = request.get_json()
+    filter_id = int(data.get("filters_id", 0))
+    if filter_id:
+        # Hardcoded "All Samples" filter set
+        if filter_id == -1:
+            filters = []
+        else:
+            my_filter = db.session.query(SampleFilter).filter(SampleFilter.sample_filter_id == filter_id).first()
+            filters = json.loads(my_filter.sample_filter_data)
+    else:
+        filters = data.get("filters", [])
+    return_data = aggregate_new_parameters(user, filters, False)
+    return jsonify({
+        'success': True,
+        'num_samples': return_data[0],
+        'sample_meta_fields': return_data[2]
+    })
+
 @api_blueprint.route('/api/save_filters', methods=['POST'])
 @check_user
 def save_filters(user, *args, **kwargs):

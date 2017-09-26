@@ -713,10 +713,19 @@ def get_sample_fields_values(keys, filters=None):
             'cmp':'inlist',
             'value':keys
             }]]
-
+    sample_list_query = db.session.query(Sample.sample_name).filter(Sample.sample_id.in_(sample_ids))
+    sample_meta_ids_query = db.session.query(SampleDataType.data_key, SampleDataType.data_section).filter(SampleDataType.sample_data_type_id.in_(keys))
     sample_metadata_query = db.session.query(Sample.sample_name).join(SampleData, Sample.sample_id==SampleData.sample_id).join(SampleDataType, SampleData.sample_data_type_id==SampleDataType.sample_data_type_id).add_columns(SampleDataType.data_key, SampleDataType.data_section, SampleData.value)
     sample_metadata_query = build_filter(sample_metadata_query, new_filters, SampleData)
-    results=defaultdict(lambda:{})
+    results={}
+    for row in sample_list_query.all():
+        results[row[0]]={}
+        for row2 in sample_meta_ids_query.all():
+            nicename = row2[0][len(row2[1]):] if row2[0].startswith(row2[1]) else row2[0]
+            nice_section = row2[1].title() if row2[1].islower() else row2[1]
+            nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
+            results[row[0]][nicename] = None
+
     for row in sample_metadata_query.all():
         nicename = row[1][len(row[2]):] if row[1].startswith(row[2]) else row[1]
         nice_section = row[2].title() if row[2].islower() else row[2]
