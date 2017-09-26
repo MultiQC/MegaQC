@@ -7,7 +7,7 @@ from megaqc.user.models import User
 from megaqc.model.models import PlotData, Report, SampleFilter
 from megaqc.api.utils import handle_report_data, generate_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot, \
-                            get_sample_fields_values, update_user_filter
+                            get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -177,16 +177,7 @@ def count_samples(user, *args, **kwargs):
 @check_user
 def report_filter_fields(user, *args, **kwargs):
     data = request.get_json()
-    filter_id = int(data.get("filters_id", 0))
-    if filter_id:
-        # Hardcoded "All Samples" filter set
-        if filter_id == -1:
-            filters = []
-        else:
-            my_filter = db.session.query(SampleFilter).filter(SampleFilter.sample_filter_id == filter_id).first()
-            filters = json.loads(my_filter.sample_filter_data)
-    else:
-        filters = data.get("filters", [])
+    filters = get_filter_from_data(data)
     return_data = aggregate_new_parameters(user, filters, True)
     return jsonify({
         'success': True,
@@ -198,16 +189,7 @@ def report_filter_fields(user, *args, **kwargs):
 @check_user
 def get_sample_meta_fields(user, *args, **kwargs):
     data = request.get_json()
-    filter_id = int(data.get("filters_id", 0))
-    if filter_id:
-        # Hardcoded "All Samples" filter set
-        if filter_id == -1:
-            filters = []
-        else:
-            my_filter = db.session.query(SampleFilter).filter(SampleFilter.sample_filter_id == filter_id).first()
-            filters = json.loads(my_filter.sample_filter_data)
-    else:
-        filters = data.get("filters", [])
+    filters = get_filter_from_data(data)
     return_data = aggregate_new_parameters(user, filters, False)
     return jsonify({
         'success': True,
@@ -273,11 +255,12 @@ def update_favourite_plot(user, *args, **kwargs):
     return jsonify({
         'success': True
     })
+
 @api_blueprint.route('/api/get_sample_data', methods=['POST'])
 @check_user
 def get_sample_data(user, *args, **kwargs):
     data = request.get_json()
-    my_filters = data.get("filters", [])
+    my_filters = get_filter_from_data(data)
     data_keys = data.get("fields", {})
     ret_data = get_sample_fields_values(data_keys, my_filters)
     return jsonify(ret_data)
@@ -293,3 +276,12 @@ def update_filters(user, *args, **kwargs):
     return jsonify({
             'success': True
             })
+
+@api_blueprint.route('/api/get_timeline_sample_data', methods=['POST'])
+@check_user
+def timeline_sample_data(user, *args, **kwargs):
+    data = request.get_json()
+    my_filters = get_filter_from_data(data)
+    data_keys = data.get("fields", {})
+    ret_data = get_timeline_sample_data(my_filters, data_keys)
+    return jsonify(ret_data)

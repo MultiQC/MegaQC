@@ -747,3 +747,58 @@ def update_user_filter(user, method, filter_id, filter_object=None):
         SampleFilter.query.filter_by(user_id=user.user_id, sample_filter_id=filter_id).update({"sample_filter_data":json.dumps(filter_object)})
     db.session.commit()
 
+
+def get_filter_from_data(data):
+    filter_id = int(data.get("filters_id", 0))
+    if filter_id:
+        # Hardcoded "All Samples" filter set
+        if filter_id == -1:
+            my_filter = []
+        else:
+            my_filter = json.loads(db.session.query(SampleFilter.sample_filter_data).filter(SampleFilter.sample_filter_id == filter_id).first())
+    else:
+        my_filter = data.get("filters", [])
+
+    return my_filter
+
+
+def get_timeline_sample_data(filters, fields):
+    if not filters:
+        filters=[]
+    sample_ids = get_samples(filters, ids=True)
+    if filters:
+        new_filters=[[{'type':'sampleids',
+                  'cmp':'inlist',
+                  'value': sample_ids}, 
+                  {'type':'samplemetaids',
+                  'cmp':'inlist',
+                  'value':fields
+        }]]
+    else:
+        new_filters=[[{'type':'samplemetaids',
+            'cmp':'inlist',
+            'value':fields
+            }]]
+
+    sample_meta_ids_query = db.session.query(SampleDataType.data_key, SampleDataType.data_section).filter(SampleDataType.sample_data_type_id.in_(fields))
+    sample_metadata_query = db.session.query(Sample.sample_id, Sample.sample_name).join(SampleData, Sample.sample_id==SampleData.sample_id).join(SampleDataType, SampleData.sample_data_type_id==SampleDataType.sample_data_type_id).join(Report, Report.report_id==Sample.report_id).add_columns(SampleDataType.data_key, SampleDataType.data_section, SampleData.value, Report.created_at)
+    sample_metadata_query = build_filter(sample_metadata_query, new_filters, SampleData)
+    results={}
+    for row in sample_meta_ids_query.all():
+        nicename = row[0][len(row[1]):] if row[0].startswith(row[1]) else row[0]
+        nice_section = row[1].title() if row[1].islower() else row[1]
+        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
+        results[nicename]=[]
+    for row in sample_metadata_query.all():
+        nicename = row[2][len(row[3]):] if row[2].startswith(row[3]) else row[2]
+        nice_section = row[3].title() if row[3].islower() else row[3]
+        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
+        try:
+            value = float(row[4])
+        except ValueError:
+            value = row[4]
+
+        res_dict = {"id":row[0], "name":row[1], "time":row[5].isoformat(), 'value':value}
+        results[nicename].append(res_dict)
+
+    return results
