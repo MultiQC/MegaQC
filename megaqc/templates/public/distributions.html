@@ -15,6 +15,26 @@
     <div class="col-md-6">
         <div class="card">
             <h4 class="card-header">Choose Fields to Plot</h4>
+            <div class="card-body">
+                <form class="mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Filter fields" id="distribution_fields_filter_input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-outline-info" id="distribution_fields_favourite_toggle">
+                                <i class="fa fa-heart" aria-hidden="true"></i>
+                                Favs Only
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            <div class="list-group">
+                {% for sf in sample_fields %}
+                    <a href="#distribution_plot" class="distribution-field-btn list-group-item list-group-item-action" data-fieldid="{{ sf.key }}">
+                    {{ sf.nicename }}
+                    </a>
+                {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 </div>

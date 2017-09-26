@@ -703,7 +703,7 @@ def get_sample_fields_values(keys, filters=None):
     if filters:
         new_filters=[[{'type':'sampleids',
                   'cmp':'inlist',
-                  'value': sample_ids}, 
+                  'value': sample_ids},
                   {'type':'samplemetaids',
                   'cmp':'inlist',
                   'value':keys
@@ -737,4 +737,3 @@ def update_user_filter(user, method, filter_id, filter_object=None):
     elif method == "update":
         SampleFilter.query.filter_by(user_id=user.user_id, sample_filter_id=filter_id).update({"sample_filter_data":json.dumps(filter_object)})
     db.session.commit()
-
