@@ -10,44 +10,7 @@
 
 <div class="row report-plot-setup">
     <div class="col-md-6">
-        <div class="card">
-            <h4 class="card-header">
-                Filter Samples
-                <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
-                    {{ num_samples }} samples
-                </span>
-                <button class="btn btn-sm btn-outline-primary float-right" data-toggle="modal" data-target="#create_filter_modal">
-                    <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
-                    Add
-                </button>
-            </h4>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <nav class="nav flex-column nav-pills" id="sample-filter-group-select" role="tablist">
-                            {% for sfg in sample_filters.keys() | sort %}
-                            <a class="nav-link {% if loop.first %}active{% endif %}" href="#sample_filter_group_{{ loop.index }}">{{ sfg }}</a>
-                            {% endfor %}
-                        </nav>
-                    </div>
-                    <div class="col-sm-8">
-                        <hr class="d-md-none">
-                        <div id="sample-filter-groups">
-                        {% for sfg in sample_filters.keys() | sort %}
-                        {% set sfg_loop = loop %}
-                            <div class="sample-filters-group" {% if not loop.first %}style="display:none;"{% endif %} id="sample_filter_group_{{ loop.index }}" data-filtergroup="{{ sfg }}">
-                                <div class="list-group">
-                                    {% for sf in sample_filters[sfg] %}
-                                    <button type="button" class="sample-filter-btn list-group-item list-group-item-action {% if sfg_loop.first and loop.first %}active{% endif %}" data-filterid="{{ sf.id }}">{{ sf.name }}</button>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% include "public/filter_samples_selectbox.html" %}
     </div>
     <div class="col-md-6">
         <div class="card">
@@ -77,7 +40,7 @@
     </div>
 </div>
 
-<div class="card" id="report_plot">
+<div class="card megaqc_plot" id="report_plot">
     <h4 class="card-header">Report Plot</h4>
     <div class="card-body">
         <p class="text-secondary">Please choose a plot type</p>
@@ -94,55 +57,10 @@
 $(function(){
 
 //////// TODO
-// - Actually save plot type favourites when asked to do so
 // - Popover info box for filter sets showing what the filters are...?
 
-
-    // New sample filter set saved
-    $(document).on('sample-filter-saved', function(e, fs){
-        // Hide the modal window
-        $('#create_filter_modal').modal('hide');
-        // Select the correct sample filter group
-        $('#sample-filter-group-select .nav-link').removeClass('active');
-        var sfg = $('#sample-filter-group-select .nav-link').filter(function(index) { return $(this).text() === fs['meta']['set']; });
-        $('.sample-filters-group').hide();
-        if(sfg.length > 0){
-            sfg.addClass('active');
-            $('.sample-filters-group[data-filtergroup="'+fs['meta']['set']+'"]').show();
-        } else {
-            var idx = $('#sample-filter-group-select .nav-link').length + 1;
-            $('#sample-filter-group-select').append('<a class="nav-link active" href="#sample_filter_group_'+idx+'">'+fs['meta']['set']+'</a>');
-            $('#sample-filter-groups').append('<div class="sample-filters-group" id="sample_filter_group_'+idx+'" data-filtergroup="'+fs['meta']['set']+'"><div class="list-group"></div></div>');
-        }
-        // Insert the new filters and select them
-        $('.sample-filter-btn').removeClass('active');
-        $('.sample-filters-group[data-filtergroup="'+fs['meta']['set']+'"] .list-group').append(
-            '<button type="button" class="sample-filter-btn list-group-item list-group-item-action active" data-filterid="'+fs['filter_id']+'">'+fs['meta']['name']+'</button>'
-        );
-        update_filter_set();
-    });
-
-    // Change visible sample groups
-    $('#sample-filter-group-select').on('click', 'a', function(e){
-        e.preventDefault();
-        $('#sample-filter-group-select a').removeClass('active');
-        $(this).addClass('active');
-        var target = $(this).attr('href');
-        $('.sample-filters-group:visible').fadeOut(100, function(){
-            $(target).fadeIn(100);
-        });
-    });
-
-    // Sample filter clicked
-    $('#sample-filter-groups').on('click', '.sample-filter-btn', function(e){
-        e.preventDefault();
-        $('.sample-filter-btn').removeClass('active');
-        $(this).addClass('active');
-        update_filter_set();
-    });
-
     // Function to update the active filter set
-    function update_filter_set(){
+    $(document).on('sample-filter-clicked sample-filter-added', function(e, fs){
         // Update the number of samples and available plot types
         $('.loading-spinner').show();
         var filter_id = $('.sample-filter-btn.active').first().data('filterid');
@@ -179,6 +97,10 @@ $(function(){
                                 pt['nicename'] + '<i class="fa fa-heart'+fc+' float-right report-plot-type-save-fav" aria-hidden="true"></i>' +
                             '</a>');
                     });
+                    // If a plot is visible, regenerate it
+                    if($('#report_plot .card-body .plotly-graph-div').length > 0){
+                      create_plot();
+                    }
                     // Hide the loading spinner
                     $('.loading-spinner').hide();
                 }
@@ -196,7 +118,7 @@ $(function(){
                 $('.loading-spinner').hide();
             }
         });
-    }
+    });
 
     // Filter plot types by typing
     $('#plot_type_filter_input').keyup(function(e){
@@ -311,7 +233,7 @@ $(function(){
             url: '/api/get_plot',
             type: 'post',
             data:JSON.stringify( {
-                'filters': window.active_filters,
+                'filters': $('.sample-filter-btn.active').first().data('filterid'),
                 'plot_type': plot_type
             }),
             headers : { access_token:window.token },

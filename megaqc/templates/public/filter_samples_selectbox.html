@@ -1,0 +1,38 @@
+<div class="card">
+    <h4 class="card-header">
+        Filter Samples
+        <span class="num_filtered_samples badge badge-pill {% if num_samples == 0 %}badge-danger{% elif num_samples > 100 %}badge-warning{% else %}badge-success{% endif %}">
+            {{ num_samples }} samples
+        </span>
+        <button class="btn btn-sm btn-outline-primary float-right" data-toggle="modal" data-target="#create_filter_modal">
+            <i class="fa fa-fw fa-plus-square" aria-hidden="true"></i>
+            Add
+        </button>
+    </h4>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-4">
+                <nav class="nav flex-column nav-pills" id="sample-filter-group-select" role="tablist">
+                    {% for sfg in sample_filters.keys() | sort %}
+                    <a class="nav-link {% if loop.first %}active{% endif %}" href="#sample_filter_group_{{ loop.index }}">{{ sfg }}</a>
+                    {% endfor %}
+                </nav>
+            </div>
+            <div class="col-sm-8">
+                <hr class="d-md-none">
+                <div id="sample-filter-groups">
+                {% for sfg in sample_filters.keys() | sort %}
+                {% set sfg_loop = loop %}
+                    <div class="sample-filters-group" {% if not loop.first %}style="display:none;"{% endif %} id="sample_filter_group_{{ loop.index }}" data-filtergroup="{{ sfg }}">
+                        <div class="list-group">
+                            {% for sf in sample_filters[sfg] %}
+                            <button type="button" class="sample-filter-btn list-group-item list-group-item-action {% if sfg_loop.first and loop.first %}active{% endif %}" data-filterid="{{ sf.id }}">{{ sf.name }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

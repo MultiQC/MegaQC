@@ -194,12 +194,11 @@ footer p a {
     margin: 0 -1px;
 }
 
-#report_plot .card-body {
+.megaqc_plot .card-body {
     min-height:500px;
     text-align: center;
     padding: 0;
 }
-#report_plot .card-body p {
+.megaqc_plot .card-body p {
     margin-top: 100px;
 }
-
