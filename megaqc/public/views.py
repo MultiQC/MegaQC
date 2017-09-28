@@ -110,7 +110,7 @@ def edit_filters():
     """Edit saved filters."""
     sample_filters=order_sample_filters()
     del(sample_filters['Global'])
-    return render_template('public/organize_filters.html', sample_filters=sample_filters, user_token=current_user.api_token, num_samples=get_samples(count=True))
+    return render_template('users/organize_filters.html', sample_filters=sample_filters, user_token=current_user.api_token, num_samples=get_samples(count=True))
 
 def order_sample_filters():
     sample_filters = OrderedDict()
