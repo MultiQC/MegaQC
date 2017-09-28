@@ -108,9 +108,19 @@ def report_plot():
 @login_required
 def edit_filters():
     """Edit saved filters."""
-    sample_filters=order_sample_filters()
-    del(sample_filters['Global'])
-    return render_template('users/organize_filters.html', sample_filters=sample_filters, user_token=current_user.api_token, num_samples=get_samples(count=True))
+    sample_filters = order_sample_filters()
+    sample_filter_counts = {}
+    for sfg in sample_filters:
+        sample_filter_counts[sfg] = {}
+        for sf in sample_filters[sfg]:
+            sample_filter_counts[sf['id']] = get_samples(filters=sf['id'], count=True)
+    return render_template(
+        'users/organize_filters.html',
+        sample_filters = sample_filters,
+        sample_filter_counts = sample_filter_counts,
+        user_token = current_user.api_token,
+        num_samples = get_samples(count=True)
+    )
 
 def order_sample_filters():
     sample_filters = OrderedDict()

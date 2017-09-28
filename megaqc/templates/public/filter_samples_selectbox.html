@@ -22,7 +22,7 @@
                 <hr class="d-md-none">
                 <div id="sample-filter-groups">
                 {% for sfg in sample_filters.keys() | sort %}
-                {% set sfg_loop = loop %}
+                    {% set sfg_loop = loop %}
                     <div class="sample-filters-group" {% if not loop.first %}style="display:none;"{% endif %} id="sample_filter_group_{{ loop.index }}" data-filtergroup="{{ sfg }}">
                         <div class="list-group">
                             {% for sf in sample_filters[sfg] %}
