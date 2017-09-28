@@ -3,7 +3,7 @@ FROM debian:latest
 LABEL authors="phil.ewels@scilifelab.se,denis.moreno@scilifelab.se" \
     description="Docker image running MegaQC"
 
-# Install container-wide requrements gcc, pip, zlib, libssl, make, libncurses, fortran77, g++, R
+# Install container-wide requrements 
 RUN apt-get update && apt-get install git -y && \
     apt-get install python2.7 -y && \
     apt-get install python2.7-dev -y && \
@@ -12,7 +12,19 @@ RUN apt-get update && apt-get install git -y && \
     apt-get install libfreetype6-dev -y && \
     apt-get install curl -y && \
     apt-get install gcc -y && \
-    apt-get install g++ -y 
+    apt-get install g++ -y && \
+    apt-get install apache2 -y
+
+#Enable apache mod_proxy
+RUN a2enmod proxy
+RUN a2enmod proxy_http
+
+#Overwrite apache config
+RUN echo "<VirtualHost *:80> \n\
+    ServerName megaqc \n\
+    ProxyPass / http://127.0.0.1:8000/ \n\
+    ProxyPassReverse / http://127.0.0.1:8000/ \n\
+</VirtualHost>" > /etc/apache2/sites-enabled/000-default.conf 
 
 #Fix matplotlib being dumb
 RUN ln -s /usr/include/freetype2/ft2build.h /usr/include/
@@ -54,6 +66,7 @@ RUN su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && \
 megaqc initdb && \
 su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w stop" 
 
-EXPOSE 8000
-CMD gunicorn megaqc.wsgi:app --timeout 300
+EXPOSE 80
+CMD su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && service apache2 start && gunicorn megaqc.wsgi:app --timeout 300 
+
 
