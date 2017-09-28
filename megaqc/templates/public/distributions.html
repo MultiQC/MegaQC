@@ -69,7 +69,7 @@ $(function(){
     function create_plot(){
         // Show the loading spinners
         $('.loading-spinner').show();
-        $('#report_plot .card-body').html('<p>' +
+        $('#distribution_plot .card-body').html('<p>' +
             '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
             '<span class="loading-spinner">Loading...</span>' +
         '</p>');
@@ -99,7 +99,7 @@ $(function(){
                 if (data['success']){
                     // Wait 300ms to ensure the page scroll has finished
                     setTimeout(function(){
-                        $('#report_plot .card-body').html(data['plot']);
+                        $('#distribution_plot .card-body').html(data['plot']);
                         $('.loading-spinner').hide();
                     }, 300);
                 }
@@ -107,13 +107,13 @@ $(function(){
                 else {
                     console.log(data);
                     toastr.error('There was an error whilst generating this plot.');
-                    $('#report_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                    $('#distribution_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
                     $('.loading-spinner').hide();
                 }
             },
             error: function(data){
                 toastr.error('There was an error retrieving this plot.');
-                $('#report_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                $('#distribution_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
                 $('.loading-spinner').hide();
             }
         });
