@@ -230,7 +230,7 @@ $(function(){
         }
         // Get the plot HTML
         window.ajax_update = $.ajax({
-            url: '/api/get_plot',
+            url: '/api/get_report_plot',
             type: 'post',
             data:JSON.stringify( {
                 'filters': $('.sample-filter-btn.active').first().data('filterid'),

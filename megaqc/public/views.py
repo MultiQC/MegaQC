@@ -10,7 +10,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples, get_user_filters, aggregate_new_parameters, generate_plot
+from megaqc.api.utils import get_samples, get_user_filters, aggregate_new_parameters
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct

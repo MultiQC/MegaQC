@@ -210,7 +210,7 @@ def handle_report_data(user, report_data):
     return (True, 'Data upload successful')
 
 
-def generate_plot(plot_type, sample_names):
+def generate_report_plot(plot_type, sample_names):
     if " -- " in plot_type:
         # Plot type also contains data_key : True for most xy_lines
         plot_type=plot_type.split(" -- ")
@@ -391,6 +391,9 @@ def generate_plot(plot_type, sample_names):
             )
         )
         return plot_div
+
+def generate_distribution_plot(field_id, sample_names):
+    return 'NOT WRITTEN YET'
 
 def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
     plotly_layout.title = config.get('title')
@@ -768,7 +771,7 @@ def get_timeline_sample_data(filters, fields):
     if filters:
         new_filters=[[{'type':'sampleids',
                   'cmp':'inlist',
-                  'value': sample_ids}, 
+                  'value': sample_ids},
                   {'type':'samplemetaids',
                   'cmp':'inlist',
                   'value':fields

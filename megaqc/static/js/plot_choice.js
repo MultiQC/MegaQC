@@ -46,7 +46,7 @@ function init_btns(){
         }
         );
         $.ajax({
-            url:"/api/get_plot", 
+            url:"/api/get_report_plot",
             type: 'post',
             data:JSON.stringify({"samples":selected_samples, "plot_type":window.graph_type}),
             headers : {access_token:window.token},
@@ -60,7 +60,7 @@ function init_btns(){
                 $('#plot_location').html(html);
                 }
         });
-    
+
     });
     $(".plot_type_choice").each(function(idx){
         $(this).click(function(e){
