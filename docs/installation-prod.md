@@ -34,7 +34,7 @@
     
 3. Install and start the web server
 
-    *Note : This step can be ignored if you wish yo use nginx or apache as your primary web server.*
+    *Note : This step can be ignored if you wish to use gunicorn as your primary web server.*
 
     1. Install gunicorn
 

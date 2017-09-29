@@ -210,6 +210,7 @@ def handle_report_data(user, report_data):
     return (True, 'Data upload successful')
 
 
+
 def generate_report_plot(plot_type, sample_names):
     if " -- " in plot_type:
         # Plot type also contains data_key : True for most xy_lines
@@ -392,8 +393,55 @@ def generate_report_plot(plot_type, sample_names):
         )
         return plot_div
 
-def generate_distribution_plot(field_id, sample_names):
-    return 'NOT WRITTEN YET'
+def generate_distribution_plot(field_id, filters):
+    data = get_timeline_sample_data(filters, [field_id])
+    print field_id
+    print data
+    plots=[]
+    for nicename in data:
+        if not isinstance(data[nicename][0]['value'], float):
+            continue
+        keys = []
+        values = []
+        counts = []
+        for one_dict in data[nicename]:
+            try:
+                idx=keys.index(one_dict['time'])
+                values[idx] += one_dict['value']
+                counts[idx] += 1
+            except ValueError:
+                keys.append(one_dict['time'])
+                values.append(one_dict['value'])
+                counts.append(1)
+
+        #get the averages
+        for i in counts:
+            values[i] = values[i]/counts[i]
+        plot=go.Bar(
+            x = keys,
+            y = values
+        )
+        plots.append(plot)
+
+    fig = go.Figure(data=plots)
+    plot_div = py.plot(
+        fig,
+        output_type = 'div',
+        show_link = False,
+        config = dict(
+            modeBarButtonsToRemove = [
+                'sendDataToCloud',
+                'resetScale2d',
+                'hoverClosestCartesian',
+                'hoverCompareCartesian',
+                'toggleSpikelines'
+            ],
+            displaylogo = False
+        )
+    )
+
+
+    return plot_div
 
 def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
     plotly_layout.title = config.get('title')

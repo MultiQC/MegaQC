@@ -7,7 +7,8 @@ from megaqc.user.models import User
 from megaqc.model.models import PlotData, Report, SampleFilter
 from megaqc.api.utils import handle_report_data, generate_report_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot, \
-                            get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data
+                            get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data, \
+                            generate_distribution_plot
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -269,10 +270,9 @@ def get_sample_data(user, *args, **kwargs):
 @check_user
 def get_distribution_plot(user, *args, **kwargs):
     data = request.get_json()
+    filters = get_filter_from_data(data)
     field_id = data.get("field_id")
-    filters = data.get("filters", [])
-    sample_names = get_samples(filters)
-    html = generate_distribution_plot(field_id, sample_names)
+    html = generate_distribution_plot(field_id, filters)
     return jsonify({
         'success': True,
         'plot': html

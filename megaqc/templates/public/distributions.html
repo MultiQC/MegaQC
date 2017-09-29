@@ -89,7 +89,7 @@ $(function(){
             url: '/api/get_distribution_plot',
             type: 'post',
             data:JSON.stringify( {
-                'filters': $('.sample-filter-btn.active').first().data('filterid'),
+                'filter_id': $('.sample-filter-btn.active').first().data('filterid'),
                 'field_id': field_id
             }),
             headers : { access_token:window.token },
