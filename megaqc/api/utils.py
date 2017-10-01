@@ -737,7 +737,7 @@ def get_sample_fields_values(keys, filters=None):
 
     return results
 
-def generate_distribution_plot(plot_data, nbins=20):
+def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
     dtypes = set()
     for s_name in plot_data:
         dtypes.update(plot_data[s_name])
@@ -749,16 +749,39 @@ def generate_distribution_plot(plot_data, nbins=20):
                 pdata.append(float(plot_data[s_name][dtype]))
             except:
                 pass
-        figs.append(
-            go.Histogram(
-                x = pdata,
-                opacity = 0.75,
-                nbinsx = nbins,
-                name = "{} ({})".format(dtype, len(pdata))
+        if ptype == 'hist':
+            figs.append(
+                go.Histogram(
+                    x = pdata,
+                    opacity = 0.75,
+                    nbinsx = nbins,
+                    name = "{} ({})".format(dtype, len(pdata))
+                )
             )
-        )
-    fig = go.Figure(
-        data = figs,
+        elif ptype == 'boxplot':
+            figs.append(
+                go.Box(
+                    y = pdata,
+                    name = "{} ({})".format(dtype, len(pdata))
+                )
+            )
+        elif ptype == 'dotplot':
+            figs.append(
+                go.Box(
+                    y = pdata,
+                    name = "{} ({})".format(dtype, len(pdata)),
+                    boxpoints = 'all',
+                    jitter = 0.5,
+                    pointpos = 0,
+                    line = dict(width = 0),
+                    whiskerwidth = 0,
+                    fillcolor = 'rgba(0, 0, 0, 0)'
+                )
+            )
+        else:
+            return 'Error - unrecognised plot type: {}'.format(ptype)
+    layout = {}
+    if ptype == 'hist':
         layout = go.Layout(
             barmode = 'overlay',
             showlegend = True,
@@ -770,9 +793,8 @@ def generate_distribution_plot(plot_data, nbins=20):
                 # TODO - integers only
             )
         )
-    )
     plot_div = py.plot(
-        fig,
+        go.Figure(data = figs, layout = layout),
         output_type = 'div',
         show_link = False,
         config = dict(

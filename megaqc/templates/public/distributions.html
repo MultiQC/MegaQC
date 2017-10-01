@@ -8,7 +8,7 @@
     <span class="loading-spinner" style="display:none;">Loading...</span>
 </h1>
 
-<div class="row report-plot-setup">
+<div class="row plot-setup">
     <div class="col-md-6">
         {% include "public/filter_samples_selectbox.html" %}
     </div>
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                 </form>
-            <div class="list-group">
+            <div class="list-group with-filter">
                 {% for sf in sample_fields %}
                     <a href="#distribution_plot" class="distribution-field-btn list-group-item list-group-item-action" data-fieldid="{{ sf.type_id }}">
                     {{ sf.nicename }}
@@ -46,7 +46,23 @@
 <div class="card megaqc_plot" id="distribution_plot">
     <h4 class="card-header">Distributions Plot</h4>
     <div class="card-body">
-        <p class="text-secondary">Please choose fields to plot</p>
+        <div class="plot_header_config">
+            <div class="dist_plot_type">
+                <select>
+                    <option value="hist">Histogram</option>
+                    <option value="boxplot">Box Plots</option>
+                    <option value="violin">Violin Plots</option>
+                    <option value="dotplot">Dot Plots</option>
+                </select>
+            </div>
+            <div class="hist_nbins_range">
+                <input type="range" min="1" max="100" value="40">
+                 <span>40</span> bins
+            </div>
+        </div>
+        <div id="dist_plotdiv">
+            <p class="text-secondary">Please choose fields to plot</p>
+        </div>
     </div>
 </div>
 
@@ -57,6 +73,7 @@
 {% block js %}
 <script type="text/javascript" src="/static/js/filter_samples.js"></script>
 <script type="text/javascript">
+window.dist_ptype = 'hist';
 window.hist_nbins = 40;
 $(function(){
 
@@ -69,6 +86,12 @@ $(function(){
     $('body').on('click', '.distribution-field-btn', function(e){
         e.preventDefault();
         $(this).toggleClass('active');
+        create_plot();
+    });
+
+    // Change number of histogram bins
+    $('body').on('change', '.dist_plot_type select', function(e){
+        window.dist_ptype = $(this).val();
         create_plot();
     });
 
@@ -86,7 +109,7 @@ $(function(){
     function create_plot(){
         // Show the loading spinners
         $('.loading-spinner').show();
-        $('#distribution_plot .card-body').html('<p>' +
+        $('#dist_plotdiv').html('<p>' +
             '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
             '<span class="loading-spinner">Loading...</span>' +
         '</p>');
@@ -99,7 +122,7 @@ $(function(){
         });
         if(field_ids.length == 0){
             $('#distribution_plot .card-header').text('Distributions Plot');
-            $('#distribution_plot .card-body').html('<p class="text-secondary">Please choose fields to plot</p>');
+            $('#dist_plotdiv').html('<p class="text-secondary">Please choose fields to plot</p>');
             $('.loading-spinner').hide();
             return;
         }
@@ -119,22 +142,17 @@ $(function(){
             data: JSON.stringify( {
                 'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
                 'fields': field_ids,
-                'nbins': window.hist_nbins
+                'nbins': window.hist_nbins,
+                'ptype': window.dist_ptype
             }),
             headers : { access_token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
                 if (data['success']){
-                    // Plot HTML
-                    phtml = '<div class="hist_nbins_range">' +
-                                '<input type="range" min="1" max="100" value="'+window.hist_nbins+'">' +
-                                ' <span>'+window.hist_nbins+'</span> bins' +
-                            '</div>' +
-                            data['plot'];
                     // Wait 300ms to ensure the page scroll has finished
                     setTimeout(function(){
-                        $('#distribution_plot .card-body').html(phtml);
+                        $('#dist_plotdiv').html(data['plot']);
                         $('.loading-spinner').hide();
                     }, 300);
                 }
@@ -142,13 +160,13 @@ $(function(){
                 else {
                     console.log(data);
                     toastr.error('There was an error whilst generating this plot.');
-                    $('#distribution_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                    $('#dist_plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
                     $('.loading-spinner').hide();
                 }
             },
             error: function(data){
                 toastr.error('There was an error retrieving this plot.');
-                $('#distribution_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                $('#dist_plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
                 $('.loading-spinner').hide();
             }
         });

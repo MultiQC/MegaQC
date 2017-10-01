@@ -178,12 +178,19 @@ footer p a {
     display: none;
 }
 
-.report-plot-setup .card {
+.plot-setup .card {
     margin-bottom: 2rem;
 }
-.report-plot-setup .card .card-body {
+.plot-setup .card .card-body .list-group {
     height: 300px;
     overflow-y: auto;
+}
+.plot-setup .card .card-body .list-group {
+    height: 300px;
+    overflow-y: auto;
+}
+.plot-setup .card .card-body .list-group.with-filter {
+    height: 248px;
 }
 
 #sample-filter-group-select .nav-link.active {
@@ -203,7 +210,11 @@ footer p a {
     margin-top: 100px;
 }
 
-.hist_nbins_range {
+.plot_header_config div {
     padding: 8px 15px;
     text-align: left;
+    float: left;
+}
+#dist_plotdiv {
+    clear: left;
 }

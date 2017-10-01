@@ -272,8 +272,9 @@ def get_distribution_plot(user, *args, **kwargs):
     my_filters = get_filter_from_data(data)
     data_keys = data.get("fields", {})
     nbins = data.get("nbins", 20)
+    ptype = data.get("ptype", 20)
     plot_data = get_sample_fields_values(data_keys, my_filters)
-    html = generate_distribution_plot(plot_data, nbins)
+    html = generate_distribution_plot(plot_data, nbins, ptype)
     return jsonify({
         'success': True,
         'plot': html
