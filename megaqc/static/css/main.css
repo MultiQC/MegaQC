@@ -202,3 +202,8 @@ footer p a {
 .megaqc_plot .card-body p {
     margin-top: 100px;
 }
+
+.hist_nbins_range {
+    padding: 8px 15px;
+    text-align: left;
+}

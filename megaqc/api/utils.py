@@ -392,9 +392,6 @@ def generate_report_plot(plot_type, sample_names):
         )
         return plot_div
 
-def generate_distribution_plot(field_id, sample_names):
-    return 'NOT WRITTEN YET'
-
 def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
     plotly_layout.title = config.get('title')
     xaxis={}
@@ -739,6 +736,57 @@ def get_sample_fields_values(keys, filters=None):
             results[row[0]][nicename]=row[3]
 
     return results
+
+def generate_distribution_plot(plot_data, nbins=20):
+    dtypes = set()
+    for s_name in plot_data:
+        dtypes.update(plot_data[s_name])
+    figs = []
+    for dtype in sorted(dtypes):
+        pdata = []
+        for s_name in plot_data:
+            try:
+                pdata.append(float(plot_data[s_name][dtype]))
+            except:
+                pass
+        figs.append(
+            go.Histogram(
+                x = pdata,
+                opacity = 0.75,
+                nbinsx = nbins,
+                name = "{} ({})".format(dtype, len(pdata))
+            )
+        )
+    fig = go.Figure(
+        data = figs,
+        layout = go.Layout(
+            barmode = 'overlay',
+            showlegend = True,
+            xaxis = dict(
+                title = "Data"
+            ),
+            yaxis = dict(
+                title = "Sample Count"
+                # TODO - integers only
+            )
+        )
+    )
+    plot_div = py.plot(
+        fig,
+        output_type = 'div',
+        show_link = False,
+        config = dict(
+            modeBarButtonsToRemove = [
+                'sendDataToCloud',
+                'resetScale2d',
+                'hoverClosestCartesian',
+                'hoverCompareCartesian',
+                'toggleSpikelines'
+            ],
+            displaylogo = False
+        )
+    )
+    return plot_div
 
 def update_user_filter(user, method, filter_id, filter_object=None):
     if not filter_object:

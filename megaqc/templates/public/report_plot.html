@@ -233,7 +233,7 @@ $(function(){
             url: '/api/get_report_plot',
             type: 'post',
             data:JSON.stringify( {
-                'filters': $('.sample-filter-btn.active').first().data('filterid'),
+                'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
                 'plot_type': plot_type
             }),
             headers : { access_token:window.token },
