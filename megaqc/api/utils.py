@@ -11,6 +11,7 @@ from sqlalchemy.sql import not_, or_, and_
 from collections import defaultdict, OrderedDict
 
 import plotly.offline as py
+import plotly.figure_factory as ff
 import plotly.graph_objs as go
 
 import json
@@ -778,6 +779,11 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
                     fillcolor = 'rgba(0, 0, 0, 0)'
                 )
             )
+        elif ptype == 'violin':
+            if len(figs) == 0:
+                figs = {}
+            dname = "{} ({})".format(dtype, len(pdata))
+            figs[dname] = pdata
         else:
             return 'Error - unrecognised plot type: {}'.format(ptype)
     layout = {}
@@ -793,8 +799,12 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
                 # TODO - integers only
             )
         )
+    if ptype == 'violin':
+        figure = ff.create_violin(figs)
+    else:
+        figure = go.Figure(data = figs, layout = layout)
     plot_div = py.plot(
-        go.Figure(data = figs, layout = layout),
+        figure,
         output_type = 'div',
         show_link = False,
         config = dict(
