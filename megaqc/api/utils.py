@@ -697,26 +697,31 @@ def update_fav_plot(method, user, plot_info):
         raise Exception("No such method")
     db.session.commit()
 
-def get_sample_fields_values(keys, filters=None):
+def get_sample_fields_values(keys, filters=None, num_fieldids=False):
     if not filters:
-        filters=[]
-    sample_ids = get_samples(filters, ids=True)
+        filters = []
+    sample_ids = get_samples(filters, ids = True)
     if filters:
-        new_filters=[[{'type':'sampleids',
-                  'cmp':'inlist',
-                  'value': sample_ids},
-                  {'type':'samplemetaids',
-                  'cmp':'inlist',
-                  'value':keys
-        }]]
+        new_filters = [[
+            {
+                'type': 'sampleids',
+                'cmp': 'inlist',
+                'value':  sample_ids
+            }, {
+                'type': 'samplemetaids',
+                'cmp': 'inlist',
+                'value' :keys
+            }
+        ]]
     else:
-        new_filters=[[{'type':'samplemetaids',
-            'cmp':'inlist',
-            'value':keys
-            }]]
+        new_filters = [[{
+            'type': 'samplemetaids',
+            'cmp': 'inlist',
+            'value': keys
+        }]]
     sample_list_query = db.session.query(Sample.sample_name).filter(Sample.sample_id.in_(sample_ids))
-    sample_meta_ids_query = db.session.query(SampleDataType.data_key, SampleDataType.data_section).filter(SampleDataType.sample_data_type_id.in_(keys))
-    sample_metadata_query = db.session.query(Sample.sample_name).join(SampleData, Sample.sample_id==SampleData.sample_id).join(SampleDataType, SampleData.sample_data_type_id==SampleDataType.sample_data_type_id).add_columns(SampleDataType.data_key, SampleDataType.data_section, SampleData.value)
+    sample_meta_ids_query = db.session.query(SampleDataType.data_key, SampleDataType.data_section, SampleDataType.sample_data_type_id).filter(SampleDataType.sample_data_type_id.in_(keys))
+    sample_metadata_query = db.session.query(Sample.sample_name).join(SampleData, Sample.sample_id==SampleData.sample_id).join(SampleDataType, SampleData.sample_data_type_id==SampleDataType.sample_data_type_id).add_columns(SampleDataType.data_key, SampleDataType.data_section, SampleData.value, SampleDataType.sample_data_type_id)
     sample_metadata_query = build_filter(sample_metadata_query, new_filters, SampleData)
     results={}
     for row in sample_list_query.all():
@@ -724,13 +729,17 @@ def get_sample_fields_values(keys, filters=None):
         for row2 in sample_meta_ids_query.all():
             nicename = row2[0][len(row2[1]):] if row2[0].startswith(row2[1]) else row2[0]
             nice_section = row2[1].title() if row2[1].islower() else row2[1]
-            nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
+            nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' ').strip())
+            if num_fieldids:
+                nicename = row2[2]
             results[row[0]][nicename] = None
 
     for row in sample_metadata_query.all():
         nicename = row[1][len(row[2]):] if row[1].startswith(row[2]) else row[1]
         nice_section = row[2].title() if row[2].islower() else row[2]
-        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
+        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' ').strip())
+        if num_fieldids:
+            nicename = row[4]
         try:
             results[row[0]][nicename]=float(row[3])
         except ValueError:
@@ -805,6 +814,65 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
         figure = go.Figure(data = figs, layout = layout)
     plot_div = py.plot(
         figure,
+        output_type = 'div',
+        show_link = False,
+        config = dict(
+            modeBarButtonsToRemove = [
+                'sendDataToCloud',
+                'resetScale2d',
+                'hoverClosestCartesian',
+                'hoverCompareCartesian',
+                'toggleSpikelines'
+            ],
+            displaylogo = False
+        )
+    )
+    return plot_div
+
+def generate_comparison_plot(plot_data, data_keys):
+    # return "<pre>{}</pre>".format(plot_data)
+    plotx = []
+    ploty = []
+    plotc = []
+    plots = []
+    for s_name in plot_data:
+        try:
+            plotx.append(plot_data[s_name][data_keys['x']])
+            ploty.append(plot_data[s_name][data_keys['y']])
+        except KeyError:
+            print("Couldn't find key {} (available: {})".format(plot_data[s_name].keys(), data_keys))
+        try:
+            plotc.append(plot_data[s_name][data_keys['col']])
+        except KeyError:
+            plotc.append(None)
+        try:
+            plots.append(plot_data[s_name][data_keys['size']])
+        except KeyError:
+            plots.append(None)
+    markers = {}
+    if not all([x == None for x in plotc]):
+        markers['color'] = plotc
+        markers['colorscale'] = 'Viridis'
+        markers['showscale'] = True
+    if not all([x == None for x in plots]):
+        smax = max([x for x in plots if type(x) is float])
+        smin = min([x for x in plots if type(x) is float])
+        srange = smax - smin
+        norm_plots = []
+        for x in plots:
+            if type(x) is float:
+                norm_plots.append((((x - smin)/srange)*16)+1)
+            else:
+                norm_plots.append(1)
+        markers['size'] = norm_plots
+    fig = go.Scatter(
+        x = plotx,
+        y = ploty,
+        mode = 'markers',
+        marker = markers
+    )
+    plot_div = py.plot(
+        go.Figure(data = [fig]),
         output_type = 'div',
         show_link = False,
         config = dict(

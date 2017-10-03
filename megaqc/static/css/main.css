@@ -28,6 +28,16 @@ code {
 div.alert.alert-light {
     border-color: #ededed;
 }
+.btn-outline-warning.active,
+.btn-outline-warning:hover,
+.btn-outline-warning:active,
+.btn-outline-warning:focus,
+.btn-outline-light.active,
+.btn-outline-light:hover,
+.btn-outline-light:active,
+.btn-outline-light:focus {
+    color: #666;
+}
 
 @font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Thin.ttf); font-weight: 100; }
 @font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Light.ttf); font-weight: 300; }
