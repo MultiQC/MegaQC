@@ -829,50 +829,72 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
     )
     return plot_div
 
-def generate_comparison_plot(plot_data, data_keys):
-    # return "<pre>{}</pre>".format(plot_data)
-    plotx = []
-    ploty = []
-    plotc = []
-    plots = []
+def generate_comparison_plot(plot_data, data_keys, field_names=None):
+    print(field_names)
+    if field_names is None:
+        field_names = data_keys
+    ptitle = 'MegaQC Comparison Plot'
+    plot_x = []
+    plot_y = []
+    plot_col = []
+    plot_size = []
+    plot_names = []
     for s_name in plot_data:
+        plot_names.append(s_name)
         try:
-            plotx.append(plot_data[s_name][data_keys['x']])
-            ploty.append(plot_data[s_name][data_keys['y']])
+            plot_x.append(plot_data[s_name][data_keys['x']])
+            plot_y.append(plot_data[s_name][data_keys['y']])
         except KeyError:
             print("Couldn't find key {} (available: {})".format(plot_data[s_name].keys(), data_keys))
         try:
-            plotc.append(plot_data[s_name][data_keys['col']])
+            plot_col.append(plot_data[s_name][data_keys['col']])
         except KeyError:
-            plotc.append(None)
+            plot_col.append(None)
         try:
-            plots.append(plot_data[s_name][data_keys['size']])
+            plot_size.append(plot_data[s_name][data_keys['size']])
         except KeyError:
-            plots.append(None)
+            plot_size.append(None)
+
+    # Colour with a colour scale
     markers = {}
-    if not all([x == None for x in plotc]):
-        markers['color'] = plotc
+    if not all([x == None for x in plot_col]):
+        markers['color'] = plot_col
         markers['colorscale'] = 'Viridis'
         markers['showscale'] = True
-    if not all([x == None for x in plots]):
-        smax = max([x for x in plots if type(x) is float])
-        smin = min([x for x in plots if type(x) is float])
+
+    # Scale the marker size according to a variable
+    if not all([x == None for x in plot_size]):
+        smax = max([x for x in plot_size if type(x) is float])
+        smin = min([x for x in plot_size if type(x) is float])
         srange = smax - smin
-        norm_plots = []
-        for x in plots:
+        norm_plot_size = []
+        for x in plot_size:
             if type(x) is float:
-                norm_plots.append((((x - smin)/srange)*16)+1)
+                norm_plot_size.append((((x - smin)/srange)*35)+2)
             else:
-                norm_plots.append(1)
-        markers['size'] = norm_plots
+                norm_plot_size.append(2)
+        markers['size'] = norm_plot_size
+        ptitle += '<br><span style="font-size:0.7rem">Marker Size represents "{}"</span>'.format(field_names['size'])
+
+    # Make the plot
+    layout = go.Layout(
+        title = ptitle,
+        xaxis = dict(
+            title = field_names['x']
+        ),
+        yaxis = dict(
+            title = field_names['y']
+        )
+    )
     fig = go.Scatter(
-        x = plotx,
-        y = ploty,
+        x = plot_x,
+        y = plot_y,
         mode = 'markers',
-        marker = markers
+        marker = markers,
+        text = plot_names
     )
     plot_div = py.plot(
-        go.Figure(data = [fig]),
+        go.Figure(data = [fig], layout = layout),
         output_type = 'div',
         show_link = False,
         config = dict(

@@ -121,8 +121,15 @@ $(function(){
             'col': null,
             'size': null
         };
+        field_names = {
+            'x': null,
+            'y': null,
+            'col': null,
+            'size': null
+        };
         $('.comparison_fields .btn.active').each(function(e){
             field_ids[$(this).data('fieldtype')] = $(this).data('fieldid');
+            field_names[$(this).data('fieldtype')] = $(this).closest('li').text().trim().replace('/\s+/', ' ');
         });
         if(field_ids['x'] == null || field_ids['y'] == null){
             $('#plotdiv').html('<p class="text-secondary">Please choose fields for x and y axes</p>');
@@ -140,6 +147,7 @@ $(function(){
             data: JSON.stringify( {
                 'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
                 'fields': field_ids,
+                'field_names': field_names,
                 'nbins': window.hist_nbins,
                 'ptype': window.dist_ptype
             }),
