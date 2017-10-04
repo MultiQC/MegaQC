@@ -38,6 +38,9 @@
                         <button class="btn btn-sm btn-outline-primary" data-fieldtype="y" data-fieldid="{{ sf.type_id }}" data-toggle="tooltip" title="Set as y-axis">
                             <i class="fa fa-fw fa-arrows-v" aria-hidden="true"></i>
                         </button>
+                        <button class="btn btn-sm btn-outline-primary" data-fieldtype="z" data-fieldid="{{ sf.type_id }}" data-toggle="tooltip" title="Set as z-axis">
+                            <i class="fa fa-fw fa-expand" aria-hidden="true"></i>
+                        </button>
                         <button class="btn btn-sm btn-outline-primary" data-fieldtype="col" data-fieldid="{{ sf.type_id }}" data-toggle="tooltip" title="Set as marker colour">
                             <i class="fa fa-fw fa-paint-brush" aria-hidden="true"></i>
                         </button>
@@ -56,7 +59,26 @@
 <div class="card megaqc_plot" id="comparison_plot">
     <h4 class="card-header">Comparison Plot</h4>
     <div class="card-body">
-        <div id="plotdiv">
+        <div id="plotconfig">
+            <label>
+                <input type="checkbox" id="joinmarkers">
+                Join points?
+            </label>
+            <label>
+                <select id="pointsize">
+                    <option>1</option>
+                    <option selected="selected">2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>10</option>
+                    <option>15</option>
+                    <option>20</option>
+                </select>
+                Point size
+            </label>
+        </div>
+        <div id="plotdiv" style="height: 800px;">
             <p class="text-secondary">Please choose fields for x and y axes</p>
         </div>
     </div>
@@ -118,12 +140,14 @@ $(function(){
         field_ids = {
             'x': null,
             'y': null,
+            'z': null,
             'col': null,
             'size': null
         };
         field_names = {
             'x': null,
             'y': null,
+            'z': null,
             'col': null,
             'size': null
         };

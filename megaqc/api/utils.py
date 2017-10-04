@@ -836,9 +836,11 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
     ptitle = 'MegaQC Comparison Plot'
     plot_x = []
     plot_y = []
+    plot_z = []
     plot_col = []
     plot_size = []
     plot_names = []
+    annotations = go.Annotations([])
     for s_name in plot_data:
         plot_names.append(s_name)
         try:
@@ -846,6 +848,10 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
             plot_y.append(plot_data[s_name][data_keys['y']])
         except KeyError:
             print("Couldn't find key {} (available: {})".format(plot_data[s_name].keys(), data_keys))
+        try:
+            plot_z.append(plot_data[s_name][data_keys['z']])
+        except KeyError:
+            plot_z.append(None)
         try:
             plot_col.append(plot_data[s_name][data_keys['col']])
         except KeyError:
@@ -861,20 +867,30 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
         markers['color'] = plot_col
         markers['colorscale'] = 'Viridis'
         markers['showscale'] = True
+        annotations.append(go.Annotation(
+            text = field_names['col'],
+            x = 1.02,
+            y = 0.5,
+            textangle= - 90,
+            xref = 'paper',
+            yref = 'paper',
+            showarrow = False
+        ))
 
     # Scale the marker size according to a variable
     if not all([x == None for x in plot_size]):
         smax = max([x for x in plot_size if type(x) is float])
         smin = min([x for x in plot_size if type(x) is float])
         srange = smax - smin
-        norm_plot_size = []
-        for x in plot_size:
-            if type(x) is float:
-                norm_plot_size.append((((x - smin)/srange)*35)+2)
-            else:
-                norm_plot_size.append(2)
-        markers['size'] = norm_plot_size
-        ptitle += '<br><span style="font-size:0.7rem">Marker Size represents "{}"</span>'.format(field_names['size'])
+        if srange < 0:
+            norm_plot_size = []
+            for x in plot_size:
+                if type(x) is float:
+                    norm_plot_size.append((((x - smin)/srange)*35)+2)
+                else:
+                    norm_plot_size.append(2)
+            markers['size'] = norm_plot_size
+            ptitle += '<br><span style="font-size:0.7rem">Marker Size represents "{}"</span>'.format(field_names['size'])
 
     # Make the plot
     layout = go.Layout(
@@ -884,15 +900,39 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
         ),
         yaxis = dict(
             title = field_names['y']
+        ),
+        annotations = annotations
+    )
+    if all([x == None for x in plot_z]):
+        print("just 2D")
+        fig = go.Scatter(
+            x = plot_x,
+            y = plot_y,
+            mode = 'markers',
+            marker = markers,
+            text = plot_names
         )
-    )
-    fig = go.Scatter(
-        x = plot_x,
-        y = plot_y,
-        mode = 'markers',
-        marker = markers,
-        text = plot_names
-    )
+    else:
+        print("GOING 3D")
+        fig = go.Scatter3d(
+            x = plot_x,
+            y = plot_y,
+            z = plot_z,
+            mode = 'markers',
+            marker = markers,
+            text = plot_names
+            # mode='markers',
+            # marker=dict(
+            #     color='rgb(127, 127, 127)',
+            #     size=12,
+            #     symbol='circle',
+            #     line=dict(
+            #         color='rgb(204, 204, 204)',
+            #         width=1
+            #     ),
+            #     opacity=0.9
+            # )
+        )
     plot_div = py.plot(
         go.Figure(data = [fig], layout = layout),
         output_type = 'div',
