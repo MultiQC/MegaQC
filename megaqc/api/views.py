@@ -6,7 +6,7 @@ from megaqc.extensions import db
 from megaqc.user.models import User
 from megaqc.model.models import PlotData, Report, SampleFilter
 from megaqc.api.utils import handle_report_data, generate_report_plot, generate_distribution_plot, \
-                            generate_comparison_plot, get_samples, get_report_metadata_fields, \
+                            generate_trend_plot, generate_comparison_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot, \
                             get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data, \
                             get_reports_data
@@ -277,6 +277,19 @@ def get_distribution_plot(user, *args, **kwargs):
     ptype = data.get("ptype", 20)
     plot_data = get_sample_fields_values(data_keys, my_filters)
     html = generate_distribution_plot(plot_data, nbins, ptype)
+    return jsonify({
+        'success': True,
+        'plot': html
+    })
+
+@api_blueprint.route('/api/get_trend_plot', methods=['POST'])
+@check_user
+def get_trend_plot(user, *args, **kwargs):
+    data = request.get_json()
+    my_filters = get_filter_from_data(data)
+    data_keys = data.get("fields", {})
+    plot_data = get_timeline_sample_data(my_filters, data_keys)
+    html = generate_trend_plot(plot_data)
     return jsonify({
         'success': True,
         'plot': html

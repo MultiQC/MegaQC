@@ -1,0 +1,142 @@
+
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 class="mt-4 mb-4">
+    Data Trends
+    <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
+    <span class="loading-spinner" style="display:none;">Loading...</span>
+</h1>
+
+<div class="row plot-setup">
+    <div class="col-md-6">
+        {% include "public/filter_samples_selectbox.html" %}
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h4 class="card-header">Choose Fields to Plot</h4>
+            <div class="card-body">
+                <form class="mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Filter fields" id="fields_filter_input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-outline-info" id="fields_favourite_toggle">
+                                <i class="fa fa-heart" aria-hidden="true"></i>
+                                Favs Only
+                            </button>
+                            <button class="btn btn-outline-success" id="fields_plot_toggle">
+                                <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                                Selected Only
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            <div class="list-group with-filter">
+                {% for sf in sample_fields %}
+                    <a href="#trend_plot" class="trend-field-btn list-group-item list-group-item-action" data-fieldid="{{ sf.type_id }}">
+                    {{ sf.nicename }}
+                    </a>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card megaqc_plot" id="trend_plot">
+    <h4 class="card-header">Trend Plot</h4>
+    <div class="card-body">
+        <div id="plotdiv">
+            <p class="text-secondary">Please choose fields to plot</p>
+        </div>
+    </div>
+</div>
+
+<!-- Create New Filter Set -->
+{% include "public/filter_samples_modal.html" %}
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="/static/js/filter_samples.js"></script>
+<script type="text/javascript">
+$(function(){
+
+    // Sample filter set clicked / added
+    $(document).on('sample-filter-clicked sample-filter-added', function(e, fs){
+        create_plot();
+    });
+
+    // A sample field to plot is chosen
+    $('body').on('click', '.trend-field-btn', function(e){
+        e.preventDefault();
+        $(this).toggleClass('active');
+        create_plot();
+    });
+
+    // Create a plot
+    function create_plot(){
+        // Show the loading spinners
+        $('.loading-spinner').show();
+        $('#plotdiv').html('<p>' +
+            '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
+            '<span class="loading-spinner">Loading...</span>' +
+        '</p>');
+        // Get the active field to plot
+        field_ids = [];
+        field_titles = [];
+        $('.trend-field-btn.active').each(function(e){
+            field_ids.push($(this).data('fieldid'));
+            field_titles.push($(this).text().trim());
+        });
+        if(field_ids.length == 0){
+            $('#trend_plot .card-header').text('Trend Plot');
+            $('#plotdiv').html('<p class="text-secondary">Please choose fields to plot</p>');
+            $('.loading-spinner').hide();
+            return;
+        }
+        plot_header = field_titles.length + ' Fields';
+        if(field_titles.length < 3){
+            plot_header = field_titles.join(', ');
+        }
+        $('#trend_plot .card-header').text(plot_header);
+        // Cancel any running update_filters ajax call
+        if(window.ajax_update !== false){
+            window.ajax_update.abort();
+        }
+        // Get the plot HTML
+        window.ajax_update = $.ajax({
+            url: '/api/get_trend_plot',
+            type: 'post',
+            data: JSON.stringify( {
+                'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
+                'fields': field_ids
+            }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    // Wait 300ms to ensure the page scroll has finished
+                    setTimeout(function(){
+                        $('#plotdiv').html(data['plot']);
+                        $('.loading-spinner').hide();
+                    }, 300);
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error whilst generating this plot.');
+                    $('#plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                    $('.loading-spinner').hide();
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error retrieving this plot.');
+                $('#plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                $('.loading-spinner').hide();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

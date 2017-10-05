@@ -830,6 +830,42 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
     )
     return plot_div
 
+
+
+def generate_trend_plot(plot_data):
+    # return '<pre>{}</pre>'.format(plot_data)
+    ptype = 'line'
+    figs = []
+    for field in sorted(plot_data.keys()):
+        if ptype == 'line':
+            figs.append(
+                go.Scatter(
+                    x = [ x['time'] for x in plot_data[field] ],
+                    y = [ x['value'] for x in plot_data[field] ],
+                    mode = 'markers',
+                    text = [ x['name'] for x in plot_data[field] ],
+                    name = "{} ({})".format(field, len(plot_data[field]))
+                )
+            )
+        else:
+            return 'Error - unrecognised plot type: {}'.format(ptype)
+    plot_div = py.plot(
+        go.Figure(data = figs),
+        output_type = 'div',
+        show_link = False,
+        config = dict(
+            modeBarButtonsToRemove = [
+                'sendDataToCloud',
+                'resetScale2d',
+                'hoverClosestCartesian',
+                'hoverCompareCartesian',
+                'toggleSpikelines'
+            ],
+            displaylogo = False
+        )
+    )
+    return plot_div
+
 def generate_comparison_plot(plot_data, data_keys, field_names=None):
     print(field_names)
     if field_names is None:
@@ -1017,6 +1053,10 @@ def get_timeline_sample_data(filters, fields):
 
         res_dict = {"id":row[0], "name":row[1], "time":row[5].isoformat(), 'value':value}
         results[nicename].append(res_dict)
+
+    # TODO : Do this in the SQL query
+    for nicename in results:
+        results[nicename].sort(key=lambda x: x['time'])
 
     return results
 
