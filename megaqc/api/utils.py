@@ -915,11 +915,24 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
     # Make the plot
     layout = go.Layout(
         title = ptitle,
+        # For 2D plots
         xaxis = dict(
             title = field_names['x']
         ),
         yaxis = dict(
             title = field_names['y']
+        ),
+        # For 3D plots
+        scene = dict(
+            xaxis = dict(
+                title = field_names['x']
+            ),
+            yaxis = dict(
+                title = field_names['y']
+            ),
+            zaxis = dict(
+                title = field_names['z']
+            ),
         ),
         annotations = annotations,
         height = plot_height
