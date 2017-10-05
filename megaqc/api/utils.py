@@ -838,13 +838,21 @@ def generate_trend_plot(plot_data):
     figs = []
     for field in sorted(plot_data.keys()):
         if ptype == 'line':
+            yvals = []
+            yvalcount = 0
+            for x in plot_data[field]:
+                try:
+                    yvals.append(float(x['value']))
+                    yvalcount += 1
+                except ValueError:
+                    yvals.append(None)
             figs.append(
                 go.Scatter(
                     x = [ x['time'] for x in plot_data[field] ],
-                    y = [ x['value'] for x in plot_data[field] ],
+                    y = yvals,
                     mode = 'markers',
                     text = [ x['name'] for x in plot_data[field] ],
-                    name = "{} ({})".format(field, len(plot_data[field]))
+                    name = "{} ({})".format(field, yvalcount)
                 )
             )
         else:

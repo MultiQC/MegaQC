@@ -20,9 +20,9 @@
     <div class="card plot-chooser-card">
       <a href="{{ url_for('public.distributions') }}">
         <div class="card-body text-center">
-          <h4>Data Histogram</h4>
-          <img src="http://via.placeholder.com/300x200"><br>
-          <small>View distributions of values from MultiQC reports as a histogram.</small>
+          <h4>Data Distributions</h4>
+          <img style="margin: 30px 0" src="{{ url_for('static', filename='img/distributions.png') }}"><br>
+          <small>View histograms and box plots of values from MultiQC reports as a histogram.</small>
         </div>
       </a>
     </div>
@@ -32,7 +32,7 @@
       <a href="{{ url_for('public.trends') }}">
         <div class="card-body text-center">
           <h4>Data Trend</h4>
-          <img src="http://via.placeholder.com/300x200"><br>
+          <img style="margin: 30px 0" src="{{ url_for('static', filename='img/trends.png') }}"><br>
           <small>See how values from MultiQC reports change over time to find trends.</small>
         </div>
       </a>
@@ -43,7 +43,7 @@
       <a href="{{ url_for('public.comparisons') }}">
         <div class="card-body text-center">
           <h4>Compare Data</h4>
-          <img src="http://via.placeholder.com/300x200"><br>
+          <img style="margin: 30px 0" src="{{ url_for('static', filename='img/comparisons.png') }}"><br>
           <small>Compare values from MultiQC reports against each other to look for correlations.</small>
         </div>
       </a>
