@@ -882,7 +882,7 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
         smax = max([x for x in plot_size if type(x) is float])
         smin = min([x for x in plot_size if type(x) is float])
         srange = smax - smin
-        if srange < 0:
+        if srange > 0:
             norm_plot_size = []
             for x in plot_size:
                 if type(x) is float:
@@ -892,6 +892,26 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
             markers['size'] = norm_plot_size
             ptitle += '<br><span style="font-size:0.7rem">Marker Size represents "{}"</span>'.format(field_names['size'])
 
+    plot_height = 600
+    if all([x == None for x in plot_z]):
+        fig = go.Scatter(
+            x = plot_x,
+            y = plot_y,
+            mode = 'markers',
+            marker = markers,
+            text = plot_names
+        )
+    else:
+        markers.update({'opacity':0.8})
+        fig = go.Scatter3d(
+            x = plot_x,
+            y = plot_y,
+            z = plot_z,
+            mode = 'markers',
+            marker = markers,
+            text = plot_names
+        )
+        plot_height = 800
     # Make the plot
     layout = go.Layout(
         title = ptitle,
@@ -901,38 +921,9 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
         yaxis = dict(
             title = field_names['y']
         ),
-        annotations = annotations
+        annotations = annotations,
+        height = plot_height
     )
-    if all([x == None for x in plot_z]):
-        print("just 2D")
-        fig = go.Scatter(
-            x = plot_x,
-            y = plot_y,
-            mode = 'markers',
-            marker = markers,
-            text = plot_names
-        )
-    else:
-        print("GOING 3D")
-        fig = go.Scatter3d(
-            x = plot_x,
-            y = plot_y,
-            z = plot_z,
-            mode = 'markers',
-            marker = markers,
-            text = plot_names
-            # mode='markers',
-            # marker=dict(
-            #     color='rgb(127, 127, 127)',
-            #     size=12,
-            #     symbol='circle',
-            #     line=dict(
-            #         color='rgb(204, 204, 204)',
-            #         width=1
-            #     ),
-            #     opacity=0.9
-            # )
-        )
     plot_div = py.plot(
         go.Figure(data = [fig], layout = layout),
         output_type = 'div',
