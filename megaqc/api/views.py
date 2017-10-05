@@ -8,7 +8,8 @@ from megaqc.model.models import PlotData, Report, SampleFilter
 from megaqc.api.utils import handle_report_data, generate_report_plot, generate_distribution_plot, \
                             generate_comparison_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot, \
-                            get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data
+                            get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data, \
+                            get_reports_data
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -314,4 +315,10 @@ def timeline_sample_data(user, *args, **kwargs):
     my_filters = get_filter_from_data(data)
     data_keys = data.get("fields", {})
     ret_data = get_timeline_sample_data(my_filters, data_keys)
+    return jsonify(ret_data)
+
+@api_blueprint.route('/api/get_reports', methods=['GET'])
+@check_user
+def get_reports(user, *args, **kwargs):
+    ret_data = get_reports_data()
     return jsonify(ret_data)

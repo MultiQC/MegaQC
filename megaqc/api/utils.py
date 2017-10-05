@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 from hashlib import md5
 from megaqc.model.models import *
+from megaqc.user.models import User
 from megaqc.extensions import db
 from megaqc.utils import settings
 from megaqc.api.constants import comparators, type_to_tables_fields, valid_join_conditions
@@ -23,7 +24,6 @@ def generate_hash(data):
     md5er.update(string)
     ret = md5er.hexdigest()
     return ret
-
 
 def handle_report_data(user, report_data):
     report_id = Report.get_next_id()
@@ -1006,3 +1006,15 @@ def get_timeline_sample_data(filters, fields):
         results[nicename].append(res_dict)
 
     return results
+
+def get_reports_data():
+    reports = db.session.query(Report, User.username).join(User, Report.user_id==User.user_id).order_by(Report.report_id).all()
+    ret_data=[]
+    for report in reports:
+        report_data={"report_id" : report[0].report_id,
+                     "report_hash": report[0].report_hash,
+                     "upload_date": report[0].created_at,
+                     "username": report[1]
+                }
+        ret_data.append(report_data)
+    return ret_data
