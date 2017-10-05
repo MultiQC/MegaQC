@@ -1068,14 +1068,18 @@ def get_timeline_sample_data(filters, fields):
 
     return results
 
-def get_reports_data():
-    reports = db.session.query(Report, User.username).join(User, Report.user_id==User.user_id).order_by(Report.report_id).all()
-    ret_data=[]
-    for report in reports:
-        report_data={"report_id" : report[0].report_id,
-                     "report_hash": report[0].report_hash,
-                     "upload_date": report[0].created_at,
-                     "username": report[1]
-                }
-        ret_data.append(report_data)
-    return ret_data
+def get_reports_data(count=False):
+    if count:
+        report_query = db.session.query(func.count(Report.report_id))
+        return report_query.one()[0]
+    else:
+        reports = db.session.query(Report, User.username).join(User, Report.user_id==User.user_id).order_by(Report.report_id).all()
+        ret_data=[]
+        for report in reports:
+            report_data={"report_id" : report[0].report_id,
+                         "report_hash": report[0].report_hash,
+                         "upload_date": report[0].created_at,
+                         "username": report[1]
+                    }
+            ret_data.append(report_data)
+        return ret_data
