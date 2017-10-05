@@ -8,7 +8,7 @@
     <span class="loading-spinner" style="display:none;">Loading...</span>
 </h1>
 
-<div class="row report-plot-setup">
+<div class="row plot-setup">
     <div class="col-md-6">
         {% include "public/filter_samples_selectbox.html" %}
     </div>
@@ -24,12 +24,16 @@
                                 <i class="fa fa-heart" aria-hidden="true"></i>
                                 Favs Only
                             </button>
+                            <button class="btn btn-outline-success" id="distribution_fields_plot_toggle">
+                                <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                                Selected Only
+                            </button>
                         </div>
                     </div>
                 </form>
-            <div class="list-group">
+            <div class="list-group with-filter">
                 {% for sf in sample_fields %}
-                    <a href="#distribution_plot" class="distribution-field-btn list-group-item list-group-item-action" data-fieldid="{{ sf.key }}">
+                    <a href="#distribution_plot" class="distribution-field-btn list-group-item list-group-item-action" data-fieldid="{{ sf.type_id }}">
                     {{ sf.nicename }}
                     </a>
                 {% endfor %}
@@ -42,7 +46,23 @@
 <div class="card megaqc_plot" id="distribution_plot">
     <h4 class="card-header">Distributions Plot</h4>
     <div class="card-body">
-        <p class="text-secondary">Please choose fields to plot</p>
+        <div class="plot_header_config">
+            <div class="dist_plot_type">
+                <select>
+                    <option value="hist">Histogram</option>
+                    <option value="boxplot">Box Plots</option>
+                    <option value="violin">Violin Plots</option>
+                    <option value="dotplot">Dot Plots</option>
+                </select>
+            </div>
+            <div class="hist_nbins_range">
+                <input type="range" min="1" max="100" value="40">
+                 <span>40</span> bins
+            </div>
+        </div>
+        <div id="dist_plotdiv">
+            <p class="text-secondary">Please choose fields to plot</p>
+        </div>
     </div>
 </div>
 
@@ -53,15 +73,35 @@
 {% block js %}
 <script type="text/javascript" src="/static/js/filter_samples.js"></script>
 <script type="text/javascript">
+window.dist_ptype = 'hist';
+window.hist_nbins = 40;
 $(function(){
+
+    // Sample filter set clicked / added
+    $(document).on('sample-filter-clicked sample-filter-added', function(e, fs){
+        create_plot();
+    });
+
     // A sample field to plot is chosen
     $('body').on('click', '.distribution-field-btn', function(e){
         e.preventDefault();
-        $('.distribution-field-btn').removeClass('active');
-        $(this).addClass('active');
-        $('html, body').animate({
-            scrollTop: $($(this).attr('href')).offset().top
-        }, 300);
+        $(this).toggleClass('active');
+        create_plot();
+    });
+
+    // Change number of histogram bins
+    $('body').on('change', '.dist_plot_type select', function(e){
+        window.dist_ptype = $(this).val();
+        create_plot();
+    });
+
+    // Change number of histogram bins
+    $('body').on('mousemove', '.hist_nbins_range input', function(e){
+        $('.hist_nbins_range span').text($(this).val());
+    });
+    $('body').on('change', '.hist_nbins_range input', function(e){
+        $('.hist_nbins_range span').text($(this).val());
+        window.hist_nbins = $(this).val();
         create_plot();
     });
 
@@ -69,17 +109,28 @@ $(function(){
     function create_plot(){
         // Show the loading spinners
         $('.loading-spinner').show();
-        $('#distribution_plot .card-body').html('<p>' +
+        $('#dist_plotdiv').html('<p>' +
             '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
             '<span class="loading-spinner">Loading...</span>' +
         '</p>');
         // Get the active field to plot
-        field_id = $('.distribution-field-btn.active').data('fieldid');
-        if(field_id == undefined){
-            toastr.error('Please select a field to plot type.');
+        field_ids = [];
+        field_titles = [];
+        $('.distribution-field-btn.active').each(function(e){
+            field_ids.push($(this).data('fieldid'));
+            field_titles.push($(this).text().trim());
+        });
+        if(field_ids.length == 0){
+            $('#distribution_plot .card-header').text('Distributions Plot');
+            $('#dist_plotdiv').html('<p class="text-secondary">Please choose fields to plot</p>');
+            $('.loading-spinner').hide();
             return;
         }
-        $('#distribution_plot .card-header').text($('.distribution-field-btn.active').text());
+        plot_header = field_titles.length + ' Fields';
+        if(field_titles.length < 3){
+            plot_header = field_titles.join(', ');
+        }
+        $('#distribution_plot .card-header').text(plot_header);
         // Cancel any running update_filters ajax call
         if(window.ajax_update !== false){
             window.ajax_update.abort();
@@ -88,9 +139,11 @@ $(function(){
         window.ajax_update = $.ajax({
             url: '/api/get_distribution_plot',
             type: 'post',
-            data:JSON.stringify( {
-                'filter_id': $('.sample-filter-btn.active').first().data('filterid'),
-                'field_id': field_id
+            data: JSON.stringify( {
+                'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
+                'fields': field_ids,
+                'nbins': window.hist_nbins,
+                'ptype': window.dist_ptype
             }),
             headers : { access_token:window.token },
             dataType: 'json',
@@ -99,7 +152,7 @@ $(function(){
                 if (data['success']){
                     // Wait 300ms to ensure the page scroll has finished
                     setTimeout(function(){
-                        $('#distribution_plot .card-body').html(data['plot']);
+                        $('#dist_plotdiv').html(data['plot']);
                         $('.loading-spinner').hide();
                     }, 300);
                 }
@@ -107,13 +160,13 @@ $(function(){
                 else {
                     console.log(data);
                     toastr.error('There was an error whilst generating this plot.');
-                    $('#distribution_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                    $('#dist_plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
                     $('.loading-spinner').hide();
                 }
             },
             error: function(data){
                 toastr.error('There was an error retrieving this plot.');
-                $('#distribution_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                $('#dist_plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
                 $('.loading-spinner').hide();
             }
         });

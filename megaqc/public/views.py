@@ -154,3 +154,23 @@ def distributions():
         report_fields_json = json.dumps(return_data[1]),
         sample_fields_json = json.dumps(return_data[2])
         )
+
+
+@blueprint.route('/comparisons/')
+@login_required
+def comparisons():
+    # Get the fields from the add-new-filters form
+    return_data = aggregate_new_parameters(current_user, [], False)
+    sample_filters = order_sample_filters()
+    return render_template(
+        'public/comparisons.html',
+        db = db,
+        User = User,
+        user_token = current_user.api_token,
+        sample_filters = sample_filters,
+        num_samples = return_data[0],
+        report_fields = return_data[1],
+        sample_fields = return_data[2],
+        report_fields_json = json.dumps(return_data[1]),
+        sample_fields_json = json.dumps(return_data[2])
+        )

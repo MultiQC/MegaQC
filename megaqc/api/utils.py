@@ -11,6 +11,7 @@ from sqlalchemy.sql import not_, or_, and_
 from collections import defaultdict, OrderedDict
 
 import plotly.offline as py
+import plotly.figure_factory as ff
 import plotly.graph_objs as go
 
 import json
@@ -393,56 +394,6 @@ def generate_report_plot(plot_type, sample_names):
         )
         return plot_div
 
-def generate_distribution_plot(field_id, filters):
-    data = get_timeline_sample_data(filters, [field_id])
-    print field_id
-    print data
-    plots=[]
-    for nicename in data:
-        if not isinstance(data[nicename][0]['value'], float):
-            continue
-        keys = []
-        values = []
-        counts = []
-        for one_dict in data[nicename]:
-            try:
-                idx=keys.index(one_dict['time'])
-                values[idx] += one_dict['value']
-                counts[idx] += 1
-            except ValueError:
-                keys.append(one_dict['time'])
-                values.append(one_dict['value'])
-                counts.append(1)
-
-        #get the averages
-        for i in counts:
-            values[i] = values[i]/counts[i]
-        plot=go.Bar(
-            x = keys,
-            y = values
-        )
-        plots.append(plot)
-
-    fig = go.Figure(data=plots)
-    plot_div = py.plot(
-        fig,
-        output_type = 'div',
-        show_link = False,
-        config = dict(
-            modeBarButtonsToRemove = [
-                'sendDataToCloud',
-                'resetScale2d',
-                'hoverClosestCartesian',
-                'hoverCompareCartesian',
-                'toggleSpikelines'
-            ],
-            displaylogo = False
-        )
-    )
-
-
-    return plot_div
-
 def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
     plotly_layout.title = config.get('title')
     xaxis={}
@@ -747,26 +698,31 @@ def update_fav_plot(method, user, plot_info):
         raise Exception("No such method")
     db.session.commit()
 
-def get_sample_fields_values(keys, filters=None):
+def get_sample_fields_values(keys, filters=None, num_fieldids=False):
     if not filters:
-        filters=[]
-    sample_ids = get_samples(filters, ids=True)
+        filters = []
+    sample_ids = get_samples(filters, ids = True)
     if filters:
-        new_filters=[[{'type':'sampleids',
-                  'cmp':'inlist',
-                  'value': sample_ids},
-                  {'type':'samplemetaids',
-                  'cmp':'inlist',
-                  'value':keys
-        }]]
+        new_filters = [[
+            {
+                'type': 'sampleids',
+                'cmp': 'inlist',
+                'value':  sample_ids
+            }, {
+                'type': 'samplemetaids',
+                'cmp': 'inlist',
+                'value' :keys
+            }
+        ]]
     else:
-        new_filters=[[{'type':'samplemetaids',
-            'cmp':'inlist',
-            'value':keys
-            }]]
+        new_filters = [[{
+            'type': 'samplemetaids',
+            'cmp': 'inlist',
+            'value': keys
+        }]]
     sample_list_query = db.session.query(Sample.sample_name).filter(Sample.sample_id.in_(sample_ids))
-    sample_meta_ids_query = db.session.query(SampleDataType.data_key, SampleDataType.data_section).filter(SampleDataType.sample_data_type_id.in_(keys))
-    sample_metadata_query = db.session.query(Sample.sample_name).join(SampleData, Sample.sample_id==SampleData.sample_id).join(SampleDataType, SampleData.sample_data_type_id==SampleDataType.sample_data_type_id).add_columns(SampleDataType.data_key, SampleDataType.data_section, SampleData.value)
+    sample_meta_ids_query = db.session.query(SampleDataType.data_key, SampleDataType.data_section, SampleDataType.sample_data_type_id).filter(SampleDataType.sample_data_type_id.in_(keys))
+    sample_metadata_query = db.session.query(Sample.sample_name).join(SampleData, Sample.sample_id==SampleData.sample_id).join(SampleDataType, SampleData.sample_data_type_id==SampleDataType.sample_data_type_id).add_columns(SampleDataType.data_key, SampleDataType.data_section, SampleData.value, SampleDataType.sample_data_type_id)
     sample_metadata_query = build_filter(sample_metadata_query, new_filters, SampleData)
     results={}
     for row in sample_list_query.all():
@@ -774,19 +730,217 @@ def get_sample_fields_values(keys, filters=None):
         for row2 in sample_meta_ids_query.all():
             nicename = row2[0][len(row2[1]):] if row2[0].startswith(row2[1]) else row2[0]
             nice_section = row2[1].title() if row2[1].islower() else row2[1]
-            nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
+            nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' ').strip())
+            if num_fieldids:
+                nicename = row2[2]
             results[row[0]][nicename] = None
 
     for row in sample_metadata_query.all():
         nicename = row[1][len(row[2]):] if row[1].startswith(row[2]) else row[1]
         nice_section = row[2].title() if row[2].islower() else row[2]
-        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' '))
+        nicename = "{0}: {1}".format(nice_section.replace('_', ' '), nicename.replace('_', ' ').strip())
+        if num_fieldids:
+            nicename = row[4]
         try:
             results[row[0]][nicename]=float(row[3])
         except ValueError:
             results[row[0]][nicename]=row[3]
 
     return results
+
+def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
+    dtypes = set()
+    for s_name in plot_data:
+        dtypes.update(plot_data[s_name])
+    figs = []
+    for dtype in sorted(dtypes):
+        pdata = []
+        for s_name in plot_data:
+            try:
+                pdata.append(float(plot_data[s_name][dtype]))
+            except:
+                pass
+        if ptype == 'hist':
+            figs.append(
+                go.Histogram(
+                    x = pdata,
+                    opacity = 0.75,
+                    nbinsx = nbins,
+                    name = "{} ({})".format(dtype, len(pdata))
+                )
+            )
+        elif ptype == 'boxplot':
+            figs.append(
+                go.Box(
+                    y = pdata,
+                    name = "{} ({})".format(dtype, len(pdata))
+                )
+            )
+        elif ptype == 'dotplot':
+            figs.append(
+                go.Box(
+                    y = pdata,
+                    name = "{} ({})".format(dtype, len(pdata)),
+                    boxpoints = 'all',
+                    jitter = 0.5,
+                    pointpos = 0,
+                    line = dict(width = 0),
+                    whiskerwidth = 0,
+                    fillcolor = 'rgba(0, 0, 0, 0)'
+                )
+            )
+        elif ptype == 'violin':
+            if len(figs) == 0:
+                figs = {}
+            dname = "{} ({})".format(dtype, len(pdata))
+            figs[dname] = pdata
+        else:
+            return 'Error - unrecognised plot type: {}'.format(ptype)
+    layout = {}
+    if ptype == 'hist':
+        layout = go.Layout(
+            barmode = 'overlay',
+            showlegend = True,
+            xaxis = dict(
+                title = "Data"
+            ),
+            yaxis = dict(
+                title = "Sample Count"
+                # TODO - integers only
+            )
+        )
+    if ptype == 'violin':
+        figure = ff.create_violin(figs)
+    else:
+        figure = go.Figure(data = figs, layout = layout)
+    plot_div = py.plot(
+        figure,
+        output_type = 'div',
+        show_link = False,
+        config = dict(
+            modeBarButtonsToRemove = [
+                'sendDataToCloud',
+                'resetScale2d',
+                'hoverClosestCartesian',
+                'hoverCompareCartesian',
+                'toggleSpikelines'
+            ],
+            displaylogo = False
+        )
+    )
+    return plot_div
+
+def generate_comparison_plot(plot_data, data_keys, field_names=None):
+    print(field_names)
+    if field_names is None:
+        field_names = data_keys
+    ptitle = 'MegaQC Comparison Plot'
+    plot_x = []
+    plot_y = []
+    plot_z = []
+    plot_col = []
+    plot_size = []
+    plot_names = []
+    annotations = go.Annotations([])
+    for s_name in plot_data:
+        plot_names.append(s_name)
+        try:
+            plot_x.append(plot_data[s_name][data_keys['x']])
+            plot_y.append(plot_data[s_name][data_keys['y']])
+        except KeyError:
+            print("Couldn't find key {} (available: {})".format(plot_data[s_name].keys(), data_keys))
+        try:
+            plot_z.append(plot_data[s_name][data_keys['z']])
+        except KeyError:
+            plot_z.append(None)
+        try:
+            plot_col.append(plot_data[s_name][data_keys['col']])
+        except KeyError:
+            plot_col.append(None)
+        try:
+            plot_size.append(plot_data[s_name][data_keys['size']])
+        except KeyError:
+            plot_size.append(None)
+
+    # Colour with a colour scale
+    markers = {}
+    if not all([x == None for x in plot_col]):
+        markers['color'] = plot_col
+        markers['colorscale'] = 'Viridis'
+        markers['showscale'] = True
+        annotations.append(go.Annotation(
+            text = field_names['col'],
+            x = 1.02,
+            y = 0.5,
+            textangle= - 90,
+            xref = 'paper',
+            yref = 'paper',
+            showarrow = False
+        ))
+
+    # Scale the marker size according to a variable
+    if not all([x == None for x in plot_size]):
+        smax = max([x for x in plot_size if type(x) is float])
+        smin = min([x for x in plot_size if type(x) is float])
+        srange = smax - smin
+        if srange > 0:
+            norm_plot_size = []
+            for x in plot_size:
+                if type(x) is float:
+                    norm_plot_size.append((((x - smin)/srange)*35)+2)
+                else:
+                    norm_plot_size.append(2)
+            markers['size'] = norm_plot_size
+            ptitle += '<br><span style="font-size:0.7rem">Marker Size represents "{}"</span>'.format(field_names['size'])
+
+    plot_height = 600
+    if all([x == None for x in plot_z]):
+        fig = go.Scatter(
+            x = plot_x,
+            y = plot_y,
+            mode = 'markers',
+            marker = markers,
+            text = plot_names
+        )
+    else:
+        markers.update({'opacity':0.8})
+        fig = go.Scatter3d(
+            x = plot_x,
+            y = plot_y,
+            z = plot_z,
+            mode = 'markers',
+            marker = markers,
+            text = plot_names
+        )
+        plot_height = 800
+    # Make the plot
+    layout = go.Layout(
+        title = ptitle,
+        xaxis = dict(
+            title = field_names['x']
+        ),
+        yaxis = dict(
+            title = field_names['y']
+        ),
+        annotations = annotations,
+        height = plot_height
+    )
+    plot_div = py.plot(
+        go.Figure(data = [fig], layout = layout),
+        output_type = 'div',
+        show_link = False,
+        config = dict(
+            modeBarButtonsToRemove = [
+                'sendDataToCloud',
+                'resetScale2d',
+                'hoverClosestCartesian',
+                'hoverCompareCartesian',
+                'toggleSpikelines'
+            ],
+            displaylogo = False
+        )
+    )
+    return plot_div
 
 def update_user_filter(user, method, filter_id, filter_object=None):
     if not filter_object:

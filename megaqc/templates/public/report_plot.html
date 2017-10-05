@@ -8,7 +8,7 @@
     <span class="loading-spinner" style="display:none;">Loading...</span>
 </h1>
 
-<div class="row report-plot-setup">
+<div class="row plot-setup">
     <div class="col-md-6">
         {% include "public/filter_samples_selectbox.html" %}
     </div>
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                 </form>
-                <div class="list-group" id="report-plot-type-list-group">
+                <div class="list-group with-filter" id="report-plot-type-list-group">
                     {% for pt in report_plot_types %}
                     <a href="#report_plot" class="report-plot-type-btn list-group-item list-group-item-action" data-plotid="{{ pt.name }}">
                         {{ pt.nicename }}
@@ -233,7 +233,7 @@ $(function(){
             url: '/api/get_report_plot',
             type: 'post',
             data:JSON.stringify( {
-                'filters': $('.sample-filter-btn.active').first().data('filterid'),
+                'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
                 'plot_type': plot_type
             }),
             headers : { access_token:window.token },
