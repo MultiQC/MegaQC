@@ -9,7 +9,7 @@ from megaqc.api.utils import handle_report_data, generate_report_plot, generate_
                             generate_comparison_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot, \
                             get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data, \
-                            get_reports_data
+                            get_reports_data, delete_report_data
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -322,3 +322,9 @@ def timeline_sample_data(user, *args, **kwargs):
 def get_reports(user, *args, **kwargs):
     ret_data = get_reports_data()
     return jsonify(ret_data)
+
+@api_blueprint.route('/api/delete_report', methods=['POST'])
+@check_user
+def delete_report(user, *args, **kwargs):
+    data = request.get_json()
+    delete_report_data(data.get('report_id', -1))
