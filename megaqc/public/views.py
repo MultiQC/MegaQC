@@ -10,7 +10,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples, get_user_filters, aggregate_new_parameters
+from megaqc.api.utils import get_samples, get_reports_data, get_user_filters, aggregate_new_parameters
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -27,7 +27,11 @@ def load_user(user_id):
 @blueprint.route('/', methods=['GET', 'POST'])
 def home():
     """Home page."""
-    return render_template('public/home.html', num_samples=get_samples(count=True))
+    return render_template(
+        'public/home.html',
+        num_samples = get_samples(count=True),
+        num_reports = get_reports_data(count=True)
+    )
 
 @blueprint.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -155,6 +159,24 @@ def distributions():
         sample_fields_json = json.dumps(return_data[2])
         )
 
+@blueprint.route('/trends/')
+@login_required
+def trends():
+    # Get the fields from the add-new-filters form
+    return_data = aggregate_new_parameters(current_user, [], False)
+    sample_filters = order_sample_filters()
+    return render_template(
+        'public/trends.html',
+        db = db,
+        User = User,
+        user_token = current_user.api_token,
+        sample_filters = sample_filters,
+        num_samples = return_data[0],
+        report_fields = return_data[1],
+        sample_fields = return_data[2],
+        report_fields_json = json.dumps(return_data[1]),
+        sample_fields_json = json.dumps(return_data[2])
+        )
 
 @blueprint.route('/comparisons/')
 @login_required

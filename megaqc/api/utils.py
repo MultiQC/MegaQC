@@ -830,6 +830,50 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
     )
     return plot_div
 
+
+
+def generate_trend_plot(plot_data):
+    # return '<pre>{}</pre>'.format(plot_data)
+    ptype = 'line'
+    figs = []
+    for field in sorted(plot_data.keys()):
+        if ptype == 'line':
+            yvals = []
+            yvalcount = 0
+            for x in plot_data[field]:
+                try:
+                    yvals.append(float(x['value']))
+                    yvalcount += 1
+                except ValueError:
+                    yvals.append(None)
+            figs.append(
+                go.Scatter(
+                    x = [ x['time'] for x in plot_data[field] ],
+                    y = yvals,
+                    mode = 'markers',
+                    text = [ x['name'] for x in plot_data[field] ],
+                    name = "{} ({})".format(field, yvalcount)
+                )
+            )
+        else:
+            return 'Error - unrecognised plot type: {}'.format(ptype)
+    plot_div = py.plot(
+        go.Figure(data = figs),
+        output_type = 'div',
+        show_link = False,
+        config = dict(
+            modeBarButtonsToRemove = [
+                'sendDataToCloud',
+                'resetScale2d',
+                'hoverClosestCartesian',
+                'hoverCompareCartesian',
+                'toggleSpikelines'
+            ],
+            displaylogo = False
+        )
+    )
+    return plot_div
+
 def generate_comparison_plot(plot_data, data_keys, field_names=None):
     print(field_names)
     if field_names is None:
@@ -1018,19 +1062,11 @@ def get_timeline_sample_data(filters, fields):
         res_dict = {"id":row[0], "name":row[1], "time":row[5].isoformat(), 'value':value}
         results[nicename].append(res_dict)
 
-    return results
+    # TODO : Do this in the SQL query
+    for nicename in results:
+        results[nicename].sort(key=lambda x: x['time'])
 
-def get_reports_data():
-    reports = db.session.query(Report, User.username).join(User, Report.user_id==User.user_id).order_by(Report.report_id).all()
-    ret_data=[]
-    for report in reports:
-        report_data={"report_id" : report[0].report_id,
-                     "report_hash": report[0].report_hash,
-                     "upload_date": report[0].created_at,
-                     "username": report[1]
-                }
-        ret_data.append(report_data)
-    return ret_data
+    return results
 
 def delete_report_data(report_id):
     PlotData.query.filter(PlotData.report_id==report_id).delete()
@@ -1041,3 +1077,18 @@ def delete_report_data(report_id):
     SampleDataType.query.filter(SampleDataType.sample_data_type_id.in_(db.session.query(SampleDataType.sample_data_type_id).outerjoin(SampleData).filter(SampleData.sample_data_id==None))).delete(synchronize_session='fetch')
     ReportMeta.query.filter(ReportMeta.report_id==report_id).delete()
 
+def get_reports_data(count=False):
+    if count:
+        report_query = db.session.query(func.count(Report.report_id))
+        return report_query.one()[0]
+    else:
+        reports = db.session.query(Report, User.username).join(User, Report.user_id==User.user_id).order_by(Report.report_id).all()
+        ret_data=[]
+        for report in reports:
+            report_data={"report_id" : report[0].report_id,
+                         "report_hash": report[0].report_hash,
+                         "upload_date": report[0].created_at,
+                         "username": report[1]
+                    }
+            ret_data.append(report_data)
+        return ret_data
