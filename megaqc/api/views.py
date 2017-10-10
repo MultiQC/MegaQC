@@ -9,7 +9,7 @@ from megaqc.api.utils import handle_report_data, generate_report_plot, generate_
                             generate_trend_plot, generate_comparison_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot, \
                             get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data, \
-                            get_reports_data, delete_report_data
+                            get_reports_data, delete_report_data, store_report_data
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -58,6 +58,19 @@ def test_post(user, *args, **kwargs):
     data = request.get_json()
     data['name'] = user.username
 
+
+@api_blueprint.route('/api/queue_data', methods=['POST'])
+@check_user
+def queue_multiqc_data(user, *args, **kwargs):
+    data = request.get_json().get('data')
+    success, msg = store_report_data(user, data)
+    response = jsonify({
+        'success': success,
+        'message': msg
+    })
+    if not success:
+        response.status_code = 400
+    return response
 
 @api_blueprint.route('/api/upload_data', methods=['POST'])
 @check_user

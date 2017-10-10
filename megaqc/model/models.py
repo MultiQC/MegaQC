@@ -132,3 +132,18 @@ class SampleFilter(db.Model, CRUDMixin):
     @staticmethod
     def get_next_id():
         return (db.session.query(func.max(SampleFilter.sample_filter_id)).first()[0] or 0) + 1
+
+class Upload(db.Model, CRUDMixin):
+    __tablename__="uploads"
+    upload_id = Column(Integer, primary_key=True)
+    status = Column(String(80))
+    path = Column(String(2048))
+    message = Column(String(2048))
+    created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
+    modified_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(Upload.upload_id)).first()[0] or 0) + 1
+

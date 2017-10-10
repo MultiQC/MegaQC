@@ -1,5 +1,6 @@
 
 from datetime import datetime, timedelta
+from flask import current_app
 from hashlib import md5
 from megaqc.model.models import *
 from megaqc.user.models import User
@@ -11,9 +12,12 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.sql import not_, or_, and_
 from collections import defaultdict, OrderedDict
 
+import os
 import plotly.offline as py
 import plotly.figure_factory as ff
 import plotly.graph_objs as go
+import random
+import string
 
 import json
 
@@ -24,6 +28,21 @@ def generate_hash(data):
     md5er.update(string)
     ret = md5er.hexdigest()
     return ret
+
+def store_report_data(user, report_data):
+    file_name = ''.join([random.choice(string.lowercase) for i in xrange(10)])
+    with open(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),"w") as fh:
+        fh.write(json.dumps(report_data))
+
+    upload_row = Upload(
+                        upload_id=Upload.get_next_id(),
+                        status="NOT TREATED",
+                        path=os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),
+                        message="File has been created, loading in MegaQC is queued.",
+                        user_id=user.user_id
+                )
+    upload_row.save()
+    return (True, 'Data upload queued successfully')
 
 def handle_report_data(user, report_data):
     report_id = Report.get_next_id()
@@ -1044,6 +1063,7 @@ def get_timeline_sample_data(filters, fields):
     sample_meta_ids_query = db.session.query(SampleDataType.data_key, SampleDataType.data_section).filter(SampleDataType.sample_data_type_id.in_(fields))
     sample_metadata_query = db.session.query(Sample.sample_id, Sample.sample_name).join(SampleData, Sample.sample_id==SampleData.sample_id).join(SampleDataType, SampleData.sample_data_type_id==SampleDataType.sample_data_type_id).join(Report, Report.report_id==Sample.report_id).add_columns(SampleDataType.data_key, SampleDataType.data_section, SampleData.value, Report.created_at)
     sample_metadata_query = build_filter(sample_metadata_query, new_filters, SampleData)
+    sample_metadata_query = sample_metadata_query.order_by(Report.created_at)
     results={}
     for row in sample_meta_ids_query.all():
         nicename = row[0][len(row[1]):] if row[0].startswith(row[1]) else row[0]
@@ -1061,10 +1081,6 @@ def get_timeline_sample_data(filters, fields):
 
         res_dict = {"id":row[0], "name":row[1], "time":row[5].isoformat(), 'value':value}
         results[nicename].append(res_dict)
-
-    # TODO : Do this in the SQL query
-    for nicename in results:
-        results[nicename].sort(key=lambda x: x['time'])
 
     return results
 
