@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Application configuration."""
 import os
+from megaqc.scheduler import upload_reports_job
 
 
 class Config(object):
@@ -15,6 +16,8 @@ class Config(object):
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    JOBS = [{'id': 'job1','func': upload_reports_job,'trigger': 'interval','seconds': 30}]
+    SCHEDULER_API_ENABLED = True
 
 
 class ProdConfig(Config):

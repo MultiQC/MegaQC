@@ -4,11 +4,11 @@ This file contains the app module, with the app factory function."""
 
 from __future__ import print_function
 from flask import Flask, jsonify, render_template, request
+from megaqc.scheduler import init_scheduler
 
 from megaqc import commands, public, user, version, api
 from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager
 from megaqc.settings import ProdConfig
-from megaqc.scheduler import start_job_scheduler
 
 def create_app(config_object=ProdConfig):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -22,7 +22,7 @@ def create_app(config_object=ProdConfig):
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
-    start_job_scheduler(app.config['SQLALCHEMY_DATABASE_URI'])
+    init_scheduler(app)
     return app
 
 
