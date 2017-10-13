@@ -1,0 +1,135 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<h1>Edit Reports</h1>
+
+<div>
+Filter Reports : 
+<table class="table" id="filter_table">
+    <tbody>
+      <tr>
+          <td>
+              <select id="report_filter_select" class="form-control form-control-chosen" data-placeholder="[ please select a filter type ]" >
+                  {%for key in report_meta_fields%}
+                  <option>{{ key }}</option>
+                  {% endfor %}
+              </select>
+          </td>
+          <td>
+              <input id="report_filter_input" class="form-control" type="text" />
+          </td>
+      </tr>
+    </tbody>
+</table>
+</div>
+
+<div>
+<table class="table" id="report_table">
+    <thead>
+        <tr>
+            <th>Report ID</th>
+            <th>Creation Date</th>
+            <th>User</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for report in report_data %}
+        <tr>
+            <td>{{ report['report_id'] }}</td>
+            <td>{{ report['upload_date'] }}</td>
+            <td>{{ report['username'] }}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-danger button-delete" data-reportid="{{ report['report_id'] }}"><i class="fa fa-trash" aria-hidden="true"></i>  Delete</button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}
+{% block js %}
+<script type = "text/javascript">
+window.token = "{{api_token}}";
+window.filter_timeout = null;
+$(function(){
+        init_buttons();
+        init_filter();
+        });
+function init_filter(){
+    $('#report_filter_input').on('keyup',  function(e){
+        e.preventDefault();
+        if (window.filter_timeout != null) {
+            clearTimeout(filter_timeout);
+        }
+        filter_timeout = setTimeout(function() {
+            filter_timeout = null;  
+            window.ajax_update = $.ajax({
+                url: '/api/get_reports',
+                type: 'post',
+                data: JSON.stringify( {
+                    'key':$('#report_filter_select').val(),
+                    'value':$('#report_filter_input').val()
+                }),
+                headers : { access_token:window.token },
+                dataType: 'json',
+                contentType: 'application/json; charset=UTF-8',
+                success: function(data){
+                    $("#report_table").find('tbody').remove();
+                    var tbody="<tbody>";
+                    for (report_idx in data){
+                        tbody = tbody + "<tr> \
+                                <td>"+data[report_idx]['report_id']+"</td> \
+                                <td>"+data[report_idx]['upload_date']+"</td>\
+                                <td>"+data[report_idx]['username']+"</td>\
+                                <td>\
+                                    <button class='btn btn-sm btn-outline-danger button-delete' data-reportid="+data[report_idx]['report_id']+"><i class='fa fa-trash' aria-hidden='true'></i>  Delete</button>\
+                                </td>\
+                            </tr>"
+                    }
+                    $("#report_table").append(tbody);
+                    init_buttons()
+                },
+                error: function(data){
+                    toastr.error('Filtering failed');
+                }
+            });
+        },200);
+
+    });
+}
+function init_buttons(){
+    $('body').on('click', '.button-delete', function(e){
+        e.preventDefault();
+        var my_button = $(this);
+        var report_id = my_button.data('reportid');
+        window.ajax_update = $.ajax({
+            url: '/api/delete_report',
+            type: 'post',
+            data: JSON.stringify( {
+                'report_id': report_id
+            }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    toastr.success('Deletion successful.');
+                    my_button.parent().closest('tr').remove();
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('Deletion failed.');
+                }
+            },
+            error: function(data){
+                toastr.error('Deletion failed');
+            }
+        });
+    });
+}
+
+</script>
+{% endblock %}
