@@ -58,7 +58,7 @@ RUN pip install gunicorn
 
 #Install MegaQC
 #RUN pip install megaqc
-RUN git clone "https://galithil:########@github.com/ewels/MegaQC.git" && cd MegaQC && git checkout denis && python setup.py install
+RUN git clone "https://github.com/ewels/MegaQC.git" && cd MegaQC && git checkout denis && python setup.py install
 
 
 
