@@ -1,58 +1,89 @@
-# MegaQC
+# ![MegaQC](https://raw.githubusercontent.com/ewels/MegaQC/master/logo/MegaQC_logo.png)
 
-#### A web-based tool to collect and visualise data from multiple MultiQC reports.
+### A web application to collect and visualise data from multiple MultiQC reports.
+
+[![Docker](https://img.shields.io/docker/automated/ewels/megaqc.svg?style=flat-square)](https://hub.docker.com/r/ewels/megaqc/)
+[![Build Status](https://img.shields.io/travis/ewels/megaqc.svg?style=flat-square)](https://travis-ci.org/ewels/megaqc)
+
+[![Gitter](https://img.shields.io/badge/gitter-%20join%20chat%20%E2%86%92-4fb99a.svg?style=flat-square)](https://gitter.im/ewels/MultiQC)
+
+-----
 
 MegaQC is a Flask web application that lets you easily set up a MegaQC
-website for your group or facility. Once running, MultiQC can be configured to
-automatically save data to the website every time it runs. This data can then
-be explored on the website, allowing visualisation of long-term trends.
+website for your group or facility.
+
+Once running, simply configure MultiQC configured to automatically save data to the
+website every time it runs. This is saved to a database and can be explored on the
+MegaQC website, allowing visualisation of long-term trends.
 
 ## Installation
-To see how to install MegaQC, see the [installation docs](docs/installation-prod.md).
+MegaQC has been written in such a way that it is hopefully very simple to get
+up and running for basic testing, yet easy to configure for a high performance
+production installation.
 
-This describe a typical setup for users of MegaQC. If you want to do
-development work with the MegaQC code, see the
-[development installation docs](docs/installation-dev.md).
 
-## User Authentication
-By default, MegaQC uses built-in user registration and authentication.
-If you would prefer, you can log in using Google OAuth instead - simply set
-the following environment variables in your `.bashrc` file:
+### Testing MegaQC
+By default, MegaQC installs with configuration to use the Flask development
+server and a SQLite database. This allows a very simple pure-Python installation
+where you can get up and running almost immediately.
 
+<!--
+You can install MultiQC from [PyPI](https://pypi.python.org/pypi/megaqc/)
+using `pip` as follows:
 ```bash
-export MEGAQC_GAUTH
-export GOOGLE_LOGIN_CLIENT_ID='[ Client ID ]'
-export GOOGLE_LOGIN_CLIENT_SECRET='[ Client Secret ]'
-export GOOGLE_LOGIN_CLIENT_SCOPES='[ Default scopes ]'
-export GOOGLE_LOGIN_REDIRECT_URI='[ Default redirect URI ]'
+pip install megaqc
 ```
 
-These values can be obtained at
-[https://code.google.com/apis/console](https://code.google.com/apis/console).
+Alternatively, you can install using [Conda](http://anaconda.org/)
+from the [bioconda channel](https://bioconda.github.io/):
+```bash
+conda install -c bioconda megaqc
+```
+-->
 
-### User permissions
-MegaQC has three levels of authentication - _administrators_,
-_users_ and _visitors_. Visitors require no authentication. The default
-permissions for each group are as follows (in addition to the role above):
+If you would like the development version instead, the command is:
+```bash
+pip install --upgrade --force-reinstall git+https://github.com/ewels/MegaQC.git
+```
 
-* _Visitors_
-  * View basic website description page
-* _Users_
-  * View plots and data on MegaQC website
-  * Submit data when running MultiQC
-  * Save plot configs and dashboards
-  * Delete own data submissions
-* _Administrators_
-  * Delete other people's data submissions
-  * Create, edit and remove user profiles
-  * Enable and disable user registration
+Once installed, run the server with the following command:
 
-### Submitting data to MegaQC
-Once your MegaQC website is up and running, you will find a page on the
-website describing how to configure the main [MultiQC](http://multiqc.info)
-tool so that it submits data to your website.
+```
+megaqc run
+```
 
-In brief - MultiQC needs to know the address where the website is hosted, so
-that it can submit data to the MegaQC API. If authentication is required
-for submission (recommended), each user will need to set their username and
-a authentication token.
+### MegaQC in production
+Once happy with MegaQC, you can should run it in production will a multi-threaded
+server application and high performance database. MegaQC is designed to be simply
+run with Postgres SQL and Gunicorn server, though it is written with SQL-Alchemy
+so should work with most SQL database types.
+
+MegaQC comes with instructions for how to install and setup Gunicorn+Apache with
+Postgres SQL. It also comes with a Docker container, though note that all data will
+be lost if the docker container is stopped.
+
+Please see the [docs](docs/) for full instructions for each method.
+
+
+## Contributions & Support
+
+Contributions and suggestions for new features are welcome, as are bug reports!
+Please create a new [issue](https://github.com/ewels/MegaQC/issues) for any
+of these, including example reports where possible.
+
+There is a chat room for the package hosted on Gitter where you can discuss
+things with the package author and other developers:
+https://gitter.im/ewels/MultiQC
+
+If in doubt, feel free to get in touch with the author directly:
+[@ewels](https://github.com/ewels) (phil.ewels@scilifelab.se)
+
+### Contributors
+Project lead and main author: [@ewels](https://github.com/ewels)
+Primary backend developer and database guru: [@Galithil](https://github.com/Galithil)
+
+<!--
+Code contributions from:
+[@one](https://github.com/one),
+[@two](https://github.com/two),
+-->

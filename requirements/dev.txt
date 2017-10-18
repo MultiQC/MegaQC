@@ -15,6 +15,7 @@ Flask-APScheduler>=1.7.0
 passlib>=1.7.1
 argon2-cffi>=16.3.0
 plotly>=2.0.15
+pyyaml
 
 
 # Testing
