@@ -1086,19 +1086,38 @@ def get_timeline_sample_data(filters, fields):
 
 def delete_report_data(report_id):
     PlotData.query.filter(PlotData.report_id==report_id).delete()
+    db.session.commit()
     PlotCategory.query.filter(PlotCategory.plot_category_id.in_(db.session.query(PlotCategory.plot_category_id).outerjoin(PlotData).filter(PlotData.plot_data_id==None))).delete(synchronize_session='fetch')
-    user_plotconfig_map.query.filter(user_plotconfig_map.plot_config_id.in_(db.session.query(PlotConfig.plot_config_id).outerjoin(PlotData).filter(PlotData.plot_data_id==None))).delete(synchronize_session='fetch')
-    PlotConfig.query.filter(PlotConfig.plot_config_id.in_(db.session.query(PlotConfig.plot_config_id).outerjoin(PlotData).filter(PlotData.plot_data_id==None))).delete(synchronize_session='fetch')
+    db.session.commit()
+    db.session.execute(user_plotconfig_map.delete().where(user_plotconfig_map.c.plot_config_id.in_(db.session.query(PlotConfig.config_id).outerjoin(PlotData).filter(PlotData.plot_data_id==None))))
+    db.session.commit()
+    #user_plotconfig_map.query.filter(user_plotconfig_map.plot_config_id.in_(db.session.query(PlotConfig.plot_config_id).outerjoin(PlotData).filter(PlotData.plot_data_id==None))).delete(synchronize_session='fetch')
+    PlotConfig.query.filter(PlotConfig.config_id.in_(db.session.query(PlotConfig.config_id).outerjoin(PlotData).outerjoin(PlotCategory, PlotCategory.config_id==PlotConfig.config_id).filter(and_(PlotData.plot_data_id==None, PlotCategory.plot_category_id==None)))).delete(synchronize_session='fetch')
+    db.session.commit()
     SampleData.query.filter(SampleData.report_id==report_id).delete()
+    db.session.commit()
     SampleDataType.query.filter(SampleDataType.sample_data_type_id.in_(db.session.query(SampleDataType.sample_data_type_id).outerjoin(SampleData).filter(SampleData.sample_data_id==None))).delete(synchronize_session='fetch')
+    db.session.commit()
     ReportMeta.query.filter(ReportMeta.report_id==report_id).delete()
+    db.session.commit()
+    Sample.query.filter(Sample.report_id==report_id).delete()
+    db.session.commit()
+    Report.query.filter(Report.report_id==report_id).delete()
+    db.session.commit()
 
-def get_reports_data(count=False):
+def get_reports_data(count=False, user_id=None, filters=None):
+    if not filters:
+        filters=[]
     if count:
         report_query = db.session.query(func.count(Report.report_id))
         return report_query.one()[0]
     else:
-        reports = db.session.query(Report, User.username).join(User, Report.user_id==User.user_id).order_by(Report.report_id).all()
+        reports_query = db.session.query(Report, User.username).join(User, Report.user_id==User.user_id).order_by(Report.report_id)
+        if user_id:
+            reports_query = reports_query.filter(Report.user_id == user_id)
+        if filters:
+            reports_query = reports_query.join(ReportMeta).filter(and_(ReportMeta.report_meta_key == filters[0],ReportMeta.report_meta_value == filters[1]))
+        reports = reports_query.all()
         ret_data=[]
         for report in reports:
             report_data={"report_id" : report[0].report_id,

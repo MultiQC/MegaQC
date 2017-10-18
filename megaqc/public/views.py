@@ -10,7 +10,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples, get_reports_data, get_user_filters, aggregate_new_parameters
+from megaqc.api.utils import get_samples, get_reports_data, get_user_filters, aggregate_new_parameters, get_report_metadata_fields
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -196,3 +196,17 @@ def comparisons():
         report_fields_json = json.dumps(return_data[1]),
         sample_fields_json = json.dumps(return_data[2])
         )
+
+@blueprint.route('/edit_reports/')
+@login_required
+def edit_reports():
+    # Get the fields from the add-new-filters form
+    user_id = None
+    if not current_user.is_admin:
+        user_id=current_user.user_id
+    return_data = get_reports_data(False, user_id)
+    return render_template(
+        'public/reports_management.html',
+        report_data=return_data,
+        report_meta_fields=get_report_metadata_fields(),
+        api_token=current_user.api_token)

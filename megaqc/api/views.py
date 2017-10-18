@@ -343,10 +343,23 @@ def timeline_sample_data(user, *args, **kwargs):
     ret_data = get_timeline_sample_data(my_filters, data_keys)
     return jsonify(ret_data)
 
-@api_blueprint.route('/api/get_reports', methods=['GET'])
+@api_blueprint.route('/api/get_reports', methods=['GET', 'POST'])
 @check_user
 def get_reports(user, *args, **kwargs):
-    ret_data = get_reports_data()
+    count = False
+    filtering=None
+    if request.method == 'POST':
+        data = request.get_json()
+        filtering = (data.get('key'), data.get('value'))
+        if filtering[1] == '':
+            filtering=None
+    else:
+        filtering = None
+    if not user.is_admin:
+        user_id = user.user_id
+    else:
+        user_id = None
+    ret_data = get_reports_data(count=count, user_id=user_id, filters=filtering)
     return jsonify(ret_data)
 
 @api_blueprint.route('/api/delete_report', methods=['POST'])
@@ -354,3 +367,6 @@ def get_reports(user, *args, **kwargs):
 def delete_report(user, *args, **kwargs):
     data = request.get_json()
     delete_report_data(data.get('report_id', -1))
+    return jsonify({
+            'success': True
+            })

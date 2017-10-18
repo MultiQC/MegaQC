@@ -35,7 +35,7 @@ class Report(db.Model, CRUDMixin):
 
     def __repr__(self):
         """Represent instance as a unique string."""
-        return '<Report({title!r})>'.format(title=self.title)
+        return '<Report({rid!r})>'.format(rid=self.report_id)
 
 
 
