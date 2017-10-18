@@ -10,10 +10,16 @@
 
 MegaQC is a web application that you can install and run on your own network.
 It collects and visualises data parsed by MultiQC across multiple runs.
-Once running, simply configure MultiQC to automatically save data to the
-website every time it runs. Users of your group or facility can then replicate
+
+Once MegaQC is installed and running, simply configure MultiQC to automatically
+save data to the website every time it runs (find instructions in the running
+MegaQC website). Users of your group or facility can then replicate
 MultiQC plots and explore different data fields. Data distributions, timelines
 and comparisons can all be explored.
+
+The MegaQC homepage looks something like this:
+
+![MegaQC homepage](https://raw.githubusercontent.com/ewels/MegaQC/master/docs/images/megaqc_homepage.png)
 
 If you're not sure what MultiQC is yet, check out the main
 [MultiQC website](http://multiqc.info) and [GitHub repo](https://github.com/ewels/MultiQC)
