@@ -13,7 +13,7 @@ version = '0.1dev'
 dl_version = 'master' if 'dev' in version else 'v{}'.format(version)
 
 try:
-    with open("requirements/prod.txt", "r") as f:
+    with open("requirements/dev.txt", "r") as f:
         install_requires = [x.strip() for x in f.readlines()]
 except IOError:
     install_requires = []

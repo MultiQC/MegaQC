@@ -1,5 +1,21 @@
-# Everything the developer needs in addition to the production requirements
--r prod.txt
+# MegaQC
+Flask==0.12
+Werkzeug>=0.11.15
+Jinja2==2.9.5
+itsdangerous==0.24
+click>=5.0
+Flask-SQLAlchemy==2.2
+SQLAlchemy==1.1.5
+Flask-WTF==0.14.2
+WTForms==2.1
+Flask-Login==0.4.0
+Flask-Caching>=1.0.0
+Flask-DebugToolbar==0.10.1
+Flask-APScheduler>=1.7.0
+passlib>=1.7.1
+argon2-cffi>=16.3.0
+plotly>=2.0.15
+
 
 # Testing
 pytest==3.0.6
