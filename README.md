@@ -87,7 +87,7 @@ There is a chat room for the package hosted on Gitter where you can discuss
 things with the package author and other developers:
 https://gitter.im/ewels/MultiQC
 
-If in doubt, feel free to get in touch with the author directly:
+If in doubt, feel free to get in touch with the main author directly:
 [@ewels](https://github.com/ewels) (phil.ewels@scilifelab.se)
 
 ### Contributors
