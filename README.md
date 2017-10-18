@@ -15,6 +15,10 @@ website every time it runs. Users of your group or facility can then replicate
 MultiQC plots and explore different data fields. Data distributions, timelines
 and comparisons can all be explored.
 
+If you're not sure what MultiQC is yet, check out the main
+[MultiQC website](http://multiqc.info) and [GitHub repo](https://github.com/ewels/MultiQC)
+first.
+
 ## Installation
 MegaQC has been written in Python using the [Flask](http://flask.pocoo.org)
 web framework. MegaQC is designed to be very simple to get up and running
@@ -54,11 +58,11 @@ Once installed, run the server with the following command:
 megaqc run
 ```
 
-> ##### WARNING!
-> The flask server is _single-threaded_, meaning that only one person can load
+> #### WARNING!
+> _The flask server is single-threaded, meaning that only one person can load
 > a page or a plot at a time. The SQLite database works using flat files on the
 > disk and much slower than fully fledged SQL databases. As such, it should
-> **not be used in production** and will run slowly during testing.
+> **not be used in production** and will run slowly during testing._
 
 ### MegaQC in production
 Once happy with MegaQC, you can should run it in production will a multi-threaded
@@ -87,8 +91,9 @@ If in doubt, feel free to get in touch with the author directly:
 [@ewels](https://github.com/ewels) (phil.ewels@scilifelab.se)
 
 ### Contributors
-Project lead and main author: [@ewels](https://github.com/ewels)
-Primary backend developer and database guru: [@Galithil](https://github.com/Galithil)
+
+* Project lead and main author: [@ewels](https://github.com/ewels)
+* Primary backend developer and database guru: [@Galithil](https://github.com/Galithil)
 
 <!--
 Code contributions from:
