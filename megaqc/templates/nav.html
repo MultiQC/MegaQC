@@ -36,6 +36,7 @@
           <a class="dropdown-item" href="{{ url_for('user.profile') }}">Your Profile</a>
           <a class="dropdown-item" href="{{ url_for('user.multiqc_config') }}">MultiQC Configuration</a>
           <a class="dropdown-item" href="{{ url_for('user.change_password') }}">Change Password</a>
+          <a class="dropdown-item" href="{{ url_for('public.queued_uploads') }}">Pending Uploads</a>
           <a class="dropdown-item" href="{{ url_for('public.edit_filters') }}">Edit Filters</a>
           <a class="dropdown-item" href="{{ url_for('public.edit_reports') }}">Edit Reports</a>
           {% if current_user.is_admin %}
@@ -57,4 +58,3 @@
   </div>
 
 </nav>
-

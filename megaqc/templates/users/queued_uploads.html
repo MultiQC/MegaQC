@@ -1,0 +1,28 @@
+
+{% extends "layout.html" %}
+{% block content %}
+  <h1>Pending Uploads</h1>
+  <p>This page shows the MultiQC reports that have uploaded JSON but have not yet been successfully
+    imported into the MegaQC database. To see reports that have been successfully imported,
+    see the <a href="{{ url_for('public.edit_reports') }}">Edit Reports</a> page.
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Upload Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for upload in uploads %}
+      <tr>
+        <td>{{ upload.upload_id }}</td>
+        <td><span class="badge badge-{{ upload.status_class }}">{{ upload.status }}</label></td>
+        <td><samp>{{ upload.upload_date }}</samp></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</form>
+{% endblock %}

@@ -1114,18 +1114,71 @@ def get_reports_data(count=False, user_id=None, filters=None):
         report_query = db.session.query(func.count(Report.report_id))
         return report_query.one()[0]
     else:
-        reports_query = db.session.query(Report, User.username).join(User, Report.user_id==User.user_id).order_by(Report.report_id)
+        reports_query = (db.session
+                .query(Report, User.username)
+                .join(User, Report.user_id==User.user_id)
+                .order_by(Report.report_id)
+            )
         if user_id:
             reports_query = reports_query.filter(Report.user_id == user_id)
         if filters:
-            reports_query = reports_query.join(ReportMeta).filter(and_(ReportMeta.report_meta_key == filters[0],ReportMeta.report_meta_value == filters[1]))
+            reports_query = (reports_query
+                .join(ReportMeta)
+                .filter(and_(
+                        ReportMeta.report_meta_key == filters[0],
+                        ReportMeta.report_meta_value == filters[1]
+                ))
+            )
         reports = reports_query.all()
-        ret_data=[]
+        ret_data = []
         for report in reports:
-            report_data={"report_id" : report[0].report_id,
-                         "report_hash": report[0].report_hash,
-                         "upload_date": report[0].created_at,
-                         "username": report[1]
-                    }
-            ret_data.append(report_data)
+            ret = {
+                "report_id" : report[0].report_id,
+                "report_hash": report[0].report_hash,
+                "upload_date": report[0].created_at,
+                "username": report[1]
+            }
+            # Get the metadata pairs for this report
+            # TODO: This is probably really slow and inefficient
+            report_md_query = (db.session
+                    .query(ReportMeta)
+                    .filter(ReportMeta.report_id == report[0].report_id)
+                )
+            report_md = report_md_query.all()
+            for md in report_md:
+                ret[md.report_meta_key] = md.report_meta_value
+
+            ret_data.append(ret)
+        return ret_data
+
+def get_queued_uploads(count=False, filter_cats=None):
+    if filter_cats is None:
+        # Exclude "TREATED" by default
+        filter_cats = ["NOT TREATED", "IN TREATMENT", "FAILED"]
+    if count:
+        uploads_query = db.session.query(func.count(Upload.upload_id)).filter(Upload.status.in_(filter_cats))
+        return uploads_query.one()[0]
+    else:
+        uploads_query = (db.session.
+                            query(Upload.upload_id, Upload.status, Upload.created_at)
+                            .filter(Upload.status.in_(filter_cats))
+                            .order_by(Upload.created_at.desc()) )
+        uploads = uploads_query.all()
+        ret_data = []
+        for upload in uploads:
+            status_class = 'secondary'
+            if upload.status == "TREATED":
+                status_class = 'success'
+            elif upload.status == "NOT TREATED":
+                status_class = 'info'
+            elif upload.status == "IN TREATMENT":
+                status_class = 'warning'
+            elif upload.status == "FAILED":
+                status_class = 'danger'
+            ret_data.append({
+                "upload_id" : upload.upload_id,
+                "status": upload.status,
+                "status_class": status_class,
+                "upload_date": upload.created_at
+            })
         return ret_data

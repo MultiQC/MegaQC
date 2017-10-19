@@ -9,7 +9,7 @@ from megaqc.api.utils import handle_report_data, generate_report_plot, generate_
                             generate_trend_plot, generate_comparison_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot, \
                             get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data, \
-                            get_reports_data, delete_report_data, store_report_data
+                            get_reports_data, delete_report_data, store_report_data, get_queued_uploads
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -369,4 +369,13 @@ def delete_report(user, *args, **kwargs):
     delete_report_data(data.get('report_id', -1))
     return jsonify({
             'success': True
+            })
+
+
+@api_blueprint.route('/api/count_queued_uploads', methods=['POST'])
+def count_queued_uploads():
+    count = get_queued_uploads()
+    return jsonify({
+            'success': True,
+            'count': count
             })
