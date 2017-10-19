@@ -7,6 +7,7 @@ from flask_apscheduler import APScheduler
 
 import json
 import datetime
+import os
 
 scheduler = APScheduler()
 
@@ -38,14 +39,16 @@ def upload_reports_job():
                 with open(row.path, 'r') as fh:
                     data = json.load(fh)
             print "loaded data"
+            # Now save the parsed JSON data to the database
             try:
                 ret = handle_report_data(user, data)
             except Exception as e:
-                ret=(False, str(e))
+                ret = (False, str(e))
             print "handled"
             if ret[0]:
                 row.status = "TREATED"
                 row.message = "The document has been uploaded successfully"
+                os.remove(row.path)
             else:
                 row.status = "FAILED"
                 row.message = "The document has not been uploaded : {0}".format(ret[1])
