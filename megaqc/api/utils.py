@@ -189,8 +189,11 @@ def handle_report_data(user, report_data):
                 for sub_dict in dataset:
                     try:
                         data_key = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]['ylab']
-                    except KeyError:
-                        data_key = report_data['report_plot_data'][plot]['config']['ylab']
+                    except (KeyError, TypeError):
+                        try:
+                            data_key = report_data['report_plot_data'][plot]['config']['ylab']
+                        except KeyError:
+                            data_key = report_data['report_plot_data'][plot]['config']['title']
 
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
                     data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
