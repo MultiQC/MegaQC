@@ -9,3 +9,8 @@ or missing information as a [new issue](https://github.com/ewels/MegaQC/issues/n
 * Testing and development - [`installation-dev.md`](installation-dev.md)
 * Production installation - [`installation-prod.md`](installation-prod.md)
 * Docker installation - [`installation-docker.md`](installation-docker.md)
+
+## Usage
+
+* Administration - [`usage-admin.md`](usage-admin.md)
+* Setup (all users) - [`usage-setup.md`](usage-admin.md)

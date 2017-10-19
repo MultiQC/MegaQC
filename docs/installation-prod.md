@@ -19,10 +19,12 @@ conda install -c bioconda megaqc
 ## 2. Set up the database
 MegaQC uses the Flask SQLAlchemy plugin, meaning that it can be used with any SQL database (PostgreSQL, MySQL, SQLite and others).
 
-If you have a preference for any of the above, feel free to use that. The instructions below describe how to set up a PostgreSQL database.
+MegaQC has been developed with PostgreSQL, see below. For instructions. If you use MegaQC with any
+other database tools and could contribute to the documentation, that would be great!
 
-First, install PostgreSQL:
-https://wiki.postgresql.org/wiki/Detailed_installation_guides
+## 2.1 Using a PostgreSQL database
+
+First, install PostgreSQL: https://wiki.postgresql.org/wiki/Detailed_installation_guides
 
 Then, install the Python package that handles requests:
 
@@ -37,6 +39,34 @@ In order to make this happen, run :
 megaqc initdb
 ```
 
+## 2.2 Using a MySQL database
+Although PostgreSQL is highly recommended, MegaQC should work with other SQL database
+back ends, such as MySQL.
+
+> Please note that MySQL support is currently untested and unsupported. If you use MegaQC
+> with MySQL we'd love to hear about your experiences!
+
+First, install MySQL: https://dev.mysql.com/doc/refman/5.7/en/installing.html
+
+Then install the [Python MySQL connector](https://dev.mysql.com/downloads/connector/python/2.1.html)
+(alternatively with the [PyPI package](https://pypi.python.org/pypi/mysql-connector-python/2.0.4)).
+
+Now, create a custom MegaQC configuration file somewhere and set the environment variable
+`MEGAQC_EXTRA_CONFIG` to point to it. For example, in `~/.bashrc`:
+
+```bash
+export MEGAQC_EXTRA_CONFIG="/path/to/megaqc_config.yaml"
+```
+
+Then in this file, set the following configuration key pair:
+
+```yaml
+SQLALCHEMY_DBMS: mysql
+```
+
+This should, hopefully, make everything work. If you have problems, please
+[create an issue](https://github.com/ewels/MegaQC/issues/new) and we'll do our
+best to help.
 
 ## 3. Install and start the web server
 
