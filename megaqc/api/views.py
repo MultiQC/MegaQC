@@ -59,10 +59,10 @@ def test_post(user, *args, **kwargs):
     data['name'] = user.username
 
 
-@api_blueprint.route('/api/queue_data', methods=['POST'])
+@api_blueprint.route('/api/upload_data', methods=['POST'])
 @check_user
 def queue_multiqc_data(user, *args, **kwargs):
-    data = request.get_json().get('data')
+    data = request.data
     success, msg = store_report_data(user, data)
     response = jsonify({
         'success': success,
@@ -72,7 +72,7 @@ def queue_multiqc_data(user, *args, **kwargs):
         response.status_code = 400
     return response
 
-@api_blueprint.route('/api/upload_data', methods=['POST'])
+@api_blueprint.route('/api/upload_parse', methods=['POST'])
 @check_user
 def handle_multiqc_data(user, *args, **kwargs):
     data = request.get_json().get('data')
