@@ -8,6 +8,15 @@
 
 -----
 
+### Current Status: _"Pretty unstable"_
+As of mid-October 2017, MegaQC has all basic functionality. We've made the repo public,
+but please bear in mind that it is still under heavy development and changes are being
+made on a daily basis. It's safe to assume that the database structure is still at risk
+and that you shouldn't yet trust it to be stable. However, we'd love your help in testing,
+bug finding and development!
+
+-----
+
 MegaQC is a web application that you can install and run on your own network.
 It collects and visualises data parsed by MultiQC across multiple runs.
 
