@@ -11,7 +11,7 @@
     {{ num_samples }} samples, {{ num_reports }} reports<br>
     {% if num_uploads_processing %}
       <a href="{{ url_for('public.queued_uploads') }}">
-          {{ num_uploads_processing }} report{% if num_uploads_processing > 1 %}s{% endif %} currently processing
+          {{ num_uploads_processing }} upload{% if num_uploads_processing > 1 %}s{% endif %} processing
       </a>
     {% endif %}
   </div>
