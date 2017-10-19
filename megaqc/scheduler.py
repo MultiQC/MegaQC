@@ -24,8 +24,19 @@ def upload_reports_job():
             db.session.commit()
             print "updated status"
             user = db.session.query(User).filter(User.user_id == row.user_id).one()
+            # Check if we have a gzipped file
+            gzipped = False
             with open(row.path, 'r') as fh:
-            	data = json.load(fh)
+                # Check if we have a gzipped file
+                file_start = fh.read(3)
+                if file_start == "\x1f\x8b\x08":
+                    gzipped = True
+            if gzipped:
+                with gzip.open('file.txt.gz', 'rb') as fh:
+                    data = json.load(fh)
+            else:
+                with open(row.path, 'r') as fh:
+                    data = json.load(fh)
             print "loaded data"
             try:
                 ret = handle_report_data(user, data)
@@ -41,6 +52,3 @@ def upload_reports_job():
             row.modified_at = datetime.datetime.utcnow()
             db.session.add(row)
             db.session.commit()
-
-
-

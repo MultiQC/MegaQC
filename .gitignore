@@ -1,3 +1,7 @@
+# Uploads
+uploads/*
+!uploads/README.md
+
 # Development stuff
 dev.db
 

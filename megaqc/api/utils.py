@@ -32,7 +32,7 @@ def generate_hash(data):
 def store_report_data(user, report_data):
     file_name = ''.join([random.choice(string.lowercase) for i in xrange(10)])
     with open(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),"w") as fh:
-        fh.write(json.dumps(report_data))
+        fh.write(report_data)
 
     upload_row = Upload(
                         upload_id=Upload.get_next_id(),
@@ -45,6 +45,8 @@ def store_report_data(user, report_data):
     return (True, 'Data upload queued successfully')
 
 def handle_report_data(user, report_data):
+    if 'data' in report_data:
+        report_data = report_data['data']
     report_id = Report.get_next_id()
     report_hash = generate_hash(report_data)
     if db.session.query(Report).filter(Report.report_hash==report_hash).first():
