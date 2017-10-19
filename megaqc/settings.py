@@ -2,6 +2,7 @@
 """Application configuration."""
 import os
 from megaqc.scheduler import upload_reports_job
+import yaml
 
 
 class Config(object):
@@ -11,13 +12,24 @@ class Config(object):
     APP_DIR = os.path.abspath(os.path.dirname(__file__))  # This directory
     PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
     UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, 'uploads')
-    BCRYPT_LOG_ROUNDS = 13
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JOBS = [{'id': 'job1','func': upload_reports_job,'trigger': 'interval','seconds': 30}]
     SCHEDULER_API_ENABLED = True
+    EXTRA_CONFIG = os.environ.get("MEGAQC_CONFIG", None)
+
+    def __init__(self):
+        if self.EXTRA_CONFIG:
+            self.extra_conf = yaml.load(self.EXTRA_CONFIG)
+            for key in self.extra_conf:
+                if key in self.__dict__:
+                    setattr(self, self.extra_conf[key])
+            if self.SQLALCHEMY_DBMS == "sqlite":
+                self.SQLALCHEMY_DATABASE_URI = '{0}://{1}'.format(self.SQLALCHEMY_DBMS, self.DB_PATH) 
+            else:
+                self.SQLALCHEMY_DATABASE_URI = '{3}://{0}:@{1}/{2}'.format(self.SQLALCHEMY_USER, self.SQLALCHEMY_HOST, self.SQLALCHEMY_DATABASE, self.SQLALCHEMY_DBMS) 
 
 
 class ProdConfig(Config):
@@ -25,9 +37,15 @@ class ProdConfig(Config):
 
     ENV = 'prod'
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = 'postgresql://megaqc_user:@localhost:5432/megaqc'  # TODO: Change me
-    #SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(Config.PROJECT_ROOT, 'dev.db'))
+    SQLALCHEMY_DBMS = 'postgresql'
+    SQLALCHEMY_USER = 'megaqc'
+    SQLALCHEMY_HOST='localhost:5432'
+    SQLALCHEMY_DATABASE = 'megaqc'
+    SQLALCHEMY_DATABASE_URI = '{3}://{0}:@{1}/{2}'.format(SQLALCHEMY_USER, SQLALCHEMY_HOST, SQLALCHEMY_DATABASE, SQLALCHEMY_DBMS) 
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
+
+    def __init__(self):
+        super(ProdConfig, self).__init__()
 
 
 class DevConfig(Config):
@@ -35,19 +53,27 @@ class DevConfig(Config):
 
     ENV = 'dev'
     DEBUG = True
+    SQLALCHEMY_DBMS = 'sqlite'
     DB_NAME = 'dev.db'
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(DB_PATH)
+    SQLALCHEMY_DATABASE_URI = '{0}:///{1}'.format(SQLALCHEMY_DBMS,DB_PATH)
     DEBUG_TB_ENABLED = True
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
+    WTF_CSRF_ENABLED = False  # Allows form testing
+
+    def __init__(self):
+        super(DevConfig, self).__init__()
+
 
 
 class TestConfig(Config):
     """Test configuration."""
+    SQLALCHEMY_DBMS = 'sqlite'
+    DB_NAME = 'test.db'
+    DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
+    SQLALCHEMY_DATABASE_URI = '{0}:///{1}'.format(SQLALCHEMY_DBMS,DB_PATH)
 
-    TESTING = True
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    BCRYPT_LOG_ROUNDS = 4  # For faster tests; needs at least 4 to avoid "ValueError: Invalid rounds"
-    WTF_CSRF_ENABLED = False  # Allows form testing
+    def __init__(self):
+        super(TestConfig, self).__init__()
+

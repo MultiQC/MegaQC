@@ -8,9 +8,10 @@ from megaqc.scheduler import init_scheduler
 
 from megaqc import commands, public, user, version, api
 from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager
-from megaqc.settings import ProdConfig
+from megaqc.settings import ProdConfig, TestConfig
+from megaqc.scheduler import start_job_scheduler
 
-def create_app(config_object=ProdConfig):
+def create_app(config_object=TestConfig):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
 
     :param config_object: The configuration object to use.
