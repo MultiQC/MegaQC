@@ -29,10 +29,13 @@ def generate_hash(data):
     ret = md5er.hexdigest()
     return ret
 
-def store_report_data(user, report_data):
+def store_report_data(user, report_data, uploaded_file):
     file_name = ''.join([random.choice(string.lowercase) for i in xrange(10)])
-    with open(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),"w") as fh:
-        fh.write(report_data)
+    if report_data:
+        with open(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),"w") as fh:
+            fh.write(report_data)
+    else:
+        uploaded_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name))
 
     upload_row = Upload(
                         upload_id=Upload.get_next_id(),

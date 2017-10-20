@@ -106,6 +106,9 @@ to include, for example (Apache 2.2):
   </Proxy>
 </VirtualHost>
 ```
+You also need to ensure that apache mod_proxy is activated : 
+```a2enmod proxy
+a2enmod proxy_http```
 
 ## 4. Restart apache
 In order for these changes to be applied, you need to restart apache with

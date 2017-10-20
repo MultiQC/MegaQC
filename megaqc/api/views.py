@@ -63,7 +63,11 @@ def test_post(user, *args, **kwargs):
 @check_user
 def queue_multiqc_data(user, *args, **kwargs):
     data = request.data
-    success, msg = store_report_data(user, data)
+    try:
+        uploaded_file = request.files['file']
+    except:
+        uploaded_file = None
+    success, msg = store_report_data(user, data, uploaded_file)
     response = jsonify({
         'success': success,
         'message': msg

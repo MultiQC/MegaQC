@@ -4,10 +4,12 @@ from megaqc.user.models import User
 from megaqc.extensions import db
 from megaqc.api.utils import handle_report_data
 from flask_apscheduler import APScheduler
+from io import BufferedReader
 
 import json
 import datetime
 import os
+import gzip
 
 scheduler = APScheduler()
 
@@ -19,11 +21,9 @@ def upload_reports_job():
     with scheduler.app.app_context():
         queued_uploads = db.session.query(Upload).filter(Upload.status == "NOT TREATED").all()
         for row in queued_uploads:
-            print "dealing with {0}".format(row.upload_id)
             row.status = "IN TREATMENT"
             db.session.add(row)
             db.session.commit()
-            print "updated status"
             user = db.session.query(User).filter(User.user_id == row.user_id).one()
             # Check if we have a gzipped file
             gzipped = False
@@ -32,19 +32,17 @@ def upload_reports_job():
                 file_start = fh.read(3)
                 if file_start == "\x1f\x8b\x08":
                     gzipped = True
-            if gzipped:
-                with gzip.open('file.txt.gz', 'rb') as fh:
-                    data = json.load(fh)
-            else:
-                with open(row.path, 'r') as fh:
-                    data = json.load(fh)
-            print "loaded data"
-            # Now save the parsed JSON data to the database
             try:
+                if gzipped:
+                    with BufferedReader(gzip.open(row.path, 'rb')) as fh:
+                        data = json.load(fh)
+                else:
+                    with open(row.path, 'r') as fh:
+                        data = json.load(fh)
+                # Now save the parsed JSON data to the database
                 ret = handle_report_data(user, data)
             except Exception as e:
                 ret = (False, str(e))
-            print "handled"
             if ret[0]:
                 row.status = "TREATED"
                 row.message = "The document has been uploaded successfully"

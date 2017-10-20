@@ -72,6 +72,7 @@ class TestConfig(Config):
     SQLALCHEMY_DBMS = 'sqlite'
     DB_NAME = 'test.db'
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
+    print DB_PATH
     SQLALCHEMY_DATABASE_URI = '{0}:///{1}'.format(SQLALCHEMY_DBMS,DB_PATH)
 
     def __init__(self):
