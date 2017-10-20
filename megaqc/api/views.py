@@ -378,7 +378,7 @@ def delete_report(user, *args, **kwargs):
 
 @api_blueprint.route('/api/count_queued_uploads', methods=['POST'])
 def count_queued_uploads():
-    count = get_queued_uploads()
+    count = get_queued_uploads(count=True)
     return jsonify({
             'success': True,
             'count': count

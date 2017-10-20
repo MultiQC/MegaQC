@@ -1145,7 +1145,6 @@ def get_reports_data(count=False, user_id=None, filters=None):
                 "username": report[1]
             }
             # Get the metadata pairs for this report
-            # TODO: This is probably really slow and inefficient
             report_md_query = (db.session
                     .query(ReportMeta)
                     .filter(ReportMeta.report_id == report[0].report_id)
@@ -1166,7 +1165,7 @@ def get_queued_uploads(count=False, filter_cats=None):
         return uploads_query.one()[0]
     else:
         uploads_query = (db.session.
-                            query(Upload.upload_id, Upload.status, Upload.created_at)
+                            query(Upload)
                             .filter(Upload.status.in_(filter_cats))
                             .order_by(Upload.created_at.desc()) )
         uploads = uploads_query.all()
@@ -1185,6 +1184,7 @@ def get_queued_uploads(count=False, filter_cats=None):
                 "upload_id" : upload.upload_id,
                 "status": upload.status,
                 "status_class": status_class,
-                "upload_date": upload.created_at
+                "upload_date": upload.created_at,
+                "message": upload.message
             })
         return ret_data
