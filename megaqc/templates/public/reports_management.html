@@ -2,25 +2,29 @@
 {% extends "layout.html" %}
 {% block content %}
 <h1>Edit Reports</h1>
+<p>This page shows reports that have been successfully uploaded. Clicking Delete
+will remove all data associated with that report upload.<br>
+To see pending or failed report data imports, see the
+<a href="{{ url_for('public.queued_uploads') }}">Pending Uploads</a> page.</p>
 
 <div>
-Filter Reports : 
-<table class="table" id="filter_table">
-    <tbody>
-      <tr>
-          <td>
-              <select id="report_filter_select" class="form-control form-control-chosen" data-placeholder="[ please select a filter type ]" >
-                  {%for key in report_meta_fields%}
-                  <option>{{ key }}</option>
-                  {% endfor %}
-              </select>
-          </td>
-          <td>
-              <input id="report_filter_input" class="form-control" type="text" />
-          </td>
-      </tr>
-    </tbody>
-</table>
+    Filter Reports:
+    <table class="table" id="filter_table">
+        <tbody>
+          <tr>
+              <td>
+                  <select id="report_filter_select" class="form-control form-control-chosen" data-placeholder="[ please select a filter type ]" >
+                      {%for key in report_meta_fields%}
+                      <option>{{ key }}</option>
+                      {% endfor %}
+                  </select>
+              </td>
+              <td>
+                  <input id="report_filter_input" class="form-control" type="text" />
+              </td>
+          </tr>
+        </tbody>
+    </table>
 </div>
 
 <div>
@@ -28,6 +32,7 @@ Filter Reports :
     <thead>
         <tr>
             <th>Report ID</th>
+            <th>Title</th>
             <th>Creation Date</th>
             <th>User</th>
             <th>Actions</th>
@@ -37,7 +42,8 @@ Filter Reports :
     {% for report in report_data %}
         <tr>
             <td>{{ report['report_id'] }}</td>
-            <td>{{ report['upload_date'] }}</td>
+            <td>{{ report['config_title'] }}</td>
+            <td><samp>{{ report['upload_date'] }}</samp></td>
             <td>{{ report['username'] }}</td>
             <td>
                 <button class="btn btn-sm btn-outline-danger button-delete" data-reportid="{{ report['report_id'] }}"><i class="fa fa-trash" aria-hidden="true"></i>  Delete</button>
@@ -64,7 +70,7 @@ function init_filter(){
             clearTimeout(filter_timeout);
         }
         filter_timeout = setTimeout(function() {
-            filter_timeout = null;  
+            filter_timeout = null;
             window.ajax_update = $.ajax({
                 url: '/api/get_reports',
                 type: 'post',

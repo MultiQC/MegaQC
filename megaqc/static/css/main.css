@@ -81,6 +81,10 @@ nav.navbar {
     font-weight: 300;
     padding: 1.6rem 3rem;
 }
+.megaqc-header-samplecount a {
+    color: #666666;
+    text-decoration: none;
+}
 
 footer {
     background-color: #eeeeee;

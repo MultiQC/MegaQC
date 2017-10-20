@@ -8,7 +8,12 @@
   </div>
   <div class="col-md-6 megaqc-header-samplecount">
     Data available from<br>
-    {{ num_samples }} samples, {{ num_reports }} reports
+    {{ num_samples }} samples, {{ num_reports }} reports<br>
+    {% if num_uploads_processing %}
+      <a href="{{ url_for('public.queued_uploads') }}">
+          {{ num_uploads_processing }} upload{% if num_uploads_processing > 1 %}s{% endif %} processing
+      </a>
+    {% endif %}
   </div>
 </div>
 <p class="lead">MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.</p>
