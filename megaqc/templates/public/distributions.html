@@ -24,14 +24,14 @@
                                 <i class="fa fa-heart" aria-hidden="true"></i>
                                 Favs Only
                             </button>
-                            <button class="btn btn-outline-success" id="distribution_fields_plot_toggle">
+                            <button class="btn btn-outline-success" id="distribution_fields_selected_toggle">
                                 <i class="fa fa-bar-chart" aria-hidden="true"></i>
                                 Selected Only
                             </button>
                         </div>
                     </div>
                 </form>
-            <div class="list-group with-filter">
+            <div class="list-group with-filter" id="distribution_plot_listgroup">
                 {% for sf in sample_fields %}
                     <a href="#distribution_plot" class="distribution-field-btn list-group-item list-group-item-action" data-fieldid="{{ sf.type_id }}">
                     {{ sf.nicename }}
@@ -49,10 +49,10 @@
         <div class="plot_header_config">
             <div class="dist_plot_type">
                 <select>
-                    <option value="hist">Histogram</option>
                     <option value="boxplot">Box Plots</option>
                     <option value="violin">Violin Plots</option>
                     <option value="dotplot">Dot Plots</option>
+                    <option value="hist">Histogram</option>
                 </select>
             </div>
             <div class="hist_nbins_range">
@@ -73,9 +73,52 @@
 {% block js %}
 <script type="text/javascript" src="/static/js/filter_samples.js"></script>
 <script type="text/javascript">
-window.dist_ptype = 'hist';
+window.dist_ptype = 'boxplot';
 window.hist_nbins = 40;
 $(function(){
+
+    // Filter field types by typing
+    $('#distribution_fields_filter_input').keyup(function(e){
+        filter_report_plot_types();
+    });
+
+    // Toggle field types - selected only
+    $('#distribution_fields_favourite_toggle, #distribution_fields_selected_toggle').click(function(e){
+        e.preventDefault();
+        if($(this).hasClass('active')){
+            $(this).removeClass('active');
+            filter_report_plot_types();
+        } else {
+            $(this).addClass('active');
+            filter_report_plot_types();
+        }
+    });
+
+    // Function to filter the list of available plot types
+    function filter_report_plot_types(){
+        var favs_only = $('#distribution_fields_favourite_toggle').hasClass('active');
+        var selected_only = $('#distribution_fields_selected_toggle').hasClass('active');
+        $('#distribution_plot_listgroup a').each(function(e){
+            var display = true;
+            if(favs_only && $(this).find('.report-plot-type-save-fav').hasClass('fa-heart-o')){
+                display = false;
+            }
+            if(selected_only && !$(this).hasClass('active')){
+                display = false;
+            }
+            var ft = $('#distribution_fields_filter_input').val().trim().toLowerCase();
+            var pt_name = $(this).text().trim().toLowerCase();
+            if(ft.length > 0 && pt_name.indexOf(ft) == -1){
+                display = false;
+            }
+            if(display){
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
 
     // Sample filter set clicked / added
     $(document).on('sample-filter-clicked sample-filter-added', function(e, fs){
