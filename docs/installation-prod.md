@@ -119,3 +119,7 @@ service restart httpd
 ```
 
 You should now have a fully functional MegaQC server running.
+
+
+### Notes : 
+The password encryption relies on libffi-devel to work. If you run an older OS, ensure that the package is installed.
