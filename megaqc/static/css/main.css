@@ -102,6 +102,14 @@ footer p a {
     text-decoration: underline;
 }
 
+#megaqc-homepage-jumbotron {
+    padding: 2rem;
+}
+#megaqc-homepage-title-img {
+    max-width: 400px;
+    margin: 10px 0;
+}
+
 .loading-spinner {
     color: #999;
     font-size: 1rem;
