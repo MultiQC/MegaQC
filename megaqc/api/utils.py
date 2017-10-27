@@ -775,7 +775,7 @@ def get_sample_fields_values(keys, filters=None, num_fieldids=False):
 
     return results
 
-def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
+def generate_distribution_plot(plot_data, nbins=20, ptype='boxplot'):
     dtypes = set()
     for s_name in plot_data:
         dtypes.update(plot_data[s_name])
@@ -787,16 +787,7 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
                 pdata.append(float(plot_data[s_name][dtype]))
             except:
                 pass
-        if ptype == 'hist':
-            figs.append(
-                go.Histogram(
-                    x = pdata,
-                    opacity = 0.75,
-                    nbinsx = nbins,
-                    name = "{} ({})".format(dtype, len(pdata))
-                )
-            )
-        elif ptype == 'boxplot':
+        if ptype == 'boxplot':
             figs.append(
                 go.Box(
                     y = pdata,
@@ -814,6 +805,15 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='hist'):
                     line = dict(width = 0),
                     whiskerwidth = 0,
                     fillcolor = 'rgba(0, 0, 0, 0)'
+                )
+            )
+        elif ptype == 'hist':
+            figs.append(
+                go.Histogram(
+                    x = pdata,
+                    opacity = 0.75,
+                    nbinsx = nbins,
+                    name = "{} ({})".format(dtype, len(pdata))
                 )
             )
         elif ptype == 'violin':
