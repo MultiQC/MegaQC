@@ -709,6 +709,18 @@ def get_user_filters(user):
     data=[{'name':x.sample_filter_name,'set':x.sample_filter_tag, 'id':x.sample_filter_id, 'filters':json.loads(x.sample_filter_data)} for x in sfs]
     return data
 
+def update_fav_sample_field(method, user, sample_field_id):
+    existing_sample_field = db.session.query(SampleDataType).filter(SampleDataType.sample_data_type_id==sample_field_id).first()
+    if not existing_sample_field:
+        raise Exception("No such sample_field")
+    if method == 'save':
+        db.session.execute(user_sampletype_map.insert().values(user_id=user.user_id, plot_config_id=existing_sample_field.sample_data_type_id))
+    elif method == 'delete':
+        db.session.execute(user_sampletype_map.delete().where(and_(user_sampletype_map.c.user_id==user.user_id, user_sampletype_map.c.sample_data_type_id==existing_sample_fielexisting_sample_fieldd.sample_data_type_id)))
+    else:
+        raise Exception("No such method")
+    db.session.commit()
+
 def update_fav_plot(method, user, plot_info):
 
     existing_plot_config_q = db.session.query(PlotConfig).filter(PlotConfig.config_name==plot_info[0])
