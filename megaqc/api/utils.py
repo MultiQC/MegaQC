@@ -689,7 +689,7 @@ def build_filter(query, filters, source_table):
         alchemy_or_cmps.append(and_(*alchemy_and_cmps))
 
     query = query.filter(or_(*alchemy_or_cmps))
-    print query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
+    current_app.logger.debug(query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True}))
     return query
 
 def get_user_filters(user):
@@ -896,7 +896,6 @@ def generate_trend_plot(plot_data):
     return plot_div
 
 def generate_comparison_plot(plot_data, data_keys, field_names=None):
-    print(field_names)
     if field_names is None:
         field_names = data_keys
     ptitle = 'MegaQC Comparison Plot'
@@ -913,7 +912,7 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
             plot_x.append(plot_data[s_name][data_keys['x']])
             plot_y.append(plot_data[s_name][data_keys['y']])
         except KeyError:
-            print("Couldn't find key {} (available: {})".format(plot_data[s_name].keys(), data_keys))
+            current_app.logger.error("Couldn't find key {} (available: {})".format(plot_data[s_name].keys(), data_keys))
         try:
             plot_z.append(plot_data[s_name][data_keys['z']])
         except KeyError:

@@ -1,4 +1,5 @@
 
+from flask import current_app
 from megaqc.model.models import Upload
 from megaqc.user.models import User
 from megaqc.extensions import db
@@ -19,11 +20,11 @@ def upload_reports_job():
     with scheduler.app.app_context():
         queued_uploads = db.session.query(Upload).filter(Upload.status == "NOT TREATED").all()
         for row in queued_uploads:
-            print "dealing with {0}".format(row.upload_id)
+            current_app.logger.info( "dealing with {0}".format(row.upload_id) )
             row.status = "IN TREATMENT"
             db.session.add(row)
             db.session.commit()
-            print "updated status"
+            current_app.logger.info( "updated status" )
             user = db.session.query(User).filter(User.user_id == row.user_id).one()
             # Check if we have a gzipped file
             gzipped = False
@@ -38,13 +39,13 @@ def upload_reports_job():
             else:
                 with open(row.path, 'r') as fh:
                     data = json.load(fh)
-            print "loaded data"
+            current_app.logger.info( "loaded data" )
             # Now save the parsed JSON data to the database
             try:
                 ret = handle_report_data(user, data)
             except Exception as e:
                 ret = (False, str(e))
-            print "handled"
+            current_app.logger.info( "handled" )
             if ret[0]:
                 row.status = "TREATED"
                 row.message = "The document has been uploaded successfully"
