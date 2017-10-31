@@ -29,10 +29,13 @@ def generate_hash(data):
     ret = md5er.hexdigest()
     return ret
 
-def store_report_data(user, report_data):
+def store_report_data(user, report_data, uploaded_file):
     file_name = ''.join([random.choice(string.lowercase) for i in xrange(10)])
-    with open(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),"w") as fh:
-        fh.write(report_data)
+    if report_data:
+        with open(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),"w") as fh:
+            fh.write(report_data)
+    else:
+        uploaded_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name))
 
     upload_row = Upload(
                         upload_id=Upload.get_next_id(),
@@ -191,8 +194,11 @@ def handle_report_data(user, report_data):
                 for sub_dict in dataset:
                     try:
                         data_key = report_data['report_plot_data'][plot]['config']['data_labels'][dst_idx]['ylab']
-                    except KeyError:
-                        data_key = report_data['report_plot_data'][plot]['config']['ylab']
+                    except (KeyError, TypeError):
+                        try:
+                            data_key = report_data['report_plot_data'][plot]['config']['ylab']
+                        except KeyError:
+                            data_key = report_data['report_plot_data'][plot]['config']['title']
 
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
                     data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
@@ -703,6 +709,18 @@ def get_user_filters(user):
     data=[{'name':x.sample_filter_name,'set':x.sample_filter_tag, 'id':x.sample_filter_id, 'filters':json.loads(x.sample_filter_data)} for x in sfs]
     return data
 
+def update_fav_sample_field(method, user, sample_field_id):
+    existing_sample_field = db.session.query(SampleDataType).filter(SampleDataType.sample_data_type_id==sample_field_id).first()
+    if not existing_sample_field:
+        raise Exception("No such sample_field")
+    if method == 'save':
+        db.session.execute(user_sampletype_map.insert().values(user_id=user.user_id, plot_config_id=existing_sample_field.sample_data_type_id))
+    elif method == 'delete':
+        db.session.execute(user_sampletype_map.delete().where(and_(user_sampletype_map.c.user_id==user.user_id, user_sampletype_map.c.sample_data_type_id==existing_sample_fielexisting_sample_fieldd.sample_data_type_id)))
+    else:
+        raise Exception("No such method")
+    db.session.commit()
+
 def update_fav_plot(method, user, plot_info):
 
     existing_plot_config_q = db.session.query(PlotConfig).filter(PlotConfig.config_name==plot_info[0])
@@ -1138,7 +1156,6 @@ def get_reports_data(count=False, user_id=None, filters=None):
                 "username": report[1]
             }
             # Get the metadata pairs for this report
-            # TODO: This is probably really slow and inefficient
             report_md_query = (db.session
                     .query(ReportMeta)
                     .filter(ReportMeta.report_id == report[0].report_id)
@@ -1159,7 +1176,7 @@ def get_queued_uploads(count=False, filter_cats=None):
         return uploads_query.one()[0]
     else:
         uploads_query = (db.session.
-                            query(Upload.upload_id, Upload.status, Upload.created_at)
+                            query(Upload)
                             .filter(Upload.status.in_(filter_cats))
                             .order_by(Upload.created_at.desc()) )
         uploads = uploads_query.all()
@@ -1178,6 +1195,7 @@ def get_queued_uploads(count=False, filter_cats=None):
                 "upload_id" : upload.upload_id,
                 "status": upload.status,
                 "status_class": status_class,
-                "upload_date": upload.created_at
+                "upload_date": upload.created_at,
+                "message": upload.message
             })
         return ret_data

@@ -63,7 +63,11 @@ def test_post(user, *args, **kwargs):
 @check_user
 def queue_multiqc_data(user, *args, **kwargs):
     data = request.data
-    success, msg = store_report_data(user, data)
+    try:
+        uploaded_file = request.files['file']
+    except:
+        uploaded_file = None
+    success, msg = store_report_data(user, data, uploaded_file)
     response = jsonify({
         'success': success,
         'message': msg
@@ -374,7 +378,7 @@ def delete_report(user, *args, **kwargs):
 
 @api_blueprint.route('/api/count_queued_uploads', methods=['POST'])
 def count_queued_uploads():
-    count = get_queued_uploads()
+    count = get_queued_uploads(count=True)
     return jsonify({
             'success': True,
             'count': count

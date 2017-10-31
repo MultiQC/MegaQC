@@ -9,9 +9,13 @@ from flask.cli import FlaskGroup
 def create_megaqc_app(info):
     import os
     from megaqc.app import create_app
-    from megaqc.settings import DevConfig, ProdConfig
+    from megaqc.settings import TestConfig, DevConfig, ProdConfig
     MEGAQC_DEBUG = os.environ.get('MEGAQC_DEBUG', False)
-    CONFIG = DevConfig if MEGAQC_DEBUG else ProdConfig
+    CONFIG = TestConfig()
+    if os.environ.get('MEGAQC_DEBUG', False):
+        CONFIG = DevConfig()
+    elif os.environ.get('MEGAQC_PRODUCTION', False):
+        CONFIG = ProdConfig()
     return create_app(CONFIG)
 
 @click.group(cls=FlaskGroup, create_app=create_megaqc_app)

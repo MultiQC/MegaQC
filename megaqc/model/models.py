@@ -14,6 +14,11 @@ user_plotconfig_map = db.Table('user_plotconfig_map',
             db.Column('plot_config_id', Integer, db.ForeignKey('plot_config.config_id'))
             )
 
+user_plotconfig_map = db.Table('user_sampletype_map',
+            db.Column('user_id', Integer, db.ForeignKey('users.user_id')),
+            db.Column('sample_data_type_id', Integer, db.ForeignKey('sample_data_type.sample_data_type_id'))
+            )
+
 class Report(db.Model, CRUDMixin):
     """a MultiQC report"""
 
