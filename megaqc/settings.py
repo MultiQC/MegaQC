@@ -27,9 +27,9 @@ class Config(object):
                 if key in self.__dict__:
                     setattr(self, self.extra_conf[key])
             if self.SQLALCHEMY_DBMS == "sqlite":
-                self.SQLALCHEMY_DATABASE_URI = '{0}://{1}'.format(self.SQLALCHEMY_DBMS, self.DB_PATH) 
+                self.SQLALCHEMY_DATABASE_URI = '{0}://{1}'.format(self.SQLALCHEMY_DBMS, self.DB_PATH)
             else:
-                self.SQLALCHEMY_DATABASE_URI = '{3}://{0}:@{1}/{2}'.format(self.SQLALCHEMY_USER, self.SQLALCHEMY_HOST, self.SQLALCHEMY_DATABASE, self.SQLALCHEMY_DBMS) 
+                self.SQLALCHEMY_DATABASE_URI = '{3}://{0}:@{1}/{2}'.format(self.SQLALCHEMY_USER, self.SQLALCHEMY_HOST, self.SQLALCHEMY_DATABASE, self.SQLALCHEMY_DBMS)
 
 
 class ProdConfig(Config):
@@ -38,10 +38,10 @@ class ProdConfig(Config):
     ENV = 'prod'
     DEBUG = False
     SQLALCHEMY_DBMS = 'postgresql'
-    SQLALCHEMY_USER = 'megaqc'
+    SQLALCHEMY_USER = 'megaqc_user'
     SQLALCHEMY_HOST='localhost:5432'
     SQLALCHEMY_DATABASE = 'megaqc'
-    SQLALCHEMY_DATABASE_URI = '{3}://{0}:@{1}/{2}'.format(SQLALCHEMY_USER, SQLALCHEMY_HOST, SQLALCHEMY_DATABASE, SQLALCHEMY_DBMS) 
+    SQLALCHEMY_DATABASE_URI = '{3}://{0}:@{1}/{2}'.format(SQLALCHEMY_USER, SQLALCHEMY_HOST, SQLALCHEMY_DATABASE, SQLALCHEMY_DBMS)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
     def __init__(self):
@@ -77,4 +77,3 @@ class TestConfig(Config):
 
     def __init__(self):
         super(TestConfig, self).__init__()
-

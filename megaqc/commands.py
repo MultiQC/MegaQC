@@ -129,18 +129,18 @@ def urls(url, order):
 def initdb():
     """ Initialise a new database """
     if "postgresql" in current_app.config['SQLALCHEMY_DATABASE_URI']:
-	try:
+        try:
             create_engine(current_app.config['SQLALCHEMY_DATABASE_URI']).connect().close()
-	except:
-		print("Initializing the postgres user and db")
-		engine = create_engine("postgres://postgres@localhost:5432/postgres")
-		conn = engine.connect()
-		conn.execute("commit")
-		conn.execute("CREATE USER megaqc_user;")
-		conn.execute("commit")
-		conn.execute("CREATE DATABASE megaqc OWNER megaqc_user;")
-		conn.execute("commit")
-		conn.close()
+        except:
+            print("Initializing the postgres user and db")
+            engine = create_engine("postgres://postgres@localhost:5432/postgres")
+            conn = engine.connect()
+            conn.execute("commit")
+            conn.execute("CREATE USER megaqc_user;")
+            conn.execute("commit")
+            conn.execute("CREATE DATABASE megaqc OWNER megaqc_user;")
+            conn.execute("commit")
+            conn.close()
 
 
     """Initializes the database."""
