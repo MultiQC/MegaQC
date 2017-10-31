@@ -16,6 +16,17 @@ To install with conda:
 conda install -c bioconda megaqc
 ```
 
+## 2. Export environment variables
+By default, MegaQC runs in development mode with a sqlite flat file database (this is to make
+it as simple as possible to get up and running for a quick test / demo). To tell MegaQC to use
+a production server, you need to set the `MEGAQC_PRODUCTION` environment variable to true.
+
+Add the following line to your `.bashrc` file:
+
+```bash
+export MEGAQC_PRODUCTION=1
+```
+
 ## 2. Set up the database
 MegaQC uses the Flask SQLAlchemy plugin, meaning that it can be used with any SQL database (PostgreSQL, MySQL, SQLite and others).
 
@@ -106,7 +117,7 @@ to include, for example (Apache 2.2):
   </Proxy>
 </VirtualHost>
 ```
-You also need to ensure that apache mod_proxy is activated : 
+You also need to ensure that apache mod_proxy is activated :
 ```a2enmod proxy
 a2enmod proxy_http```
 
@@ -121,5 +132,5 @@ service restart httpd
 You should now have a fully functional MegaQC server running.
 
 
-### Notes : 
-The password encryption relies on libffi-devel to work. If you run an older OS, ensure that the package is installed.
+### Notes:
+The password encryption relies on the `libffi-devel` package to work. If you run an older OS, ensure that the package is installed.
