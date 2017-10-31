@@ -27,13 +27,13 @@ Add the following line to your `.bashrc` file:
 export MEGAQC_PRODUCTION=1
 ```
 
-## 2. Set up the database
+## 3. Set up the database
 MegaQC uses the Flask SQLAlchemy plugin, meaning that it can be used with any SQL database (PostgreSQL, MySQL, SQLite and others).
 
 MegaQC has been developed with PostgreSQL, see below. For instructions. If you use MegaQC with any
 other database tools and could contribute to the documentation, that would be great!
 
-## 2.1 Using a PostgreSQL database
+## 3.1 Using a PostgreSQL database
 
 First, install PostgreSQL: https://wiki.postgresql.org/wiki/Detailed_installation_guides
 
@@ -50,7 +50,7 @@ In order to make this happen, run :
 megaqc initdb
 ```
 
-## 2.2 Using a MySQL database
+## 3.2 Using a MySQL database
 Although PostgreSQL is highly recommended, MegaQC should work with other SQL database
 back ends, such as MySQL.
 
@@ -79,29 +79,11 @@ This should, hopefully, make everything work. If you have problems, please
 [create an issue](https://github.com/ewels/MegaQC/issues/new) and we'll do our
 best to help.
 
-## 3. Install and start the web server
+### 4. (Optional, but recommended) Create an apache proxy
 
-_**Note:** This step can be ignored if you wish to use gunicorn as your primary web server._
+_**Note:** You can skip this step if you wish to use gunicorn as your primary web server, but it's not recommended._
 
-### 3.1. Install gunicorn
-
-```bash
-pip install gunicorn
-```
-
-### 3.2. Start megaqc as a gunicorn wsgi app:
-
-```bash
-gunicorn --log-file megaqc.log --timeout 300 megaqc.wsgi:app
-```
-
-_**Note:** We recommend using a long timeout as the data upload from MultiQC can take several minutes for large reports_
-
-At this point, MegaQC should be running on the default gunicorn port (`8000`)
-
-### 3.3. Create an apache proxy
-
-_**Note:** this is an example configuration that will map all http requests to the current server to MegaQC. It will also not filter anything._
+_**Note:** This is an example configuration that will map all http requests to the current server to MegaQC. It will also not filter anything. Please consider your server security!_
 
 Update your apache configuration (`/usr/local/apache2/conf/httpd.conf`, `/etc/apache2/apache2.conf`, `/etc/httpd/conf/httpd.conf`...)
 to include, for example (Apache 2.2):
@@ -129,8 +111,29 @@ the following command (or equivalent on your system):
 service restart httpd
 ```
 
-You should now have a fully functional MegaQC server running.
+
+## 5. Install and start the web server
+
+_**Note:** It's possible to run the MegaQC Flask app using different web servers. Below we describe gunicon which is the server that we recommend using._
+
+### 5.1. Install gunicorn
+
+```bash
+pip install gunicorn
+```
+
+### 5.2. Start megaqc as a gunicorn wsgi app:
+
+```bash
+gunicorn --log-file megaqc.log --timeout 300 megaqc.wsgi:app
+```
+
+_**Note:** We recommend using a long timeout as the data upload from MultiQC can take several minutes for large reports_
+
+At this point, MegaQC should be running on the default gunicorn port (`8000`)
+
+You should now have a fully functional MegaQC server running! 🎉
 
 
-### Notes:
+## Troubleshooting
 The password encryption relies on the `libffi-devel` package to work. If you run an older OS, ensure that the package is installed.
