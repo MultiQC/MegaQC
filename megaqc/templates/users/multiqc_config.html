@@ -13,7 +13,7 @@
       <code>~/.multiqc_config.yaml</code>
     </div>
     <div class="card-body">
-      <pre><code id="multiqc_config"><span style="color:#22863a;">megaqc_url:</span> <span style="color:#005cc5;">{{url_for('api.handle_multiqc_data', _external=True)}}<br><span style="color:#22863a;">megaqc_access_token:</span> <span style="color:#005cc5;">{{current_user.api_token}}</span></code></pre>
+      <pre><code id="multiqc_config"><span style="color:#22863a;">megaqc_url:</span> <span style="color:#005cc5;">{{url_for('api.queue_multiqc_data', _external=True)}}<br><span style="color:#22863a;">megaqc_access_token:</span> <span style="color:#005cc5;">{{current_user.api_token}}</span></code></pre>
     </div>
   </div>
   <p>Note that this identification key is specific to you and should not be shared with any other users.</p>
