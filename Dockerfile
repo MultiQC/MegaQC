@@ -3,7 +3,7 @@ FROM debian:latest
 LABEL authors="phil.ewels@scilifelab.se,denis.moreno@scilifelab.se" \
     description="Docker image running MegaQC"
 
-# Install container-wide requrements 
+# Install container-wide requrements
 RUN apt-get update && apt-get install git -y && \
     apt-get install python2.7 -y && \
     apt-get install python2.7-dev -y && \
@@ -24,13 +24,13 @@ RUN echo "<VirtualHost *:80> \n\
     ServerName megaqc \n\
     ProxyPass / http://127.0.0.1:8000/ \n\
     ProxyPassReverse / http://127.0.0.1:8000/ \n\
-</VirtualHost>" > /etc/apache2/sites-enabled/000-default.conf 
+</VirtualHost>" > /etc/apache2/sites-enabled/000-default.conf
 
 #Fix matplotlib being dumb
 RUN ln -s /usr/include/freetype2/ft2build.h /usr/include/
 
 #Link python
-RUN ln -s /usr/bin/python2.7 /usr/bin/python  
+RUN ln -s /usr/bin/python2.7 /usr/bin/python
 
 # Install pip
 RUN curl -fsSL https://bootstrap.pypa.io/get-pip.py -o /opt/get-pip.py && \
@@ -40,7 +40,7 @@ RUN curl -fsSL https://bootstrap.pypa.io/get-pip.py -o /opt/get-pip.py && \
 #Install PostreSQL
 RUN apt-get install postgresql-9.6 postgresql-server-dev-9.6 -y
 
-#Set data directory : 
+#Set data directory :
 ENV PGDATA /usr/local/lib/postgresql
 
 #create the data directory
@@ -52,21 +52,20 @@ RUN su postgres -c "/usr/lib/postgresql/9.6/bin/initdb" && \
 su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && \
 su postgres -c "/usr/lib/postgresql/9.6/bin/createuser megaqc_user" && \
 su postgres -c "/usr/lib/postgresql/9.6/bin/createdb megaqc -O megaqc_user" && \
-su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w stop" 
+su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w stop"
 #Install Gunicorn
 RUN pip install gunicorn
 
 #Install MegaQC
 #RUN pip install megaqc
-RUN git clone "https://github.com/ewels/MegaQC.git" && cd MegaQC && git checkout denis && python setup.py install
-
-
+# RUN git clone "https://github.com/ewels/MegaQC.git" && cd MegaQC && python setup.py install
+COPY . MegaQC
+WORKDIR MegaQC
+RUN python setup.py install
 
 RUN su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && \
 megaqc initdb && \
-su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w stop" 
+su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w stop"
 
 EXPOSE 80
-CMD su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && service apache2 start && gunicorn megaqc.wsgi:app --timeout 300 
-
-
+CMD su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && service apache2 start && gunicorn megaqc.wsgi:app --timeout 300
