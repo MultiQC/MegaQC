@@ -31,6 +31,10 @@ def generate_hash(data):
 
 def store_report_data(user, report_data, uploaded_file):
     file_name = ''.join([random.choice(string.lowercase) for i in xrange(10)])
+
+    if not os.path.isdir(current_app.config['UPLOAD_FOLDER']):
+        os.mkdir(current_app.config['UPLOAD_FOLDER'])
+
     if report_data:
         with open(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),"w") as fh:
             fh.write(report_data)

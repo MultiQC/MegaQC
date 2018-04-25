@@ -40,7 +40,7 @@ RUN curl -fsSL https://bootstrap.pypa.io/get-pip.py -o /opt/get-pip.py && \
 # Install PostreSQL
 RUN apt-get install postgresql-9.6 postgresql-server-dev-9.6 -y
 
-# Set data directory :
+# Set data directory
 ENV PGDATA /usr/local/lib/postgresql
 
 # create the data directory
@@ -57,11 +57,10 @@ su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w stop"
 # Install Gunicorn
 RUN pip install gunicorn
 
-#Install MegaQC
-# RUN pip install megaqc
-RUN git clone "https://github.com/ewels/MegaQC.git" && \
-    cd MegaQC && \
-    python setup.py install
+# Install MegaQC
+COPY . MegaQC
+WORKDIR MegaQC
+RUN python setup.py install
 
 # Set up the Postgres SQL server
 RUN su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && \
