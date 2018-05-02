@@ -7,6 +7,7 @@ LABEL authors="phil.ewels@scilifelab.se,denis.moreno@scilifelab.se" \
 RUN apt-get update && apt-get install git -y && \
     apt-get install python2.7 -y && \
     apt-get install python2.7-dev -y && \
+    apt-get install libyaml-dev -y && \
     apt-get install libffi-dev -y && \
     apt-get install libpng-dev -y && \
     apt-get install libfreetype6-dev -y && \
@@ -37,11 +38,15 @@ RUN curl -fsSL https://bootstrap.pypa.io/get-pip.py -o /opt/get-pip.py && \
     python /opt/get-pip.py && \
     rm /opt/get-pip.py
 
-# Install PostreSQL
+# Install PostgreSQL and psycopg2
 RUN apt-get install postgresql-9.6 postgresql-server-dev-9.6 -y
+RUN pip install psycopg2-binary
 
 # Set data directory
 ENV PGDATA /usr/local/lib/postgresql
+
+# Tell MegaQC to use postgres / psycopg2
+ENV MEGAQC_PRODUCTION 1
 
 # create the data directory
 RUN mkdir $PGDATA
@@ -66,6 +71,9 @@ RUN python setup.py install
 RUN su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && \
     megaqc initdb && \
     su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w stop"
+
+# Use volumes to persist logs and data
+VOLUME ["/var/log/postgresql", "/usr/local/lib/postgresql"]
 
 # Run the MegaQC server
 EXPOSE 80
