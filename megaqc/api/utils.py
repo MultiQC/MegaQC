@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import division
+from builtins import map, range, str
+from past.utils import old_div
 
 from datetime import datetime, timedelta
 from flask import current_app
@@ -19,24 +24,32 @@ import plotly.graph_objs as go
 import random
 import string
 
+import sys
+if sys.version_info.major == 2:
+    lc_string = string.lowercase
+elif sys.version_info.major == 3:
+    lc_string = string.ascii_lowercase
+else:
+    raise(Exception("Unsupported python version"))
+
 import json
 
 def generate_hash(data):
     data.pop("config_creation_date")
-    string = json.dumps(data)
+    data_string = json.dumps(data).encode('utf-8')
     md5er = md5()
-    md5er.update(string)
+    md5er.update(data_string)
     ret = md5er.hexdigest()
     return ret
 
 def store_report_data(user, report_data, uploaded_file):
-    file_name = ''.join([random.choice(string.lowercase) for i in xrange(10)])
+    file_name = ''.join([random.choice(lc_string) for i in range(10)])
 
     if not os.path.isdir(current_app.config['UPLOAD_FOLDER']):
         os.mkdir(current_app.config['UPLOAD_FOLDER'])
 
     if report_data:
-        with open(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),"w") as fh:
+        with open(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name),"wb") as fh:
             fh.write(report_data)
     else:
         uploaded_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], file_name))
@@ -161,7 +174,7 @@ def handle_report_data(user, report_data):
                 for sub_dict in dataset:
                     data_key = sub_dict['name']
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
-                    data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
+                    data = json.dumps({x:y for x,y in list(sub_dict.items()) if x != 'data'})
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
                         existing_category = PlotCategory(
@@ -205,7 +218,7 @@ def handle_report_data(user, report_data):
                             data_key = report_data['report_plot_data'][plot]['config']['title']
 
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
-                    data = json.dumps({x:y for x,y in sub_dict.items() if x != 'data'})
+                    data = json.dumps({x:y for x,y in list(sub_dict.items()) if x != 'data'})
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
                         existing_category = PlotCategory(
@@ -434,7 +447,7 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
     if 'ymin' in config and 'ymax' in config:
         my_range=[float(config['ymin']), float(config['ymax'])]
         if 'logswitch_active' in config:
-            my_range = map(math.log, my_range)
+            my_range = list(map(math.log, my_range))
     #TODO : Figure out how yfloor and yceiling should be handled
     if plot_type=="bar_graph":
         # For stacked bar graphs, axes are reversed in Plotly
@@ -445,12 +458,12 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
             dict(
                 buttons=list([
                     dict(
-                        args = [{'visible': [i<series_nb for i in xrange(series_nb*2)]}],
+                        args = [{'visible': [i<series_nb for i in range(series_nb*2)]}],
                         label = 'Count',
                         method = 'restyle',
                     ),
                     dict(
-                        args = [{'visible': [i>=series_nb for i in xrange(series_nb*2)]}],
+                        args = [{'visible': [i>=series_nb for i in range(series_nb*2)]}],
                         label = 'Percentage',
                         method = 'restyle',
                     )
@@ -1017,7 +1030,7 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None, pointsize=1
             plot_x.append(plot_data[s_name][data_keys['x']])
             plot_y.append(plot_data[s_name][data_keys['y']])
         except KeyError:
-            current_app.logger.error("Couldn't find key {} (available: {})".format(plot_data[s_name].keys(), data_keys))
+            current_app.logger.error("Couldn't find key {} (available: {})".format(list(plot_data[s_name].keys()), data_keys))
         try:
             plot_z.append(plot_data[s_name][data_keys['z']])
         except KeyError:
@@ -1056,7 +1069,7 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None, pointsize=1
             norm_plot_size = []
             for x in plot_size:
                 if type(x) is float:
-                    norm_plot_size.append((((x - smin)/srange)*35)+2)
+                    norm_plot_size.append(((old_div((x - smin),srange))*35)+2)
                 else:
                     norm_plot_size.append(2)
             markers['size'] = norm_plot_size

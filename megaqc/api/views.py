@@ -105,7 +105,7 @@ def admin_update_users(user, *args, **kwargs):
     if not form.validate():
         response = jsonify({
             'success': False,
-            'message': ' '.join(' '.join(errs) for errs in form.errors.values())
+            'message': ' '.join(' '.join(errs) for errs in list(form.errors.values()))
         })
         response.status_code = 400
         return response

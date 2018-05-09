@@ -56,3 +56,6 @@ output/*/index.html
 
 # Virtualenvs
 env/
+
+# futurize backups
+*.py.bak

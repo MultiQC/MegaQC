@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Click commands."""
+from __future__ import print_function
+from builtins import next, str
+
 import os
 from glob import glob
 from subprocess import call

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-
 """ MegaQC config module. """
 
 from __future__ import print_function
 import inspect
+import io
 import collections
 import os
 import pkg_resources
@@ -38,9 +38,9 @@ MEGAQC_DIR = os.path.dirname(os.path.realpath(inspect.getfile(megaqc)))
 ##### MegaQC script defaults
 # Default MegaQC config
 searchp_fn = os.path.join( MEGAQC_DIR, 'utils', 'config_defaults.yaml')
-with open(searchp_fn) as f:
+with io.open(searchp_fn) as f:
     configs = yaml.load(f)
-    for c, v in configs.items():
+    for c, v in list(configs.items()):
         globals()[c] = v
 
 ##### Functions to load user config files. These are called by the main MegaQC script.
@@ -69,7 +69,7 @@ def mqc_load_config(yaml_config):
     """ Load and parse a config file if we find it """
     if os.path.isfile(yaml_config):
         try:
-            with open(yaml_config) as f:
+            with io.open(yaml_config) as f:
                 new_config = yaml.load(f)
                 logger.debug("Loading config settings from: {}".format(yaml_config))
                 mqc_add_config(new_config, yaml_config)
@@ -100,7 +100,7 @@ def mqc_cl_config(cl_config):
 def mqc_add_config(conf, conf_path=None):
     """ Add to the global config with given MegaQC config dict """
     global fn_clean_exts, fn_clean_trim
-    for c, v in conf.items():
+    for c, v in list(conf.items()):
         logger.debug("New config '{}': {}".format(c, v))
         update_dict(globals(), {c: v})
 
@@ -109,7 +109,7 @@ def mqc_add_config(conf, conf_path=None):
 def update_dict(d, u):
     """ Recursively updates nested dict d from nested dict u
     """
-    for key, val in u.items():
+    for key, val in list(u.items()):
         if isinstance(val, collections.Mapping):
             d[key] = update_dict(d.get(key, {}), val)
         else:
