@@ -926,10 +926,12 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None, pointsize=1
     plot_z = []
     plot_col = []
     plot_size = []
-    plot_names = []
+    plot_names = plot_data.keys()
     annotations = go.Annotations([])
-    for s_name in plot_data:
-        plot_names.append(s_name)
+    # Sort the data by the x, y variables (needed when joining dots with lines)
+    plot_names = sorted(plot_names, key=lambda s_name: (plot_data[s_name][data_keys['x']], plot_data[s_name][data_keys['y']]))
+    # Collect the variables
+    for s_name in plot_names:
         try:
             plot_x.append(plot_data[s_name][data_keys['x']])
             plot_y.append(plot_data[s_name][data_keys['y']])
@@ -986,7 +988,7 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None, pointsize=1
         fig = go.Scatter(
             x = plot_x,
             y = plot_y,
-            mode = 'markers',
+            mode = 'lines+markers' if joinmarkers else 'markers',
             marker = markers,
             text = plot_names
         )

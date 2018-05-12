@@ -160,6 +160,14 @@ $(function(){
         $('.comparison_fields li.active').find('.btn.btn-outline-primary.active').removeClass('btn-outline-primary').addClass('btn-outline-warning');
         $('.comparison_fields li.active').not(':has(.btn.active)').removeClass('active');
         $('.comparison_fields li:not(.active) .btn.btn-outline-light, .comparison_fields li:not(.active) .btn.btn-outline-warning').addClass('btn-outline-primary').removeClass('btn-outline-light btn-outline-warning');
+        // Disable the join-points checkbox if we're using z
+        if($('.comparison_fields li.active button.active[data-fieldtype="z"]').length > 0){
+            $('#joinmarkers').prop('disabled', true).prop('checked', false);
+            $('#joinmarkers').parent().addClass('text-muted');
+        } else {
+            $('#joinmarkers').prop('disabled', false);
+            $('#joinmarkers').parent().removeClass('text-muted');
+        }
         // Disable the point size dropdown if we're using size
         if($('.comparison_fields li.active button.active[data-fieldtype="size"]').length > 0){
             $('#pointsize').prop('disabled', true);
