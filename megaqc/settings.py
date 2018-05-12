@@ -46,6 +46,9 @@ class ProdConfig(Config):
 
     def __init__(self):
         super(ProdConfig, self).__init__()
+        # Log to the terminal
+        print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
+        print(" * Database path: {}".format(self.DB_PATH))
 
 
 class DevConfig(Config):
@@ -64,6 +67,9 @@ class DevConfig(Config):
 
     def __init__(self):
         super(DevConfig, self).__init__()
+        # Log to the terminal
+        print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
+        print(" * Database path: {}".format(self.DB_PATH))
 
 
 
@@ -72,7 +78,6 @@ class TestConfig(Config):
     SQLALCHEMY_DBMS = 'sqlite'
     DB_NAME = 'test.db'
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
-    print DB_PATH
     SQLALCHEMY_DATABASE_URI = '{0}:///{1}'.format(SQLALCHEMY_DBMS,DB_PATH)
 
     def __init__(self):

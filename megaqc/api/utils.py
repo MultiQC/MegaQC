@@ -699,7 +699,9 @@ def build_filter(query, filters, source_table):
         alchemy_or_cmps.append(and_(*alchemy_and_cmps))
 
     query = query.filter(or_(*alchemy_or_cmps))
-    current_app.logger.debug(query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True}))
+    # current_app.logger.debug(
+    #     query.statement.compile(dialect=db.session.bind.dialect, compile_kwargs={"literal_binds": True})
+    # )
     return query
 
 def get_user_filters(user):
