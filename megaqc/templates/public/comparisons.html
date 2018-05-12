@@ -21,13 +21,17 @@
                         <input type="text" class="form-control" placeholder="Filter fields" id="fields_filter_input">
                         <div class="input-group-btn">
                             <button class="btn btn-outline-success" id="fields_selected_toggle">
-                                <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                                <i class="fa fa-check" aria-hidden="true"></i>
                                 Selected Only
+                            </button>
+                            <button class="btn btn-outline-danger" id="fields_clear_selection">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                                Clear
                             </button>
                         </div>
                     </div>
                 </form>
-                <ul class="list-group comparison_fields">
+                <ul class="list-group comparison_fields" id="field_listgroup">
                 {% for sf in sample_fields %}
                     <li href="#comparison_plot" class="list-group-item">
                     {{ sf.nicename }}
@@ -95,20 +99,53 @@ window.dist_ptype = 'hist';
 window.hist_nbins = 40;
 $(function(){
 
-    // Sample filter set clicked / added
-    $(document).on('sample-filter-clicked sample-filter-added', function(e, fs){
+    // Filter field types by typing
+    $('#fields_filter_input').keyup(function(e){
+        filter_field_types();
+    });
+
+    // Toggle field types - selected only
+    $('#fields_favourite_toggle, #fields_selected_toggle').click(function(e){
+        e.preventDefault();
+        $(this).toggleClass('active');
+        filter_field_types();
+    });
+
+    // Clear field selection
+    $('#fields_clear_selection').click(function(e){
+        $('#field_listgroup li').removeClass('active');
+        filter_field_types();
         create_plot();
     });
 
-    // Show only selected fields
-    $('#fields_selected_toggle').click(function(e){
-        e.preventDefault();
-        $(this).toggleClass('active');
-        if($(this).hasClass('active')){
-            $('.comparison_fields li:not(.active)').hide();
-        } else {
-            $('.comparison_fields li').show();
-        }
+    // Function to filter the list of available plot types
+    function filter_field_types(){
+        var favs_only = $('#fields_favourite_toggle').hasClass('active');
+        var selected_only = $('#fields_selected_toggle').hasClass('active');
+        $('#field_listgroup li').each(function(e){
+            var display = true;
+            if(favs_only && $(this).find('.report-plot-type-save-fav').hasClass('fa-heart-o')){
+                display = false;
+            }
+            if(selected_only && !$(this).hasClass('active')){
+                display = false;
+            }
+            var ft = $('#fields_filter_input').val().trim().toLowerCase();
+            var pt_name = $(this).text().trim().toLowerCase();
+            if(ft.length > 0 && pt_name.indexOf(ft) == -1){
+                display = false;
+            }
+            if(display){
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
+    // Sample filter set clicked / added
+    $(document).on('sample-filter-clicked sample-filter-added', function(e, fs){
+        create_plot();
     });
 
     // Field button clicked

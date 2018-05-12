@@ -18,20 +18,26 @@
             <div class="card-body">
                 <form class="mb-3">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Filter fields" id="distribution_fields_filter_input">
+                        <input type="text" class="form-control" placeholder="Filter fields" id="fields_filter_input">
                         <div class="input-group-btn">
-                            <button class="btn btn-outline-info" id="distribution_fields_favourite_toggle">
+                            <!-- TODO: Add back once the back-end is written
+                            <button class="btn btn-outline-info" id="fields_favourite_toggle">
                                 <i class="fa fa-heart" aria-hidden="true"></i>
                                 Favs Only
                             </button>
-                            <button class="btn btn-outline-success" id="distribution_fields_selected_toggle">
-                                <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                            -->
+                            <button class="btn btn-outline-success" id="fields_selected_toggle">
+                                <i class="fa fa-check" aria-hidden="true"></i>
                                 Selected Only
+                            </button>
+                            <button class="btn btn-outline-danger" id="fields_clear_selection">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                                Clear
                             </button>
                         </div>
                     </div>
                 </form>
-            <div class="list-group with-filter" id="distribution_plot_listgroup">
+            <div class="list-group with-filter" id="field_listgroup">
                 {% for sf in sample_fields %}
                     <a href="#distribution_plot" class="distribution-field-btn list-group-item list-group-item-action" data-fieldid="{{ sf.type_id }}">
                     {{ sf.nicename }}
@@ -78,27 +84,29 @@ window.hist_nbins = 40;
 $(function(){
 
     // Filter field types by typing
-    $('#distribution_fields_filter_input').keyup(function(e){
-        filter_report_plot_types();
+    $('#fields_filter_input').keyup(function(e){
+        filter_field_types();
     });
 
     // Toggle field types - selected only
-    $('#distribution_fields_favourite_toggle, #distribution_fields_selected_toggle').click(function(e){
+    $('#fields_favourite_toggle, #fields_selected_toggle').click(function(e){
         e.preventDefault();
-        if($(this).hasClass('active')){
-            $(this).removeClass('active');
-            filter_report_plot_types();
-        } else {
-            $(this).addClass('active');
-            filter_report_plot_types();
-        }
+        $(this).toggleClass('active');
+        filter_field_types();
+    });
+
+    // Clear field selection
+    $('#fields_clear_selection').click(function(e){
+        $('#field_listgroup a').removeClass('active');
+        filter_field_types();
+        create_plot();
     });
 
     // Function to filter the list of available plot types
-    function filter_report_plot_types(){
-        var favs_only = $('#distribution_fields_favourite_toggle').hasClass('active');
-        var selected_only = $('#distribution_fields_selected_toggle').hasClass('active');
-        $('#distribution_plot_listgroup a').each(function(e){
+    function filter_field_types(){
+        var favs_only = $('#fields_favourite_toggle').hasClass('active');
+        var selected_only = $('#fields_selected_toggle').hasClass('active');
+        $('#field_listgroup a').each(function(e){
             var display = true;
             if(favs_only && $(this).find('.report-plot-type-save-fav').hasClass('fa-heart-o')){
                 display = false;
@@ -106,7 +114,7 @@ $(function(){
             if(selected_only && !$(this).hasClass('active')){
                 display = false;
             }
-            var ft = $('#distribution_fields_filter_input').val().trim().toLowerCase();
+            var ft = $('#fields_filter_input').val().trim().toLowerCase();
             var pt_name = $(this).text().trim().toLowerCase();
             if(ft.length > 0 && pt_name.indexOf(ft) == -1){
                 display = false;

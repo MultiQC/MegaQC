@@ -128,13 +128,8 @@ $(function(){
     // Toggle plot favourite types
     $('#plot_type_favourite_toggle').click(function(e){
         e.preventDefault();
-        if($(this).hasClass('active')){
-            $(this).removeClass('active');
-            filter_report_plot_types();
-        } else {
-            $(this).addClass('active');
-            filter_report_plot_types();
-        }
+        $(this).toggleClass('active');
+        filter_report_plot_types();
     });
 
     // Function to filter the list of available plot types
