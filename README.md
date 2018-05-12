@@ -4,7 +4,7 @@
 
 [![Docker](https://img.shields.io/docker/automated/ewels/megaqc.svg?style=flat-square)](https://hub.docker.com/r/ewels/megaqc/)
 [![Build Status](https://travis-ci.org/ewels/MegaQC.svg?branch=master)](https://travis-ci.org/ewels/MegaQC)
-[![Gitter](https://img.shields.io/badge/gitter-%20join%20chat%20%E2%86%92-4fb99a.svg?style=flat-square)](https://gitter.im/ewels/MultiQC)
+[![Gitter](https://img.shields.io/badge/gitter-%20join%20chat%20%E2%86%92-4fb99a.svg?style=flat-square)](https://gitter.im/ewels/MegaQC)
 
 -----
 
@@ -100,7 +100,7 @@ of these, including example reports where possible.
 
 There is a chat room for the package hosted on Gitter where you can discuss
 things with the package author and other developers:
-https://gitter.im/ewels/MultiQC
+https://gitter.im/ewels/MegaQC
 
 If in doubt, feel free to get in touch with the main author directly:
 [@ewels](https://github.com/ewels) (phil.ewels@scilifelab.se)
@@ -110,8 +110,4 @@ If in doubt, feel free to get in touch with the main author directly:
 * Project lead and main author: [@ewels](https://github.com/ewels)
 * Primary backend developer and database guru: [@Galithil](https://github.com/Galithil)
 
-<!--
-Code contributions from:
-[@one](https://github.com/one),
-[@two](https://github.com/two),
--->
+See all contributors [on GitHub](https://github.com/ewels/MegaQC/graphs/contributors).
