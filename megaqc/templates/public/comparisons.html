@@ -68,14 +68,12 @@
                 <input type="checkbox" id="joinmarkers">
                 Join points?
             </label>
+            &nbsp;
             <label>
                 <select id="pointsize">
                     <option>1</option>
-                    <option selected="selected">2</option>
-                    <option>3</option>
-                    <option>4</option>
                     <option>5</option>
-                    <option>10</option>
+                    <option selected="selected">10</option>
                     <option>15</option>
                     <option>20</option>
                 </select>
@@ -162,6 +160,19 @@ $(function(){
         $('.comparison_fields li.active').find('.btn.btn-outline-primary.active').removeClass('btn-outline-primary').addClass('btn-outline-warning');
         $('.comparison_fields li.active').not(':has(.btn.active)').removeClass('active');
         $('.comparison_fields li:not(.active) .btn.btn-outline-light, .comparison_fields li:not(.active) .btn.btn-outline-warning').addClass('btn-outline-primary').removeClass('btn-outline-light btn-outline-warning');
+        // Disable the point size dropdown if we're using size
+        if($('.comparison_fields li.active button.active[data-fieldtype="size"]').length > 0){
+            $('#pointsize').prop('disabled', true);
+            $('#pointsize').parent().addClass('text-muted');
+        } else {
+            $('#pointsize').prop('disabled', false);
+            $('#pointsize').parent().removeClass('text-muted');
+        }
+        create_plot();
+    });
+
+    // Point size updated
+    $('#pointsize').change(function(e){
         create_plot();
     });
 
@@ -209,19 +220,16 @@ $(function(){
                 'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
                 'fields': field_ids,
                 'field_names': field_names,
-                'nbins': window.hist_nbins,
-                'ptype': window.dist_ptype
+                'pointsize': $('#pointsize').val(),
+                'joinmarkers': $('#joinmarkers').is(':checked')
             }),
             headers : { access_token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
                 if (data['success']){
-                    // Wait 300ms to ensure the page scroll has finished
-                    setTimeout(function(){
-                        $('#plotdiv').html(data['plot']);
-                        $('.loading-spinner').hide();
-                    }, 300);
+                    $('#plotdiv').html(data['plot']);
+                    $('.loading-spinner').hide();
                 }
                 // AJAX data['success'] was false
                 else {

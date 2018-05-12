@@ -917,7 +917,7 @@ def generate_trend_plot(plot_data):
     )
     return plot_div
 
-def generate_comparison_plot(plot_data, data_keys, field_names=None):
+def generate_comparison_plot(plot_data, data_keys, field_names=None, pointsize=10, joinmarkers=False):
     if field_names is None:
         field_names = data_keys
     ptitle = 'MegaQC Comparison Plot'
@@ -978,6 +978,8 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None):
                     norm_plot_size.append(2)
             markers['size'] = norm_plot_size
             ptitle += '<br><span style="font-size:0.7rem">Marker Size represents "{}"</span>'.format(field_names['size'])
+    else:
+        markers['size'] = pointsize
 
     plot_height = 600
     if all([x == None for x in plot_z]):

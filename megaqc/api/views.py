@@ -319,8 +319,10 @@ def get_comparison_plot(user, *args, **kwargs):
     my_filters = get_filter_from_data(data)
     data_keys = data.get("fields", {})
     field_names = data.get("field_names", {})
+    pointsize = data.get("pointsize", 10)
+    joinmarkers = data.get("joinmarkers", False)
     plot_data = get_sample_fields_values(data_keys.values(), my_filters, num_fieldids=True)
-    html = generate_comparison_plot(plot_data, data_keys, field_names)
+    html = generate_comparison_plot(plot_data, data_keys, field_names, pointsize, joinmarkers)
     return jsonify({
         'success': True,
         'plot': html
