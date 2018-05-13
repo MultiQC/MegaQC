@@ -48,7 +48,7 @@ class ProdConfig(Config):
         super(ProdConfig, self).__init__()
         # Log to the terminal
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
-        print(" * Database path: {}".format(self.DB_PATH))
+        print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI))
 
 
 class DevConfig(Config):
