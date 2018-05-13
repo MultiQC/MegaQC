@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1>Favourite Plots</h1>
+<h1 class="mt-4 mb-4">
+    Favourite Plots
+    <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
+    <span class="loading-spinner" style="display:none;">Loading...</span>
+</h1>
 
 <p>This page shows you the MegaQC plots that you've saved in the past. Click <code>Plot</code>
     to view the plot and <code>Delete</code> to remove it.</p>
@@ -23,22 +27,101 @@
         </tr>
         {% endif %}
         {% for fav in favourite_plots %}
-            <tr>
+            <tr id="plot-favourite-{{ fav['plot_favourite_id'] }}">
                 <td>{{ fav['title'] }}</td>
                 <td>{{ fav['description'] }}</td>
                 <td>{{ fav['plot_type'] }}</td>
                 <td>{{ fav['created_at'].strftime('%Y-%m-%d %H:%I') }}</td>
                 <td>
-                    <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#create_filter_modal" data-favouriteid="{{ fav['plot_favourite_id'] }}"><i class="fa fa-bar-chart" aria-hidden="true"></i> Plot</button>
-                    <button class="btn btn-sm btn-outline-danger" data-favouriteid="{{ fav['plot_favourite_id'] }}"><i class="fa fa-trash" aria-hidden="true"></i>  Delete</button>
+                    <button class="btn btn-sm btn-outline-primary plot-favourite-btn" data-favouriteid="{{ fav['plot_favourite_id'] }}"><i class="fa fa-bar-chart" aria-hidden="true"></i> Plot</button>
+                    <button class="btn btn-sm btn-outline-danger delete-plot-favourite-btn" data-favouriteid="{{ fav['plot_favourite_id'] }}"><i class="fa fa-trash" aria-hidden="true"></i>  Delete</button>
                 </td>
             </tr>
         {% endfor %}
 </table>
 
+<div class="card megaqc_plot" id="favourite_plot">
+    <h4 class="card-header">
+        <span id="plot-name">My Favourite Plot</span>
+    </h4>
+    <div class="card-body">
+        <div id="favplot_plotdiv">
+            <p class="text-secondary">Please choose a favourite to plot</p>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 {% block js %}
 <script type="text/javascript">
+$(function(){
 
+    // Delete a plot favourite
+    $('.delete-plot-favourite-btn').click(function(e){
+        fav_id = $(this).data('favouriteid');
+        window.ajax_update = $.ajax({
+            url: '/api/delete_plot_favourite',
+            type: 'post',
+            data: JSON.stringify({'favourite_id': fav_id }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    toastr.success('Plot favourite deleted');
+                    $('#plot-favourite-'+fav_id).slideUp();
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error whilst deleting this plot.');
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error deleting this plot.');
+            }
+        });
+    });
+
+    // Plot a favourite plot
+    $('.plot-favourite-btn').click(function(e){
+
+        // Show the loading spinners
+        $('.loading-spinner').show();
+        $('#favplot_plotdiv').html('<p>' +
+            '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
+            '<span class="loading-spinner">Loading...</span>' +
+        '</p>');
+
+        // Get the plot HTML
+        window.ajax_update = $.ajax({
+            url: '/api/get_favourite_plot',
+            type: 'post',
+            data: JSON.stringify({'favourite_id': $(this).data('favouriteid') }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    $('#plot-name').text(data['title']);
+                    $('#favplot_plotdiv').html(data['plot_html']);
+                    $('.loading-spinner').hide();
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error whilst generating this plot.');
+                    $('#favplot_plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                    $('.loading-spinner').hide();
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error retrieving this plot.');
+                $('#favplot_plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                $('.loading-spinner').hide();
+            }
+        });
+    });
+});
 </script>
 {% endblock %}

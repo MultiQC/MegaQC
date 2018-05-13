@@ -746,17 +746,16 @@ def update_fav_report_plot_type(method, user, plot_info):
 def get_plot_favourites(user):
     """ Return a list of the plot favourites for the given user """
     favourite_list_query = db.session \
-        .query(PlotFavourite.user_id) \
-        .filter_by(user_id=user.user_id) \
-        .order_by(PlotFavourite.created_at) \
-        .add_columns(
+        .query(
             PlotFavourite.plot_favourite_id,
+            PlotFavourite.user_id,
             PlotFavourite.title,
             PlotFavourite.description,
             PlotFavourite.plot_type,
             PlotFavourite.data,
             PlotFavourite.created_at
-        )
+        ).filter_by(user_id=user.user_id) \
+        .order_by(PlotFavourite.created_at)
     ret_data = []
     for row in favourite_list_query.all():
         ret_data.append(dict(
@@ -771,8 +770,43 @@ def get_plot_favourites(user):
 
 def get_favourite_plot_data(user, favourite_id):
     """ Fetch a plot favourite by ID and return the HTML to generate the plot """
-    # TODO: This function hasn't yet been written
-    return
+    # Get the database row for this favourite
+    fp_row = db.session \
+        .query(
+            PlotFavourite.plot_favourite_id,
+            PlotFavourite.user_id,
+            PlotFavourite.title,
+            PlotFavourite.description,
+            PlotFavourite.plot_type,
+            PlotFavourite.data,
+            PlotFavourite.created_at
+        ).filter_by(user_id=user.user_id, plot_favourite_id=favourite_id) \
+        .first()
+    # Prep variables
+    plot_type = fp_row[4]
+    api_data = json.loads(fp_row[5])
+    plot_html = '<p class="text-error">Could not find favourite plot</p>'
+    # TODO: Report plot
+    # Distribution plot
+    if plot_type == 'distribution':
+        my_filters = get_filter_from_data(api_data)
+        data_keys = api_data.get("fields", {})
+        nbins = api_data.get("nbins", 20)
+        ptype = api_data.get("ptype", 20)
+        plot_data = get_sample_fields_values(data_keys, my_filters)
+        plot_html = generate_distribution_plot(plot_data, nbins, ptype)
+    # TODO: Trend plot
+    # TODO: Comparison plot
+    else:
+        plot_html = '<p class="text-error">Plot type <code>{}</code> not recognised.</p>'.format(plot_type)
+    return {
+        'user_id': fp_row[1],
+        'title': fp_row[2],
+        'description': fp_row[3],
+        'plot_type': fp_row[4],
+        'created_at': fp_row[6],
+        'plot_html': plot_html
+    }
 
 def save_plot_favourite_data(user, plot_type, data, title, description=None):
     """ Save a new plot favourite to the database """

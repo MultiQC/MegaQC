@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify, abort
 
 from megaqc.extensions import db
 from megaqc.user.models import User
-from megaqc.model.models import PlotData, Report, SampleFilter
+from megaqc.model.models import PlotData, Report, SampleFilter, PlotFavourite
 from megaqc.api.utils import handle_report_data, generate_report_plot, generate_distribution_plot, \
                             generate_trend_plot, generate_comparison_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_report_plot_type, \
@@ -381,11 +381,12 @@ def delete_report(user, *args, **kwargs):
 
 @api_blueprint.route('/api/get_favourite_plot', methods=['POST'])
 @check_user
-def get_favourite_plot():
-    # TODO: This hasn't yet been written
-    return jsonify({
-        'success': True
-    })
+def get_favourite_plot(user, *args, **kwargs):
+    data = request.get_json()
+    favourite_id = data.get("favourite_id")
+    plot_results = get_favourite_plot_data(user, favourite_id)
+    plot_results['success'] = True
+    return jsonify(plot_results)
 
 @api_blueprint.route('/api/save_plot_favourite', methods=['POST'])
 @check_user
@@ -398,6 +399,17 @@ def save_plot_favourite(user, *args, **kwargs):
     pf_id = save_plot_favourite_data(user, type, request_data, title, description)
     return jsonify({
         'favourite_id': pf_id,
+        'success': True
+    })
+
+@api_blueprint.route('/api/delete_plot_favourite', methods=['POST'])
+@check_user
+def delete_plot_favourite(user, *args, **kwargs):
+    data = request.get_json()
+    favourite_id = data.get("favourite_id")
+    PlotFavourite.query.filter_by(user_id=user.user_id, plot_favourite_id=favourite_id).delete()
+    db.session.commit()
+    return jsonify({
         'success': True
     })
 
