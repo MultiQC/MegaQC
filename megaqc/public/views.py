@@ -10,7 +10,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples, get_reports_data, get_user_filters, aggregate_new_parameters, get_report_metadata_fields, get_queued_uploads
+from megaqc.api.utils import get_samples, get_reports_data, get_user_filters, aggregate_new_parameters, get_report_metadata_fields, get_queued_uploads, get_plot_favourites
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -119,6 +119,16 @@ def queued_uploads():
         user_token = current_user.api_token,
         uploads = get_queued_uploads()
         )
+
+@blueprint.route('/plot_favourites/')
+@login_required
+def plot_favourites():
+    """View and edit saved plots."""
+    return render_template(
+        'users/plot_favourites.html',
+        favourite_plots = get_plot_favourites(User),
+        user_token = current_user.api_token,
+    )
 
 @blueprint.route('/edit_filters/')
 @login_required

@@ -50,7 +50,13 @@
 </div>
 
 <div class="card megaqc_plot" id="distribution_plot">
-    <h4 class="card-header">Distributions Plot</h4>
+    <h4 class="card-header">
+        <button id="save-plot-favourite" class="float-right btn btn-sm btn-outline-danger" disabled>
+            <i class="fa fa-heart" aria-hidden="true"></i>
+            Save plot favourite
+        </button>
+        <span id="plot-name">Distributions Plot</span>
+    </h4>
     <div class="card-body">
         <div class="plot_header_config">
             <div class="dist_plot_type">
@@ -164,6 +170,7 @@ $(function(){
             '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
             '<span class="loading-spinner">Loading...</span>' +
         '</p>');
+        $('#save-plot-favourite').prop('disabled', true);
         // Get the active field to plot
         field_ids = [];
         field_titles = [];
@@ -172,8 +179,9 @@ $(function(){
             field_titles.push($(this).text().trim());
         });
         if(field_ids.length == 0){
-            $('#distribution_plot .card-header').text('Distributions Plot');
+            $('#plot-name').text('Distributions Plot');
             $('#dist_plotdiv').html('<p class="text-secondary">Please choose fields to plot</p>');
+            $('#save-plot-favourite').prop('disabled', true);
             $('.loading-spinner').hide();
             return;
         }
@@ -181,7 +189,7 @@ $(function(){
         if(field_titles.length < 3){
             plot_header = field_titles.join(', ');
         }
-        $('#distribution_plot .card-header').text(plot_header);
+        $('#plot-name').text(plot_header);
         // Cancel any running update_filters ajax call
         if(window.ajax_update !== false){
             window.ajax_update.abort();
@@ -205,6 +213,7 @@ $(function(){
                     setTimeout(function(){
                         $('#dist_plotdiv').html(data['plot']);
                         $('.loading-spinner').hide();
+                        $('#save-plot-favourite').prop('disabled', false);
                     }, 300);
                 }
                 // AJAX data['success'] was false
@@ -212,16 +221,65 @@ $(function(){
                     console.log(data);
                     toastr.error('There was an error whilst generating this plot.');
                     $('#dist_plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                    $('#save-plot-favourite').prop('disabled', true);
                     $('.loading-spinner').hide();
                 }
             },
             error: function(data){
                 toastr.error('There was an error retrieving this plot.');
                 $('#dist_plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
+                $('#save-plot-favourite').prop('disabled', true);
                 $('.loading-spinner').hide();
             }
         });
     }
+
+    // Save a plot as a favourite
+    $('#save-plot-favourite').click(function(e){
+        e.preventDefault();
+
+        // Get the plot fields
+        field_ids = [];
+        $('.distribution-field-btn.active').each(function(e){
+            field_ids.push($(this).data('fieldid'));
+        });
+        // Get the title and description
+        plot_title = prompt("Please enter a title for this plot");
+        plot_description = prompt("Please enter a description for this plot");
+        // Send the plot details to save
+        window.ajax_update = $.ajax({
+            url: '/api/save_plot_favourite',
+            type: 'post',
+            data: JSON.stringify({
+                'type': 'distribution',
+                'request_data': {
+                    'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
+                    'fields': field_ids,
+                    'nbins': window.hist_nbins,
+                    'ptype': window.dist_ptype
+                },
+                'title': plot_title,
+                'description': plot_description
+            }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    toastr.success('Plot favourite saved!');
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error whilst saving this plot.');
+                }
+            },
+            error: function(data){
+                console.log(data);
+                toastr.error('There was an error saving this plot.');
+            }
+        });
+    });
 });
 </script>
 {% endblock %}

@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Favourite Plots</h1>
+
+<p>This page shows you the MegaQC plots that you've saved in the past. Click <code>Plot</code>
+    to view the plot and <code>Delete</code> to remove it.</p>
+<p>Plot favourites can be used by themselves or bunched together to make dashboards.</p>
+
+<table class="table table-striped" id="filter_table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Plot Type</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+        {% if favourite_plots|length == 0 %}
+        <tr>
+            <td colspan="4" class="text-muted text-center">
+                No favourites found..
+            </td>
+        </tr>
+        {% endif %}
+        {% for fav in favourite_plots %}
+            <tr>
+                <td>{{ fav['title'] }}</td>
+                <td>{{ fav['description'] }}</td>
+                <td>{{ fav['plot_type'] }}</td>
+                <td>{{ fav['created_at'].strftime('%Y-%m-%d %H:%I') }}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#create_filter_modal" data-favouriteid="{{ fav['plot_favourite_id'] }}"><i class="fa fa-bar-chart" aria-hidden="true"></i> Plot</button>
+                    <button class="btn btn-sm btn-outline-danger" data-favouriteid="{{ fav['plot_favourite_id'] }}"><i class="fa fa-trash" aria-hidden="true"></i>  Delete</button>
+                </td>
+            </tr>
+        {% endfor %}
+</table>
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}

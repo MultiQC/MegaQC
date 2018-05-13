@@ -727,7 +727,7 @@ def update_fav_sample_field(method, user, sample_field_id):
         raise Exception("No such method")
     db.session.commit()
 
-def update_fav_plot(method, user, plot_info):
+def update_fav_report_plot_type(method, user, plot_info):
 
     existing_plot_config_q = db.session.query(PlotConfig).filter(PlotConfig.config_name==plot_info[0])
     if len(plot_info)==2:
@@ -742,6 +742,51 @@ def update_fav_plot(method, user, plot_info):
     else:
         raise Exception("No such method")
     db.session.commit()
+
+def get_plot_favourites(user):
+    """ Return a list of the plot favourites for the given user """
+    favourite_list_query = db.session \
+        .query(PlotFavourite.user_id) \
+        .filter_by(user_id=user.user_id) \
+        .order_by(PlotFavourite.created_at) \
+        .add_columns(
+            PlotFavourite.plot_favourite_id,
+            PlotFavourite.title,
+            PlotFavourite.description,
+            PlotFavourite.plot_type,
+            PlotFavourite.data,
+            PlotFavourite.created_at
+        )
+    ret_data = []
+    for row in favourite_list_query.all():
+        ret_data.append(dict(
+            plot_favourite_id = row.plot_favourite_id,
+            title = row.title,
+            description = row.description,
+            plot_type = row.plot_type,
+            data = json.loads(row.data),
+            created_at = row.created_at
+        ))
+    return ret_data
+
+def get_favourite_plot_data(user, favourite_id):
+    """ Fetch a plot favourite by ID and return the HTML to generate the plot """
+    # TODO: This function hasn't yet been written
+    return
+
+def save_plot_favourite_data(user, plot_type, data, title, description=None):
+    """ Save a new plot favourite to the database """
+    pf_id = PlotFavourite.get_next_id()
+    new_plot_favourite = PlotFavourite(
+        plot_favourite_id = pf_id,
+        user_id = user.user_id,
+        title = title,
+        description = description,
+        plot_type = plot_type,
+        data = json.dumps(data),
+    )
+    new_plot_favourite.save()
+    return pf_id
 
 def get_sample_fields_values(keys, filters=None, num_fieldids=False):
     if not filters:

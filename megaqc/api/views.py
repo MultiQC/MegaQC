@@ -7,9 +7,10 @@ from megaqc.user.models import User
 from megaqc.model.models import PlotData, Report, SampleFilter
 from megaqc.api.utils import handle_report_data, generate_report_plot, generate_distribution_plot, \
                             generate_trend_plot, generate_comparison_plot, get_samples, get_report_metadata_fields, \
-                            get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_plot, \
+                            get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_report_plot_type, \
                             get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data, \
-                            get_reports_data, delete_report_data, store_report_data, get_queued_uploads
+                            get_reports_data, delete_report_data, store_report_data, get_queued_uploads, \
+                            get_favourite_plot_data, save_plot_favourite_data
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -265,7 +266,7 @@ def update_favourite_plot(user, *args, **kwargs):
     method = data.get('method', None)
     if plot_info and method:
         try:
-            update_fav_plot(method, user, plot_info)
+            update_fav_report_plot_type(method, user, plot_info)
         except Exception as e:
             return jsonify({
                 'success':False,
@@ -377,6 +378,28 @@ def delete_report(user, *args, **kwargs):
             'success': True
             })
 
+
+@api_blueprint.route('/api/get_favourite_plot', methods=['POST'])
+@check_user
+def get_favourite_plot():
+    # TODO: This hasn't yet been written
+    return jsonify({
+        'success': True
+    })
+
+@api_blueprint.route('/api/save_plot_favourite', methods=['POST'])
+@check_user
+def save_plot_favourite(user, *args, **kwargs):
+    data = request.get_json()
+    type = data.get("type")
+    request_data = data.get("request_data")
+    title = data.get("title")
+    description = data.get("description")
+    pf_id = save_plot_favourite_data(user, type, request_data, title, description)
+    return jsonify({
+        'favourite_id': pf_id,
+        'success': True
+    })
 
 @api_blueprint.route('/api/count_queued_uploads', methods=['POST'])
 def count_queued_uploads():

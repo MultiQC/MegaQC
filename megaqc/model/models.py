@@ -56,7 +56,7 @@ class ReportMeta(db.Model, CRUDMixin):
     def get_next_id():
         return (db.session.query(func.max(ReportMeta.report_meta_id)).first()[0] or 0) + 1
 
-class  PlotConfig(db.Model, CRUDMixin):
+class PlotConfig(db.Model, CRUDMixin):
     __tablename__ =  'plot_config'
     config_id = Column(Integer, primary_key=True)
     config_type = Column(String(80),  nullable=False)
@@ -94,6 +94,20 @@ class PlotCategory(db.Model, CRUDMixin):
     @staticmethod
     def get_next_id():
         return (db.session.query(func.max(PlotCategory.plot_category_id)).first()[0] or 0) + 1
+
+class PlotFavourite(db.Model, CRUDMixin):
+    __tablename__ = "plot_favourite"
+    plot_favourite_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+    title = Column(String(2048), nullable=False)
+    description = Column(String(2048), nullable=True)
+    plot_type = Column(String(128), nullable=False)
+    data = Column(String(2048), nullable=False)
+    created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
+
+    @staticmethod
+    def get_next_id():
+        return (db.session.query(func.max(PlotFavourite.plot_favourite_id)).first()[0] or 0) + 1
 
 class SampleDataType(db.Model, CRUDMixin):
     __tablename__ = "sample_data_type"
@@ -151,4 +165,3 @@ class Upload(db.Model, CRUDMixin):
     @staticmethod
     def get_next_id():
         return (db.session.query(func.max(Upload.upload_id)).first()[0] or 0) + 1
-
