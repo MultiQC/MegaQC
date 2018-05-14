@@ -1,0 +1,31 @@
+{% if raw %}
+   {% extends 'layout_blank.html' %}
+{% else %}
+   {% extends 'layout.html' %}
+{% endif %}
+
+{% block content %}
+
+{% if raw %}
+
+{{ plot_data['plot_html']|safe }}
+
+{% else %}
+<h1 class="mt-4 mb-4">{{ plot_data['title'] }}</h1>
+<p class ="lead">{{ plot_data['description'] }}</p>
+
+<div class="card megaqc_plot" id="favourite_plot">
+    <h4 class="card-header">
+        <span id="plot-name">{{ plot_data['title'] }}</span>
+        <a href="{{ request.base_url }}/raw" id="plot-url" style="display: inline;">{{ request.base_url }}/raw</a>
+    </h4>
+    <div class="card-body">
+        <div id="favplot_plotdiv">
+            {{ plot_data['plot_html']|safe }}
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

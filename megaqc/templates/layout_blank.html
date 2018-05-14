@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}">
+
+  <title>{% block page_title %}MegaQC{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{% endblock %}">
+  <meta name="author" content="{% block meta_author %}{% endblock %}">
+
+  <!-- CSS imports -->
+  {% block css %}{% endblock %}
+
+</head>
+
+<body>
+{% block body %}
+    {% block content %}{% endblock %}
+{% endblock %}
+
+{% block js %}{% endblock %}
+
+</body>
+</html>

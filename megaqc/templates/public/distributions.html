@@ -51,7 +51,7 @@
 
 <div class="card megaqc_plot" id="distribution_plot">
     <h4 class="card-header">
-        <button id="save-plot-favourite" class="float-right btn btn-sm btn-outline-danger" disabled>
+        <button id="save-plot-favourite" type="button" disabled class="float-right btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#save_plot_favourite_modal">
             <i class="fa fa-heart" aria-hidden="true"></i>
             Save plot favourite
         </button>
@@ -80,6 +80,9 @@
 
 <!-- Create New Filter Set -->
 {% include "public/filter_samples_modal.html" %}
+
+<!-- Modal for saving a favourite plot -->
+{% include "public/save_plot_favourite_modal.html" %}
 
 {% endblock %}
 {% block js %}
@@ -235,17 +238,22 @@ $(function(){
     }
 
     // Save a plot as a favourite
-    $('#save-plot-favourite').click(function(e){
+    $('#save_plot_favourite_form').submit(function(e){
         e.preventDefault();
+
+        // Check that we have a title
+        if(!$('#plot_favourite_title').val().trim()){
+            $('#plot_favourite_title_feedback').show();
+            $('#plot_favourite_title').addClass('is-invalid');
+            return;
+        }
 
         // Get the plot fields
         field_ids = [];
         $('.distribution-field-btn.active').each(function(e){
             field_ids.push($(this).data('fieldid'));
         });
-        // Get the title and description
-        plot_title = prompt("Please enter a title for this plot");
-        plot_description = prompt("Please enter a description for this plot");
+
         // Send the plot details to save
         window.ajax_update = $.ajax({
             url: '/api/save_plot_favourite',
@@ -258,24 +266,31 @@ $(function(){
                     'nbins': window.hist_nbins,
                     'ptype': window.dist_ptype
                 },
-                'title': plot_title,
-                'description': plot_description
+                'title': $('#plot_favourite_title').val(),
+                'description': $('#plot_favourite_description').val()
             }),
             headers : { access_token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
                 if (data['success']){
-                    toastr.success('Plot favourite saved!');
+                    $('#save_plot_favourite_modal').modal('hide');
+                    toastr.success(
+                        'Plot favourite saved!<br>Click to view all plot favourites.',
+                        null,
+                        { onclick: function() { window.location.href = "/plot_favourites/"; } }
+                    );
                 }
                 // AJAX data['success'] was false
                 else {
                     console.log(data);
+                    $('#save_plot_favourite_modal').modal('hide');
                     toastr.error('There was an error whilst saving this plot.');
                 }
             },
             error: function(data){
                 console.log(data);
+                $('#save_plot_favourite_modal').modal('hide');
                 toastr.error('There was an error saving this plot.');
             }
         });

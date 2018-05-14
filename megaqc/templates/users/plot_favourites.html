@@ -31,7 +31,7 @@
                 <td>{{ fav['title'] }}</td>
                 <td>{{ fav['description'] }}</td>
                 <td>{{ fav['plot_type'] }}</td>
-                <td>{{ fav['created_at'].strftime('%Y-%m-%d %H:%I') }}</td>
+                <td>{{ fav['created_at'].strftime('%Y-%m-%d %H:%M') }}</td>
                 <td>
                     <button class="btn btn-sm btn-outline-primary plot-favourite-btn" data-favouriteid="{{ fav['plot_favourite_id'] }}"><i class="fa fa-bar-chart" aria-hidden="true"></i> Plot</button>
                     <button class="btn btn-sm btn-outline-danger delete-plot-favourite-btn" data-favouriteid="{{ fav['plot_favourite_id'] }}"><i class="fa fa-trash" aria-hidden="true"></i>  Delete</button>
@@ -43,6 +43,7 @@
 <div class="card megaqc_plot" id="favourite_plot">
     <h4 class="card-header">
         <span id="plot-name">My Favourite Plot</span>
+        <a href="" id="plot-url">Plot URL</a>
     </h4>
     <div class="card-body">
         <div id="favplot_plotdiv">
@@ -93,6 +94,8 @@ $(function(){
             '<span class="loading-spinner">Loading...</span>' +
         '</p>');
 
+        var fav_url = location.protocol+'//'+location.hostname+(location.port?":"+location.port:"")+'/plot_favourite/'+$(this).data('favouriteid');
+
         // Get the plot HTML
         window.ajax_update = $.ajax({
             url: '/api/get_favourite_plot',
@@ -104,6 +107,7 @@ $(function(){
             success: function(data){
                 if (data['success']){
                     $('#plot-name').text(data['title']);
+                    $('#plot-url').text(fav_url).attr('href', fav_url).show();
                     $('#favplot_plotdiv').html(data['plot_html']);
                     $('.loading-spinner').hide();
                 }

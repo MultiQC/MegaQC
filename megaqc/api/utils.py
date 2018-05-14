@@ -755,7 +755,7 @@ def get_plot_favourites(user):
             PlotFavourite.data,
             PlotFavourite.created_at
         ).filter_by(user_id=user.user_id) \
-        .order_by(PlotFavourite.created_at)
+        .order_by(PlotFavourite.created_at.desc())
     ret_data = []
     for row in favourite_list_query.all():
         ret_data.append(dict(
