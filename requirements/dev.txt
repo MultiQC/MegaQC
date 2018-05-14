@@ -9,7 +9,7 @@ Flask-SQLAlchemy==2.2
 Flask-WTF==0.14.2
 Flask==1.0.2
 itsdangerous>=0.24
-Jinja2==2.9.5
+Jinja2>=2.9.5
 numpy==1.14.3
 passlib==1.7.1
 plotly==2.0.15
