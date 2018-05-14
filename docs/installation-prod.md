@@ -21,10 +21,14 @@ By default, MegaQC runs in development mode with a sqlite flat file database (th
 it as simple as possible to get up and running for a quick test / demo). To tell MegaQC to use
 a production server, you need to set the `MEGAQC_PRODUCTION` environment variable to true.
 
-Add the following line to your `.bashrc` file:
+If you are running MegaQC behind a custom domain name (recommended, it's nicer than just having
+a difficult to remember IP address), then you need to set `SERVER_NAME` to the URL of the website.
+
+Add the following lines to your `.bashrc` file:
 
 ```bash
 export MEGAQC_PRODUCTION=1
+export SERVER_NAME='http://megaqc.yourdomain.com'
 ```
 
 ## 3. Set up the database
@@ -63,10 +67,10 @@ Then install the [Python MySQL connector](https://dev.mysql.com/downloads/connec
 (alternatively with the [PyPI package](https://pypi.python.org/pypi/mysql-connector-python/2.0.4)).
 
 Now, create a custom MegaQC configuration file somewhere and set the environment variable
-`MEGAQC_EXTRA_CONFIG` to point to it. For example, in `~/.bashrc`:
+`MEGAQC_CONFIG` to point to it. For example, in `~/.bashrc`:
 
 ```bash
-export MEGAQC_EXTRA_CONFIG="/path/to/megaqc_config.yaml"
+export MEGAQC_CONFIG="/path/to/megaqc_config.yaml"
 ```
 
 Then in this file, set the following configuration key pair:

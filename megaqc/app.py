@@ -17,6 +17,8 @@ def create_app(config_object=TestConfig()):
     """
     app = Flask(__name__.split('.')[0])
     app.config.from_object(config_object)
+    if app.config['SERVER_NAME'] is not None:
+        print(" * Server name: {}".format(app.config['SERVER_NAME']))
     register_extensions(app)
     register_blueprints(app)
     register_errorhandlers(app)

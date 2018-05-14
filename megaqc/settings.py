@@ -19,13 +19,18 @@ class Config(object):
     JOBS = [{'id': 'job1','func': upload_reports_job,'trigger': 'interval','seconds': 30}]
     SCHEDULER_API_ENABLED = True
     EXTRA_CONFIG = os.environ.get("MEGAQC_CONFIG", None)
+    SERVER_NAME = None
 
     def __init__(self):
         if self.EXTRA_CONFIG:
-            self.extra_conf = yaml.load(self.EXTRA_CONFIG)
-            for key in self.extra_conf:
-                if key in self.__dict__:
-                    setattr(self, self.extra_conf[key])
+            with open(self.EXTRA_CONFIG) as f:
+                self.extra_conf = yaml.load(f)
+                for key in self.extra_conf:
+                    if key in self.__dict__:
+                        setattr(self, self.extra_conf[key])
+                        print("Setting {} to {}".format(key, self.extra_conf[key]))
+                    else:
+                        print("Key '{}' not in '{}'".format(key, self.__dict__))
             if self.SQLALCHEMY_DBMS == "sqlite":
                 self.SQLALCHEMY_DATABASE_URI = '{0}://{1}'.format(self.SQLALCHEMY_DBMS, self.DB_PATH)
             else:
