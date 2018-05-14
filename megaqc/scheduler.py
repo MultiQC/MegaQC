@@ -1,16 +1,19 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from builtins import str
 
 from flask import current_app
+from flask_apscheduler import APScheduler
 from megaqc.model.models import Upload
 from megaqc.user.models import User
 from megaqc.extensions import db
 from megaqc.api.utils import handle_report_data
-from flask_apscheduler import APScheduler
-from io import BufferedReader
 
-import json
 import datetime
-import os
 import gzip
+import json
+import io
+import os
 
 scheduler = APScheduler()
 
@@ -28,18 +31,19 @@ def upload_reports_job():
             user = db.session.query(User).filter(User.user_id == row.user_id).one()
             # Check if we have a gzipped file
             gzipped = False
-            with open(row.path, 'r') as fh:
+            with open(row.path, 'rb') as fh:
                 # Check if we have a gzipped file
                 file_start = fh.read(3)
-                if file_start == "\x1f\x8b\x08":
+                if file_start == b'\x1f\x8b\x08':
                     gzipped = True
             try:
                 if gzipped:
-                    with BufferedReader(gzip.open(row.path, 'rb')) as fh:
-                        data = json.load(fh)
+                    with io.BufferedReader(gzip.open(row.path, 'rb')) as fh:
+                        raw_data = fh.read().decode('utf-8')
                 else:
-                    with open(row.path, 'r') as fh:
-                        data = json.load(fh)
+                    with io.open(row.path, 'rb') as fh:
+                        raw_data = fh.read().decode('utf-8')
+                data = json.loads(raw_data)
                 # Now save the parsed JSON data to the database
                 ret = handle_report_data(user, data)
             except Exception as e:

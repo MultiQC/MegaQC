@@ -3,6 +3,8 @@
 This file contains the app module, with the app factory function."""
 
 from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
 from flask import Flask, jsonify, render_template, request
 from megaqc.scheduler import init_scheduler
 

@@ -58,6 +58,8 @@ class PasswordChangeForm(Form):
 
 class RegisterForm(Form):
     """Register form."""
+    class Meta:
+        csrf = False # disable csrf protection on registration
 
     username = StringField('Username',
                            validators=[DataRequired(), Length(min=3, max=25)])

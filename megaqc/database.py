@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
+from past.builtins import basestring
+from builtins import object
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -22,7 +24,7 @@ class CRUDMixin(object):
 
     def update(self, commit=True, **kwargs):
         """Update specific fields of a record."""
-        for attr, value in kwargs.items():
+        for attr, value in list(kwargs.items()):
             setattr(self, attr, value)
         return commit and self.save() or self
 

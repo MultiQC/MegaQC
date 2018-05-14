@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
+from future import standard_library
+standard_library.install_aliases()
+from builtins import bytes
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for, abort, json, Request
 from flask_login import login_required, login_user, logout_user, current_user
 
@@ -14,7 +18,7 @@ from megaqc.api.utils import get_samples, get_reports_data, get_user_filters, ag
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
-from urllib import unquote_plus
+from urllib.parse import unquote_plus
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 
@@ -61,7 +65,7 @@ def logout():
 @blueprint.route('/register/', methods=['GET', 'POST'])
 def register():
     """Register new user."""
-    form = RegisterForm(request.form, csrf_enabled=False)
+    form = RegisterForm(request.form)
     if form.validate_on_submit():
         user_id = (db.session.query(func.max(User.user_id)).scalar() or 0)+1
         User.create(

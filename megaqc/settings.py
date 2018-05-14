@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Application configuration."""
+from __future__ import print_function
+from builtins import object
 import os
 from megaqc.scheduler import upload_reports_job
 import yaml
@@ -69,6 +71,7 @@ class DevConfig(Config):
     DEBUG_TB_ENABLED = True
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     WTF_CSRF_ENABLED = False  # Allows form testing
+    SQLALCHEMY_RECORD_QUERIES = True
 
     def __init__(self):
         super(DevConfig, self).__init__()
