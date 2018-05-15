@@ -256,3 +256,29 @@ footer p a {
 #favourite_plot .favourite-plot-url #plot-url {
     margin-left: auto;
 }
+
+
+#dashboard_build {
+    min-height: 320px;
+}
+#dashboard .grid-stack-item-content {
+    background-color: #ededed;
+    text-align: center;
+    padding: 1rem;
+    cursor:move;
+}
+#dashboard .grid-stack-item-content .fa {
+    font-size: 32px;
+}
+#delete-area {
+    text-align: center;
+    background-color: #f2cdcd;
+    min-width: 100px;
+    min-height: 100px;
+    border: 3px dashed #ed5050;
+    border-radius: 5px;
+    padding: 1rem;
+}
+#delete-area .fa {
+    font-size: 48px;
+}

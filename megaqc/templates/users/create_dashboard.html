@@ -1,0 +1,112 @@
+
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 class="mt-4 mb-4">
+    Create Dashboard
+    <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
+    <span class="loading-spinner" style="display:none;">Loading...</span>
+</h1>
+
+<div class="row">
+    <div class="col-4">
+        <select id="add-plot-select" class="custom-select">
+        {% for fav in favourite_plots %}
+            <option value="plot-favourite-{{ fav['plot_favourite_id'] }}">
+                {{ fav['plot_type'] | replace('_', ' ') | title }}: {{ fav['title'] }}
+            </option>
+        {% endfor %}
+        </select>
+        <br>
+        <button id="add-plot-btn" class="btn btn-primary mt-2">Add Plot</button>
+    </div>
+    <div class="col-4">
+        <div id="delete-area" class="alert-danger">
+            <i class="fa fa-trash" aria-hidden="true"></i><br>
+            Drag here to delete
+        </div>
+    </div>
+    <div class="col-4">
+        <button id="save-plot-btn" class="btn btn-primary">Preview Dashboard</button>
+    </div>
+</div>
+
+<div class="card mt-3" id="dashboard">
+    <h4 class="card-header">New Dashboard</h4>
+    <div class="card-body">
+        <div id="dashboard_build">
+            <div class="grid-stack"></div>
+        </div>
+        <div id="dashboard_preview" style="display:none;">
+            Preview here
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/gridstack.min.css">
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="/static/js/libs/lodash.min.js"></script>
+<script type="text/javascript" src="/static/js/libs/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/libs/gridstack.min.js"></script>
+<script type="text/javascript" src="/static/js/libs/gridstack.jQueryUI.min.js"></script>
+<script type="text/javascript">
+$(function () {
+    // Initialise grid-stack
+    $('.grid-stack').gridstack({
+        cellHeight: 80,
+        verticalMargin: 10,
+        alwaysShowResizeHandle: true,
+        resizable: {
+            handles: 'se, sw'
+        }
+    });
+
+    // Add a new plot
+    $('#add-plot-btn').click(function(){
+        var dash_grid = $('.grid-stack').data('gridstack');
+        dash_grid.addWidget(
+            $('<div class="grid-stack-item" data-type="plot" data-plot_id="'+$('#add-plot-select').val()+'">'+
+                '<div class="grid-stack-item-content">'+
+                    '<i class="fa fa-bar-chart" aria-hidden="true"></i><br>' +
+                    $('#add-plot-select option:selected').text() +
+                '</div>'+
+            '</div>'),
+            0, 0, 2, 2
+        );
+    });
+
+    // Save dashboard
+    $('#save-plot-btn').click(function(){
+        var dash_grid = $('.grid-stack').data('gridstack');
+        serializedData = _.map($('.grid-stack > .grid-stack-item:visible'), function (el) {
+            el = $(el);
+            var node = el.data('_gridstack_node');
+            console.log(el.data('type'));
+            return {
+                type: el.data('type'),
+                plot_id: el.data('plot_id'),
+                x: node.x,
+                y: node.y,
+                width: node.width,
+                height: node.height
+            };
+        });
+        $('#dashboard_preview').html('<pre><code>'+JSON.stringify(serializedData, null, '    ')+'</code></pre>');
+        $('#dashboard_build').fadeToggle();
+        $('#dashboard_preview').fadeToggle();
+    });
+
+    // Add an area that deletes an object when dropped
+    $('#delete-area').droppable({
+        tolerance: 'pointer',
+        drop: function(event, ui) {
+            $(ui.draggable).remove();
+        }
+    });
+});
+</script>
+{% endblock %}

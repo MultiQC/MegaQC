@@ -814,13 +814,13 @@ def get_favourite_plot_data(user, favourite_id):
         plot_data = get_sample_fields_values(data_keys, my_filters)
         plot_html = generate_distribution_plot(plot_data, nbins, ptype)
     # Trend plot
-    elif plot_type == 'trend_plot':
+    elif plot_type == 'trend':
         my_filters = get_filter_from_data(api_data)
         data_keys = api_data.get("fields", {})
         plot_data = get_timeline_sample_data(my_filters, data_keys)
         plot_html = generate_trend_plot(plot_data)
     # Comparison plot
-    elif plot_type == 'comparison_plot':
+    elif plot_type == 'comparison':
         my_filters = get_filter_from_data(api_data)
         data_keys = api_data.get("fields", {})
         field_names = api_data.get("field_names", {})
