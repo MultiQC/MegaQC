@@ -68,15 +68,40 @@ $(function () {
     // Add a new plot
     $('#add-plot-btn').click(function(){
         var dash_grid = $('.grid-stack').data('gridstack');
-        dash_grid.addWidget(
-            $('<div class="grid-stack-item" data-type="plot" data-plot_id="'+$('#add-plot-select').val()+'">'+
-                '<div class="grid-stack-item-content">'+
-                    '<i class="fa fa-bar-chart" aria-hidden="true"></i><br>' +
-                    $('#add-plot-select option:selected').text() +
-                '</div>'+
-            '</div>'),
-            0, 0, 2, 2
-        );
+
+        // Get the plot HTML into a new div
+        window.ajax_update = $.ajax({
+            url: '/api/get_favourite_plot',
+            type: 'post',
+            data: JSON.stringify({'favourite_id': $('#add-plot-select').val().replace('plot-favourite-', '') }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    var plot_el = $('<div />');
+                    plot_el.html(data['plot_html']);
+                    dash_grid.addWidget(
+                        $('<div class="grid-stack-item" data-type="plot" data-plot_id="'+$('#add-plot-select').val()+'">'+
+                            '<div class="grid-stack-item-content">'+
+                                // '<i class="fa fa-bar-chart" aria-hidden="true"></i><br>' +
+                                // $('#add-plot-select option:selected').text() +
+                                plot_el.html() +
+                            '</div>'+
+                        '</div>'),
+                        0, 0, 2, 2
+                    );
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error whilst generating this plot.');
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error retrieving this plot.');
+            }
+        });
     });
 
     // Save dashboard
