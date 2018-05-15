@@ -263,8 +263,7 @@ footer p a {
 }
 #dashboard .grid-stack-item-content {
     background-color: #ededed;
-    text-align: center;
-    padding: 1rem;
+    border: 1px solid #ededed;
     cursor:move;
 }
 #dashboard .grid-stack-item-content .fa {

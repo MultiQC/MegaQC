@@ -79,14 +79,12 @@ $(function () {
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
                 if (data['success']){
-                    var plot_el = $('<div />');
-                    plot_el.html(data['plot_html']);
                     dash_grid.addWidget(
                         $('<div class="grid-stack-item" data-type="plot" data-plot_id="'+$('#add-plot-select').val()+'">'+
                             '<div class="grid-stack-item-content">'+
-                                // '<i class="fa fa-bar-chart" aria-hidden="true"></i><br>' +
-                                // $('#add-plot-select option:selected').text() +
-                                plot_el.html() +
+                                '<div class="plotly-plot" id="plotly-'+$('#add-plot-select').val()+'">'+
+                                    data['plot_html'] +
+                                '</div>'+
                             '</div>'+
                         '</div>'),
                         0, 0, 2, 2
@@ -102,6 +100,12 @@ $(function () {
                 toastr.error('There was an error retrieving this plot.');
             }
         });
+    });
+
+    // Update plotly plots when resized
+    $('.grid-stack').on('gsresizestop', function(event, elem) {
+        // Cheat: tell the browser that the whole window has been resized
+        window.dispatchEvent(new Event('resize'));
     });
 
     // Save dashboard
