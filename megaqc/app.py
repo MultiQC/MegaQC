@@ -6,6 +6,8 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 from flask import Flask, jsonify, render_template, request
+import jinja2
+import markdown
 from megaqc.scheduler import init_scheduler
 
 from megaqc import commands, public, user, version, api
@@ -42,6 +44,10 @@ def register_extensions(app):
     def inject_debug():
         """ Make the debug variable available to templates """
         return dict(debug=app.debug, version=version)
+
+    @app.template_filter()
+    def safe_markdown(text):
+        return jinja2.Markup(markdown.markdown(text))
 
     return None
 

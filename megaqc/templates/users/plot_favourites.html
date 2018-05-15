@@ -17,7 +17,7 @@
             <th>Description</th>
             <th>Plot Type</th>
             <th>Created</th>
-            <th>Actions</th>
+            <th style="width: 180px;">Actions</th>
         </tr>
         {% if favourite_plots|length == 0 %}
         <tr>
@@ -29,7 +29,7 @@
         {% for fav in favourite_plots %}
             <tr id="plot-favourite-{{ fav['plot_favourite_id'] }}">
                 <td>{{ fav['title'] }}</td>
-                <td>{{ fav['description'] }}</td>
+                <td>{{ fav['description'] | safe_markdown }}</td>
                 <td>{{ fav['plot_type'] }}</td>
                 <td>{{ fav['created_at'].strftime('%Y-%m-%d %H:%M') }}</td>
                 <td>

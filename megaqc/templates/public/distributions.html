@@ -67,7 +67,7 @@
                     <option value="hist">Histogram</option>
                 </select>
             </div>
-            <div class="hist_nbins_range">
+            <div class="hist_nbins_range" style="display:none;">
                 <input type="range" min="1" max="100" value="40">
                  <span>40</span> bins
             </div>
@@ -152,6 +152,10 @@ $(function(){
     // Change number of histogram bins
     $('body').on('change', '.dist_plot_type select', function(e){
         window.dist_ptype = $(this).val();
+        // show or hide the histogram bins slider
+        if($(this).val() == 'hist'){ $('.hist_nbins_range').show(); }
+        else { $('.hist_nbins_range').hide(); }
+        // generate the plot
         create_plot();
     });
 
@@ -236,6 +240,19 @@ $(function(){
             }
         });
     }
+
+    // Pre-fill the save-plot description
+    $('#save_plot_favourite_modal').on('show.bs.modal', function (e) {
+        // Get the plot fields
+        var field_names = [];
+        $('.distribution-field-btn.active').each(function(e){
+            field_names.push($(this).text().trim().replace(/\s+/g, ' '));
+        });
+        // Plot type nice name
+        var ptype = $('.dist_plot_type select option[value='+window.dist_ptype+']').text().replace(/s$/, '').toLowerCase();
+        // Fill the description box
+        $('#plot_favourite_description').val('Distribution '+ptype+': `'+field_names.join('`, `')+'`');
+    });
 
     // Save a plot as a favourite
     $('#save_plot_favourite_form').submit(function(e){
