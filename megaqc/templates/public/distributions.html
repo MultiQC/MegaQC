@@ -258,59 +258,20 @@ $(function(){
     $('#save_plot_favourite_form').submit(function(e){
         e.preventDefault();
 
-        // Check that we have a title
-        if(!$('#plot_favourite_title').val().trim()){
-            $('#plot_favourite_title_feedback').show();
-            $('#plot_favourite_title').addClass('is-invalid');
-            return;
-        }
-
         // Get the plot fields
         field_ids = [];
         $('.distribution-field-btn.active').each(function(e){
             field_ids.push($(this).data('fieldid'));
         });
 
-        // Send the plot details to save
-        window.ajax_update = $.ajax({
-            url: '/api/save_plot_favourite',
-            type: 'post',
-            data: JSON.stringify({
-                'type': 'distribution',
-                'request_data': {
-                    'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
-                    'fields': field_ids,
-                    'nbins': window.hist_nbins,
-                    'ptype': window.dist_ptype
-                },
-                'title': $('#plot_favourite_title').val(),
-                'description': $('#plot_favourite_description').val()
-            }),
-            headers : { access_token:window.token },
-            dataType: 'json',
-            contentType: 'application/json; charset=UTF-8',
-            success: function(data){
-                if (data['success']){
-                    $('#save_plot_favourite_modal').modal('hide');
-                    toastr.success(
-                        'Plot favourite saved!<br>Click to view all plot favourites.',
-                        null,
-                        { onclick: function() { window.location.href = "/plot_favourites/"; } }
-                    );
-                }
-                // AJAX data['success'] was false
-                else {
-                    console.log(data);
-                    $('#save_plot_favourite_modal').modal('hide');
-                    toastr.error('There was an error whilst saving this plot.');
-                }
-            },
-            error: function(data){
-                console.log(data);
-                $('#save_plot_favourite_modal').modal('hide');
-                toastr.error('There was an error saving this plot.');
-            }
+        // Save using a function in megaqc.js
+        save_plot_favourite('distribution',{
+            'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
+            'fields': field_ids,
+            'nbins': window.hist_nbins,
+            'ptype': window.dist_ptype
         });
+
     });
 });
 </script>

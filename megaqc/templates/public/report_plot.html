@@ -41,7 +41,13 @@
 </div>
 
 <div class="card megaqc_plot" id="report_plot">
-    <h4 class="card-header">Report Plot</h4>
+    <h4 class="card-header">
+        <button id="save-plot-favourite" type="button" disabled class="float-right btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#save_plot_favourite_modal">
+            <i class="fa fa-heart" aria-hidden="true"></i>
+            Save plot favourite
+        </button>
+        <span id="plot-name">Report Plot</span>
+    </h4>
     <div class="card-body">
         <p class="text-secondary">Please choose a plot type</p>
     </div>
@@ -49,6 +55,9 @@
 
 <!-- Create New Filter Set -->
 {% include "public/filter_samples_modal.html" %}
+
+<!-- Modal for saving a favourite plot -->
+{% include "public/save_plot_favourite_modal.html" %}
 
 {% endblock %}
 {% block js %}
@@ -212,13 +221,14 @@ $(function(){
             '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
             '<span class="loading-spinner">Loading...</span>' +
         '</p>');
+        $('#save-plot-favourite').prop('disabled', true);
         // Get the active plot type
         plot_type = $('.report-plot-type-btn.active').data('plotid');
         if(plot_type == undefined){
             toastr.error('Please select a plot type.');
             return;
         }
-        $('#report_plot .card-header').text($('.report-plot-type-btn.active').text());
+        $('#plot-name').text($('.report-plot-type-btn.active').text());
         // Cancel any running update_filters ajax call
         if(window.ajax_update !== false){
             window.ajax_update.abort();
@@ -240,6 +250,8 @@ $(function(){
                     setTimeout(function(){
                         $('#report_plot .card-body').html(data['plot']);
                         $('.loading-spinner').hide();
+                        $('#save-plot-favourite').prop('disabled', false);
+                        $('#plot_favourite_description').val($('.report-plot-type-btn.active').text().trim().replace(/\s+/g, ' '));
                     }, 300);
                 }
                 // AJAX data['success'] was false
@@ -248,15 +260,28 @@ $(function(){
                     toastr.error('There was an error whilst generating this plot.');
                     $('#report_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
                     $('.loading-spinner').hide();
+                    $('#save-plot-favourite').prop('disabled', true);
                 }
             },
             error: function(data){
                 toastr.error('There was an error retrieving this plot.');
                 $('#report_plot .card-body').html('<p class="text-danger mb-0">Error generating plot.</p>');
                 $('.loading-spinner').hide();
+                $('#save-plot-favourite').prop('disabled', true);
             }
         });
     }
+
+    // Save a plot as a favourite
+    $('#save_plot_favourite_form').submit(function(e){
+        e.preventDefault();
+
+        // Save using a function in megaqc.js
+        save_plot_favourite('report_plot',{
+            'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
+            'plot_type': $('.report-plot-type-btn.active').data('plotid')
+        });
+    });
 });
 </script>
 {% endblock %}

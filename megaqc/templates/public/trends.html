@@ -50,7 +50,13 @@
 </div>
 
 <div class="card megaqc_plot" id="trend_plot">
-    <h4 class="card-header">Trend Plot</h4>
+    <h4 class="card-header">
+        <button id="save-plot-favourite" type="button" disabled class="float-right btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#save_plot_favourite_modal">
+            <i class="fa fa-heart" aria-hidden="true"></i>
+            Save plot favourite
+        </button>
+        <span id="plot-name">Trend Plot</span>
+    </h4>
     <div class="card-body">
         <div id="plotdiv">
             <p class="text-secondary">Please choose fields to plot</p>
@@ -60,6 +66,9 @@
 
 <!-- Create New Filter Set -->
 {% include "public/filter_samples_modal.html" %}
+
+<!-- Modal for saving a favourite plot -->
+{% include "public/save_plot_favourite_modal.html" %}
 
 {% endblock %}
 {% block js %}
@@ -131,6 +140,7 @@ $(function(){
             '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
             '<span class="loading-spinner">Loading...</span>' +
         '</p>');
+        $('#save-plot-favourite').prop('disabled', true);
         // Get the active field to plot
         field_ids = [];
         field_titles = [];
@@ -139,7 +149,7 @@ $(function(){
             field_titles.push($(this).text().trim());
         });
         if(field_ids.length == 0){
-            $('#trend_plot .card-header').text('Trend Plot');
+            $('#plot-name').text('Trend Plot');
             $('#plotdiv').html('<p class="text-secondary">Please choose fields to plot</p>');
             $('.loading-spinner').hide();
             return;
@@ -148,7 +158,8 @@ $(function(){
         if(field_titles.length < 3){
             plot_header = field_titles.join(', ');
         }
-        $('#trend_plot .card-header').text(plot_header);
+        $('#plot-name').text(plot_header);
+        $('#plot_favourite_description').val('Trend plot: `'+field_titles.join('`, `')+'`');
         // Cancel any running update_filters ajax call
         if(window.ajax_update !== false){
             window.ajax_update.abort();
@@ -170,6 +181,7 @@ $(function(){
                     setTimeout(function(){
                         $('#plotdiv').html(data['plot']);
                         $('.loading-spinner').hide();
+                        $('#save-plot-favourite').prop('disabled', false);
                     }, 300);
                 }
                 // AJAX data['success'] was false
@@ -178,15 +190,35 @@ $(function(){
                     toastr.error('There was an error whilst generating this plot.');
                     $('#plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
                     $('.loading-spinner').hide();
+                    $('#save-plot-favourite').prop('disabled', true);
                 }
             },
             error: function(data){
                 toastr.error('There was an error retrieving this plot.');
                 $('#plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
                 $('.loading-spinner').hide();
+                $('#save-plot-favourite').prop('disabled', true);
             }
         });
     }
+
+    // Save a plot as a favourite
+    $('#save_plot_favourite_form').submit(function(e){
+        e.preventDefault();
+
+        // Get the active field to plot
+        field_ids = [];
+        $('.trend-field-btn.active').each(function(e){
+            field_ids.push($(this).data('fieldid'));
+        });
+
+        // Save using a function in megaqc.js
+        save_plot_favourite('trend_plot',{
+            'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
+            'fields': field_ids
+        });
+
+    });
 });
 </script>
 {% endblock %}

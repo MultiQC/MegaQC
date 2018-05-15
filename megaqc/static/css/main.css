@@ -242,10 +242,17 @@ footer p a {
 }
 
 
+#favourite_plot .favourite-plot-url,
 #favourite_plot #plot-url {
     margin-left: 1rem;
     font-size: 16px;
     color: #999;
     font-weight: normal;
     display: none;
+}
+#favourite_plot .favourite-plot-url {
+    display: inline;
+}
+#favourite_plot .favourite-plot-url #plot-url {
+    margin-left: auto;
 }

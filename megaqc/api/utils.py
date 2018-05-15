@@ -799,17 +799,35 @@ def get_favourite_plot_data(user, favourite_id):
     plot_type = fp_row[4]
     api_data = json.loads(fp_row[5])
     plot_html = '<p class="text-error">Could not find favourite plot</p>'
-    # TODO: Report plot
+    # Report plot
+    if plot_type == 'report_plot':
+        plot_type = api_data.get("plot_type")
+        filters = api_data.get("filters", [])
+        sample_names = get_samples(filters)
+        plot_html = generate_report_plot(plot_type, sample_names)
     # Distribution plot
-    if plot_type == 'distribution':
+    elif plot_type == 'distribution':
         my_filters = get_filter_from_data(api_data)
         data_keys = api_data.get("fields", {})
         nbins = api_data.get("nbins", 20)
         ptype = api_data.get("ptype", 20)
         plot_data = get_sample_fields_values(data_keys, my_filters)
         plot_html = generate_distribution_plot(plot_data, nbins, ptype)
-    # TODO: Trend plot
-    # TODO: Comparison plot
+    # Trend plot
+    elif plot_type == 'trend_plot':
+        my_filters = get_filter_from_data(api_data)
+        data_keys = api_data.get("fields", {})
+        plot_data = get_timeline_sample_data(my_filters, data_keys)
+        plot_html = generate_trend_plot(plot_data)
+    # Comparison plot
+    elif plot_type == 'comparison_plot':
+        my_filters = get_filter_from_data(api_data)
+        data_keys = api_data.get("fields", {})
+        field_names = api_data.get("field_names", {})
+        pointsize = api_data.get("pointsize", 10)
+        joinmarkers = api_data.get("joinmarkers", False)
+        plot_data = get_sample_fields_values(data_keys.values(), my_filters, num_fieldids=True)
+        plot_html = generate_comparison_plot(plot_data, data_keys, field_names, pointsize, joinmarkers)
     else:
         plot_html = '<p class="text-error">Plot type <code>{}</code> not recognised.</p>'.format(plot_type)
     return {

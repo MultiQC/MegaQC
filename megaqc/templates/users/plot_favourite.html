@@ -17,7 +17,10 @@
 <div class="card megaqc_plot" id="favourite_plot">
     <h4 class="card-header">
         <span id="plot-name">{{ plot_data['title'] }}</span>
-        <a href="{{ request.base_url }}/raw" id="plot-url" style="display: inline;">{{ request.base_url }}/raw</a>
+        <span class="favourite-plot-url">
+            Raw plot:
+            <a href="{{ request.base_url }}/raw" id="plot-url" style="display: inline;">{{ request.base_url }}/raw</a>
+        </span>
     </h4>
     <div class="card-body">
         <div id="favplot_plotdiv">

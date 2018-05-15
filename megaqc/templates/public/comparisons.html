@@ -61,7 +61,13 @@
 </div>
 
 <div class="card megaqc_plot" id="comparison_plot">
-    <h4 class="card-header">Comparison Plot</h4>
+    <h4 class="card-header">
+        <button id="save-plot-favourite" type="button" disabled class="float-right btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#save_plot_favourite_modal">
+            <i class="fa fa-heart" aria-hidden="true"></i>
+            Save plot favourite
+        </button>
+        <span id="plot-name">Comparison Plot</span>
+    </h4>
     <div class="card-body">
         <div id="plotconfig">
             <label>
@@ -88,6 +94,9 @@
 
 <!-- Create New Filter Set -->
 {% include "public/filter_samples_modal.html" %}
+
+<!-- Modal for saving a favourite plot -->
+{% include "public/save_plot_favourite_modal.html" %}
 
 {% endblock %}
 {% block js %}
@@ -192,6 +201,7 @@ $(function(){
             '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i> ' +
             '<span class="loading-spinner">Loading...</span>' +
         '</p>');
+        $('#save-plot-favourite').prop('disabled', true);
         // Get the active field to plot
         field_ids = {
             'x': null,
@@ -216,6 +226,8 @@ $(function(){
             $('.loading-spinner').hide();
             return;
         }
+        // Set the 'save favourite plot' modal description field
+        $('#plot_favourite_description').val('Comparison plot: `'+Object.values(field_names).filter(function(v){ return v !== null; }).join('`, `')+'`');
         // Cancel any running update_filters ajax call
         if(window.ajax_update !== false){
             window.ajax_update.abort();
@@ -237,6 +249,7 @@ $(function(){
             success: function(data){
                 if (data['success']){
                     $('#plotdiv').html(data['plot']);
+                    $('#save-plot-favourite').prop('disabled', false);
                     $('.loading-spinner').hide();
                 }
                 // AJAX data['success'] was false
@@ -245,15 +258,52 @@ $(function(){
                     toastr.error('There was an error whilst generating this plot.');
                     $('#plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
                     $('.loading-spinner').hide();
+                    $('#save-plot-favourite').prop('disabled', true);
                 }
             },
             error: function(data){
                 toastr.error('There was an error retrieving this plot.');
                 $('#plotdiv').html('<p class="text-danger mb-0">Error generating plot.</p>');
                 $('.loading-spinner').hide();
+                $('#save-plot-favourite').prop('disabled', true);
             }
         });
     }
+
+    // Save a plot as a favourite
+    $('#save_plot_favourite_form').submit(function(e){
+        e.preventDefault();
+
+        // Get the active field to plot
+        field_ids = {
+            'x': null,
+            'y': null,
+            'z': null,
+            'col': null,
+            'size': null
+        };
+        field_names = {
+            'x': null,
+            'y': null,
+            'z': null,
+            'col': null,
+            'size': null
+        };
+        $('.comparison_fields .btn.active').each(function(e){
+            field_ids[$(this).data('fieldtype')] = $(this).data('fieldid');
+            field_names[$(this).data('fieldtype')] = $(this).closest('li').text().trim().replace('/\s+/', ' ');
+        });
+
+        // Save using a function in megaqc.js
+        save_plot_favourite('comparison_plot',{
+            'filters_id': $('.sample-filter-btn.active').first().data('filterid'),
+            'fields': field_ids,
+            'field_names': field_names,
+            'pointsize': $('#pointsize').val(),
+            'joinmarkers': $('#joinmarkers').is(':checked')
+        });
+
+    });
 });
 </script>
 {% endblock %}
