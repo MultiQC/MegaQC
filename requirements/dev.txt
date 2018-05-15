@@ -11,6 +11,7 @@ Flask==1.0.2
 future==0.16.0
 itsdangerous>=0.24
 Jinja2>=2.9.5
+markdown>=2.6.11
 numpy==1.14.3
 passlib==1.7.1
 plotly==2.0.15
