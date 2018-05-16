@@ -10,7 +10,7 @@
     to view the plot and <code>Delete</code> to remove it.</p>
 <p>Plot favourites can be used by themselves or bunched together to make dashboards.</p>
 
-<table class="table table-striped" id="filter_table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Title</th>
@@ -19,6 +19,8 @@
             <th>Created</th>
             <th style="width: 180px;">Actions</th>
         </tr>
+    </thead>
+    <tbody>
         {% if favourite_plots|length == 0 %}
         <tr>
             <td colspan="4" class="text-muted text-center">
@@ -38,6 +40,7 @@
                 </td>
             </tr>
         {% endfor %}
+    </tbody>
 </table>
 
 <div class="card megaqc_plot" id="favourite_plot">

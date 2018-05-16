@@ -4,6 +4,11 @@ $(function(){
 
     // Turn on the bootstrap tooltips
     $('[data-toggle="tooltip"]').tooltip();
+
+    // Focus the save-plot-modal title field when shown
+    $('#save_plot_favourite_modal').on('shown.bs.modal', function (e) {
+        $('#plot_favourite_title').focus();
+    });
 });
 
 

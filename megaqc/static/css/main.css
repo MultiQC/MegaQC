@@ -265,19 +265,24 @@ footer p a {
     background-color: #ededed;
     border: 1px solid #ededed;
     cursor:move;
+    text-align: center;
 }
-#dashboard .grid-stack-item-content .fa {
-    font-size: 32px;
+.grid-stack-loading {
+    display: inline-block;
+    margin: 4rem 0.5rem;
 }
 #delete-area {
     text-align: center;
-    background-color: #f2cdcd;
-    min-width: 100px;
-    min-height: 100px;
-    border: 3px dashed #ed5050;
-    border-radius: 5px;
-    padding: 1rem;
+    border: 2px dashed rgba(255,0,0,0.4);
+    padding: .4rem 1rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: .3rem;
 }
-#delete-area .fa {
-    font-size: 48px;
+
+#plot_favourites_table tbody tr {
+    cursor: pointer;
+}
+#plot_favourites_table tbody tr:hover {
+    background-color: rgba(181, 222, 189, 0.5)
 }

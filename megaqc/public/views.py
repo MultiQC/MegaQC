@@ -124,12 +124,14 @@ def queued_uploads():
         uploads = get_queued_uploads()
         )
 
-@blueprint.route('/create_dashboard/')
+@blueprint.route('/dashboard/create/')
+@blueprint.route('/dashboard/edit/<dashboard_id>')
 @login_required
-def create_dashboard():
+def create_dashboard(dashboard_id=None):
     """Create a new dashboard."""
     return render_template(
         'users/create_dashboard.html',
+        dashboard_id = dashboard_id,
         favourite_plots = get_plot_favourites(User),
         user_token = current_user.api_token,
     )

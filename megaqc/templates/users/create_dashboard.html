@@ -3,36 +3,61 @@
 {% block content %}
 
 <h1 class="mt-4 mb-4">
-    Create Dashboard
+    {% if dashboard_id %}Edit{% else %}Create{% endif %} Dashboard
     <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="display:none;"></i>
     <span class="loading-spinner" style="display:none;">Loading...</span>
 </h1>
 
-<div class="row">
-    <div class="col-4">
-        <select id="add-plot-select" class="custom-select">
-        {% for fav in favourite_plots %}
-            <option value="plot-favourite-{{ fav['plot_favourite_id'] }}">
-                {{ fav['plot_type'] | replace('_', ' ') | title }}: {{ fav['title'] }}
-            </option>
-        {% endfor %}
-        </select>
-        <br>
-        <button id="add-plot-btn" class="btn btn-primary mt-2">Add Plot</button>
+<div class="form-group row">
+    <label for="dashboard_title" class="col-sm-3 col-lg-2 col-form-label">Dashboard Title</label>
+    <div class="col-sm-5 col-lg-6">
+        <input type="text" class="form-control" id="dashboard_title" placeholder="Name of dashboard">
     </div>
-    <div class="col-4">
+    <div class="col-sm-4">
+        <button id="save-plot-btn" class="btn btn-primary btn-block">Save Dashboard</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4 col-lg-2 mb-3">
+        <button class="btn btn-outline-info btn-lg btn-block" data-toggle="modal" data-target="#dashboard-add-plot-modal">
+            <i class="fa fa-line-chart" aria-hidden="true"></i><br>
+            Add Plot
+        </button>
+    </div>
+    <div class="col-sm-4 col-lg-2 mb-3">
+        <button class="btn btn-outline-info btn-lg btn-block">
+            <i class="fa fa-header" aria-hidden="true"></i><br>
+            Add Heading
+        </button>
+    </div>
+    <div class="col-sm-4 col-lg-2 mb-3">
+        <button class="btn btn-outline-info btn-lg btn-block">
+            <i class="fa fa-picture-o" aria-hidden="true"></i><br>
+            Add Image
+        </button>
+    </div>
+    <div class="col-sm-4 col-lg-2 mb-3">
+        <button class="btn btn-outline-info btn-lg btn-block">
+            <i class="fa fa-list-ul" aria-hidden="true"></i><br>
+            Add Markdown
+        </button>
+    </div>
+    <div class="col-sm-4 col-lg-2 mb-3">
+        <button class="btn btn-outline-info btn-lg btn-block">
+            <i class="fa fa-code" aria-hidden="true"></i><br>
+            Custom HTML
+        </button>
+    </div>
+    <div class="col-sm-4 col-lg-2 mb-3">
         <div id="delete-area" class="alert-danger">
             <i class="fa fa-trash" aria-hidden="true"></i><br>
-            Drag here to delete
+            Drag to delete
         </div>
-    </div>
-    <div class="col-4">
-        <button id="save-plot-btn" class="btn btn-primary">Preview Dashboard</button>
     </div>
 </div>
 
 <div class="card mt-3" id="dashboard">
-    <h4 class="card-header">New Dashboard</h4>
+    <h4 class="card-header">{% if dashboard_id %}Edit{% else %}New{% endif %}  Dashboard</h4>
     <div class="card-body">
         <div id="dashboard_build">
             <div class="grid-stack"></div>
@@ -43,6 +68,54 @@
     </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="dashboard-add-plot-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add plot to dashboard</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-info">
+                    <i class="fa fa-info-circle ml-2 mr-1"></i>
+                    Click a table row to add that plot to the dashboard.
+                </p>
+                <table class="table table-striped table-hover" id="plot_favourites_table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Plot Type</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if favourite_plots|length == 0 %}
+                        <tr>
+                            <td colspan="4" class="text-muted text-center">
+                                No favourites found..
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% for fav in favourite_plots %}
+                            <tr id="plot-favourite-{{ fav['plot_favourite_id'] }}">
+                                <td>{{ fav['title'] }}</td>
+                                <td>{{ fav['description'] | safe_markdown }}</td>
+                                <td>{{ fav['plot_type'] | replace('_', ' ') | title }}</td>
+                                <td>{{ fav['created_at'].strftime('%Y-%m-%d %H:%M') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 {% block css %}
@@ -66,29 +139,38 @@ $(function () {
     });
 
     // Add a new plot
-    $('#add-plot-btn').click(function(){
+    $('#plot_favourites_table tbody tr').click(function(){
         var dash_grid = $('.grid-stack').data('gridstack');
+        var plot_id = $(this).attr('id').replace('plot-favourite-', '');
+        var content_id = 'plotly-'+plot_id;
+
+        // Add a new empty widget with loading spinner
+        $('#dashboard-add-plot-modal').modal('hide');
+        dash_grid.addWidget(
+            $('<div class="grid-stack-item" data-type="plot" data-plot_id="'+plot_id+'">'+
+                '<div class="grid-stack-item-content">'+
+                    '<div class="plotly-plot" id="'+content_id+'">'+
+                        '<span class="grid-stack-loading">'+
+                            '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw mr-1"></i>'+
+                            '<span class="loading-spinner">Loading...</span>'+
+                        '</span>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'),
+            0, 0, 6, 3
+        );
 
         // Get the plot HTML into a new div
         window.ajax_update = $.ajax({
             url: '/api/get_favourite_plot',
             type: 'post',
-            data: JSON.stringify({'favourite_id': $('#add-plot-select').val().replace('plot-favourite-', '') }),
+            data: JSON.stringify({'favourite_id': plot_id }),
             headers : { access_token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
                 if (data['success']){
-                    dash_grid.addWidget(
-                        $('<div class="grid-stack-item" data-type="plot" data-plot_id="'+$('#add-plot-select').val()+'">'+
-                            '<div class="grid-stack-item-content">'+
-                                '<div class="plotly-plot" id="plotly-'+$('#add-plot-select').val()+'">'+
-                                    data['plot_html'] +
-                                '</div>'+
-                            '</div>'+
-                        '</div>'),
-                        0, 0, 2, 2
-                    );
+                    $('#'+content_id).html(data['plot_html']);
                 }
                 // AJAX data['success'] was false
                 else {
