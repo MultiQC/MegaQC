@@ -4,13 +4,13 @@ from flask import Blueprint, request, jsonify, abort
 
 from megaqc.extensions import db
 from megaqc.user.models import User
-from megaqc.model.models import PlotData, Report, SampleFilter, PlotFavourite
+from megaqc.model.models import PlotData, Report, SampleFilter, PlotFavourite, Dashboard
 from megaqc.api.utils import handle_report_data, generate_report_plot, generate_distribution_plot, \
                             generate_trend_plot, generate_comparison_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_report_plot_type, \
                             get_sample_fields_values, update_user_filter, get_filter_from_data, get_timeline_sample_data, \
                             get_reports_data, delete_report_data, store_report_data, get_queued_uploads, \
-                            get_favourite_plot_data, save_plot_favourite_data
+                            get_favourite_plot_data, save_plot_favourite_data, get_dashboard_data, save_dashboard_data
 from megaqc.user.forms import AdminForm
 
 from sqlalchemy.sql import func, distinct
@@ -408,6 +408,40 @@ def delete_plot_favourite(user, *args, **kwargs):
     data = request.get_json()
     favourite_id = data.get("favourite_id")
     PlotFavourite.query.filter_by(user_id=user.user_id, plot_favourite_id=favourite_id).delete()
+    db.session.commit()
+    return jsonify({
+        'success': True
+    })
+
+
+@api_blueprint.route('/api/get_dashboard', methods=['POST'])
+@check_user
+def get_dashboard(user, *args, **kwargs):
+    data = request.get_json()
+    dashboard_id = data.get("dashboard_id")
+    results = get_dashboard_data(user, dashboard_id)
+    results['success'] = True
+    return jsonify(results)
+
+@api_blueprint.route('/api/save_dashboard', methods=['POST'])
+@check_user
+def save_dashboard(user, *args, **kwargs):
+    data = request.get_json()
+    title = data.get("title")
+    request_data = data.get("data")
+    is_public = data.get("is_public", False)
+    dash_id = save_dashboard_data(user, title, request_data, is_public)
+    return jsonify({
+        'dashboard_id': dash_id,
+        'success': True
+    })
+
+@api_blueprint.route('/api/delete_dashboard', methods=['POST'])
+@check_user
+def delete_dashboard(user, *args, **kwargs):
+    data = request.get_json()
+    dashboard_id = data.get("dashboard_id")
+    Dashboard.query.filter_by(user_id=user.user_id, dashboard_id=dashboard_id).delete()
     db.session.commit()
     return jsonify({
         'success': True

@@ -10,15 +10,35 @@
   <meta name="author" content="{% block meta_author %}{% endblock %}">
 
   <!-- CSS imports -->
+  <link rel="stylesheet" href="/static/css/tether.min.css">
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/static/css/component-chosen.min.css">
+  <link rel="stylesheet" href="/static/css/toastr.min.css">
+  <link rel="stylesheet" href="/static/css/main.css">
   {% block css %}{% endblock %}
 
 </head>
 
-<body>
+<body style="background-color:inherit;">
 {% block body %}
     {% block content %}{% endblock %}
 {% endblock %}
 
+<!-- JavaScript -->
+<script type="text/javascript" src="/static/js/libs/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/static/js/libs/popper.min.js"></script>
+<script type="text/javascript" src="/static/js/libs/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/js/libs/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/libs/toastr.min.js"></script>
+<script type="text/javascript" src="/static/js/libs/clipboard.min.js"></script>
+<script type="text/javascript" src="/static/js/megaqc.js"></script>
+<script type="text/javascript">
+{% if user_token %}window.token = "{{ user_token }}";{%- endif %}
+{% if report_fields_json %}window.report_fields = {{ report_fields_json | safe }};{%- endif %}
+{% if sample_fields_json %}window.sample_fields = {{ sample_fields_json | safe }};{%- endif %}
+{% if num_samples %}window.num_matching_samples = {{ num_samples }};{%- endif %}
+</script>
 {% block js %}{% endblock %}
 
 </body>

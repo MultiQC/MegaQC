@@ -853,6 +853,76 @@ def save_plot_favourite_data(user, plot_type, data, title, description=None):
     new_plot_favourite.save()
     return pf_id
 
+def get_dashboards(user):
+    """ Return list of saved dashboards for the user """
+    dashboard_list_query = db.session \
+        .query(
+            Dashboard.dashboard_id,
+            Dashboard.user_id,
+            Dashboard.title,
+            Dashboard.data,
+            Dashboard.is_public,
+            Dashboard.modified_at,
+            Dashboard.created_at
+        ).filter_by(user_id=user.user_id) \
+        .order_by(Dashboard.created_at.desc())
+    ret_data = []
+    for row in dashboard_list_query.all():
+        ret_data.append(dict(
+            dashboard_id = row.dashboard_id,
+            user_id = row.user_id,
+            title = row.title,
+            data = json.loads(row.data),
+            is_public = row.is_public,
+            modified_at = row.modified_at,
+            created_at = row.created_at
+        ))
+    return ret_data
+
+def get_dashboard_data(user, dashboard_id):
+    """ Fetch a dashboard by ID and return the data """
+    # Get the database row for this favourite
+    row = db.session \
+        .query(
+            Dashboard.dashboard_id,
+            Dashboard.user_id,
+            Dashboard.title,
+            Dashboard.data,
+            Dashboard.is_public,
+            Dashboard.modified_at,
+            Dashboard.created_at
+        ).filter_by(user_id=user.user_id, dashboard_id=dashboard_id) \
+        .first()
+    if row is None:
+        return None
+    # Calculate extra variables
+    parsed_data = json.loads(row.data)
+    max_height = max([d['y'] + d['height'] for d in parsed_data])
+
+    return dict(
+        dashboard_id = row.dashboard_id,
+        user_id = row.user_id,
+        title = row.title,
+        data = parsed_data,
+        max_height = max_height,
+        is_public = row.is_public,
+        modified_at = row.modified_at,
+        created_at = row.created_at
+    )
+
+def save_dashboard_data(user, title, data, is_public=False, dashboard_id=None):
+    """ Save a dashboard """
+    dashboard_id = Dashboard.get_next_id()
+    new_dashboard = Dashboard(
+        dashboard_id = dashboard_id,
+        user_id = user.user_id,
+        title = title,
+        data = json.dumps(data),
+        is_public = is_public
+    )
+    new_dashboard.save()
+    return dashboard_id
+
 def get_sample_fields_values(keys, filters=None, num_fieldids=False):
     if not filters:
         filters = []

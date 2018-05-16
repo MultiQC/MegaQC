@@ -14,7 +14,7 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.model.models import Report, PlotConfig, PlotData, PlotCategory
-from megaqc.api.utils import get_samples, get_reports_data, get_user_filters, aggregate_new_parameters, get_report_metadata_fields, get_queued_uploads, get_plot_favourites, get_favourite_plot_data
+from megaqc.api.utils import get_samples, get_reports_data, get_user_filters, aggregate_new_parameters, get_report_metadata_fields, get_queued_uploads, get_plot_favourites, get_favourite_plot_data, get_dashboards, get_dashboard_data
 from megaqc.utils import settings, flash_errors
 
 from sqlalchemy.sql import func, distinct
@@ -124,6 +124,16 @@ def queued_uploads():
         uploads = get_queued_uploads()
         )
 
+@blueprint.route('/dashboards/')
+@login_required
+def list_dashboard():
+    """Create a new dashboard."""
+    return render_template(
+        'users/dashboards.html',
+        dashboards = get_dashboards(User),
+        user_token = current_user.api_token,
+    )
+
 @blueprint.route('/dashboard/create/')
 @blueprint.route('/dashboard/edit/<dashboard_id>')
 @login_required
@@ -133,6 +143,22 @@ def create_dashboard(dashboard_id=None):
         'users/create_dashboard.html',
         dashboard_id = dashboard_id,
         favourite_plots = get_plot_favourites(User),
+        user_token = current_user.api_token,
+    )
+
+@blueprint.route('/dashboard/view/<dashboard_id>')
+@blueprint.route('/dashboard/view/<dashboard_id>/raw')
+@login_required
+def view_dashboard(dashboard_id):
+    """Create a new dashboard."""
+    dashboard = get_dashboard_data(current_user, dashboard_id)
+    if dashboard is None:
+        abort(404)
+    return render_template(
+        'public/dashboard.html',
+        dashboard_id = dashboard_id,
+        dashboard = dashboard,
+        raw = request.path.endswith('/raw'),
         user_token = current_user.api_token,
     )
 

@@ -1,0 +1,76 @@
+{% if raw %}
+   {% extends 'layout_blank.html' %}
+{% else %}
+   {% extends 'layout.html' %}
+{% endif %}
+
+{% block content %}
+
+{% if not raw %}
+
+<h1>{{ dashboard.title }}</h1>
+
+<p class="text-muted">View the dashboard in an empty page without MegaQC navigation and footer here:
+    <a href="{{ request.base_url }}/raw" class="text-muted">{{ request.base_url }}/raw</a></p>
+
+<div class="card">
+    <div class="card-body clearfix">
+
+{% endif %}
+
+        <div class="dashboard-body" style="height: {{ dashboard.max_height*80 }}px;">
+        {% for d in dashboard.data %}
+            <div class="dashboard-body-block" style="left: {{ (d['x']/12)*100 }}%; top: {{ d['y']*80 }}px; width: {{ (d['width']/12)*100 }}%; height: {{ d['height']*80 }}px; ">
+            {% if d['type'] == 'plot' and 'plot_id' in d %}
+                <div class="dashboard-block-plot loading" data-plotid="{{ d['plot_id'] }}" id="dashboard-block-plot-{{ d['plot_id'] }}">
+                    <div class="mt-5 text-center">
+                        <i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw mr-1"></i>
+                        <span class="loading-spinner">Loading...</span>
+                    </div>
+                </div>
+            {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+
+{% if not raw %}
+
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript">
+$(function () {
+    $('.dashboard-block-plot').each(function(){
+        var el = $(this);
+        // Get the plot HTML into a new div
+        $.ajax({
+            url: '/api/get_favourite_plot',
+            type: 'post',
+            data: JSON.stringify({'favourite_id': el.data('plotid') }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    el.html(data['plot_html']);
+                    el.removeClass('loading');
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error whilst generating plot '+el.data('plotid'));
+                }
+            },
+            error: function(data){
+                toastr.error('There was an error retrieving plot '+el.data('plotid'));
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

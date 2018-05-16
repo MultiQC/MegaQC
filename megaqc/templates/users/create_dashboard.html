@@ -12,9 +12,10 @@
     <label for="dashboard_title" class="col-sm-3 col-lg-2 col-form-label">Dashboard Title</label>
     <div class="col-sm-5 col-lg-6">
         <input type="text" class="form-control" id="dashboard_title" placeholder="Name of dashboard">
+        <div id="dashboard_title_feedback" class="invalid-feedback">Please enter a title for the dashboard.</div>
     </div>
     <div class="col-sm-4">
-        <button id="save-plot-btn" class="btn btn-primary btn-block">Save Dashboard</button>
+        <button id="save-plot-btn" class="btn btn-primary btn-block">Save &amp; View Dashboard</button>
     </div>
 </div>
 <div class="row">
@@ -59,12 +60,7 @@
 <div class="card mt-3" id="dashboard">
     <h4 class="card-header">{% if dashboard_id %}Edit{% else %}New{% endif %}  Dashboard</h4>
     <div class="card-body">
-        <div id="dashboard_build">
-            <div class="grid-stack"></div>
-        </div>
-        <div id="dashboard_preview" style="display:none;">
-            Preview here
-        </div>
+        <div class="grid-stack"></div>
     </div>
 </div>
 
@@ -140,6 +136,7 @@ $(function () {
 
     // Add a new plot
     $('#plot_favourites_table tbody tr').click(function(){
+
         var dash_grid = $('.grid-stack').data('gridstack');
         var plot_id = $(this).attr('id').replace('plot-favourite-', '');
         var content_id = 'plotly-'+plot_id;
@@ -190,8 +187,30 @@ $(function () {
         window.dispatchEvent(new Event('resize'));
     });
 
+    // Remove validation when adding a title
+    $('#dashboard_title').keyup(function(){
+        if($(this).hasClass('is-invalid')){
+            $('#dashboard_title_feedback').slideUp();
+            $(this).removeClass('is-invalid');
+        }
+    });
+
     // Save dashboard
     $('#save-plot-btn').click(function(){
+
+        // Check that we have a title
+        if(!$('#dashboard_title').val().trim()){
+            $('#dashboard_title_feedback').slideDown();
+            $('#dashboard_title').addClass('is-invalid');
+            return false;
+        }
+
+        // Check that we have some elements in the dashboard
+        if($('.grid-stack').children().length == 0){
+            toastr.error('The dashboard is empty! Please add something before saving.');
+            return false;
+        }
+
         var dash_grid = $('.grid-stack').data('gridstack');
         serializedData = _.map($('.grid-stack > .grid-stack-item:visible'), function (el) {
             el = $(el);
@@ -206,9 +225,34 @@ $(function () {
                 height: node.height
             };
         });
-        $('#dashboard_preview').html('<pre><code>'+JSON.stringify(serializedData, null, '    ')+'</code></pre>');
-        $('#dashboard_build').fadeToggle();
-        $('#dashboard_preview').fadeToggle();
+
+        // Send the plot details to save
+        window.ajax_update = $.ajax({
+            url: '/api/save_dashboard',
+            type: 'post',
+            data: JSON.stringify({
+                'title': $('#dashboard_title').val(),
+                'data': serializedData,
+                'is_public': false
+            }),
+            headers : { access_token:window.token },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data){
+                if (data['success']){
+                    window.location = '/dashboard/view/'+data['dashboard_id'];
+                }
+                // AJAX data['success'] was false
+                else {
+                    console.log(data);
+                    toastr.error('There was an error whilst saving this dashboard.');
+                }
+            },
+            error: function(data){
+                console.log(data);
+                toastr.error('There was an error saving this dashboard.');
+            }
+        });
     });
 
     // Add an area that deletes an object when dropped

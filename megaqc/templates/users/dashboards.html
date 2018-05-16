@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1 class="mt-4 mb-4">My Dashboards</h1>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Public</th>
+            <th>Created</th>
+            <th style="width: 240px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if dashboards|length == 0 %}
+        <tr>
+            <td colspan="4" class="text-muted text-center">
+                No dashboards found..
+            </td>
+        </tr>
+        {% endif %}
+        {% for dash in dashboards %}
+            <tr id="dashboard-{{ dash['dashboard_id'] }}">
+                <td>{{ dash['title'] }}</td>
+                <td>{{ 'Yes' if dash['is_public'] else 'No' }}</td>
+                <td>{{ dash['created_at'].strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-success" href="/dashboard/view/{{ dash['dashboard_id'] }}"><i class="fa fa-search" aria-hidden="true"></i> View</a>
+                    <button class="btn btn-sm btn-outline-info edit-dashboard-btn" data-favouriteid="{{ dash['dashboard_id'] }}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</button>
+                    <button class="btn btn-sm btn-outline-danger delete-dashboard-btn" data-favouriteid="{{ dash['dashboard_id'] }}"><i class="fa fa-trash" aria-hidden="true"></i>  Delete</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

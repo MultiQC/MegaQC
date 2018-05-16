@@ -258,7 +258,7 @@ footer p a {
 }
 
 
-#dashboard_build {
+#dashboard .grid-stack {
     min-height: 320px;
 }
 #dashboard .grid-stack-item-content {
@@ -285,4 +285,19 @@ footer p a {
 }
 #plot_favourites_table tbody tr:hover {
     background-color: rgba(181, 222, 189, 0.5)
+}
+
+.dashboard-body {
+    position: relative;
+    overflow: hidden;
+}
+.dashboard-body-block {
+    position: absolute;
+    display: block;
+    overflow: hidden;
+}
+.dashboard-block-plot.loading {
+    background-color: #ededed;
+    border: 1px solid #ccc;
+    height: 100%;
 }
