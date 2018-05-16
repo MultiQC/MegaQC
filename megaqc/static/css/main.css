@@ -257,14 +257,22 @@ footer p a {
     margin-left: auto;
 }
 
+#plot_favourites_table tbody tr {
+    cursor: pointer;
+}
+#plot_favourites_table tbody tr:hover {
+    background-color: rgba(181, 222, 189, 0.5)
+}
 
 #dashboard .grid-stack {
     min-height: 320px;
 }
 #dashboard .grid-stack-item-content {
-    background-color: #ededed;
     border: 1px solid #ededed;
     cursor:move;
+}
+#dashboard .grid-stack-item-content.loading {
+    background-color: #ededed;
     text-align: center;
 }
 .grid-stack-loading {
@@ -278,13 +286,6 @@ footer p a {
     font-size: 1.25rem;
     line-height: 1.5;
     border-radius: .3rem;
-}
-
-#plot_favourites_table tbody tr {
-    cursor: pointer;
-}
-#plot_favourites_table tbody tr:hover {
-    background-color: rgba(181, 222, 189, 0.5)
 }
 
 .dashboard-body {

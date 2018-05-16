@@ -28,6 +28,10 @@
                         <span class="loading-spinner">Loading...</span>
                     </div>
                 </div>
+            {% elif d['type'] == 'html' and 'html_contents' in d %}
+               {{ d['html_contents'] | safe }}
+            {% else %}
+               {{ d }}
             {% endif %}
             </div>
         {% endfor %}

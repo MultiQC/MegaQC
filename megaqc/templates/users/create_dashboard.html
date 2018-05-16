@@ -26,25 +26,25 @@
         </button>
     </div>
     <div class="col-sm-4 col-lg-2 mb-3">
-        <button class="btn btn-outline-info btn-lg btn-block">
+        <button class="btn btn-outline-info btn-lg btn-block disabled">
             <i class="fa fa-header" aria-hidden="true"></i><br>
             Add Heading
         </button>
     </div>
     <div class="col-sm-4 col-lg-2 mb-3">
-        <button class="btn btn-outline-info btn-lg btn-block">
+        <button class="btn btn-outline-info btn-lg btn-block disabled">
             <i class="fa fa-picture-o" aria-hidden="true"></i><br>
             Add Image
         </button>
     </div>
     <div class="col-sm-4 col-lg-2 mb-3">
-        <button class="btn btn-outline-info btn-lg btn-block">
+        <button class="btn btn-outline-info btn-lg btn-block disabled">
             <i class="fa fa-list-ul" aria-hidden="true"></i><br>
             Add Markdown
         </button>
     </div>
     <div class="col-sm-4 col-lg-2 mb-3">
-        <button class="btn btn-outline-info btn-lg btn-block">
+        <button class="btn btn-outline-info btn-lg btn-block" data-toggle="modal" data-target="#dashboard-add-html-modal">
             <i class="fa fa-code" aria-hidden="true"></i><br>
             Custom HTML
         </button>
@@ -65,7 +65,7 @@
 </div>
 
 
-<!-- Modal -->
+<!-- Add Plot Modal -->
 <div class="modal fade" id="dashboard-add-plot-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -113,6 +113,25 @@
     </div>
 </div>
 
+<!-- Add Custom HTML Modal -->
+<div class="modal fade" id="dashboard-add-html-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add custom HTML to dashboard</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control monospace" rows="15" id="dashboard-add-html"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="dashboard-add-html-btn" type="button" class="btn btn-primary">Add to dashboard</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 {% block css %}
 <link rel="stylesheet" href="/static/css/gridstack.min.css">
@@ -145,7 +164,7 @@ $(function () {
         $('#dashboard-add-plot-modal').modal('hide');
         dash_grid.addWidget(
             $('<div class="grid-stack-item" data-type="plot" data-plot_id="'+plot_id+'">'+
-                '<div class="grid-stack-item-content">'+
+                '<div class="grid-stack-item-content loading">'+
                     '<div class="plotly-plot" id="'+content_id+'">'+
                         '<span class="grid-stack-loading">'+
                             '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw mr-1"></i>'+
@@ -168,6 +187,7 @@ $(function () {
             success: function(data){
                 if (data['success']){
                     $('#'+content_id).html(data['plot_html']);
+                    $('#'+content_id).closest('.grid-stack-item-content').removeClass('loading');
                 }
                 // AJAX data['success'] was false
                 else {
@@ -186,6 +206,21 @@ $(function () {
         // Cheat: tell the browser that the whole window has been resized
         window.dispatchEvent(new Event('resize'));
     });
+
+    // Add Custom HTML to dashboard
+    $('#dashboard-add-html-btn').click(function(){
+        var dash_grid = $('.grid-stack').data('gridstack');
+        dash_grid.addWidget(
+            $('<div class="grid-stack-item" data-type="html">'+
+                '<div class="grid-stack-item-content">'+
+                    $('#dashboard-add-html').val()+
+                '</div>'+
+            '</div>'),
+            0, 0, 6, 3
+        );
+        $('#dashboard-add-html-modal').modal('hide');
+        $('#dashboard-add-html').val('');
+    })
 
     // Remove validation when adding a title
     $('#dashboard_title').keyup(function(){
@@ -215,15 +250,20 @@ $(function () {
         serializedData = _.map($('.grid-stack > .grid-stack-item:visible'), function (el) {
             el = $(el);
             var node = el.data('_gridstack_node');
-            console.log(el.data('type'));
-            return {
+            var ret_data = {
                 type: el.data('type'),
-                plot_id: el.data('plot_id'),
                 x: node.x,
                 y: node.y,
                 width: node.width,
                 height: node.height
             };
+            if(el.data('type') == 'plot'){
+                ret_data['plot_id'] = el.data('plot_id');
+            }
+            if(el.data('type') == 'html'){
+                ret_data['html_contents'] = el.find('.grid-stack-item-content').html();
+            }
+            return ret_data;
         });
 
         // Send the plot details to save
