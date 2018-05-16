@@ -224,7 +224,7 @@ $(function () {
         var dash_grid = $('.grid-stack').data('gridstack');
         var plot_id = $(this).attr('id').replace('plot-favourite-', '');
         var ptarget = $('#plot_favourites_table').data('edit-target');
-        if(ptarget){ el_id = ptarget; console.log('found a target!')}
+        if(ptarget){ el_id = ptarget; }
         else { el_id = 'dashboard-plot-'+Math.random().toString(36).substring(7); }
         var new_item = $('<div class="grid-stack-item-content loading" id="'+el_id+'">'+
                 '<div class="plotly-plot">'+
@@ -259,9 +259,6 @@ $(function () {
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
                 if (data['success']){
-                    console.log('#'+el_id+' .plotly-plot');
-                    console.log($('#'+el_id+' .plotly-plot'));
-                    console.log($('#'+el_id+' .plotly-plot').html());
                     $('#'+el_id+' .plotly-plot').html(data['plot_html']);
                     $('#'+el_id+' .plotly-plot').closest('.grid-stack-item-content').removeClass('loading');
                 }
