@@ -18,9 +18,9 @@
 
 {% endif %}
 
-        <div class="dashboard-body" style="height: {{ dashboard.max_height*80 }}px;">
+        <div class="dashboard-body" style="height: {{ dashboard.max_height*40 }}px;">
         {% for d in dashboard.data %}
-            <div class="dashboard-body-block" style="left: {{ (d['x']/12)*100 }}%; top: {{ d['y']*80 }}px; width: {{ (d['width']/12)*100 }}%; height: {{ d['height']*80 }}px; ">
+            <div class="dashboard-body-block" style="left: {{ (d['x']/12)*100 }}%; top: {{ d['y']*40 }}px; width: {{ (d['width']/12)*100 }}%; height: {{ d['height']*40 }}px; ">
             {% if d['type'] == 'plot' and 'plot_id' in d %}
                 <div class="dashboard-block-plot loading" data-plotid="{{ d['plot_id'] }}" id="dashboard-block-plot-{{ d['plot_id'] }}">
                     <div class="mt-5 text-center">
@@ -28,7 +28,7 @@
                         <span class="loading-spinner">Loading...</span>
                     </div>
                 </div>
-            {% elif d['type'] == 'html' and 'html_contents' in d %}
+            {% elif 'html_contents' in d %}
                {{ d['html_contents'] | safe }}
             {% else %}
                {{ d }}

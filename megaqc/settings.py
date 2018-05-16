@@ -83,10 +83,15 @@ class DevConfig(Config):
 
 class TestConfig(Config):
     """Test configuration."""
+    DEBUG = False
     SQLALCHEMY_DBMS = 'sqlite'
     DB_NAME = 'test.db'
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     SQLALCHEMY_DATABASE_URI = '{0}:///{1}'.format(SQLALCHEMY_DBMS,DB_PATH)
+    DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
     def __init__(self):
         super(TestConfig, self).__init__()
+        # Log to the terminal
+        print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
+        print(" * Database path: {}".format(self.DB_PATH))

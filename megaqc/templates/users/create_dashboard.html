@@ -26,7 +26,7 @@
         </button>
     </div>
     <div class="col-sm-4 col-lg-2 mb-3">
-        <button class="btn btn-outline-info btn-lg btn-block disabled">
+        <button class="btn btn-outline-info btn-lg btn-block" data-toggle="modal" data-target="#dashboard-add-heading-modal">
             <i class="fa fa-header" aria-hidden="true"></i><br>
             Add Heading
         </button>
@@ -70,7 +70,8 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add plot to dashboard</h5>
+                <h5 class="modal-title show-create">Add plot to dashboard</h5>
+                <h5 class="modal-title show-edit" style="display:none;">Edit dashboard plot</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -113,21 +114,67 @@
     </div>
 </div>
 
+<!-- Add Heading Modal -->
+<div class="modal fade" id="dashboard-add-heading-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title show-create">Add heading to dashboard</h5>
+                <h5 class="modal-title show-edit" style="display:none;">Edit heading in dashboard</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="dashboard_title" class="col-sm-6 col-lg-3 col-form-label">Heading Style:</label>
+                        <div class="col-sm-6 col-lg-3">
+                            <select class="form-control" id="dashboard-add-heading-class">
+                                <option value="display-1">Display 1</option>
+                                <option value="display-2">Display 2</option>
+                                <option value="display-3">Display 3</option>
+                                <option value="display-4">Display 4</option>
+                                <option value="h1">Heading 1</option>
+                                <option value="h2">Heading 2</option>
+                                <option value="h3">Heading 3</option>
+                                <option value="h4">Heading 4</option>
+                                <option value="h5">Heading 5</option>
+                                <option value="h6">Heading 6</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input class="display-1" id="dashboard-add-heading" placeholder="Type Here" type="text">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary show-create">Add to dashboard</button>
+                    <button type="submit" class="btn btn-primary show-edit" style="display:none;">Edit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
 <!-- Add Custom HTML Modal -->
 <div class="modal fade" id="dashboard-add-html-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add custom HTML to dashboard</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <textarea class="form-control monospace" rows="15" id="dashboard-add-html"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button id="dashboard-add-html-btn" type="button" class="btn btn-primary">Add to dashboard</button>
-            </div>
+            <form>
+                <div class="modal-header">
+                    <h5 class="modal-title show-create">Add custom HTML to dashboard</h5>
+                    <h5 class="modal-title show-edit" style="display:none;">Edit custom HTML in dashboard</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control monospace" rows="15" id="dashboard-add-html"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary show-create">Add to dashboard</button>
+                    <button type="submit" class="btn btn-primary show-edit" style="display:none;">Edit</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -145,7 +192,7 @@
 $(function () {
     // Initialise grid-stack
     $('.grid-stack').gridstack({
-        cellHeight: 80,
+        cellHeight: 40,
         verticalMargin: 10,
         alwaysShowResizeHandle: true,
         resizable: {
@@ -153,28 +200,54 @@ $(function () {
         }
     });
 
+    // Add edit buttons to grid items when created
+    $('.grid-stack').on('added', function(event, items) {
+        for (var i = 0; i < items.length; i++) {
+            items[i]['el'].append(
+                '<button class="btn btn-sm btn-primary edit-btn">'+
+                    '<i class="fa fa-pencil mr-1" aria-hidden="true"></i> Edit'+
+                '</button>'
+            );
+        }
+    });
+
+    // Reset heading modal when adding new plot
+    $('button[data-target="#dashboard-add-plot-modal"]').click(function(){
+        $('#plot_favourites_table').data('edit-target', '');
+        $('#dashboard-add-plot-modal .show-create').hide();
+        $('#dashboard-add-plot-modal .show-edit').show();
+    });
+
     // Add a new plot
     $('#plot_favourites_table tbody tr').click(function(){
 
         var dash_grid = $('.grid-stack').data('gridstack');
         var plot_id = $(this).attr('id').replace('plot-favourite-', '');
-        var content_id = 'plotly-'+plot_id;
-
-        // Add a new empty widget with loading spinner
-        $('#dashboard-add-plot-modal').modal('hide');
-        dash_grid.addWidget(
-            $('<div class="grid-stack-item" data-type="plot" data-plot_id="'+plot_id+'">'+
-                '<div class="grid-stack-item-content loading">'+
-                    '<div class="plotly-plot" id="'+content_id+'">'+
-                        '<span class="grid-stack-loading">'+
-                            '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw mr-1"></i>'+
-                            '<span class="loading-spinner">Loading...</span>'+
-                        '</span>'+
-                    '</div>'+
+        var ptarget = $('#plot_favourites_table').data('edit-target');
+        if(ptarget){ el_id = ptarget; console.log('found a target!')}
+        else { el_id = 'dashboard-plot-'+Math.random().toString(36).substring(7); }
+        var new_item = $('<div class="grid-stack-item-content loading" id="'+el_id+'">'+
+                '<div class="plotly-plot">'+
+                    '<span class="grid-stack-loading">'+
+                        '<i class="loading-spinner fa fa-spinner fa-pulse fa-3x fa-fw mr-1"></i>'+
+                        '<span class="loading-spinner">Loading...</span>'+
+                    '</span>'+
                 '</div>'+
-            '</div>'),
-            0, 0, 6, 3
-        );
+            '</div>');
+
+        // editing an exiting item
+        if(ptarget){
+            $('#'+el_id).replaceWith(new_item);
+        // Create a new item
+        } else {
+            dash_grid.addWidget(
+                $('<div class="grid-stack-item" data-type="plot" data-plot_id="'+plot_id+'" />').append(new_item),
+                0, 0, 6, 3
+            );
+        }
+
+        // Hide the modal
+        $('#dashboard-add-plot-modal').modal('hide');
 
         // Get the plot HTML into a new div
         window.ajax_update = $.ajax({
@@ -186,8 +259,11 @@ $(function () {
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
                 if (data['success']){
-                    $('#'+content_id).html(data['plot_html']);
-                    $('#'+content_id).closest('.grid-stack-item-content').removeClass('loading');
+                    console.log('#'+el_id+' .plotly-plot');
+                    console.log($('#'+el_id+' .plotly-plot'));
+                    console.log($('#'+el_id+' .plotly-plot').html());
+                    $('#'+el_id+' .plotly-plot').html(data['plot_html']);
+                    $('#'+el_id+' .plotly-plot').closest('.grid-stack-item-content').removeClass('loading');
                 }
                 // AJAX data['success'] was false
                 else {
@@ -201,14 +277,75 @@ $(function () {
         });
     });
 
+    // Edit Plot
+    $('#dashboard').on('click', '.grid-stack-item[data-type="plot"] .edit-btn', function(){
+        var el_id = $(this).siblings('.grid-stack-item-content').attr('id');
+        $('#dashboard-add-plot-modal').modal('show');
+        $('#plot_favourites_table').data('edit-target', el_id);
+        $('#dashboard-add-plot-modal .show-create').hide();
+        $('#dashboard-add-plot-modal .show-edit').show();
+    });
+
     // Update plotly plots when resized
     $('.grid-stack').on('gsresizestop', function(event, elem) {
         // Cheat: tell the browser that the whole window has been resized
         window.dispatchEvent(new Event('resize'));
     });
 
+    // Update heading style dropdown
+    $('#dashboard-add-heading-class').change(function(){
+        $('#dashboard-add-heading').removeClass().addClass($(this).val());
+    });
+
+    // Reset heading modal when adding new heading
+    $('button[data-target="#dashboard-add-heading-modal"]').click(function(){
+        $('#dashboard-add-heading-modal form').data('edit-target', '');
+        $('#dashboard-add-heading-modal .show-create').show();
+        $('#dashboard-add-heading-modal .show-edit').hide();
+        $('#dashboard-add-heading-class').val('display-1');
+        $('#dashboard-add-heading').val('').removeClass().addClass('display-1');
+    });
+
+    // Add Heading to dashboard
+    $('#dashboard-add-heading-modal form').submit(function(e){
+        e.preventDefault();
+        var edit_target = $(this).data('edit-target');
+        var hclass = $('#dashboard-add-heading-class').val();
+        var htag = hclass.replace('display-','h');
+        if(edit_target && edit_target.length > 0){
+            $(edit_target).html('<'+htag+' class="'+hclass+'">'+$('#dashboard-add-heading').val()+'</'+htag+'>');
+        } else {
+            var dash_grid = $('.grid-stack').data('gridstack');
+            var el_id = 'dashboard-heading-'+Math.random().toString(36).substring(7);
+            dash_grid.addWidget(
+                $('<div class="grid-stack-item" data-type="heading">'+
+                    '<div class="grid-stack-item-content" id="'+el_id+'">'+
+                        '<'+htag+' class="'+hclass+'">'+$('#dashboard-add-heading').val()+'</'+htag+'>'+
+                    '</div>'+
+                '</div>'),
+                0, 0, 6, 3
+            );
+        }
+        $('#dashboard-add-heading-modal').modal('hide');
+    });
+
+    // Edit Heading
+    $('#dashboard').on('click', '.grid-stack-item[data-type="heading"] .edit-btn', function(){
+        var el = $(this).siblings('.grid-stack-item-content');
+        var el_id = el.attr('id');
+        var hclass = el.children().attr('class');
+        var htext = el.children().text();
+        $('#dashboard-add-heading-modal').modal('show');
+        $('#dashboard-add-heading-modal form').data('edit-target', '#'+el_id);
+        $('#dashboard-add-heading-modal .show-create').hide();
+        $('#dashboard-add-heading-modal .show-edit').show();
+        $('#dashboard-add-heading-class').val(hclass);
+        $('#dashboard-add-heading').val(htext).removeClass().addClass(hclass);
+    });
+
     // Add Custom HTML to dashboard
-    $('#dashboard-add-html-btn').click(function(){
+    $('#dashboard-add-html-modal form').submit(function(e){
+        e.preventDefault();
         var dash_grid = $('.grid-stack').data('gridstack');
         dash_grid.addWidget(
             $('<div class="grid-stack-item" data-type="html">'+
@@ -260,7 +397,10 @@ $(function () {
             if(el.data('type') == 'plot'){
                 ret_data['plot_id'] = el.data('plot_id');
             }
-            if(el.data('type') == 'html'){
+            else if(el.data('type') == 'heading'){
+                ret_data['html_contents'] = el.find('.grid-stack-item-content').html();
+            }
+            else if(el.data('type') == 'html'){
                 ret_data['html_contents'] = el.find('.grid-stack-item-content').html();
             }
             return ret_data;
