@@ -28,12 +28,16 @@ def change_password():
     form = PasswordChangeForm()
     return render_template('users/change_password.html', form=form)
 
-@blueprint.route('/admin')
+@blueprint.route('/admin/users')
 @login_required
-def admin_panel():
-    form = AdminForm()
+def manage_users():
     if not current_user.is_admin:
         abort(403)
     else:
         users_data = db.session.query(User).all()
-        return render_template('users/admin.html', users_data=users_data, form=form)
+        form = AdminForm()
+        return render_template(
+            'users/manage_users.html',
+            users_data = users_data,
+            form = form
+        )
