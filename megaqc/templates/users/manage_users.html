@@ -18,7 +18,7 @@
       </tr>
       <tr>
         <td><input class="form-control" name="user_id" type="hidden" value={{ users_data[-1].user_id + 1 }} /><input class="form-control" name="username" type="text" /></td>
-        <td><input class="form-control" name="email" type="text" /></td>
+        <td><input class="form-control" name="email" type="email" /></td>
         <td><input class="form-control" name="first_name" type="text" /></td>
         <td><input class="form-control" name="last_name" type="text" /></td>
         <td class="align-middle"><input class="form-control" name="active" type="checkbox" /></td>
@@ -46,7 +46,7 @@
       {% for user in users_data %}
       <tr>
         <td><input name="user_id" type="hidden" value={{user.user_id}} /><input class="form-control" name="username" type="text" value = {{user.username}} /></td>
-        <td><input class="form-control" name="email" type="text" value="{{user.email}}" /></td>
+        <td><input class="form-control" name="email" type="email" value="{{user.email}}" /></td>
         <td><input class="form-control" name="first_name" type="text" value="{{user.first_name}}" /></td>
         <td><input class="form-control" name="last_name" type="text" value="{{user.last_name}}" /></td>
         <td><input class="form-control monospace" name="api_token" type="text" value="{{user.api_token}}" disabled="disabled" /></td>
