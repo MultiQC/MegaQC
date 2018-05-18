@@ -68,7 +68,7 @@ def register():
     form = RegisterForm(request.form)
     if form.validate_on_submit():
         user_id = (db.session.query(func.max(User.user_id)).scalar() or 0)+1
-        User.create(
+        u = User.create(
             user_id = user_id,
             username = form.username.data,
             email = form.email.data,
@@ -78,6 +78,7 @@ def register():
             active = True
         )
         flash("Thanks for registering! You're now logged in.", 'success')
+        login_user(u)
         return redirect(url_for('public.home'))
     else:
         flash_errors(form)
