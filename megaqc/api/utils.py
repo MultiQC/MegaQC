@@ -17,6 +17,8 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.sql import not_, or_, and_
 from collections import defaultdict, OrderedDict
 
+import copy
+import json
 import os
 import plotly.offline as py
 import plotly.figure_factory as ff
@@ -32,9 +34,8 @@ elif sys.version_info.major == 3:
 else:
     raise(Exception("Unsupported python version"))
 
-import json
-
-def generate_hash(data):
+def generate_hash(d):
+    data = copy.deepcopy(d)
     data.pop("config_creation_date")
     data_string = json.dumps(data).encode('utf-8')
     md5er = md5()
@@ -69,26 +70,42 @@ def handle_report_data(user, report_data):
         report_data = report_data['data']
     report_id = Report.get_next_id()
     report_hash = generate_hash(report_data)
+    # Check that we don't already have a data file with this md5hash
     if db.session.query(Report).filter(Report.report_hash==report_hash).first():
         return (False, 'Report already uploaded')
-    new_report = Report(report_hash=report_hash, user_id=user.user_id)
+    # Pull the creation date if we can
+    try:
+        report_created_at = datetime.strptime(report_data['config_creation_date'], "%Y-%m-%d, %H:%M")
+    except:
+        report_created_at = datetime.now()
+    # Add to the main report table
+    new_report = Report(
+        report_hash = report_hash,
+        user_id = user.user_id,
+        created_at = report_created_at
+    )
     new_report.save()
 
     # Save the user as a report meta value
     # TODO: Replace this with special cases in get_report_metadata_fields()
     user_report_meta = ReportMeta(
-                            report_meta_id = ReportMeta.get_next_id(),
-                            report_meta_key = 'username',
-                            report_meta_value = user.username,
-                            report_id = new_report.report_id
-                        )
+        report_meta_id = ReportMeta.get_next_id(),
+        report_meta_key = 'username',
+        report_meta_value = user.username,
+        report_id = new_report.report_id
+    )
     user_report_meta.save()
 
     # Get top-level `config_` JSON keys (strings only).
     # eg. config_title / config_short_version / config_creation_date etc
     for key in report_data:
         if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict) and report_data[key]:
-            new_meta = ReportMeta(report_meta_id=ReportMeta.get_next_id(), report_meta_key=key, report_meta_value=report_data[key], report_id=new_report.report_id)
+            new_meta = ReportMeta(
+                report_meta_id = ReportMeta.get_next_id(),
+                report_meta_key = key,
+                report_meta_value = report_data[key],
+                report_id = new_report.report_id
+            )
             new_meta.save()
 
     # Save the raw parsed data (stuff that ends up in the multiqc_data directory)
@@ -111,11 +128,11 @@ def handle_report_data(user, report_data):
                 if not existing_key:
                     new_id = (db.session.query(func.max(SampleDataType.sample_data_type_id)).first()[0] or 0) +1
                     new_type = SampleDataType(
-                                    sample_data_type_id=new_id,
-                                    data_key="{}__{}".format(section, d_key),
-                                    data_section=section,
-                                    data_id=d_key
-                                )
+                        sample_data_type_id = new_id,
+                        data_key = "{}__{}".format(section, d_key),
+                        data_section = section,
+                        data_id = d_key
+                    )
                     new_type.save()
                     type_id = new_id
                 else:
@@ -125,12 +142,12 @@ def handle_report_data(user, report_data):
                 new_data_id = (db.session.query(func.max(SampleData.sample_data_id)).first()[0] or 0) + 1
                 value = report_data['report_saved_raw_data'][s_key][s_name][d_key]
                 new_data = SampleData(
-                                sample_data_id=new_data_id,
-                                report_id=report_id,
-                                sample_data_type_id=type_id,
-                                sample_id=sample_id,
-                                value=str(value)
-                            )
+                    sample_data_id = new_data_id,
+                    report_id = report_id,
+                    sample_data_type_id = type_id,
+                    sample_id = sample_id,
+                    value = str(value)
+                )
                 new_data.save()
 
     # Save report plot data and configs
@@ -158,7 +175,7 @@ def handle_report_data(user, report_data):
             if not existing_plot_config:
                 config_id = PlotConfig.get_next_id()
                 new_plot_config = PlotConfig(
-                    config_id=config_id,
+                    config_id = config_id,
                     config_type = report_data['report_plot_data'][plot]['plot_type'],
                     config_name = plot,
                     config_dataset = dataset_name,
@@ -178,12 +195,12 @@ def handle_report_data(user, report_data):
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
                         existing_category = PlotCategory(
-                                                plot_category_id = PlotCategory.get_next_id(),
-                                                report_id = report_id,
-                                                config_id = config_id,
-                                                category_name = data_key,
-                                                data = data
-                                            )
+                            plot_category_id = PlotCategory.get_next_id(),
+                            report_id = report_id,
+                            config_id = config_id,
+                            category_name = data_key,
+                            data = data
+                        )
                         existing_category.save()
                     else:
                         existing_category.data = data
@@ -197,13 +214,14 @@ def handle_report_data(user, report_data):
                             new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sub_dict['name'], report_id=report_id)
                             new_sample.save()
                             sample_id=new_sample.sample_id
-                        new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
-                                       report_id=report_id,
-                                       config_id=config_id,
-                                       sample_id=sample_id,
-                                       plot_category_id=existing_category.plot_category_id,
-                                       data=json.dumps(actual_data)
-                                )
+                        new_dataset_row = PlotData(
+                            plot_data_id = PlotData.get_next_id(),
+                            report_id = report_id,
+                            config_id = config_id,
+                            sample_id = sample_id,
+                            plot_category_id = existing_category.plot_category_id,
+                            data = json.dumps(actual_data)
+                        )
                         new_dataset_row.save()
 
         # Save line plot data
@@ -222,12 +240,12 @@ def handle_report_data(user, report_data):
                     if not existing_category:
                         category_id = PlotCategory.get_next_id()
                         existing_category = PlotCategory(
-                                                plot_category_id = PlotCategory.get_next_id(),
-                                                report_id = report_id,
-                                                config_id = config_id,
-                                                category_name = data_key,
-                                                data = data
-                                            )
+                            plot_category_id = PlotCategory.get_next_id(),
+                            report_id = report_id,
+                            config_id = config_id,
+                            category_name = data_key,
+                            data = data
+                        )
                         existing_category.save()
                     else:
                         existing_category.data = data
@@ -239,16 +257,17 @@ def handle_report_data(user, report_data):
                         if existing_sample:
                             sample_id = existing_sample.sample_id
                         else:
-                            new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sub_dict['name'], report_id=report_id)
+                            new_sample = Sample(sample_id=Sample.get_next_id(), sample_name=sub_dict['name'], report_id=report_id)
                             new_sample.save()
-                            sample_id=new_sample.sample_id
-                        new_dataset_row = PlotData(plot_data_id=PlotData.get_next_id(),
-                                       report_id=report_id,
-                                       config_id=config_id,
-                                       sample_id=sample_id,
-                                       plot_category_id=category_id,
-                                       data=json.dumps(sub_dict['data'])
-                                )
+                            sample_id = new_sample.sample_id
+                        new_dataset_row = PlotData(
+                            plot_data_id = PlotData.get_next_id(),
+                            report_id = report_id,
+                            config_id = config_id,
+                            sample_id = sample_id,
+                            plot_category_id = category_id,
+                            data = json.dumps(sub_dict['data'])
+                        )
                     new_dataset_row.save()
 
     # We made it this far - everything must have worked!

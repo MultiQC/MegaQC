@@ -20,7 +20,7 @@
       <tr>
         <td>{{ upload.upload_id }}</td>
         <td><span class="badge badge-{{ upload.status_class }}">{{ upload.status }}</label></td>
-        <td>{{ upload.message }}</td>
+        <td>{{ upload.message | safe }}</td>
         <td><samp>{{ upload.upload_date }}</samp></td>
       </tr>
       {% endfor %}
