@@ -22,21 +22,46 @@ class Config(object):
     SCHEDULER_API_ENABLED = True
     EXTRA_CONFIG = os.environ.get("MEGAQC_CONFIG", None)
     SERVER_NAME = None
+    DB_PATH = None
+    SQLALCHEMY_DBMS = None
+    SQLALCHEMY_HOST = 'localhost:5432'
+    SQLALCHEMY_USER = 'megaqc_user'
+    SQLALCHEMY_PASS = ''
+    SQLALCHEMY_DATABASE = 'megaqc'
 
     def __init__(self):
         if self.EXTRA_CONFIG:
             with open(self.EXTRA_CONFIG) as f:
                 self.extra_conf = yaml.load(f)
                 for key in self.extra_conf:
-                    if key in self.__dict__:
-                        setattr(self, self.extra_conf[key])
-                        print("Setting {} to {}".format(key, self.extra_conf[key]))
+                    if key in Config.__dict__:
+                        setattr(self, key, self.extra_conf[key])
+                        if key != "SQLALCHEMY_PASS":
+                            print("Setting {} to {}".format(key, self.extra_conf[key]))
+                        else:
+                            print("Setting {} to {}".format(key, "********"))
                     else:
                         print("Key '{}' not in '{}'".format(key, self.__dict__))
-            if self.SQLALCHEMY_DBMS == "sqlite":
-                self.SQLALCHEMY_DATABASE_URI = '{0}://{1}'.format(self.SQLALCHEMY_DBMS, self.DB_PATH)
-            else:
-                self.SQLALCHEMY_DATABASE_URI = '{3}://{0}:@{1}/{2}'.format(self.SQLALCHEMY_USER, self.SQLALCHEMY_HOST, self.SQLALCHEMY_DATABASE, self.SQLALCHEMY_DBMS)
+
+    def update_db_uri(self):
+        if self.SQLALCHEMY_DBMS == "sqlite":
+            self.SQLALCHEMY_DATABASE_URI = "{}:///{}".format(self.SQLALCHEMY_DBMS, self.DB_PATH)
+            self.SQLALCHEMY_DATABASE_URI_SAN = self.SQLALCHEMY_DATABASE_URI
+        else:
+            self.SQLALCHEMY_DATABASE_URI = "{}://{}:{}@{}/{}".format(
+                self.SQLALCHEMY_DBMS,
+                self.SQLALCHEMY_USER,
+                self.SQLALCHEMY_PASS,
+                self.SQLALCHEMY_HOST,
+                self.SQLALCHEMY_DATABASE
+            )
+            self.SQLALCHEMY_DATABASE_URI_SAN = "{}://{}:{}@{}/{}".format(
+                self.SQLALCHEMY_DBMS,
+                self.SQLALCHEMY_USER,
+                '***' if self.SQLALCHEMY_PASS else "",
+                self.SQLALCHEMY_HOST,
+                self.SQLALCHEMY_DATABASE
+            )
 
 
 class ProdConfig(Config):
@@ -46,16 +71,17 @@ class ProdConfig(Config):
     DEBUG = False
     SQLALCHEMY_DBMS = 'postgresql'
     SQLALCHEMY_USER = 'megaqc_user'
-    SQLALCHEMY_HOST='localhost:5432'
+    SQLALCHEMY_HOST = 'localhost:5432'
     SQLALCHEMY_DATABASE = 'megaqc'
-    SQLALCHEMY_DATABASE_URI = '{3}://{0}:@{1}/{2}'.format(SQLALCHEMY_USER, SQLALCHEMY_HOST, SQLALCHEMY_DATABASE, SQLALCHEMY_DBMS)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
     def __init__(self):
         super(ProdConfig, self).__init__()
+        self.update_db_uri()
         # Log to the terminal
+        print("Env: Prod")
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
-        print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI))
+        print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
 
 
 class DevConfig(Config):
@@ -67,7 +93,6 @@ class DevConfig(Config):
     DB_NAME = 'dev.db'
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
-    SQLALCHEMY_DATABASE_URI = '{0}:///{1}'.format(SQLALCHEMY_DBMS,DB_PATH)
     DEBUG_TB_ENABLED = True
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     WTF_CSRF_ENABLED = False  # Allows form testing
@@ -75,9 +100,11 @@ class DevConfig(Config):
 
     def __init__(self):
         super(DevConfig, self).__init__()
+        self.update_db_uri()
         # Log to the terminal
+        print("Env: dev")
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
-        print(" * Database path: {}".format(self.DB_PATH))
+        print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
 
 
 
@@ -87,11 +114,12 @@ class TestConfig(Config):
     SQLALCHEMY_DBMS = 'sqlite'
     DB_NAME = 'test.db'
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
-    SQLALCHEMY_DATABASE_URI = '{0}:///{1}'.format(SQLALCHEMY_DBMS,DB_PATH)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
     def __init__(self):
         super(TestConfig, self).__init__()
+        self.update_db_uri()
         # Log to the terminal
+        print("Env: test")
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
-        print(" * Database path: {}".format(self.DB_PATH))
+        print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
