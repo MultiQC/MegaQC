@@ -2,7 +2,7 @@
 -r dev.txt
 
 # Postgres SQL
-psycopg2>=2.6.2
+psycopg2-binary>=2.6.2
 
 # Gunicorn server
 gunicorn>=19.7.1

@@ -40,7 +40,6 @@ RUN curl -fsSL https://bootstrap.pypa.io/get-pip.py -o /opt/get-pip.py && \
 
 # Install PostgreSQL and psycopg2
 RUN apt-get install postgresql-9.6 postgresql-server-dev-9.6 -y
-RUN pip install psycopg2-binary
 
 # Set data directory
 ENV PGDATA /usr/local/lib/postgresql
@@ -59,13 +58,11 @@ su postgres -c "/usr/lib/postgresql/9.6/bin/createuser megaqc_user" && \
 su postgres -c "/usr/lib/postgresql/9.6/bin/createdb megaqc -O megaqc_user" && \
 su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w stop"
 
-# Install Gunicorn
-RUN pip install gunicorn
-
 # Install MegaQC
 COPY . MegaQC
 WORKDIR MegaQC
-RUN python setup.py install
+RUN pip install -r requirements/prod.txt && \
+    python setup.py install
 
 # Set up the Postgres SQL server
 RUN su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && \
