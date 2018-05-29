@@ -50,7 +50,7 @@ class ReportMeta(db.Model, CRUDMixin):
     __tablename__ =  'report_meta'
     report_meta_id = Column(Integer, primary_key=True)
     report_meta_key = Column(String(80), nullable=False)
-    report_meta_value = Column(String(80), nullable=False)
+    report_meta_value = Column(String(1024), nullable=False)
     report_id = Column(Integer, ForeignKey('report.report_id'))
 
     @staticmethod

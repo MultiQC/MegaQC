@@ -5,7 +5,7 @@ import datetime as dt
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, String, TIMESTAMP, Binary, DateTime
+from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Sequence, String, TIMESTAMP, Binary, DateTime
 
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
@@ -64,10 +64,6 @@ class User(db.Model, CRUDMixin):
             self.set_password(password)
         else:
             self.password = None
-
-
-        if self.user_id == 1:
-            self.is_admin = True
 
     def reset_password(self):
         password = getrandstr(rng, digits + letters, 10)
