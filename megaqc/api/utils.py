@@ -87,13 +87,14 @@ def handle_report_data(user, report_data):
     )
     new_report.save()
     current_app.logger.info("Created new report {} from {}".format(new_report.report_id, user.email))
+    report_id = new_report.report_id
 
     # Save the user as a report meta value
     # TODO: Replace this with special cases in get_report_metadata_fields()
     user_report_meta = ReportMeta(
         report_meta_key = 'username',
         report_meta_value = user.username,
-        report_id = new_report.report_id
+        report_id = report_id
     )
     user_report_meta.save()
 
@@ -106,7 +107,7 @@ def handle_report_data(user, report_data):
             new_meta = ReportMeta(
                 report_meta_key = key,
                 report_meta_value = report_data[key],
-                report_id = new_report.report_id
+                report_id = report_id
             )
             new_meta.save()
     current_app.logger.info("Finished writing {} metadata fields for report {}".format(new_meta_cnt, new_report.report_id))
@@ -120,7 +121,7 @@ def handle_report_data(user, report_data):
             new_samp_cnt += 1
             report_sample = db.session.query(Sample).filter(Sample.sample_name==s_name).first()
             if not report_sample:
-                report_sample = Sample(sample_name=s_name, report_id=new_report.report_id)
+                report_sample = Sample(sample_name=s_name, report_id=report_id)
                 report_sample.save()
             sample_id = report_sample.sample_id
 
@@ -140,7 +141,7 @@ def handle_report_data(user, report_data):
                 # Save the data value
                 value = report_data['report_saved_raw_data'][s_key][s_name][d_key]
                 new_data = SampleData(
-                    report_id = new_report.report_id,
+                    report_id = report_id,
                     sample_data_type_id = type_id,
                     sample_id = sample_id,
                     value = str(value)
