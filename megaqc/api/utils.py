@@ -1096,13 +1096,17 @@ def generate_trend_plot(plot_data):
                     y = yvals,
                     mode = 'markers',
                     text = [ x['name'] for x in plot_data[field] ],
-                    name = "{} ({})".format(field, yvalcount)
+                    name = "{} ({})".format(field, yvalcount),
+                    hoverinfo = 'text+x+y'
                 )
             )
         else:
             return 'Error - unrecognised plot type: {}'.format(ptype)
     plot_div = py.plot(
-        go.Figure(data = figs),
+        go.Figure(
+            data = figs,
+            layout = go.Layout(hovermode= 'closest')
+        ),
         output_type = 'div',
         show_link = False,
         config = dict(
