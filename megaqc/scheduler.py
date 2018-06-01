@@ -49,6 +49,7 @@ def upload_reports_job():
                 # Now save the parsed JSON data to the database
                 ret = handle_report_data(user, data)
             except Exception:
+                current_app.logger.error("Failed loading upload {}: {}".format(row.upload_id, traceback.format_exc()))
                 ret = (False, '<pre><code>{}</code></pre>'.format(traceback.format_exc()))
                 current_app.logger.error("Error processing upload {}: {}".format(row.upload_id, ret))
             if ret[0]:
