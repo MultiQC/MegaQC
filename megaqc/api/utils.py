@@ -199,7 +199,7 @@ def handle_report_data(user, report_data):
             if report_data['report_plot_data'][plot]['plot_type'] == "bar_graph":
 
                 for sub_dict in dataset:
-                    data_key = sub_dict['name']
+                    data_key = str(sub_dict['name'])
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
                     data = json.dumps({x:y for x,y in list(sub_dict.items()) if x != 'data'})
                     if not existing_category:
