@@ -2,8 +2,11 @@
 """Application configuration."""
 from __future__ import print_function
 from builtins import object
-import os
+
 from megaqc.scheduler import upload_reports_job
+
+import logging
+import os
 import yaml
 
 
@@ -23,6 +26,7 @@ class Config(object):
     EXTRA_CONFIG = os.environ.get("MEGAQC_CONFIG", None)
     SERVER_NAME = None
     DB_PATH = None
+    LOG_LEVEL = logging.INFO
     SQLALCHEMY_DBMS = None
     SQLALCHEMY_HOST = 'localhost:5432'
     SQLALCHEMY_USER = 'megaqc_user'
@@ -97,6 +101,7 @@ class DevConfig(Config):
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     WTF_CSRF_ENABLED = False  # Allows form testing
     SQLALCHEMY_RECORD_QUERIES = True
+    LOG_LEVEL = logging.DEBUG
 
     def __init__(self):
         super(DevConfig, self).__init__()
@@ -115,6 +120,7 @@ class TestConfig(Config):
     DB_NAME = 'test.db'
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
+    LOG_LEVEL = logging.DEBUG
 
     def __init__(self):
         super(TestConfig, self).__init__()

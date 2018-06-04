@@ -85,6 +85,7 @@ def handle_report_data(user, report_data):
         created_at = report_created_at
     )
     new_report.save()
+    current_app.logger.info("Created new report {} from {}".format(new_report.report_id, user.email))
 
     # Save the user as a report meta value
     # TODO: Replace this with special cases in get_report_metadata_fields()
@@ -98,8 +99,10 @@ def handle_report_data(user, report_data):
 
     # Get top-level `config_` JSON keys (strings only).
     # eg. config_title / config_short_version / config_creation_date etc
+    new_meta_cnt = 0
     for key in report_data:
         if key.startswith("config") and not isinstance(report_data[key], list) and not isinstance(report_data[key], dict) and report_data[key]:
+            new_meta_cnt += 1
             new_meta = ReportMeta(
                 report_meta_id = ReportMeta.get_next_id(),
                 report_meta_key = key,
@@ -107,12 +110,15 @@ def handle_report_data(user, report_data):
                 report_id = new_report.report_id
             )
             new_meta.save()
+    current_app.logger.info("Finished writing {} metadata fields for report {}".format(new_meta_cnt, new_report.report_id))
 
     # Save the raw parsed data (stuff that ends up in the multiqc_data directory)
+    new_samp_cnt = 0
     for s_key in report_data.get('report_saved_raw_data', {}):
         section = s_key.replace('multiqc_', '')
         # Go through each sample
         for s_name in report_data['report_saved_raw_data'][s_key]:
+            new_samp_cnt += 1
             existing_sample = db.session.query(Sample).filter(Sample.sample_name==s_name).first()
             if existing_sample:
                 sample_id = existing_sample.sample_id
@@ -149,8 +155,11 @@ def handle_report_data(user, report_data):
                     value = str(value)
                 )
                 new_data.save()
+    current_app.logger.info("Finished writing {} samples for report {}".format(new_samp_cnt, new_report.report_id))
 
     # Save report plot data and configs
+    new_plotcfg_cnt = 0
+    new_plotdata_cnt = 0
     for plot in report_data.get('report_plot_data'):
         #  skip custom plots
         if 'mqc_hcplot_' in plot:
@@ -173,6 +182,7 @@ def handle_report_data(user, report_data):
                     dataset_name = report_data['report_plot_data'][plot]['config']['title']
             existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.config_type==report_data['report_plot_data'][plot]['plot_type'], PlotConfig.config_name==plot, PlotConfig.config_dataset==dataset_name).first()
             if not existing_plot_config:
+                new_plotcfg_cnt += 1
                 config_id = PlotConfig.get_next_id()
                 new_plot_config = PlotConfig(
                     config_id = config_id,
@@ -223,6 +233,7 @@ def handle_report_data(user, report_data):
                             data = json.dumps(actual_data)
                         )
                         new_dataset_row.save()
+                        new_plotdata_cnt
 
         # Save line plot data
             elif report_data['report_plot_data'][plot]['plot_type'] == "xy_line":
@@ -269,6 +280,8 @@ def handle_report_data(user, report_data):
                             data = json.dumps(sub_dict['data'])
                         )
                     new_dataset_row.save()
+                    new_plotdata_cnt
+    current_app.logger.info("Finished writing plot data ({} cfg, {} data points) for report {}".format(new_plotcfg_cnt, new_plotdata_cnt, new_report.report_id))
 
     # We made it this far - everything must have worked!
     return (True, 'Data upload successful')

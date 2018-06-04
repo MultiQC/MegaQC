@@ -26,10 +26,11 @@ def upload_reports_job():
     with scheduler.app.app_context():
         queued_uploads = db.session.query(Upload).filter(Upload.status == "NOT TREATED").all()
         for row in queued_uploads:
+            user = db.session.query(User).filter(User.user_id == row.user_id).one()
+            current_app.logger.info("Beginning process of upload #{} from {}".format(row.upload_id, user.email))
             row.status = "IN TREATMENT"
             db.session.add(row)
             db.session.commit()
-            user = db.session.query(User).filter(User.user_id == row.user_id).one()
             # Check if we have a gzipped file
             gzipped = False
             with open(row.path, 'rb') as fh:
@@ -49,6 +50,7 @@ def upload_reports_job():
                 ret = handle_report_data(user, data)
             except Exception:
                 ret = (False, '<pre><code>{}</code></pre>'.format(traceback.format_exc()))
+                current_app.logger.error("Error processing upload {}: {}".format(row.upload_id, ret))
             if ret[0]:
                 row.status = "TREATED"
                 row.message = "The document has been uploaded successfully"
@@ -57,5 +59,6 @@ def upload_reports_job():
                 row.status = "FAILED"
                 row.message = "The document has not been uploaded : {0}".format(ret[1])
             row.modified_at = datetime.datetime.utcnow()
+            current_app.logger.info("Finished processing upload #{} to state {}".format(row.upload_id, row.status))
             db.session.add(row)
             db.session.commit()
