@@ -1280,7 +1280,7 @@ def get_filter_from_data(data):
         if filter_id == -1:
             my_filter = []
         else:
-            my_filter = json.loads(db.session.query(SampleFilter.sample_filter_data).filter(SampleFilter.sample_filter_id == filter_id).first())
+            my_filter = json.loads(db.session.query(SampleFilter.sample_filter_data).filter(SampleFilter.sample_filter_id == filter_id).first()[0])
     else:
         my_filter = data.get("filters", [])
 
