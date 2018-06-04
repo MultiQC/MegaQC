@@ -194,7 +194,7 @@ def edit_filters():
     for sfg in sample_filters:
         sample_filter_counts[sfg] = {}
         for sf in sample_filters[sfg]:
-            sample_filter_counts[sf['id']] = get_samples(filters=sf['id'], count=True)
+            sample_filter_counts[sf['id']] = get_samples(filters=sf.get('sample_filter_data', []), count=True)
     return render_template(
         'users/organize_filters.html',
         sample_filters = sample_filters,

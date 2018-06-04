@@ -199,7 +199,7 @@ def handle_report_data(user, report_data):
             if report_data['report_plot_data'][plot]['plot_type'] == "bar_graph":
 
                 for sub_dict in dataset:
-                    data_key = sub_dict['name']
+                    data_key = str(sub_dict['name'])
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
                     data = json.dumps({x:y for x,y in list(sub_dict.items()) if x != 'data'})
                     if not existing_category:
@@ -1280,7 +1280,7 @@ def get_filter_from_data(data):
         if filter_id == -1:
             my_filter = []
         else:
-            my_filter = json.loads(db.session.query(SampleFilter.sample_filter_data).filter(SampleFilter.sample_filter_id == filter_id).first())
+            my_filter = json.loads(db.session.query(SampleFilter.sample_filter_data).filter(SampleFilter.sample_filter_id == filter_id).first()[0])
     else:
         my_filter = data.get("filters", [])
 

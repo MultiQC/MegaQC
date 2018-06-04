@@ -3,14 +3,14 @@
 This file contains the app module, with the app factory function."""
 
 from __future__ import print_function
+from builtins import str
 from future import standard_library
 standard_library.install_aliases()
 
-from flask import Flask, jsonify, render_template, request
 import jinja2
 import markdown
-import logging
 
+from flask import Flask, jsonify, render_template, request
 from megaqc import commands, public, user, version, api
 from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager
 from megaqc.scheduler import init_scheduler
@@ -22,9 +22,6 @@ def create_app(config_object):
     :param config_object: The configuration object to use.
     """
     app = Flask(__name__.split('.')[0])
-    # get appropriate log level from config and set it
-    log_level = getattr(config_object, 'LOG_LEVEL', logging.INFO)
-    app.logger.setLevel(log_level)
     app.config.from_object(config_object)
     if app.config['SERVER_NAME'] is not None:
         print(" * Server name: {}".format(app.config['SERVER_NAME']))
@@ -72,14 +69,15 @@ def register_errorhandlers(app):
         """Render error template."""
         # If a HTTPException, pull the `code` attribute; default to 500
         error_code = getattr(error, 'code', 500)
+        err_msg = str(error)
         # Return JSON if an API call
         if request.path.startswith('/api/'):
             response = jsonify({
                 'success': False,
-                'message': getattr(error, 'description'),
+                'message': err_msg,
                 'error': {
                     'code': error_code,
-                    'message': getattr(error, 'description')
+                    'message': err_msg
                 }
             })
             response.status_code = error_code
