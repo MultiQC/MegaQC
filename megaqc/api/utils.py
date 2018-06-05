@@ -12,7 +12,7 @@ from megaqc.user.models import User
 from megaqc.extensions import db
 from megaqc.utils import settings
 from megaqc.api.constants import comparators, type_to_tables_fields, valid_join_conditions
-from sqlalchemy import func, distinct, cast, Numeric
+from sqlalchemy import func, distinct, cast, Numeric, or_
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import not_, or_, and_
 from collections import defaultdict, OrderedDict
@@ -825,7 +825,7 @@ def get_favourite_plot_data(user, favourite_id):
             PlotFavourite.plot_type,
             PlotFavourite.data,
             PlotFavourite.created_at
-        ).filter_by(user_id=user.user_id, plot_favourite_id=favourite_id) \
+        ).filter_by(plot_favourite_id=favourite_id) \
         .first()
     # Prep variables
     plot_type = fp_row[4]
@@ -923,7 +923,7 @@ def get_dashboard_data(user, dashboard_id):
             Dashboard.is_public,
             Dashboard.modified_at,
             Dashboard.created_at
-        ).filter_by(user_id=user.user_id, dashboard_id=dashboard_id) \
+        ).filter(or_(Dashboard.user_id==user.user_id, Dashboard.is_public==True), Dashboard.dashboard_id==dashboard_id) \
         .first()
     if row is None:
         return None
