@@ -8,6 +8,7 @@ from future import standard_library
 standard_library.install_aliases()
 
 import jinja2
+import logging
 import markdown
 
 from flask import Flask, jsonify, render_template, request
@@ -22,6 +23,9 @@ def create_app(config_object):
     :param config_object: The configuration object to use.
     """
     app = Flask(__name__.split('.')[0])
+    # get appropriate log level from config and set it
+    log_level = getattr(config_object, 'LOG_LEVEL', logging.INFO)
+    app.logger.setLevel(log_level)
     app.config.from_object(config_object)
     if app.config['SERVER_NAME'] is not None:
         print(" * Server name: {}".format(app.config['SERVER_NAME']))
