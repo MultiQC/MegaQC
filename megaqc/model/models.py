@@ -24,8 +24,8 @@ class Report(db.Model, CRUDMixin):
 
     __tablename__ = 'report'
     report_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
-    report_hash = Column(String)
+    user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
+    report_hash = Column(String, index=True)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     uploaded_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
@@ -51,7 +51,7 @@ class ReportMeta(db.Model, CRUDMixin):
     report_meta_id = Column(Integer, primary_key=True)
     report_meta_key = Column(String(80), nullable=False)
     report_meta_value = Column(String(1024), nullable=False)
-    report_id = Column(Integer, ForeignKey('report.report_id'))
+    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
 
     @staticmethod
     def get_next_id():
@@ -74,10 +74,10 @@ class PlotConfig(db.Model, CRUDMixin):
 class PlotData(db.Model, CRUDMixin):
     __tablename__ = "plot_data"
     plot_data_id = Column(Integer, primary_key=True)
-    report_id = Column(Integer, ForeignKey('report.report_id'))
+    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
     config_id = Column(Integer, ForeignKey('plot_config.config_id'))
     plot_category_id = Column(Integer(), ForeignKey('plot_category.plot_category_id'))
-    sample_id = Column(Integer, ForeignKey('sample.sample_id'))
+    sample_id = Column(Integer, ForeignKey('sample.sample_id'), index=True)
     data = Column(String, nullable=False)
 
     @staticmethod
@@ -99,7 +99,7 @@ class PlotCategory(db.Model, CRUDMixin):
 class PlotFavourite(db.Model, CRUDMixin):
     __tablename__ = "plot_favourite"
     plot_favourite_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
+    user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
     title = Column(String(2048), nullable=False)
     description = Column(String(2048), nullable=True)
     plot_type = Column(String(128), nullable=False)
@@ -113,10 +113,10 @@ class PlotFavourite(db.Model, CRUDMixin):
 class Dashboard(db.Model, CRUDMixin):
     __tablename__ = "dashboard"
     dashboard_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
+    user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
     title = Column(String(2048), nullable=False)
     data = Column(String(2048), nullable=False)
-    is_public = Column(Boolean, default=False)
+    is_public = Column(Boolean, default=False, index=True)
     modified_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
@@ -134,9 +134,9 @@ class SampleDataType(db.Model, CRUDMixin):
 class SampleData(db.Model, CRUDMixin):
     __tablename__ = "sample_data"
     sample_data_id = Column(Integer, primary_key=True)
-    report_id = Column(Integer, ForeignKey('report.report_id'))
+    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
     sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id'))
-    sample_id = Column(Integer, ForeignKey('sample.sample_id'))
+    sample_id = Column(Integer, ForeignKey('sample.sample_id'), index=True)
     value = Column(String(1024))
 
     @staticmethod
@@ -148,7 +148,7 @@ class Sample(db.Model, CRUDMixin):
     __tablename__ ="sample"
     sample_id = Column(Integer, primary_key=True)
     sample_name = Column(String(80))
-    report_id = Column(Integer, ForeignKey('report.report_id'))
+    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
     @staticmethod
     def get_next_id():
         return (db.session.query(func.max(Sample.sample_id)).first()[0] or 0) + 1
@@ -159,9 +159,9 @@ class SampleFilter(db.Model, CRUDMixin):
     sample_filter_id = Column(Integer, primary_key=True)
     sample_filter_name = Column(String(80))
     sample_filter_tag = Column(String(80))
-    is_public = Column(Boolean)
+    is_public = Column(Boolean, index=True)
     sample_filter_data = Column(String(2048), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
+    user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
 
     @staticmethod
     def get_next_id():
@@ -170,7 +170,7 @@ class SampleFilter(db.Model, CRUDMixin):
 class Upload(db.Model, CRUDMixin):
     __tablename__="uploads"
     upload_id = Column(Integer, primary_key=True)
-    status = Column(String(80))
+    status = Column(String(80, index=True))
     path = Column(String(2048))
     message = Column(String(2048))
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
