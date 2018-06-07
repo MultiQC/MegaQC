@@ -170,7 +170,7 @@ class SampleFilter(db.Model, CRUDMixin):
 class Upload(db.Model, CRUDMixin):
     __tablename__="uploads"
     upload_id = Column(Integer, primary_key=True)
-    status = Column(String(80, index=True))
+    status = Column(String(80), index=True)
     path = Column(String(2048))
     message = Column(String(2048))
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
