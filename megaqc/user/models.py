@@ -5,7 +5,7 @@ import datetime as dt
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, String, TIMESTAMP, Binary, DateTime
+from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Unicode, TIMESTAMP, Binary, DateTime
 
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
@@ -30,7 +30,7 @@ class Role(db.Model, CRUDMixin):
 
     __tablename__ = 'roles'
     role_id = Column(Integer, primary_key=True)
-    name = Column(String(80, convert_unicode=True), unique=True, nullable=False)
+    name = Column(Unicode, unique=True, nullable=False)
     user_id = Column(Integer, ForeignKey('users.user_id'))
     user = relationship('User', backref='roles')
 
@@ -44,16 +44,16 @@ class User(db.Model, CRUDMixin):
 
     __tablename__ = 'users'
     user_id = Column(Integer, primary_key=True)
-    username = Column(String(80, convert_unicode=True), unique=True, nullable=False)
-    email = Column(String(80, convert_unicode=True), unique=True, nullable=False)
-    salt = Column(String(80, convert_unicode=True), nullable=True)
-    password = Column(String(128, convert_unicode=True), nullable=True)
+    username = Column(Unicode, unique=True, nullable=False)
+    email = Column(Unicode, unique=True, nullable=False)
+    salt = Column(Unicode, nullable=True)
+    password = Column(Unicode, nullable=True)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
-    first_name = Column(String(30, convert_unicode=True), nullable=True)
-    last_name = Column(String(30, convert_unicode=True), nullable=True)
+    first_name = Column(Unicode, nullable=True)
+    last_name = Column(Unicode, nullable=True)
     active = Column(Boolean(), default=False)
     is_admin = Column(Boolean(), default=False)
-    api_token = Column(String(80, convert_unicode=True), nullable=True)
+    api_token = Column(Unicode, nullable=True)
 
     def __init__(self, password=None, **kwargs):
         """Create instance."""
@@ -64,6 +64,9 @@ class User(db.Model, CRUDMixin):
             self.set_password(password)
         else:
             self.password = None
+
+        if self.user_id == 1:
+            self.is_admin = True
 
     def reset_password(self):
         password = getrandstr(rng, digits + letters, 10)
@@ -87,7 +90,6 @@ class User(db.Model, CRUDMixin):
     def get_id(self):
         #must return unicode
         return str(self.user_id)
-
 
     def __repr__(self):
         """Represent instance as a unique string."""
