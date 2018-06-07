@@ -225,9 +225,7 @@ def save_filters(user, *args, **kwargs):
     meta = data.get("meta", {})
     data = json.dumps(one_filter)
     if one_filter and meta:
-        # new_sf_id = SampleFilter.get_next_id()
         new_sf = SampleFilter(
-                # sample_filter_id = new_sf_id,
                 sample_filter_name = meta.get('name'),
                 sample_filter_tag = meta.get('set'),
                 is_public = meta.get('is_public', False),

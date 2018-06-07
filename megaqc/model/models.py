@@ -35,8 +35,6 @@ class Report(db.Model, CRUDMixin):
 
     def __init__(self, **kwargs):
         """Create instance."""
-        if "report_id" not in kwargs:
-            kwargs['report_id'] = Report.get_next_id()
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):

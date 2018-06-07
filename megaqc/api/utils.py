@@ -172,20 +172,22 @@ def handle_report_data(user, report_data):
                     dataset_name = report_data['report_plot_data'][plot]['config']['ylab']
                 except KeyError:
                     dataset_name = report_data['report_plot_data'][plot]['config']['title']
-            existing_plot_config = db.session.query(PlotConfig).filter(PlotConfig.config_type==report_data['report_plot_data'][plot]['plot_type'], PlotConfig.config_name==plot, PlotConfig.config_dataset==dataset_name).first()
-            if not existing_plot_config:
-                new_plotcfg_cnt += 1
-#                 config_id = PlotConfig.get_next_id()
-                new_plot_config = PlotConfig(
-                    # config_id = config_id,
+
+            plot_config = db.session.query(PlotConfig).filter(
+                PlotConfig.config_type==report_data['report_plot_data'][plot]['plot_type'],
+                PlotConfig.config_name==plot,
+                PlotConfig.config_dataset==dataset_name
+            ).first()
+            if not plot_config:
+                plot_config = PlotConfig(
                     config_type = report_data['report_plot_data'][plot]['plot_type'],
                     config_name = plot,
                     config_dataset = dataset_name,
                     data = config
                 )
-                new_plot_config.save()
-            else:
-                config_id = existing_plot_config.config_id
+                plot_config.save()
+                new_plotcfg_cnt += 1
+            config_id = plot_config.config_id
 
         # Save bar graph data
             if report_data['report_plot_data'][plot]['plot_type'] == "bar_graph":
@@ -195,9 +197,7 @@ def handle_report_data(user, report_data):
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
                     data = json.dumps({x:y for x,y in list(sub_dict.items()) if x != 'data'})
                     if not existing_category:
-#                         category_id = PlotCategory.get_next_id()
                         existing_category = PlotCategory(
-#                             plot_category_id = PlotCategory.get_next_id(),
                             report_id = report_id,
                             config_id = config_id,
                             category_name = data_key,
@@ -213,11 +213,10 @@ def handle_report_data(user, report_data):
                         if existing_sample:
                             sample_id = existing_sample.sample_id
                         else:
-                            new_sample=Sample(sample_id=Sample.get_next_id(), sample_name=sub_dict['name'], report_id=report_id)
+                            new_sample=Sample(sample_name=sub_dict['name'], report_id=report_id)
                             new_sample.save()
                             sample_id=new_sample.sample_id
                         new_dataset_row = PlotData(
-#                             plot_data_id = PlotData.get_next_id(),
                             report_id = report_id,
                             config_id = config_id,
                             sample_id = sample_id,
@@ -225,7 +224,7 @@ def handle_report_data(user, report_data):
                             data = json.dumps(actual_data)
                         )
                         new_dataset_row.save()
-                        new_plotdata_cnt
+                        new_plotdata_cnt += 1
 
         # Save line plot data
             elif report_data['report_plot_data'][plot]['plot_type'] == "xy_line":
@@ -241,9 +240,7 @@ def handle_report_data(user, report_data):
                     existing_category = db.session.query(PlotCategory).filter(PlotCategory.category_name==data_key).first()
                     data = json.dumps({x:y for x,y in list(sub_dict.items()) if x != 'data'})
                     if not existing_category:
-#                         category_id = PlotCategory.get_next_id()
                         existing_category = PlotCategory(
-#                             plot_category_id = PlotCategory.get_next_id(),
                             report_id = report_id,
                             config_id = config_id,
                             category_name = data_key,
@@ -256,15 +253,13 @@ def handle_report_data(user, report_data):
                         category_id = existing_category.plot_category_id
 
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
-                        existing_sample = db.session.query(Sample).filter(Sample.sample_name==sub_dict['name']).first()
-                        if existing_sample:
-                            sample_id = existing_sample.sample_id
-                        else:
-                            new_sample = Sample(sample_id=Sample.get_next_id(), sample_name=sub_dict['name'], report_id=report_id)
+                        sample = db.session.query(Sample).filter(Sample.sample_name==sub_dict['name']).first()
+                        if not sample:
+                            new_sample = Sample(sample_name=sub_dict['name'], report_id=report_id)
                             new_sample.save()
-                            sample_id = new_sample.sample_id
+                        sample_id = sample.sample_id
+
                         new_dataset_row = PlotData(
-#                             plot_data_id = PlotData.get_next_id(),
                             report_id = report_id,
                             config_id = config_id,
                             sample_id = sample_id,
@@ -272,7 +267,7 @@ def handle_report_data(user, report_data):
                             data = json.dumps(sub_dict['data'])
                         )
                     new_dataset_row.save()
-                    new_plotdata_cnt
+                    new_plotdata_cnt += 1
     current_app.logger.info("Finished writing plot data ({} cfg, {} data points) for report {}".format(new_plotcfg_cnt, new_plotdata_cnt, new_report.report_id))
 
     # We made it this far - everything must have worked!
@@ -865,17 +860,15 @@ def get_favourite_plot_data(user, favourite_id):
 
 def save_plot_favourite_data(user, plot_type, data, title, description=None):
     """ Save a new plot favourite to the database """
-#     pf_id = PlotFavourite.get_next_id()
     new_plot_favourite = PlotFavourite(
-        plot_favourite_id = pf_id,
-        # user_id = user.user_id,
+        user_id = user.user_id,
         title = title,
         description = description,
         plot_type = plot_type,
         data = json.dumps(data),
     )
     new_plot_favourite.save()
-    return pf_id
+    return new_plot_favourite.plot_favourite_id
 
 def get_dashboards(user):
     """ Return list of saved dashboards for the user """
@@ -936,16 +929,14 @@ def get_dashboard_data(user, dashboard_id):
 
 def save_dashboard_data(user, title, data, is_public=False, dashboard_id=None):
     """ Save a dashboard """
-#     dashboard_id = Dashboard.get_next_id()
     new_dashboard = Dashboard(
-        # dashboard_id = dashboard_id,
         user_id = user.user_id,
         title = title,
         data = json.dumps(data),
         is_public = is_public
     )
     new_dashboard.save()
-    return dashboard_id
+    return new_dashboard.dashboard_id
 
 def get_sample_fields_values(keys, filters=None, num_fieldids=False):
     if not filters:

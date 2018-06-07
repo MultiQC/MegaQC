@@ -69,7 +69,6 @@ def register():
     if form.validate_on_submit():
         user_cnt = db.session.query(User).count()
         u = User.create(
-            # user_id = user_id,
             username = form.username.data,
             email = form.email.data,
             password = form.password.data,
