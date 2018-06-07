@@ -993,6 +993,7 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='boxplot'):
     for s_name in plot_data:
         dtypes.update(plot_data[s_name])
     figs = []
+    ylabels = []
     for dtype in sorted(dtypes):
         pdata = []
         for s_name in plot_data:
@@ -1036,7 +1037,10 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='boxplot'):
             figs[dname] = pdata
         else:
             return 'Error - unrecognised plot type: {}'.format(ptype)
-    layout = {}
+
+        ylab = dtype.split(':', 2)[1].strip()
+        ylabels.append(ylab)
+
     if ptype == 'hist':
         layout = go.Layout(
             barmode = 'overlay',
@@ -1049,10 +1053,27 @@ def generate_distribution_plot(plot_data, nbins=20, ptype='boxplot'):
                 # TODO - integers only
             )
         )
+
+    layout = go.Layout(hovermode="closest")
     if ptype == 'violin':
-        figure = ff.create_violin(figs)
+        if len(figs) > 1:
+            return 'Error - multiple violin plots not yet supported'
+        elif len(figs) == 0:
+            return 'Error - no data selected'
+
+        title = list(figs).pop()
+        ylab = ylabels.pop()
+
+        layout = go.Layout(
+            showlegend=True,
+            xaxis={"title": title},
+            yaxis={"title": ylab},
+            hovermode="closest"
+        )
+        figure = ff.create_violin(figs[title])
     else:
         figure = go.Figure(data = figs, layout = layout)
+
     plot_div = py.plot(
         figure,
         output_type = 'div',
