@@ -407,7 +407,7 @@ def generate_report_plot(plot_type, sample_names):
                     xs.append(d[0])
                     ys.append(d[1])
             line_color = settings.default_plot_colors[ idx % len(settings.default_plot_colors) ]
-            plots.append(go.Scatter(
+            plots.append(go.Scattergl(
                 y = ys,
                 x = xs,
                 name = row[3].sample_name,
@@ -1108,7 +1108,7 @@ def generate_trend_plot(plot_data):
                 except ValueError:
                     yvals.append(None)
             figs.append(
-                go.Scatter(
+                go.Scattergl(
                     x = [ x['time'] for x in plot_data[field] ],
                     y = yvals,
                     mode = 'markers',
@@ -1207,7 +1207,7 @@ def generate_comparison_plot(plot_data, data_keys, field_names=None, pointsize=1
 
     plot_height = 600
     if all([x == None for x in plot_z]):
-        fig = go.Scatter(
+        fig = go.Scattergl(
             x = plot_x,
             y = plot_y,
             mode = 'lines+markers' if joinmarkers else 'markers',
