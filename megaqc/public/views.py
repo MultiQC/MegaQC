@@ -67,15 +67,15 @@ def register():
     """Register new user."""
     form = RegisterForm(request.form)
     if form.validate_on_submit():
-        user_id = (db.session.query(func.max(User.user_id)).scalar() or 0)+1
+        user_cnt = db.session.query(User).count()
         u = User.create(
-            user_id = user_id,
             username = form.username.data,
             email = form.email.data,
             password = form.password.data,
             first_name = form.first_name.data,
             last_name = form.last_name.data,
-            active = True
+            active = True,
+            is_admin = True if user_cnt == 0 else False,
         )
         flash("Thanks for registering! You're now logged in.", 'success')
         login_user(u)

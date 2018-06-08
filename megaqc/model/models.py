@@ -3,7 +3,7 @@ import datetime as dt
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, String, TIMESTAMP, Binary, DateTime, func
+from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Unicode, TIMESTAMP, Binary, DateTime, func
 
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
@@ -19,24 +19,19 @@ user_sampletype_map = db.Table('user_sampletype_map',
             db.Column('sample_data_type_id', Integer, db.ForeignKey('sample_data_type.sample_data_type_id'))
             )
 
+
 class Report(db.Model, CRUDMixin):
     """a MultiQC report"""
 
     __tablename__ = 'report'
     report_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
-    report_hash = Column(String)
+    user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
+    report_hash = Column(Unicode, index=True)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     uploaded_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(Report.report_id)).first()[0] or 0) + 1
-
     def __init__(self, **kwargs):
         """Create instance."""
-        if "report_id" not in kwargs:
-            kwargs['report_id'] = Report.get_next_id()
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
@@ -44,139 +39,106 @@ class Report(db.Model, CRUDMixin):
         return '<Report({rid!r})>'.format(rid=self.report_id)
 
 
-
-
 class ReportMeta(db.Model, CRUDMixin):
-    __tablename__ =  'report_meta'
+    __tablename__ = 'report_meta'
     report_meta_id = Column(Integer, primary_key=True)
-    report_meta_key = Column(String(80), nullable=False)
-    report_meta_value = Column(String(80), nullable=False)
-    report_id = Column(Integer, ForeignKey('report.report_id'))
+    report_meta_key = Column(Unicode, nullable=False)
+    report_meta_value = Column(Unicode, nullable=False)
+    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
 
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(ReportMeta.report_meta_id)).first()[0] or 0) + 1
 
 class PlotConfig(db.Model, CRUDMixin):
-    __tablename__ =  'plot_config'
+    __tablename__ = 'plot_config'
     config_id = Column(Integer, primary_key=True)
-    config_type = Column(String(80),  nullable=False)
-    config_name = Column(String(80), nullable=False)
-    config_dataset = Column(String(80), nullable=True)
-    data = Column(String, nullable=False)
+    config_type = Column(Unicode,  nullable=False)
+    config_name = Column(Unicode, nullable=False)
+    config_dataset = Column(Unicode, nullable=True)
+    data = Column(Unicode, nullable=False)
 
     fav_users = db.relationship('User', secondary=user_plotconfig_map, backref="favourite_plotconfigs")
 
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(PlotConfig.config_id)).first()[0] or 0) + 1
 
 class PlotData(db.Model, CRUDMixin):
     __tablename__ = "plot_data"
     plot_data_id = Column(Integer, primary_key=True)
-    report_id = Column(Integer, ForeignKey('report.report_id'))
+    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
     config_id = Column(Integer, ForeignKey('plot_config.config_id'))
     plot_category_id = Column(Integer(), ForeignKey('plot_category.plot_category_id'))
-    sample_id = Column(Integer, ForeignKey('sample.sample_id'))
-    data = Column(String, nullable=False)
+    sample_id = Column(Integer, ForeignKey('sample.sample_id'), index=True)
+    data = Column(Unicode, nullable=False)
 
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(PlotData.plot_data_id)).first()[0] or 0) + 1
 
 class PlotCategory(db.Model, CRUDMixin):
     __tablename__ = "plot_category"
     plot_category_id = Column(Integer, primary_key=True)
     report_id = Column(Integer, ForeignKey('report.report_id'))
     config_id = Column(Integer, ForeignKey('plot_config.config_id'))
-    category_name = Column(String(128), nullable=True)
-    data = Column(String(2048), nullable=False)
+    category_name = Column(Unicode, nullable=True)
+    data = Column(Unicode, nullable=False)
 
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(PlotCategory.plot_category_id)).first()[0] or 0) + 1
 
 class PlotFavourite(db.Model, CRUDMixin):
     __tablename__ = "plot_favourite"
     plot_favourite_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
-    title = Column(String(2048), nullable=False)
-    description = Column(String(2048), nullable=True)
-    plot_type = Column(String(128), nullable=False)
-    data = Column(String(2048), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
+    title = Column(Unicode, nullable=False)
+    description = Column(Unicode, nullable=True)
+    plot_type = Column(Unicode, nullable=False)
+    data = Column(Unicode, nullable=False)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(PlotFavourite.plot_favourite_id)).first()[0] or 0) + 1
 
 class Dashboard(db.Model, CRUDMixin):
     __tablename__ = "dashboard"
     dashboard_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
-    title = Column(String(2048), nullable=False)
-    data = Column(String(2048), nullable=False)
-    is_public = Column(Boolean, default=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
+    title = Column(Unicode, nullable=False)
+    data = Column(Unicode, nullable=False)
+    is_public = Column(Boolean, default=False, index=True)
     modified_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(Dashboard.dashboard_id)).first()[0] or 0) + 1
 
 class SampleDataType(db.Model, CRUDMixin):
     __tablename__ = "sample_data_type"
     sample_data_type_id = Column(Integer, primary_key=True)
-    data_id = Column(String(128))
-    data_section = Column(String(80))
-    data_key = Column(String(128), nullable=False)
+    data_id = Column(Unicode)
+    data_section = Column(Unicode)
+    data_key = Column(Unicode, nullable=False)
+
 
 class SampleData(db.Model, CRUDMixin):
     __tablename__ = "sample_data"
     sample_data_id = Column(Integer, primary_key=True)
-    report_id = Column(Integer, ForeignKey('report.report_id'))
+    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
     sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id'))
-    sample_id = Column(Integer, ForeignKey('sample.sample_id'))
-    value = Column(String(1024))
-
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(SampleData.sample_data_id)).first()[0] or 0) + 1
+    sample_id = Column(Integer, ForeignKey('sample.sample_id'), index=True)
+    value = Column(Unicode)
 
 
 class Sample(db.Model, CRUDMixin):
-    __tablename__ ="sample"
+    __tablename__ = "sample"
     sample_id = Column(Integer, primary_key=True)
-    sample_name = Column(String(80))
-    report_id = Column(Integer, ForeignKey('report.report_id'))
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(Sample.sample_id)).first()[0] or 0) + 1
+    sample_name = Column(Unicode)
+    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
 
 
 class SampleFilter(db.Model, CRUDMixin):
-    __tablename__="sample_filter"
+    __tablename__ = "sample_filter"
     sample_filter_id = Column(Integer, primary_key=True)
-    sample_filter_name = Column(String(80))
-    sample_filter_tag = Column(String(80))
-    is_public = Column(Boolean)
-    sample_filter_data = Column(String(2048), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
+    sample_filter_name = Column(Unicode)
+    sample_filter_tag = Column(Unicode)
+    is_public = Column(Boolean, index=True)
+    sample_filter_data = Column(Unicode, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
 
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(SampleFilter.sample_filter_id)).first()[0] or 0) + 1
 
 class Upload(db.Model, CRUDMixin):
-    __tablename__="uploads"
+    __tablename__ = "uploads"
     upload_id = Column(Integer, primary_key=True)
-    status = Column(String(80))
-    path = Column(String(2048))
-    message = Column(String(2048))
+    status = Column(Unicode, index=True)
+    path = Column(Unicode)
+    message = Column(Unicode)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     modified_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     user_id = Column(Integer, ForeignKey('users.user_id'))
-
-    @staticmethod
-    def get_next_id():
-        return (db.session.query(func.max(Upload.upload_id)).first()[0] or 0) + 1
