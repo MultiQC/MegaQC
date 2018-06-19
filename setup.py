@@ -7,13 +7,19 @@ See the MultiQC website for installation instructions and documentation: http://
 MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at SciLifeLab Sweden (http://www.scilifelab.se)
 """
 
+import io
+import os
 from setuptools import setup
 
 version = '0.1dev'
 dl_version = 'master' if 'dev' in version else 'v{}'.format(version)
 
 try:
-    with open("requirements/dev.txt", "r") as f:
+    if os.environ.get('MEGAQC_PRODUCTION'):
+        req_file = 'requirements/prod.txt'
+    else:
+        req_file = 'requirements/dev.txt'
+    with io.open(req_file) as f:
         install_requires = [x.strip() for x in f.readlines()]
 except IOError:
     install_requires = []
