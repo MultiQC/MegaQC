@@ -7,7 +7,6 @@ See the MultiQC website for installation instructions and documentation: http://
 MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at SciLifeLab Sweden (http://www.scilifelab.se)
 """
 
-import io
 import os
 from setuptools import setup
 
