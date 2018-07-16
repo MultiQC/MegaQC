@@ -255,8 +255,8 @@ def handle_report_data(user, report_data):
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
                         sample = db.session.query(Sample).filter(Sample.sample_name==sub_dict['name']).first()
                         if not sample:
-                            new_sample = Sample(sample_name=sub_dict['name'], report_id=report_id)
-                            new_sample.save()
+                            sample = Sample(sample_name=sub_dict['name'], report_id=report_id)
+                            sample.save()
                         sample_id = sample.sample_id
 
                         new_dataset_row = PlotData(
