@@ -250,7 +250,7 @@ def handle_report_data(user, report_data):
                     else:
                         existing_category.data = data
                         existing_category.save()
-                        category_id = existing_category.plot_category_id
+                    category_id = existing_category.plot_category_id
 
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
                         sample = db.session.query(Sample).filter(Sample.sample_name==sub_dict['name']).first()
