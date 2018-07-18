@@ -90,7 +90,7 @@ def handle_report_data(user, report_data):
         new_report.save()
     except InvalidRequestError as e:
         if 'UNIQUE constraint failed' in str(e):
-            return (False, 'Report already uploaded')
+            return (False, 'Report already processed')
         else:
             raise e
     current_app.logger.info("Created new report {} from {}".format(new_report.report_id, user.email))
