@@ -13,6 +13,7 @@ from megaqc.extensions import db
 from megaqc.utils import settings
 from megaqc.api.constants import comparators, type_to_tables_fields, valid_join_conditions
 from sqlalchemy import func, distinct, cast, Numeric, or_
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import not_, or_, and_
 from collections import defaultdict, OrderedDict
@@ -85,7 +86,13 @@ def handle_report_data(user, report_data):
         user_id = user.user_id,
         created_at = report_created_at
     )
-    new_report.save()
+    try:
+        new_report.save()
+    except InvalidRequestError as e:
+        if 'UNIQUE constraint failed' in str(e):
+            return (False, 'Report already uploaded')
+        else:
+            raise e
     current_app.logger.info("Created new report {} from {}".format(new_report.report_id, user.email))
     report_id = new_report.report_id
 
