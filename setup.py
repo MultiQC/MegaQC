@@ -10,7 +10,7 @@ MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at S
 import os
 from setuptools import setup
 
-version = '0.1dev'
+version = '0.1dev1'
 dl_version = 'master' if 'dev' in version else 'v{}'.format(version)
 
 dev_reqs = [

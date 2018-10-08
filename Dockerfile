@@ -61,8 +61,7 @@ su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w stop"
 # Install MegaQC
 COPY . MegaQC
 WORKDIR MegaQC
-RUN pip install -r requirements/prod.txt && \
-    python setup.py install
+RUN python setup.py install
 
 # Set up the Postgres SQL server
 RUN su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl -D $PGDATA -w start" && \

@@ -4,6 +4,7 @@ uploads/*
 
 # Development stuff
 dev.db
+dist/
 
 # Dev CSS
 megaqc/static/scss/*.css
