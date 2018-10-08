@@ -56,6 +56,9 @@ def upload_reports_job():
                 row.message = "The document has been uploaded successfully"
                 os.remove(row.path)
             else:
+                if ret[1] == "Report already processed":
+                    current_app.logger.info("Upload {} already being processed by another worker, skipping".format(row.upload_id))
+                    continue
                 row.status = "FAILED"
                 row.message = "The document has not been uploaded : {0}".format(ret[1])
             row.modified_at = datetime.datetime.utcnow()

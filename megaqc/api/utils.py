@@ -13,6 +13,7 @@ from megaqc.extensions import db
 from megaqc.utils import settings
 from megaqc.api.constants import comparators, type_to_tables_fields, valid_join_conditions
 from sqlalchemy import func, distinct, cast, Numeric, or_
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import not_, or_, and_
 from collections import defaultdict, OrderedDict
@@ -85,7 +86,13 @@ def handle_report_data(user, report_data):
         user_id = user.user_id,
         created_at = report_created_at
     )
-    new_report.save()
+    try:
+        new_report.save()
+    except InvalidRequestError as e:
+        if 'UNIQUE constraint failed' in str(e):
+            return (False, 'Report already processed')
+        else:
+            raise e
     current_app.logger.info("Created new report {} from {}".format(new_report.report_id, user.email))
     report_id = new_report.report_id
 
@@ -250,13 +257,13 @@ def handle_report_data(user, report_data):
                     else:
                         existing_category.data = data
                         existing_category.save()
-                        category_id = existing_category.plot_category_id
+                    category_id = existing_category.plot_category_id
 
                     for sa_idx, actual_data in enumerate(sub_dict['data']):
                         sample = db.session.query(Sample).filter(Sample.sample_name==sub_dict['name']).first()
                         if not sample:
-                            new_sample = Sample(sample_name=sub_dict['name'], report_id=report_id)
-                            new_sample.save()
+                            sample = Sample(sample_name=sub_dict['name'], report_id=report_id)
+                            sample.save()
                         sample_id = sample.sample_id
 
                         new_dataset_row = PlotData(

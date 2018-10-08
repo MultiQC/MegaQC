@@ -236,7 +236,7 @@ def save_filters(user, *args, **kwargs):
         return jsonify({
                 'success': True,
                 'message': "Filters created successfully",
-                'filter_id': new_sf_id
+                'filter_id': new_sf.sample_filter_id
             })
     else:
         return jsonify({
