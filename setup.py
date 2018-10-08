@@ -2,7 +2,7 @@
 """
 MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.
 
-See the MultiQC website for installation instructions and documentation: http://multiqc.info/db/
+See the MultiQC website for installation instructions and documentation: https://megaqc.info/
 
 MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at SciLifeLab Sweden (http://www.scilifelab.se)
 """
@@ -74,8 +74,8 @@ setup(
     description = "Collect and visualise data across multiple MultiQC runs",
     long_description = __doc__,
     keywords = ['bioinformatics', 'biology', 'sequencing', 'NGS', 'next generation sequencing', 'quality control'],
-    url = 'http://multiqc.info/db',
-    download_url = 'https://github.com/MultiQC/MegaQC/tarball/{}'.format(dl_version),
+    url = 'https://megaqc.info/',
+    download_url = 'https://github.com/ewels/MegaQC/releases',
     license = 'GPLv3',
     packages = ['megaqc'],
     include_package_data = True,
