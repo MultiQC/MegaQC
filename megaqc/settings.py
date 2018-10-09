@@ -67,7 +67,6 @@ class Config(object):
                 self.SQLALCHEMY_DATABASE
             )
 
-
 class ProdConfig(Config):
     """Production configuration."""
 
@@ -83,7 +82,7 @@ class ProdConfig(Config):
         super(ProdConfig, self).__init__()
         self.update_db_uri()
         # Log to the terminal
-        print("Env: Prod")
+        print(" * Environment: Prod")
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
         print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
 
@@ -107,7 +106,7 @@ class DevConfig(Config):
         super(DevConfig, self).__init__()
         self.update_db_uri()
         # Log to the terminal
-        print("Env: dev")
+        print(" * Environment: dev")
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
         print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
 
@@ -126,6 +125,6 @@ class TestConfig(Config):
         super(TestConfig, self).__init__()
         self.update_db_uri()
         # Log to the terminal
-        print("Env: test")
+        print(" * Environment: test")
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
         print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))

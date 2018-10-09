@@ -4,6 +4,7 @@ uploads/*
 
 # Development stuff
 dev.db
+test.db
 dist/
 
 # Dev CSS
