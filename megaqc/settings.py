@@ -67,7 +67,6 @@ class Config(object):
                 self.SQLALCHEMY_DATABASE
             )
 
-
 class ProdConfig(Config):
     """Production configuration."""
 
@@ -83,7 +82,7 @@ class ProdConfig(Config):
         super(ProdConfig, self).__init__()
         self.update_db_uri()
         # Log to the terminal
-        print("Env: Prod")
+        print(" * Environment: Prod")
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
         print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
 
@@ -94,7 +93,7 @@ class DevConfig(Config):
     ENV = 'dev'
     DEBUG = True
     SQLALCHEMY_DBMS = 'sqlite'
-    DB_NAME = 'dev.db'
+    DB_NAME = 'megaqc.db'
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     DEBUG_TB_ENABLED = True
@@ -107,7 +106,7 @@ class DevConfig(Config):
         super(DevConfig, self).__init__()
         self.update_db_uri()
         # Log to the terminal
-        print("Env: dev")
+        print(" * Environment: dev")
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
         print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
 
@@ -117,7 +116,7 @@ class TestConfig(Config):
     """Test configuration."""
     DEBUG = False
     SQLALCHEMY_DBMS = 'sqlite'
-    DB_NAME = 'test.db'
+    DB_NAME = 'megaqc.db'
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
     LOG_LEVEL = logging.DEBUG
@@ -126,6 +125,6 @@ class TestConfig(Config):
         super(TestConfig, self).__init__()
         self.update_db_uri()
         # Log to the terminal
-        print("Env: test")
+        print(" * Environment: test")
         print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
         print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))

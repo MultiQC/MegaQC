@@ -26,20 +26,20 @@ conda install -c bioconda megaqc
 ```
 
 ## 2. (Optional) Set the variable for the development mode:
-Setting this bash variable tells MegaQC to show full Python exception
-tracebacks in the web browser, as well as additional Flask plugins
-which help with debugging and performance testing.
+Setting this bash variable runs MegaQC in development mode. This means
+that it will show full Python exception tracebacks in the web browser
+as well as additional Flask plugins which help with debugging and performance testing.
 
 This is only useful when actively developing MegaQC code and should
 be skipped if you're just trying MegaQC out.
 
 ```bash
-export MEGAQC_DEBUG=1
+export FLASK_DEBUG=1
 ```
 
 ## 3. Set up the database
 Running this command creates an empty SQLite MegaQC database file in the
-installation directory called `dev.db`.
+installation directory called `megaqc.db`
 
 ```bash
 megaqc initdb

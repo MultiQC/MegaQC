@@ -4,6 +4,8 @@ uploads/*
 
 # Development stuff
 dev.db
+test.db
+megaqc.db
 dist/
 
 # Dev CSS
