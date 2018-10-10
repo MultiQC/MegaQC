@@ -39,7 +39,7 @@ export FLASK_DEBUG=1
 
 ## 3. Set up the database
 Running this command creates an empty SQLite MegaQC database file in the
-installation directory called `test.db` (`dev.db` if running in dev mode).
+installation directory called `megaqc.db`
 
 ```bash
 megaqc initdb

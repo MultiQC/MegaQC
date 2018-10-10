@@ -93,7 +93,7 @@ class DevConfig(Config):
     ENV = 'dev'
     DEBUG = True
     SQLALCHEMY_DBMS = 'sqlite'
-    DB_NAME = 'dev.db'
+    DB_NAME = 'megaqc.db'
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     DEBUG_TB_ENABLED = True
@@ -116,7 +116,7 @@ class TestConfig(Config):
     """Test configuration."""
     DEBUG = False
     SQLALCHEMY_DBMS = 'sqlite'
-    DB_NAME = 'test.db'
+    DB_NAME = 'megaqc.db'
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
     LOG_LEVEL = logging.DEBUG
