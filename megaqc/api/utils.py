@@ -283,12 +283,28 @@ def handle_report_data(user, report_data):
 
 
 def generate_report_plot(plot_type, sample_names):
+    # The common part of the query
+    query = db.session.query(
+        PlotConfig, PlotData, PlotCategory, Sample
+    ).join(
+        PlotData, PlotData.config_id == PlotConfig.config_id
+    ).join(
+        PlotCategory
+    ).join(
+        Sample
+    ).filter(
+        Sample.sample_name.in_(sample_names)
+    )
+
     if " -- " in plot_type:
         # Plot type also contains data_key : True for most xy_lines
-        plot_type=plot_type.split(" -- ")
-        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.config_name==plot_type[0],PlotConfig.config_dataset==plot_type[1],Sample.sample_name.in_(sample_names)).all()
+        plot_type = plot_type.split(" -- ")
+        rows = query.filter(
+            PlotConfig.config_name == plot_type[0],
+            PlotConfig.config_dataset == plot_type[1],
+        ).all()
     else:
-        rows = db.session.query(PlotConfig, PlotData, PlotCategory, Sample).join(PlotData).join(PlotCategory).join(Sample).filter(PlotConfig.config_name==plot_type,Sample.sample_name.in_(sample_names)).all()
+        rows = query.filter(PlotConfig.config_name == plot_type).all()
 
     if len(rows) == 0:
         return '<div class="alert alert-danger">No samples found</div>'
