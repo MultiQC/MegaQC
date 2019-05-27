@@ -6,6 +6,7 @@ from builtins import next, str
 import os
 from glob import glob
 from subprocess import call
+from datetime import datetime
 
 import click
 from flask import current_app
@@ -152,9 +153,15 @@ def initdb():
     print('Initialized the database.')
 
 
+@click.option(
+    '--date',
+    default=None,
+    help='Custom date to be stored for all the MultiQC files provided. Should be provided in ISO 8601 format',
+    type=datetime.fromisoformat
+)
 @click.command( context_settings=dict( help_option_names = ['-h', '--help'] ) )
 @click.argument('json_files', type=click.Path(exists=True), nargs=-1, required=True, metavar="<multiqc_data.json>" )
-def upload(json_files):
+def upload(json_files, date):
     """
     Manually upload MultiQC JSON files to MegaQC
 
@@ -193,4 +200,8 @@ def upload(json_files):
                 else:
                     with open(fn, 'r') as fh:
                         multiqc_json_dump = json.load(fh)
+
+                # Patch in the date provided on the CLI
+                if date is not None:
+                    multiqc_json_dump['config_creation_date'] = date.strftime("%Y-%m-%d, %H:%M")
                 multiqc_megaqc.multiqc_api_post(multiqc_json_dump)
