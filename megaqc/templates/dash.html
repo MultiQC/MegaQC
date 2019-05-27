@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    {% autoescape false %}
+        {{ title }}
+    {% endautoescape %}
+{% endblock %}
+
+{% block css %}
+    {% autoescape false %}
+        {{ css }}
+        {{ favicon }}
+    {% endautoescape %}
+{% endblock %}
+
+{% block content %}
+    {% autoescape false %}
+        {{ app_entry }}
+        {{ config }}
+        {{ scripts }}
+        {{ renderer }}
+    {% endautoescape %}
+{% endblock %}
