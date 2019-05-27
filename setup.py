@@ -30,7 +30,7 @@ dev_reqs = [
     "markdown>=2.6.11",
     "numpy==1.14.3",
     "passlib==1.7.1",
-    "plotly==2.0.15",
+    "plotly>3.0.0",
     "pyyaml==3.12",
     "SQLAlchemy>=1.1.5",
     "Werkzeug==0.14.1",

@@ -15,6 +15,7 @@ from flask import Flask, jsonify, render_template, request
 from megaqc import commands, public, user, version, api
 from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager
 from megaqc.scheduler import init_scheduler
+from megaqc.public.dash_views import app as trend_dash
 from megaqc.settings import ProdConfig, TestConfig
 
 def create_app(config_object):
@@ -44,7 +45,7 @@ def register_extensions(app):
     db.init_app(app)
     csrf_protect.init_app(app)
     login_manager.init_app(app)
-    debug_toolbar.init_app(app)
+    trend_dash.init_app(app)
 
     @app.context_processor
     def inject_debug():

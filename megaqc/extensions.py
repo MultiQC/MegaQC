@@ -11,3 +11,4 @@ login_manager = LoginManager()
 db = SQLAlchemy()
 cache = Cache()
 debug_toolbar = DebugToolbarExtension()
+
