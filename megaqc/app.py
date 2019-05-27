@@ -45,7 +45,6 @@ def register_extensions(app):
     db.init_app(app)
     csrf_protect.init_app(app)
     login_manager.init_app(app)
-    debug_toolbar.init_app(app)
     trend_dash.init_app(app)
 
     @app.context_processor
