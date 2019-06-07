@@ -23,13 +23,6 @@ function selectValue(select) {
     return Array.from(select.options).filter(o => o.selected).map(o => o.value)
 }
 
-class TrendPlot extends React.Component {
-
-    render() {
-
-    }
-}
-
 class Trend extends React.Component {
     constructor(props) {
         super(props);
@@ -125,41 +118,9 @@ class Trend extends React.Component {
     }
 }
 
-/**
- function Trend() {
-    // const state = {dataTypes: []};
-    const [state, setState] = useState({
-        dataTypes: []
-    });
-
-    // Get Select data
-    useEffect(() => {
-        getDataTypes().then(response => {
-            setState({
-                dataTypes: response.types
-            })
-        })
-    }, []);
-
-    return (
-        <Form>
-            <FormGroup>
-                <Label for="exampleSelectMulti">Select Multiple</Label>
-                <Input type="select" name="selectMulti" id="exampleSelectMulti" multiple>
-                    {state.dataTypes.map(type => {
-                        return <option>{type}</option>
-                    })}
-                </Input>
-            </FormGroup>
-        </Form>
-    );
-}
- **/
-
 
 ReactDOM.render(
     <Trend/>,
     document.getElementById('react-trend')
 );
 
-// module.hot.accept();

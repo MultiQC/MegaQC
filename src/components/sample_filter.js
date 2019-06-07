@@ -59,6 +59,7 @@ export class SampleFilter extends React.Component {
                                            href={`#sample_filter_group_${i}`}
                                            key={i}
                                         >{sfg}</a>
+
                                     );
                                 })}
                             </nav>
