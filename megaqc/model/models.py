@@ -138,12 +138,14 @@ class Sample(db.Model, CRUDMixin):
         sample_alerts = [alert for alert in db.session.query(AlertThreshold).all() if alert.sample_id == self.sample_id]
         db.session.bulk_save_objects(sample_alerts)
 
-@event.listens_for(Sample, 'alert_insert')
+
+@event.listens_for(Sample, 'after_insert')
 def new_alert_threshold(mapper, connection, target: Sample):
     """
     Whenever a Sample is inserted into the DB, create Alerts for it
     """
     target.generate_alerts()
+
 
 class SampleFilter(db.Model, CRUDMixin):
     __tablename__ = "sample_filter"
@@ -193,7 +195,7 @@ class AlertThreshold(db.Model, CRUDMixin):
         db.session.bulk_save_objects(self.calculate_alerts())
 
 
-@event.listens_for(AlertThreshold, 'alert_insert')
+@event.listens_for(AlertThreshold, 'after_insert')
 def new_alert_threshold(mapper, connection, target: AlertThreshold):
     """
     Whenever an AlertThreshold is inserted into the DB, create Alerts for it
