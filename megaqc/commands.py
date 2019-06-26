@@ -6,6 +6,7 @@ from builtins import next, str
 import os
 from glob import glob
 from subprocess import call
+from datetime import datetime
 
 import click
 from flask import current_app
@@ -18,6 +19,7 @@ from megaqc.extensions import db
 HERE = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(HERE, os.pardir)
 TEST_PATH = os.path.join(PROJECT_ROOT, 'tests')
+MEGAQC_DATE_FORMAT = "%Y-%m-%d, %H:%M"
 
 
 @click.command()
@@ -151,10 +153,20 @@ def initdb():
     db.metadata.create_all()
     print('Initialized the database.')
 
+def megaqc_date_type(arg):
+    return datetime.strptime(arg, MEGAQC_DATE_FORMAT)
 
+@click.option(
+    '--date',
+    default=None,
+    help='Custom date to be stored for all the MultiQC files provided. Should be provided in the date format {}'.format(
+        MEGAQC_DATE_FORMAT
+    ),
+    type=megaqc_date_type
+)
 @click.command( context_settings=dict( help_option_names = ['-h', '--help'] ) )
 @click.argument('json_files', type=click.Path(exists=True), nargs=-1, required=True, metavar="<multiqc_data.json>" )
-def upload(json_files):
+def upload(json_files, date):
     """
     Manually upload MultiQC JSON files to MegaQC
 
@@ -193,4 +205,8 @@ def upload(json_files):
                 else:
                     with open(fn, 'r') as fh:
                         multiqc_json_dump = json.load(fh)
+
+                # Patch in the date provided on the CLI
+                if date is not None:
+                    multiqc_json_dump['config_creation_date'] = date.strftime(MEGAQC_DATE_FORMAT)
                 multiqc_megaqc.multiqc_api_post(multiqc_json_dump)
