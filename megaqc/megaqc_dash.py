@@ -9,7 +9,3 @@ class MegaQcDash(dash.Dash):
     def interpolate_index(self, **kwargs):
         t = render_template('dash.html', **kwargs)
         return t
-
-    # def init_app(self, app=None):
-    #     super(app)
-

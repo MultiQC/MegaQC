@@ -35,7 +35,7 @@ dev_reqs = [
     "SQLAlchemy>=1.1.5",
     "Werkzeug==0.14.1",
     "WTForms>=2.1",
-    "dash @ https://github.com/TMiguelT/dash/archive/master.zip#sha1=e47990eec8fa3f9069040db86ad6eb9a2ad77ce2",
+    "dash>=1.0.0",
 
     # Testing
     "pytest==3.0.6",

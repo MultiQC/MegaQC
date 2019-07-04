@@ -4,7 +4,7 @@ import dash
 import plotly.graph_objs as go
 from numpy import std, mean, repeat, concatenate, flip
 
-from megaqc.dash import MegaQcDash
+from megaqc.megaqc_dash import MegaQcDash
 from megaqc.extensions import db
 from megaqc.api.utils import get_sample_metadata_fields
 from megaqc.model.models import Sample, SampleData, SampleDataType, Report

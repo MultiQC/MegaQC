@@ -45,7 +45,6 @@ def register_extensions(app):
     db.init_app(app)
     csrf_protect.init_app(app)
     login_manager.init_app(app)
-    trend_dash.init_app(app)
 
     @app.context_processor
     def inject_debug():
@@ -65,6 +64,11 @@ def register_blueprints(app):
     app.register_blueprint(user.views.blueprint)
     csrf_protect.exempt(api.views.api_blueprint)
     app.register_blueprint(api.views.api_blueprint)
+
+    trend_dash.init_app(app)
+    # Hack to stop CSRF protection blocking Dash
+    csrf_protect.exempt('dash.dash.dispatch')
+
     return None
 
 
