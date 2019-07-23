@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import {
     Row,
+    Button,
     Col,
     Card,
     CardBody,
@@ -11,6 +12,7 @@ import {
 } from 'reactstrap';
 import MegaQcApi from '../api';
 
+import NewFilter from './new_filter';
 export function SampleFilter(props) {
     const {qcApi, onFilterChange} = props;
 
@@ -18,6 +20,11 @@ export function SampleFilter(props) {
     const [sampleFilters, setSampleFilters] = useState([]);
     const [selectedFilter, setSelectedFilter] = useState(null);
     const [selectedGroup, setSelectedGroup] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+
+    function toggleModal(){
+        setModalOpen(!modalOpen);
+    }
 
     // The first time this is run, request the filters
     useEffect(() => {
@@ -43,6 +50,7 @@ export function SampleFilter(props) {
 
     return (
         <Card>
+            <NewFilter isOpen={modalOpen} toggle={toggleModal}/>
             <h4 className="card-header">
                 Filter Samples
                 <span
@@ -54,11 +62,10 @@ export function SampleFilter(props) {
                         'badge-warning': false,
                         'badge-success': false
                     })}> {numSamples} samples </span>
-                <button className="btn btn-sm btn-outline-primary float-right" data-toggle="modal"
-                        data-target="#create_filter_modal">
+                <Button onClick={toggleModal} size={'sm'} color={'primary'} outline={true} className="float-right">
                     <i className="fa fa-fw fa-plus-square" aria-hidden="true"/>
                     Add
-                </button>
+                </Button>
             </h4>
             <CardBody>
                 <Row>
