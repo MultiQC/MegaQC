@@ -52,6 +52,13 @@ class ReportMeta(db.Model, CRUDMixin):
         """
         return session.query(ReportMeta.report_meta_key).distinct()
 
+    @classmethod
+    def get_keys(cls, session):
+        """
+        Returns all unique metadata keys
+        """
+        return session.query(ReportMeta.report_meta_key).distinct()
+
 
 class PlotConfig(db.Model, CRUDMixin):
     __tablename__ = 'plot_config'

@@ -10,9 +10,9 @@ import {
     ListGroup,
     ListGroupItem
 } from 'reactstrap';
-import MegaQcApi from '../api';
+import MegaQcApi from '../util/api';
 
-import NewFilter from './new_filter';
+import NewFilter from './newFilter';
 export function SampleFilter(props) {
     const {qcApi, onFilterChange} = props;
 

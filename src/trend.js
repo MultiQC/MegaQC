@@ -16,11 +16,8 @@ import {
     CardHeader,
 } from 'reactstrap';
 import Plot from 'react-plotly.js';
-import MegaQcApi from './api';
-import {SampleFilter} from './components/sample_filter';
-
-window.React2 = React;
-console.log(window.React1 === window.React2);
+import MegaQcApi from './util/api';
+import {SampleFilter} from './components/sampleFilter';
 
 function selectValue(select) {
     return Array.from(select.options).filter(o => o.selected).map(o => o.value)

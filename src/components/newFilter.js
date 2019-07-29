@@ -23,10 +23,10 @@ import {
     Table,
     FormGroup
 } from 'reactstrap';
-import BootstrapField from './BootstrapField';
-import MegaQcApi from '../api';
+import BootstrapField from './bootstrapField';
+import filterSchema from '../util/filterSchema'
 
-import {Formik, Form, FieldArray, Field} from 'formik';
+import {Formik, Form, FieldArray, Field, ErrorMessage} from 'formik';
 
 class Filter {
     constructor() {
@@ -37,8 +37,18 @@ class Filter {
     }
 }
 
+const typeLookup = {
+    'timedelta': {
+        keys: [
+
+        ]
+    }, 'daterange', 'reportmeta', 'samplemeta'
+};
+
 export default function NewFilter(props) {
     const {isOpen, toggle, qcApi} = props;
+    const [sampleFields, setSampleFields] = useState([]);
+    const [reportFields, setreportFields] = useState([]);
 
     return <Formik
         initialValues={{
@@ -49,12 +59,18 @@ export default function NewFilter(props) {
             filterGroup: 'Global',
             visibility: 'Just me'
         }}
-        validate={values => {
-            let errors = {};
-            return errors;
-        }}
+        validationSchema={filterSchema}
         onSubmit={(values, {setSubmitting}) => {
-            qcApi.saveFilters(values).then(() => {
+            qcApi.saveFilters({
+                'meta': {
+                    'name': values.filterName,
+                    'set': values.filterGroup,
+                    'is_public': values.visibility === 'Everyone'
+                },
+                'filters': values.filters
+            }).then(() => {
+                toggle();
+            }).finally(() => {
                 setSubmitting(false);
             });
         }}
@@ -93,7 +109,10 @@ export default function NewFilter(props) {
                             <Col md={4}>
                                 <FormGroup>
                                     <Label>Visibility</Label>
-                                    <Field component={BootstrapField} name='visibility'/>
+                                    <Field type={'select'} component={BootstrapField} name='visibility'>
+                                        <option value={'private'}>Just me</option>
+                                        <option value={'public'}>Everyone</option>
+                                    </Field>
                                 </FormGroup>
                             </Col>
                         </Row>
@@ -131,50 +150,60 @@ export default function NewFilter(props) {
                                                                         return (
                                                                             <tr key={j}>
                                                                                 <td>
-                                                                                    <Field
-                                                                                        component={BootstrapField}
-                                                                                        name={`filters.${i}.${j}.type`}
-                                                                                        type={'select'}
-                                                                                    >
-                                                                                        <option
-                                                                                            value="timedelta">
-                                                                                            Dynamic date
-                                                                                            range
-                                                                                        </option>
-                                                                                        <option
-                                                                                            value="daterange">
-                                                                                            Specific dates
-                                                                                        </option>
-                                                                                        <option
-                                                                                            value="reportmeta">
-                                                                                            Report metadata
-                                                                                        </option>
-                                                                                        <option
-                                                                                            value="samplemeta">
-                                                                                            Sample data
-                                                                                        </option>
-                                                                                    </Field>
+                                                                                    <FormGroup>
+                                                                                        <Field
+                                                                                            component={BootstrapField}
+                                                                                            name={`filters.${i}.${j}.type`}
+                                                                                            type={'select'}
+                                                                                        >
+                                                                                            <option
+                                                                                                value="timedelta">
+                                                                                                Dynamic date
+                                                                                                range
+                                                                                            </option>
+                                                                                            <option
+                                                                                                value="daterange">
+                                                                                                Specific dates
+                                                                                            </option>
+                                                                                            <option
+                                                                                                value="reportmeta">
+                                                                                                Report metadata
+                                                                                            </option>
+                                                                                            <option
+                                                                                                value="samplemeta">
+                                                                                                Sample data
+                                                                                            </option>
+                                                                                        </Field>
+                                                                                    </FormGroup>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <Field
-                                                                                        name={`filters.${i}.${j}.key`}
-                                                                                        component={BootstrapField}
-                                                                                    >
-                                                                                    </Field>
+                                                                                    <FormGroup>
+                                                                                        <Field
+                                                                                            name={`filters.${i}.${j}.key`}
+                                                                                            component={BootstrapField}
+                                                                                            type={'select'}
+                                                                                        >
+                                                                                            {
+                                                                                                switch(
+                                                                                            }
+                                                                                        </Field>
+                                                                                    </FormGroup>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <Field
-                                                                                        name={`filters.${i}.${j}.comparison`}
-                                                                                        component={BootstrapField}
-                                                                                        type={'select'}
-                                                                                    >
-                                                                                    </Field>
+                                                                                    <FormGroup>
+                                                                                        <Field
+                                                                                            name={`filters.${i}.${j}.comparison`}
+                                                                                            component={BootstrapField}
+                                                                                            type={'select'}
+                                                                                        />
+                                                                                    </FormGroup>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <Field
-                                                                                        name={`filters.${i}.${j}.value`}
-                                                                                        component={BootstrapField}>
-                                                                                    </Field>
+                                                                                    <FormGroup>
+                                                                                        <Field
+                                                                                            name={`filters.${i}.${j}.value`}
+                                                                                            component={BootstrapField}/>
+                                                                                    </FormGroup>
                                                                                 </td>
                                                                                 <td>
                                                                                     <Button
