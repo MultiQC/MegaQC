@@ -2,35 +2,40 @@ from flask import url_for
 from plotly.offline import plot
 import json
 
-from megaqc.rest_api.schemas import TrendSchema
-from marshmallow.utils import EXCLUDE
-
-from tests import factories
+import megaqc.user.models as user_models
+from megaqc.model import models
 
 
-def test_get_trend_series(db, client):
-    # Create 5 reports each with 1 sample. Each has a single field called 'test_field'
-    data_type = factories.SampleDataTypeFactory()
-    report = factories.ReportFactory.create_batch(5, samples__data__data_type=data_type)
-    db.session.add_all(report)
-    db.session.commit()
+class TestPlotApi:
+    @staticmethod
+    def test_get_trend_series(mix, db, client):
+        # Create 5 reports each with 1 sample. Each has a single field called 'test_field'
+        data_type = mix.blend(models.SampleDataType, data_key='test_field')
+        report = mix.cycle(5).blend(
+            models.Report,
+            created_at=lambda: mix.faker.date_time(),
+            user=mix.blend(user_models.User),
+            samples=lambda: mix.blend(
+                models.Sample,
+                data=lambda: mix.cycle(1).blend(models.SampleData, data_type=data_type,
+                                                value=mix.faker.small_positive_integer)
+            )
 
-    # plots = jpi.get('plots/trends/series')
-    url = url_for(
-        'rest_api.trend_data',
-        filter=json.dumps([]),
-        fields=json.dumps([data_type.data_key]),
-    )
-    response = client.get(url)
+        )
+        db.session.add_all([
+            data_type,
+            *report
+        ])
 
-    # Check the request was successful
-    assert response.status_code == 200
+        response = client.get(url_for('rest_api.trend_data', filter=json.dumps([]), fields=json.dumps(['test_field'])))
 
-    # unknown=EXCLUDE ensures we don't keep the ID field when we load at this point
-    data = TrendSchema(many=True, unknown=EXCLUDE).load(response.json)
+        # Check the request was successful
+        assert response.status_code == 200
 
-    # Check that there are 4 series (mean, stdev, raw data, outliers)
-    assert len(data) == 3
+        # Check that there are 3 series (mean, stdev, raw data)
+        assert len(response.json) == 3
 
-    # Test that this is valid plot data
-    plot({'data': data}, validate=True, auto_open=False)
+        # Test that this is valid plot data
+        plot({'data': response.json}, validate=True, auto_open=False)
+
+

@@ -111,7 +111,7 @@ class ReportSchema(BaseModelSchema):
 
     def meta_dict(self, obj):
         d = {}
-        for record in obj.report_meta:
+        for record in obj.meta:
             d[record.report_meta_key] = record.report_meta_value
         return d
 

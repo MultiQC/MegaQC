@@ -4,7 +4,7 @@ import pytest
 from tests import factories
 
 from megaqc.model import models
-from megaqc.rest_api.filters import build_filter_query, DATE_FORMAT
+from megaqc.api.filters import build_filter_query, DATE_FORMAT
 
 
 def unique(result, column):
@@ -74,7 +74,6 @@ def filter_test_reports(filter_test_types, session):
             ]
         )
     ]
-    session.expunge_all()
     session.add_all(ret)
     session.commit()
     return ret
@@ -155,7 +154,7 @@ def test_timedelta_in(filter_test_reports):
         [
             {
                 'type': 'timedelta',
-                'value': [2],
+                'value': 2,
                 'cmp': 'in'
             }
         ]
@@ -185,7 +184,7 @@ def test_timedelta_not_in(filter_test_reports):
         [
             {
                 'type': 'timedelta',
-                'value': [2],
+                'value': 2,
                 'cmp': 'not in'
             }
         ]
@@ -227,7 +226,7 @@ def test_reportmeta_equals(filter_test_reports, meta_key, value):
             {
                 'type': 'reportmeta',
                 'key': meta_key,
-                'value': [value],
+                'value': value,
                 'cmp': 'eq'
             }
         ]
@@ -258,7 +257,7 @@ def test_reportmeta_not_equals(filter_test_reports):
             {
                 'type': 'reportmeta',
                 'key': 'key_1',
-                'value': [2],
+                'value': 2,
                 'cmp': 'ne'
             }
         ]
@@ -306,7 +305,7 @@ def test_samplemeta_operator(filter_test_reports, filter_test_types, cmp, correc
             {
                 'type': 'samplemeta',
                 'key': filter_test_types[0].data_key,
-                'value': [2],
+                'value': 2,
                 'cmp': cmp
             }
         ]
@@ -342,13 +341,13 @@ def test_and_query(filter_test_types, filter_test_reports):
             {
                 'type': 'samplemeta',
                 'key': filter_test_types[0].data_key,
-                'value': [1],
+                'value': 1,
                 'cmp': 'gt'
             },
             {
                 'type': 'reportmeta',
                 'key': 'key_1',
-                'value': [2],
+                'value': 2,
                 'cmp': 'gt'
             }
         ]
@@ -383,7 +382,7 @@ def test_or_query(filter_test_types, filter_test_reports):
             {
                 'type': 'samplemeta',
                 'key': filter_test_types[0].data_key,
-                'value': [2],
+                'value': 2,
                 'cmp': 'gt'
             },
         ],
@@ -391,7 +390,7 @@ def test_or_query(filter_test_types, filter_test_reports):
             {
                 'type': 'reportmeta',
                 'key': 'key_1',
-                'value': [2],
+                'value': 2,
                 'cmp': 'lt'
             }
         ]

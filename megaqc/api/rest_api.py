@@ -76,7 +76,7 @@ class Report(Resource):
         report_meta = db.session.query(
             models.Report,
         ).options(
-            joinedload(models.Report.report_meta)
+            joinedload(models.Report.meta)
         ).filter(
             models.Report.report_id == report_id
         ).first()

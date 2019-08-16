@@ -1,6 +1,13 @@
 import pytest
+from mixer.backend.flask import mixer
+import megaqc.user.models as user_models
 from tests import factories
-from flask import request
+
+
+# @pytest.fixture('function')
+# def mix(app):
+#     mixer.init_app(app)
+#     return mixer
 
 
 @pytest.yield_fixture('function')
@@ -13,7 +20,6 @@ def client(app):
 def token(db):
     user = factories.UserFactory(is_admin=False)
     db.session.add(user)
-    db.session.commit()
     return user.api_token
 
 
@@ -21,7 +27,6 @@ def token(db):
 def admin_token(db):
     user = factories.UserFactory(is_admin=True)
     db.session.add(user)
-    db.session.commit()
     return user.api_token
 
 
