@@ -67,15 +67,18 @@ class Config(object):
                 self.SQLALCHEMY_DATABASE
             )
 
+
 class ProdConfig(Config):
     """Production configuration."""
 
     ENV = 'prod'
     DEBUG = False
     SQLALCHEMY_DBMS = 'postgresql'
-    SQLALCHEMY_USER = 'megaqc_user'
-    SQLALCHEMY_HOST = 'localhost:5432'
-    SQLALCHEMY_DATABASE = 'megaqc'
+    SQLALCHEMY_HOST = "{}:{}".format(os.environ.get(
+        'DB_HOST', 'localhost'), os.environ.get('DB_PORT', '5432'))
+    SQLALCHEMY_USER = os.environ.get('DB_USER', 'megaqc')
+    SQLALCHEMY_PASS = os.environ.get('DB_PASS', 'megaqcpswd')
+    SQLALCHEMY_DATABASE = os.environ.get('DB_NAME', 'megaqc')
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
     def __init__(self):
