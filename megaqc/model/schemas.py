@@ -29,7 +29,7 @@ class ResourceHyperlink(ma.Field):
     """
 
     def __init__(self, endpoint, url_args=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ResourceHyperlink, self).__init__(*args, **kwargs)
 
         # If the user passes in a list of args, we assume a field with the exact same name appears on the relation
         if isinstance(url_args, list):
