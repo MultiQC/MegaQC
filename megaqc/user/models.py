@@ -7,7 +7,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Unicode, TIMESTAMP, Binary, DateTime
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-
 from flask_login import UserMixin
 
 from megaqc.database import CRUDMixin
