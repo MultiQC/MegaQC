@@ -17,4 +17,4 @@ ENV MEGAQC_PRODUCTION=1 \
 
 COPY . /app
 
-RUN pip install multiqc && python /app/setup.py install
+RUN python /app/setup.py install
