@@ -39,10 +39,11 @@ class Filter {
 
 const typeLookup = {
     'timedelta': {
-        keys: [
-
-        ]
-    }, 'daterange', 'reportmeta', 'samplemeta'
+        keys: []
+    },
+    'daterange': {},
+    'reportmeta': {},
+    'samplemeta': {}
 };
 
 export default function NewFilter(props) {
@@ -183,9 +184,6 @@ export default function NewFilter(props) {
                                                                                             component={BootstrapField}
                                                                                             type={'select'}
                                                                                         >
-                                                                                            {
-                                                                                                switch(
-                                                                                            }
                                                                                         </Field>
                                                                                     </FormGroup>
                                                                                 </td>
