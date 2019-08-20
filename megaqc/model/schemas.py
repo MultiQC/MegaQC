@@ -1,10 +1,12 @@
 from marshmallow_sqlalchemy import ModelSchema
 from sqlalchemy.orm.collections import InstrumentedList
+import json
 
 from megaqc.model.models import *
 from megaqc.user.models import *
 from megaqc.extensions import ma
 import marshmallow
+from marshmallow import fields
 from flask_restful import url_for
 
 
@@ -21,7 +23,7 @@ class BaseModelSchema(ModelSchema):
         nested_fields = {k: v for k, v in self.fields.items() if type(v) == marshmallow.fields.Nested}
         for field in nested_fields.values():
             field.schema.session = self.session
-            
+
 
 class ResourceHyperlink(ma.Field):
     """
@@ -65,6 +67,18 @@ class ResourceHyperlink(ma.Field):
         # raise NotImplementedError()
 
 
+class JsonString(ma.Field):
+    """
+    Serializes a JSON structure as JSON, but deserializes it as a string (for DB storage)
+    """
+
+    def _serialize(self, value, attr, obj):
+        return json.loads(value)
+
+    def _deserialize(self, value, attr, data):
+        return json.dumps(value)
+
+
 class SampleDataTypeSchema(BaseModelSchema):
     class Meta:
         model = SampleDataType
@@ -92,8 +106,19 @@ class SampleSchema(BaseModelSchema):
 
 
 class SampleFilterSchema(BaseModelSchema):
+    # We don't use the model for the schema, since we want to rename all the fields
     class Meta:
         model = SampleFilter
+        exclude = ('sample_filter_tag', 'sample_filter_name', 'is_public', 'sample_filter_id', 'sample_filter_data')
+
+    tag = fields.String(attribute='sample_filter_tag')
+    name = fields.String(attribute='sample_filter_name')
+    public = fields.Boolean(attribute='is_public')
+    id = fields.Integer(attribute='sample_filter_id')
+    data = JsonString(attribute='sample_filter_data')
+    user = ResourceHyperlink(endpoint='rest_api.user', url_args=[
+        'user_id',
+    ])
 
 
 class ReportMetaSchema(BaseModelSchema):
@@ -155,7 +180,12 @@ class RoleSchema(BaseModelSchema):
 
 
 class UserSchema(BaseModelSchema):
-    roles = ma.Nested(RoleSchema, many=True)
+    id = fields.Integer(attribute='user_id')
+    admin = fields.Boolean(attribute='is_admin')
+    roles = fields.Function(lambda obj: [role.name for role in obj.roles])
+    filters = fields.List(ma.HyperlinkRelated('rest_api.filter', url_key='filter_id'))
+    reports = fields.List(ma.HyperlinkRelated('rest_api.report', url_key='report_id'))
 
     class Meta:
         model = User
+        exclude = ('is_admin', 'user_id')

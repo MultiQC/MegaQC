@@ -5,7 +5,7 @@ Following the JSON API standard where relevant: https://jsonapi.org/format/
 from flask import request, Blueprint, jsonify
 from flask_restful import Resource, Api, marshal_with
 from sqlalchemy.sql.functions import count
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, contains_eager
 from flask.globals import current_app
 import os
 from flask_login import login_required, login_user, logout_user, current_user, login_manager
@@ -167,7 +167,7 @@ class Sample(Resource):
 
 class UserList(Resource):
     @check_admin
-    def get(self):
+    def get(self, user):
         """
         Get a list of users
         """
@@ -266,11 +266,35 @@ class Favourite(Resource):
 
 
 class FilterList(Resource):
-    def get(self):
-        pass
+    def get(self, user_id=None):
+        query = db.session.query(
+            models.SampleFilter
+        ).join(
+            user_models.User, user_models.User.user_id == models.SampleFilter.user_id
+        ).options(
+            # We're already joining to the users table in order to filter, so use this to load the relationship
+            contains_eager(models.SampleFilter.user)
+        )
 
-    def post(self):
-        pass
+        # If this is the filter list for a single user, filter it down to that
+        if user_id is not None:
+            query = query.filter(user_models.User.user_id == user_id)
+
+        results = query.all()
+        return schemas.SampleFilterSchema(many=True).dump(results)
+
+    @check_user
+    def post(self, user):
+        load_schema = schemas.SampleFilterSchema(many=False, exclude=('user', 'id'))
+        dump_schema = schemas.SampleFilterSchema(many=False)
+
+        model = load_schema.load(request.json, session=db.session).data
+        model.user_id = user.user_id
+        db.session.add(model)
+        db.session.commit()
+
+        return dump_schema.dump(model)
+
 
 
 class Filter(Resource):
@@ -364,7 +388,7 @@ restful.add_resource(User, '/users/<int:user_id>')
 # restful.add_resource(Favourite, '/users/<int:user_id>/favourites/<int:favourite_id>')
 restful.add_resource(TrendSeries, '/plots/trends/series', endpoint='trend_data')
 
-restful.add_resource(FilterList, '/filters')
+restful.add_resource(FilterList, '/filters', '/users/<int:user_id>/filters')
 restful.add_resource(Filter, '/filters/<int:filter_id>')
 
 restful.init_app(api_bp)
