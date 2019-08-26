@@ -6,6 +6,7 @@ from sqlalchemy.inspection import inspect
 from megaqc.extensions import db
 from megaqc.model import models
 
+<<<<<<< HEAD
 
 class JsonString(ma.Field):
     """
@@ -32,6 +33,8 @@ class ModelAssociation(ma.Field):
     """
     Dumps as a foreign key, e.g. "3", and loads as a model instance, e.g. User
     """
+=======
+>>>>>>> Working json:api
 
     def __init__(self, model, *args, **kwargs):
         super().__init__(*args, **kwargs)

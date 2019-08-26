@@ -230,7 +230,11 @@ class Sample(Resource):
             models.Sample.sample_id == sample_id
         ).first()
 
+<<<<<<< HEAD
         return schemas.SampleSchema(many=False).dump(samples)
+=======
+        return schemas.SampleSchema(many=False, include_data=['data']).dump(samples)
+>>>>>>> Working json:api
 
     def put(self, report_id, sample_id):
         """
@@ -270,7 +274,11 @@ class SampleData(Resource):
             models.SampleData.sample_id == sample_id
         ).all()
 
+<<<<<<< HEAD
         return schemas.SampleDataSchema(many=True, include_data=['data_type']).dump(samples)
+=======
+        return schemas.SampleDataSchema(many=True).dump(samples)
+>>>>>>> Working json:api
 
     def post(self, sample_id):
         loaded = schemas.SampleDataSchema(many=False, include_data=['data_type']).load(request.json)
