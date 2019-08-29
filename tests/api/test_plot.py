@@ -2,6 +2,9 @@ from flask import url_for
 from plotly.offline import plot
 import json
 
+from megaqc.rest_api.schemas import TrendSchema
+from marshmallow.utils import EXCLUDE
+
 from tests import factories
 
 
@@ -12,13 +15,22 @@ def test_get_trend_series(db, client):
     db.session.add_all(report)
     db.session.commit()
 
-    response = client.get(url_for('rest_api.trend_data', filter=json.dumps([]), fields=json.dumps([data_type.data_key])))
+    # plots = jpi.get('plots/trends/series')
+    url = url_for(
+        'rest_api.trend_data',
+        filter=json.dumps([]),
+        fields=json.dumps([data_type.data_key]),
+    )
+    response = client.get(url)
 
     # Check the request was successful
     assert response.status_code == 200
 
-    # Check that there are 3 series (mean, stdev, raw data)
-    assert len(response.json) == 3
+    # unknown=EXCLUDE ensures we don't keep the ID field when we load at this point
+    data = TrendSchema(many=True, unknown=EXCLUDE).load(response.json)
+
+    # Check that there are 4 series (mean, stdev, raw data, outliers)
+    assert len(data) == 3
 
     # Test that this is valid plot data
-    plot({'data': response.json}, validate=True, auto_open=False)
+    plot({'data': data}, validate=True, auto_open=False)
