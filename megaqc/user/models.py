@@ -9,6 +9,8 @@ from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Unico
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from flask_login import UserMixin
 
+from flask_login import UserMixin
+
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
 
