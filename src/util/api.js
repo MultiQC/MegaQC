@@ -1,71 +1,27 @@
-import axios from 'axios';
+import JsonApiClient from "@holidayextras/jsonapi-client"
 
-export default class MegaQcApi {
-    constructor() {
-        this.tokenPromise = axios.get('/api/get_token',)
-            .then(response => {
-                this.token = response.data.token;
-            });
-    }
+export default function getClient(token) {
+    let options = {};
 
-    /**
-     * Returns a promise that will only resolve once we have the API token
-     */
-    getToken() {
-        if (this.token)
-            return Promise.resolve(this.token);
-        else
-            return this.tokenPromise;
-    }
-
-    makeRequest(config) {
-        return this.getToken()
-            .then(() => {
-                const finalConfig = Object.assign(config, {
-                    headers: {
-                        access_token: this.token
-                    }
-                });
-                return axios.request(finalConfig)
-            })
-            .then(response => response.data);
-
-    }
-
-    getDataTypes() {
-        return this.makeRequest({url: '/api/get_data_types'})
-    }
-
-    getFilterData() {
-        return this.makeRequest({url: '/api/get_filters'}).then(response => response.data)
-    }
-
-    getTrendData(fields, filters) {
-        return this.makeRequest({
-            url: '/api/get_trend_data',
-            method: 'POST',
-            data: {
-                fields: fields,
-                filters: {filters_id: filters}
+    // If we already have a token, attach it here
+    if (token) {
+        options = {
+            header: {
+                access_token: token
             }
-        }).then(response => response.data)
+        };
     }
 
-    reportFilterFields(data) {
-        return this.makeRequest({
-            url: '/api/report_filter_fields',
-            method: 'post',
-            data: data,
-            responseType: 'json',
+    // Construct the client
+    const client = new JsonApiClient("/rest_api/v1", options);
+
+    // If we don't have a token, we need to obtain one
+    if (!token) {
+        client.get('users', 'current').then(data => {
+            client._transport._auth.header.access_token = data.toJSON().api_token
         })
     }
 
-    saveFilters(data){
-        return this.makeRequest({
-            url: '/api/save_filters',
-            method: 'post',
-            data: data,
-            responseType: 'json'
-        });
-    }
+    return client;
 }
+

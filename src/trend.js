@@ -16,7 +16,7 @@ import {
     CardHeader,
 } from 'reactstrap';
 import Plot from 'react-plotly.js';
-import MegaQcApi from './util/api';
+import getClient from './util/api';
 import {SampleFilter} from './components/sampleFilter';
 
 function selectValue(select) {
@@ -26,14 +26,14 @@ function selectValue(select) {
 function Trend(props) {
     const [dataTypes, setDataTypes] = useState([]);
     const [selectedFilter, selectFilter] = useState(null);
-    const [apiClient, setApiClient] = useState(new MegaQcApi());
+    const [apiClient, setApiClient] = useState(getClient());
     const [selectedDataTypes, selectDataTypes] = useState([]);
     const [plotData, setPlotData] = useState(null);
 
     // Whenever the plot data type or filter changes, we have to re-calculate the plot data
     useEffect(() => {
         if (selectedDataTypes.length > 0) {
-            apiClient.getTrendData(selectedDataTypes, selectedFilter)
+            apiClient.find('plots/trends/series', {fields: selectedDataTypes, filter: selectedFilter})
                 .then(data => {
                     setPlotData(data);
                 })
@@ -42,7 +42,7 @@ function Trend(props) {
 
     // When we first create the component, request the data types that could be plotted
     useEffect(() => {
-        apiClient.getDataTypes()
+        apiClient.find('')
             .then(response => {
                 setDataTypes(response.types);
             })
