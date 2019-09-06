@@ -1,55 +1,57 @@
-import React, {useState, useEffect,} from 'react';
-import classnames from 'classnames';
-import PropTypes from 'prop-types';
+import React, {useEffect, useState} from 'react';
 import {
-    Row,
-    Col,
+    Alert,
     Button,
     Card,
     CardBody,
-    CardHeader,
     CardFooter,
+    CardHeader,
+    Col,
     Container,
-    Badge,
-    Input,
+    FormGroup,
     Label,
-    ListGroup,
-    ListGroupItem,
     Modal,
     ModalBody,
     ModalFooter,
     ModalHeader,
-    Alert,
-    Table,
-    FormGroup
+    Row,
+    Table
 } from 'reactstrap';
 import BootstrapField from './bootstrapField';
-import filterSchema from '../util/filterSchema'
+import filterSchema from '../util/filterSchema';
+import FilterRow from './filterRow';
+import Filter from '../util/filter';
 
-import {Formik, Form, FieldArray, Field, ErrorMessage} from 'formik';
+import {Field, FieldArray, Form, Formik} from 'formik';
 
-class Filter {
-    constructor() {
-        this.type = 'samplemeta';
-        this.key = '';
-        this.comparison = '';
-        this.value = '';
-    }
-}
-
-const typeLookup = {
-    'timedelta': {
-        keys: []
-    },
-    'daterange': {},
-    'reportmeta': {},
-    'samplemeta': {}
-};
 
 export default function NewFilter(props) {
     const {isOpen, toggle, qcApi} = props;
     const [sampleFields, setSampleFields] = useState([]);
-    const [reportFields, setreportFields] = useState([]);
+    const [reportFields, setReportFields] = useState([]);
+    const [filterGroups, setFilterGroups] = useState([]);
+
+    // Fetch the filter groups
+    useEffect(() => {
+        qcApi.find('filter_groups').then(groups => {
+            setFilterGroups(groups.map(group => group._getUid()));
+        });
+    }, []);
+
+    // Fetch the sample fields
+    useEffect(() => {
+        qcApi.find('data_types').then(groups => {
+            setSampleFields(groups.map(group => group.get('key')));
+        });
+    }, []);
+
+    // Fetch the report metadata fields
+    useEffect(() => {
+        qcApi.find('report_meta').then(groups => {
+            setReportFields(groups.map(group => group._getUid()));
+        });
+    }, []);
+
 
     return <Formik
         initialValues={{
@@ -58,20 +60,24 @@ export default function NewFilter(props) {
             ],
             filterName: '',
             filterGroup: 'Global',
-            visibility: 'Just me'
+            visibility: 'private'
         }}
         validationSchema={filterSchema}
         onSubmit={(values, {setSubmitting}) => {
-            qcApi.saveFilters({
-                'meta': {
-                    'name': values.filterName,
-                    'set': values.filterGroup,
-                    'is_public': values.visibility === 'Everyone'
-                },
-                'filters': values.filters
-            }).then(() => {
-                toggle();
-            }).finally(() => {
+            // Note, this resource corresponds to SampleFilterSchema in the backend
+
+            // Create the resource
+            const filterResource = qcApi.create('filters');
+            filterResource.set('tag', values.filterGroup);
+            filterResource.set('name', values.filterName);
+            filterResource.set('public', values.visibility === 'public');
+            filterResource.set('data', values.filters);
+
+            // Save it
+            filterResource.sync()
+                .then(() => {
+                    toggle(true);
+                }).finally(() => {
                 setSubmitting(false);
             });
         }}
@@ -80,12 +86,18 @@ export default function NewFilter(props) {
               values,
               isSubmitting
           }) => (
-            <Modal size={'xl'} isOpen={isOpen} toggle={toggle}>
+            <Modal size={'xl'} isOpen={isOpen} toggle={() => toggle(false)}>
                 <Form>
                     <ModalHeader tag={'h3'} toggle={toggle}>
                         Sample Filters: New Set
                     </ModalHeader>
                     <ModalBody>
+                        <datalist id="filter_tags">
+                            {filterGroups.map(group => {
+                                return <option value={group}>{group}</option>;
+                            })}
+                        </datalist>
+
                         <p>Create a new sample filter set. You can use these filter sets when creating plots.
                             Remember to save at the bottom when you're finished!</p>
 
@@ -104,7 +116,7 @@ export default function NewFilter(props) {
                             <Col md={4}>
                                 <FormGroup>
                                     <Label>Filter Group</Label>
-                                    <Field component={BootstrapField} name='filterGroup'/>
+                                    <Field component={BootstrapField} name='filterGroup' list="filter_tags"/>
                                 </FormGroup>
                             </Col>
                             <Col md={4}>
@@ -120,118 +132,56 @@ export default function NewFilter(props) {
                         <FieldArray
                             name="filters"
                             render={outerArrayHelpers => (<>
-                                    {
-                                        values.filters.map((filterGroup, i) => {
-                                            return (
-                                                <Card style={{
-                                                    marginBottom: '1em'
-                                                }} key={i}>
-                                                    <CardHeader>
-                                                        Filter Group {i + 1}
-                                                    </CardHeader>
-                                                    <CardBody style={{
-                                                        padding: 0
-                                                    }}>
-                                                        <Table responsive={true}>
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Type</th>
-                                                                <th>Key</th>
-                                                                <th>Comparison</th>
-                                                                <th>Value</th>
-                                                                <th>Actions</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
+                                    {values.filters.map((filterGroup, i) => {
+                                        return (
+                                            <Card style={{
+                                                marginBottom: '1em'
+                                            }} key={i}>
+                                                <CardHeader>
+                                                    Filter Group {i + 1}
+                                                </CardHeader>
+                                                <CardBody style={{
+                                                    padding: 0
+                                                }}>
+                                                    <Table responsive={true}>
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Type</th>
+                                                            <th>Key</th>
+                                                            <th>Comparison</th>
+                                                            <th>Value</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
 
-                                                            <FieldArray
-                                                                name={`filters.${i}`}
-                                                                render={innerArrayHelpers => (
-                                                                    filterGroup.map((filter, j) => {
-                                                                        return (
-                                                                            <tr key={j}>
-                                                                                <td>
-                                                                                    <FormGroup>
-                                                                                        <Field
-                                                                                            component={BootstrapField}
-                                                                                            name={`filters.${i}.${j}.type`}
-                                                                                            type={'select'}
-                                                                                        >
-                                                                                            <option
-                                                                                                value="timedelta">
-                                                                                                Dynamic date
-                                                                                                range
-                                                                                            </option>
-                                                                                            <option
-                                                                                                value="daterange">
-                                                                                                Specific dates
-                                                                                            </option>
-                                                                                            <option
-                                                                                                value="reportmeta">
-                                                                                                Report metadata
-                                                                                            </option>
-                                                                                            <option
-                                                                                                value="samplemeta">
-                                                                                                Sample data
-                                                                                            </option>
-                                                                                        </Field>
-                                                                                    </FormGroup>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <FormGroup>
-                                                                                        <Field
-                                                                                            name={`filters.${i}.${j}.key`}
-                                                                                            component={BootstrapField}
-                                                                                            type={'select'}
-                                                                                        >
-                                                                                        </Field>
-                                                                                    </FormGroup>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <FormGroup>
-                                                                                        <Field
-                                                                                            name={`filters.${i}.${j}.comparison`}
-                                                                                            component={BootstrapField}
-                                                                                            type={'select'}
-                                                                                        />
-                                                                                    </FormGroup>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <FormGroup>
-                                                                                        <Field
-                                                                                            name={`filters.${i}.${j}.value`}
-                                                                                            component={BootstrapField}/>
-                                                                                    </FormGroup>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <Button
-                                                                                        onClick={() => {
-                                                                                            innerArrayHelpers.push(new Filter())
-                                                                                        }}
-                                                                                        size={'sm'}
-                                                                                        color={'primary'}>
-                                                                                        <i className="fa fa-fw fa-plus-square"
-                                                                                           aria-hidden="true"/>
-                                                                                        Add
-                                                                                    </Button>
-                                                                                </td>
-                                                                            </tr>
-                                                                        );
-                                                                    })
-                                                                )}/>
-                                                            </tbody>
-                                                        </Table>
-                                                    </CardBody>
-                                                    <CardFooter>
-                                                        <Button onClick={() => {
-                                                            outerArrayHelpers.remove(i)
-                                                        }} outline color={'primary'}>
-                                                            Delete
-                                                        </Button>
-                                                    </CardFooter>
-                                                </Card>
-                                            );
-                                        })
+                                                        <FieldArray
+                                                            name={`filters.${i}`}
+                                                            render={innerArrayHelpers => (
+                                                                filterGroup.map((filter, j) => {
+                                                                    return <tr key={j}>
+                                                                        <FilterRow
+                                                                            sampleFields={sampleFields}
+                                                                            reportFields={reportFields}
+                                                                            name={`filters.${i}.${j}`}
+                                                                            innerArrayHelpers={innerArrayHelpers}
+                                                                        />
+                                                                    </tr>
+                                                                })
+                                                            )}/>
+                                                        </tbody>
+                                                    </Table>
+                                                </CardBody>
+                                                <CardFooter>
+                                                    <Button onClick={() => {
+                                                        outerArrayHelpers.remove(i)
+                                                    }} outline color={'primary'}>
+                                                        Delete
+                                                    </Button>
+                                                </CardFooter>
+                                            </Card>
+                                        );
+                                    })
                                     }
 
                                     <Button onClick={() => {

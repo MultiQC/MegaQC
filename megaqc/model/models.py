@@ -165,13 +165,10 @@ class SampleFilter(db.Model, CRUDMixin):
 
     user = relationship('User', back_populates='filters')
 
-<<<<<<< HEAD
     @property
     def filter_json(self):
         return json.loads(self.sample_filter_data)
 
-=======
->>>>>>> Beginnings of filter API
 
 class Upload(db.Model, CRUDMixin):
     __tablename__ = "uploads"

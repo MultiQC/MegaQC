@@ -1,4 +1,4 @@
-import React, {useState, useEffect,} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import {
@@ -11,41 +11,43 @@ import {
     ListGroupItem
 } from 'reactstrap';
 import MegaQcApi from '../util/api';
+import groupBy from 'lodash/groupBy';
 
 import NewFilter from './newFilter';
+
 export function SampleFilter(props) {
     const {qcApi, onFilterChange} = props;
 
-    const [numSamples, setNumSamples] = useState(0);
     const [sampleFilters, setSampleFilters] = useState([]);
     const [selectedFilter, setSelectedFilter] = useState(null);
     const [selectedGroup, setSelectedGroup] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
 
-    function toggleModal(){
+    function updateFilters() {
+        qcApi.find('filters').then(filters => {
+            setSampleFilters(filters);
+        });
+    }
+
+    function toggleModal(filterCreated = false) {
         setModalOpen(!modalOpen);
+
+        if (filterCreated)
+            updateFilters()
     }
 
     // The first time this is run, request the filters
     useEffect(() => {
-        qcApi.getFilterData().then(filters => {
-            setSampleFilters(filters);
-        });
+        updateFilters()
     }, []);
 
-    // Whenever the filter selection changes, ask the server for the number of samples etc, and also report back
-    // to anything listening to this
+    const filterGroups = useMemo(() => {
+        return groupBy(sampleFilters, filter => filter.get('tag'))
+    }, [sampleFilters]);
+
+    // Whenever the filter selection changes, report back to anything listening for this event
     useEffect(() => {
         onFilterChange(selectedFilter);
-
-        if (selectedFilter !== null) {
-            qcApi.reportFilterFields({
-                filters_id: selectedFilter
-            }).then(data => {
-                const {num_samples, report_plot_types, success} = data;
-                setNumSamples(num_samples);
-            });
-        }
     }, [selectedFilter]);
 
     return (
@@ -53,15 +55,6 @@ export function SampleFilter(props) {
             <NewFilter qcApi={qcApi} isOpen={modalOpen} toggle={toggleModal}/>
             <h4 className="card-header">
                 Filter Samples
-                <span
-                    className={classnames({
-                        'num_filtered_samples': true,
-                        'badge': true,
-                        'badge-pill': true,
-                        'badge-danger': true,
-                        'badge-warning': false,
-                        'badge-success': false
-                    })}> {numSamples} samples </span>
                 <Button onClick={toggleModal} size={'sm'} color={'primary'} outline={true} className="float-right">
                     <i className="fa fa-fw fa-plus-square" aria-hidden="true"/>
                     Add
@@ -71,20 +64,18 @@ export function SampleFilter(props) {
                 <Row>
                     <Col sm={3}>
                         <nav className="nav flex-column nav-pills" id="sample-filter-group-select" role="tablist">
-                            {Object.keys(sampleFilters).sort().map((sfg, i) => {
+                            {Object.keys(filterGroups).sort().map((filterGroup, i) => {
                                 return (
                                     <a className={classnames({
                                         'nav-link': true,
-                                        'active': i === selectedGroup
+                                        'active': filterGroup === selectedGroup
                                     })}
                                        href={`#sample_filter_group_${i}`}
                                        key={i}
                                        onClick={() => {
-                                           this.setState({
-                                               selectedGroup: i
-                                           });
+                                           setSelectedGroup(filterGroup);
                                        }}
-                                    >{sfg}</a>
+                                    >{filterGroup}</a>
 
                                 );
                             })}
@@ -93,35 +84,25 @@ export function SampleFilter(props) {
                     <Col sm={8}>
                         <hr className="d-md-none"/>
                         <div id="sample-filter-groups">
-                            {Object.keys(sampleFilters).sort().map((key, j) => {
-                                return (
-                                    <div
-                                        key={j}
-                                        className="sample-filters-group"
-                                        id={`sample_filter_group_${j}`}
-                                        data-filtergroup={{key}}>
-                                        <ListGroup>
-                                            {sampleFilters[key].map((sf, i) => {
-                                                return <ListGroupItem
-                                                    onClick={() => {
-                                                        setSelectedFilter(sf.id);
-                                                    }}
-                                                    key={i}
-                                                    tag={"button"}
-                                                    className={classnames({
-                                                        'sample-filter-btn': true,
-                                                        'list-group-item-action': true,
-                                                        'active': sf.id === selectedFilter
-                                                    })}
-                                                    data-filterid={sf.id}>
-                                                    {sf.name}
-                                                </ListGroupItem>
+                            <ListGroup>
+                                {selectedGroup in filterGroups && filterGroups[selectedGroup].map((filter, i) => {
+                                    return <ListGroupItem
+                                        onClick={() => {
+                                            setSelectedFilter(filter._getUid());
+                                        }}
+                                        key={i}
+                                        tag={"button"}
+                                        className={classnames({
+                                            'sample-filter-btn': true,
+                                            'list-group-item-action': true,
+                                            'active': filter._getUid() === selectedFilter
+                                        })}
+                                        data-filterid={filter._getUid()}>
+                                        {filter.get('name')}
+                                    </ListGroupItem>
 
-                                            })}
-                                        </ListGroup>
-                                    </div>
-                                );
-                            })}
+                                })}
+                            </ListGroup>
                         </div>
                     </Col>
                 </Row>

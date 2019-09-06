@@ -18,10 +18,12 @@ export default function getClient(token) {
     // If we don't have a token, we need to obtain one
     if (!token) {
         client.get('users', 'current').then(data => {
-            client._transport._auth.header.access_token = data.toJSON().api_token
+            client._transport._auth.header = {access_token: data.toJSON().api_token};
+            console.log(client._transport._auth.header)
         })
     }
 
     return client;
 }
 
+export const client = getClient();

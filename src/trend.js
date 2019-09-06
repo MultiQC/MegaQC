@@ -16,8 +16,10 @@ import {
     CardHeader,
 } from 'reactstrap';
 import Plot from 'react-plotly.js';
-import getClient from './util/api';
+import {client} from './util/api';
 import {SampleFilter} from './components/sampleFilter';
+import {MuiPickersUtilsProvider} from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 
 function selectValue(select) {
     return Array.from(select.options).filter(o => o.selected).map(o => o.value)
@@ -26,25 +28,28 @@ function selectValue(select) {
 function Trend(props) {
     const [dataTypes, setDataTypes] = useState([]);
     const [selectedFilter, selectFilter] = useState(null);
-    const [apiClient, setApiClient] = useState(getClient());
     const [selectedDataTypes, selectDataTypes] = useState([]);
-    const [plotData, setPlotData] = useState(null);
+    const [plotData, setPlotData] = useState([]);
+    const [revision, setRevision] = useState(0);
 
     // Whenever the plot data type or filter changes, we have to re-calculate the plot data
     useEffect(() => {
         if (selectedDataTypes.length > 0) {
-            apiClient.find('plots/trends/series', {fields: selectedDataTypes, filter: selectedFilter})
+            client.find('plots/trends/series', {fields: JSON.stringify(selectedDataTypes), filter: selectedFilter})
                 .then(data => {
-                    setPlotData(data);
+                    const newData = data.map(datum => datum.toJSON());
+                    setPlotData(newData);
+                    setRevision(rev => rev + 1);
                 })
         }
     }, [selectedDataTypes, selectedFilter]);
 
+
     // When we first create the component, request the data types that could be plotted
     useEffect(() => {
-        apiClient.find('')
-            .then(response => {
-                setDataTypes(response.types);
+        client.find('data_types')
+            .then(resources => {
+                setDataTypes(resources.map(resource => resource.get('key')));
             })
     }, []);
 
@@ -55,7 +60,7 @@ function Trend(props) {
             <Row>
                 <Col sm={{size: 6}}>
                     <SampleFilter
-                        qcApi={apiClient}
+                        qcApi={client}
                         onFilterChange={filter => {
                             selectFilter(filter);
                         }}
@@ -98,6 +103,7 @@ function Trend(props) {
                         </CardHeader>
                         <CardBody>
                             <Plot
+                                revision={revision}
                                 data={plotData}
                                 useResizeHandler={true}
                                 layout={{
@@ -118,7 +124,9 @@ function Trend(props) {
 
 
 ReactDOM.render(
-    <Trend/>,
+    <MuiPickersUtilsProvider utils={MomentUtils}>
+        <Trend/>
+    </MuiPickersUtilsProvider>,
     document.getElementById('react-trend')
 );
 

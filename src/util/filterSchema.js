@@ -8,18 +8,27 @@ const schema = Yup.object().shape({
         Yup.array().of(
             Yup.object().shape({
                 type: Yup.string().oneOf(['timedelta', 'daterange', 'reportmeta', 'samplemeta']).label('Type').required(),
-                key: Yup.string().label('Key').required(),
-                comparison: Yup.string().oneOf([
-                    "in",
-                    "not in",
-                    "eq",
-                    "ne",
-                    "le",
-                    "lt",
-                    "ge",
-                    "gt"
-                ]).label('Comparison').required(),
-                value: Yup.mixed().label('Value').required()
+                key: Yup.string().label('Key').when('type', {
+                    is: val => (['samplemeta', 'reportmeta'].includes(val)),
+                    then: Yup.string().required(),
+                    otherwise: Yup.mixed().notRequired()
+                }),
+                cmp: Yup.string().label('Comparison').required().when('type', {
+                    is: val => (['samplemeta', 'reportmeta'].includes(val)),
+                    then: Yup.string().oneOf([
+                        "eq",
+                        "ne",
+                        "le",
+                        "lt",
+                        "ge",
+                        "gt"
+                    ]),
+                    otherwise: Yup.string().oneOf([
+                        "in",
+                        "not in",
+                    ])
+                }),
+                value: Yup.array().label('Value').required()
             })
         )
     )
