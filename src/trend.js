@@ -57,7 +57,7 @@ function Trend(props) {
     useEffect(() => {
         client.find('data_types')
             .then(resources => {
-                setDataTypes(resources.map(resource => resource.get('key')));
+                setDataTypes(resources.map(resource => resource.toJSON()));
             })
     }, []);
 
@@ -67,7 +67,8 @@ function Trend(props) {
             <SavePlot
                 qcApi={client}
                 plotData={{
-                    filters_id: selectedFilter,
+                    // This is a bit of a hack to ensure the filters save in a format expected by the old parts of MegaQC
+                    filters_id: selectedFilter || -1,
                     fields: selectedDataTypes
                 }}
                 plotType={'trend'}
@@ -104,7 +105,7 @@ function Trend(props) {
                                     id="exampleSelectMulti"
                                 >
                                     {dataTypes.map((type, i) => {
-                                        return <option key={i}>{type}</option>
+                                        return <option key={i} value={type.id}>{type.key}</option>
                                     })}
                                 </Input>
                             </FormGroup>
@@ -150,6 +151,7 @@ function Trend(props) {
                                 data={plotData}
                                 useResizeHandler={true}
                                 layout={{
+                                    hovermode: 'closest',
                                     autosize: true
                                 }}
                                 style={{

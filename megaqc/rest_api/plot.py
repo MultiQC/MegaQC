@@ -3,7 +3,7 @@ from megaqc.rest_api.filters import build_filter_query
 import numpy
 
 
-def trend_data(fields, filters, plot_prefix):
+def trend_data(fields, filters, plot_prefix, outlier_det=None):
     """
     Returns data suitable for a plotly plot
     """
@@ -34,21 +34,39 @@ def trend_data(fields, filters, plot_prefix):
             break
 
         names, data_types, x, y = zip(*data)
+        data_type = data_types[0]
         names = numpy.asarray(names, dtype=str)
         x = numpy.asarray(x)
         y = numpy.asarray(y, dtype=float)
 
-        # Add the raw data
+        # If we have an outlier detector, use it to split into outliers and inliers
+        outliers = outlier_det.get_outliers(y)
+        inliers = ~outliers
+
+        # Add the outliers
+        plots.append(dict(
+            id=plot_prefix + '_outlier_' + field,
+            type='scatter',
+            text=names[outliers],
+            hoverinfo='text+x+y',
+            x=x[outliers],
+            y=y[outliers],
+            line=dict(color='rgb(250,0,0)'),
+            mode='markers',
+            name='Outliers'
+        ))
+
+        # Add the non-outliers
         plots.append(dict(
             id=plot_prefix + '_raw_' + field,
             type='scatter',
-            text=names,
+            text=names[inliers],
             hoverinfo='text+x+y',
-            x=x,
-            y=y,
-            line=dict(color='rgb(250,0,0)'),
+            x=x[inliers],
+            y=y[inliers],
+            line=dict(color='rgb(0,100,80)'),
             mode='markers',
-            name='Raw Data'
+            name='Samples'
         ))
 
         # Add the mean
