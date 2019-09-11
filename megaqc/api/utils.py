@@ -859,7 +859,7 @@ def get_favourite_plot_data(user, favourite_id):
     elif plot_type == 'trend':
         my_filters = get_filter_from_data(api_data)
         data_keys = api_data.get("fields", {})
-        plot_data = get_timeline_sample_data(my_filters, data_keys)
+        plot_data = get_timeline_sample_data(data_keys, my_filters)
         plot_html = generate_trend_plot(plot_data)
     # Comparison plot
     elif plot_type == 'comparison':

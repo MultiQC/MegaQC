@@ -19,6 +19,7 @@ import Plot from 'react-plotly.js';
 import {client} from './util/api';
 import {SampleFilter} from './components/sampleFilter';
 import OutlierDetection from './components/outlierDetection';
+import SavePlot from './components/savePlot';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 
@@ -33,6 +34,7 @@ function Trend(props) {
     const [plotData, setPlotData] = useState([]);
     const [revision, setRevision] = useState(0);
     const [outlier, setOutlier] = useState(null);
+    const [saveBoxOpen, openSaveBox] = useState(false);
 
     // Whenever the plot data type or filter changes, we have to re-calculate the plot data
     useEffect(() => {
@@ -62,6 +64,18 @@ function Trend(props) {
     // The template
     return (
         <div>
+            <SavePlot
+                qcApi={client}
+                plotData={{
+                    filters_id: selectedFilter,
+                    fields: selectedDataTypes
+                }}
+                plotType={'trend'}
+                isOpen={saveBoxOpen}
+                toggle={() => {
+                    openSaveBox(open => !open)
+                }}
+            />
             <h1>Data Trends</h1>
             <Row>
                 <Col sm={{size: 4}}>
@@ -117,7 +131,15 @@ function Trend(props) {
             }}>
                 <Col sm={12}>
                     <Card>
-                        <CardHeader>
+                        <CardHeader className={'clearfix'}>
+                            <Button
+                                className={'float-right'}
+                                onClick={() => {
+                                    openSaveBox(true)
+                                }}
+                            >
+                                Save Plot Favourite
+                            </Button>
                             <h2>
                                 Trend Plot
                             </h2>
