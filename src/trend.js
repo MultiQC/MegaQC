@@ -18,6 +18,7 @@ import {
 import Plot from 'react-plotly.js';
 import {client} from './util/api';
 import {SampleFilter} from './components/sampleFilter';
+import OutlierDetection from './components/outlierDetection';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 
@@ -31,18 +32,23 @@ function Trend(props) {
     const [selectedDataTypes, selectDataTypes] = useState([]);
     const [plotData, setPlotData] = useState([]);
     const [revision, setRevision] = useState(0);
+    const [outlier, setOutlier] = useState(null);
 
     // Whenever the plot data type or filter changes, we have to re-calculate the plot data
     useEffect(() => {
         if (selectedDataTypes.length > 0) {
-            client.find('plots/trends/series', {fields: JSON.stringify(selectedDataTypes), filter: selectedFilter})
+            client.find('plots/trends/series', {
+                fields: JSON.stringify(selectedDataTypes),
+                filter: selectedFilter,
+                outliers: outlier
+            })
                 .then(data => {
                     const newData = data.map(datum => datum.toJSON());
                     setPlotData(newData);
                     setRevision(rev => rev + 1);
                 })
         }
-    }, [selectedDataTypes, selectedFilter]);
+    }, [selectedDataTypes, selectedFilter, outlier]);
 
 
     // When we first create the component, request the data types that could be plotted
@@ -58,7 +64,7 @@ function Trend(props) {
         <div>
             <h1>Data Trends</h1>
             <Row>
-                <Col sm={{size: 6}}>
+                <Col sm={{size: 4}}>
                     <SampleFilter
                         qcApi={client}
                         onFilterChange={filter => {
@@ -66,7 +72,7 @@ function Trend(props) {
                         }}
                     />
                 </Col>
-                <Col sm={{size: 6}}>
+                <Col sm={{size: 4}}>
                     <Card>
                         <CardHeader>
                             <h2>
@@ -82,8 +88,7 @@ function Trend(props) {
                                     onChange={e => selectDataTypes(selectValue(e.target))}
                                     name="selectMulti"
                                     id="exampleSelectMulti"
-                                    multiple={true
-                                    }>
+                                >
                                     {dataTypes.map((type, i) => {
                                         return <option key={i}>{type}</option>
                                     })}
@@ -92,8 +97,24 @@ function Trend(props) {
                         </CardBody>
                     </Card>
                 </Col>
+                <Col sm={{size: 4}}>
+                    <Card>
+                        <CardHeader>
+                            <h2>
+                                Outlier Detection
+                            </h2>
+                        </CardHeader>
+                        <CardBody>
+                            <OutlierDetection
+                                onChange={setOutlier}
+                            />
+                        </CardBody>
+                    </Card>
+                </Col>
             </Row>
-            <Row>
+            <Row style={{
+                paddingTop: '20px'
+            }}>
                 <Col sm={12}>
                     <Card>
                         <CardHeader>

@@ -85,6 +85,19 @@ export function SampleFilter(props) {
                         <hr className="d-md-none"/>
                         <div id="sample-filter-groups">
                             <ListGroup>
+                                <ListGroupItem
+                                    onClick={() => {
+                                        setSelectedFilter(null);
+                                    }}
+                                    tag={"button"}
+                                    className={classnames({
+                                        'sample-filter-btn': true,
+                                        'list-group-item-action': true,
+                                        'active': null === selectedFilter
+                                    })}
+                                >
+                                    None
+                                </ListGroupItem>
                                 {selectedGroup in filterGroups && filterGroups[selectedGroup].map((filter, i) => {
                                     return <ListGroupItem
                                         onClick={() => {
