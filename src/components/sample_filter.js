@@ -50,7 +50,7 @@ export function SampleFilter(props) {
 
     return (
         <Card>
-            <NewFilter isOpen={modalOpen} toggle={toggleModal}/>
+            <NewFilter qcApi={qcApi} isOpen={modalOpen} toggle={toggleModal}/>
             <h4 className="card-header">
                 Filter Samples
                 <span

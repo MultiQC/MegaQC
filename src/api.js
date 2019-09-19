@@ -59,4 +59,13 @@ export default class MegaQcApi {
             responseType: 'json',
         })
     }
+
+    saveFilters(data){
+        return this.makeRequest({
+            url: '/api/save_filters',
+            method: 'post',
+            data: data,
+            responseType: 'json'
+        });
+    }
 }
