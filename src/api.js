@@ -40,13 +40,23 @@ export default class MegaQcApi {
         return this.makeRequest({url: '/api/get_filters'}).then(response => response.data)
     }
 
-    getTrendData(fields) {
+    getTrendData(fields, filters) {
         return this.makeRequest({
             url: '/api/get_trend_data',
             method: 'POST',
             data: {
-                fields: fields
+                fields: fields,
+                filters: {filters_id: filters}
             }
         }).then(response => response.data)
+    }
+
+    reportFilterFields(data) {
+        return this.makeRequest({
+            url: '/api/report_filter_fields',
+            method: 'post',
+            data: data,
+            responseType: 'json',
+        })
     }
 }
