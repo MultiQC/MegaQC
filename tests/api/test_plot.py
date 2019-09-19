@@ -19,7 +19,7 @@ def test_get_trend_series(db, client):
     url = url_for(
         'rest_api.trend_data',
         filter=json.dumps([]),
-        fields=json.dumps([data_type.data_key]),
+        fields=json.dumps([data_type.data_key])
     )
     response = client.get(url)
 
