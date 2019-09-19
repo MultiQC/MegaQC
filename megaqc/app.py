@@ -10,12 +10,12 @@ standard_library.install_aliases()
 import jinja2
 import logging
 import markdown
-
 from flask import Flask, jsonify, render_template, request
-from megaqc import commands, public, user, version, api
-from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager
+from megaqc import commands, public, user, version, api, rest_api
+from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager, ma, restful
 from megaqc.scheduler import init_scheduler
 from megaqc.settings import ProdConfig, TestConfig
+from megaqc.api.views import api_blueprint
 
 def create_app(config_object):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -45,6 +45,7 @@ def register_extensions(app):
     csrf_protect.init_app(app)
     login_manager.init_app(app)
     debug_toolbar.init_app(app)
+    ma.init_app(app)
 
     @app.context_processor
     def inject_debug():
@@ -64,6 +65,8 @@ def register_blueprints(app):
     app.register_blueprint(user.views.blueprint)
     csrf_protect.exempt(api.views.api_blueprint)
     app.register_blueprint(api.views.api_blueprint)
+    # restful.init_app(api.rest_api.api_bp)
+    app.register_blueprint(rest_api.views.api_bp)
     return None
 
 

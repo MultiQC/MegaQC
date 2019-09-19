@@ -6,6 +6,9 @@ import datetime as dt
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Unicode, TIMESTAMP, Binary, DateTime
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+
+from flask_login import UserMixin
 
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
@@ -32,14 +35,15 @@ class Role(db.Model, CRUDMixin):
     role_id = Column(Integer, primary_key=True)
     name = Column(Unicode, unique=True, nullable=False)
     user_id = Column(Integer, ForeignKey('users.user_id'))
-    user = relationship('User', backref='roles')
+
+    user = relationship('User', back_populates='roles')
 
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<Role({name})>'.format(name=self.name)
 
 
-class User(db.Model, CRUDMixin):
+class User(db.Model, CRUDMixin, UserMixin):
     """A user of the app."""
 
     __tablename__ = 'users'
@@ -55,6 +59,13 @@ class User(db.Model, CRUDMixin):
     is_admin = Column(Boolean(), default=False)
     api_token = Column(Unicode, nullable=True)
 
+    reports = relationship('Report', back_populates='user')
+    uploads = relationship('Upload', back_populates='user')
+    roles = relationship('Role', back_populates='user')
+    filters = relationship('SampleFilter', back_populates='user')
+    favourite_plots = relationship('PlotFavourite', back_populates='user')
+    dashboards = relationship('Dashboard', back_populates='user')
+
     def __init__(self, password=None, **kwargs):
         """Create instance."""
         db.Model.__init__(self, **kwargs)
@@ -67,6 +78,10 @@ class User(db.Model, CRUDMixin):
 
         if self.user_id == 1:
             self.is_admin = True
+
+    @hybrid_property
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
 
     def reset_password(self):
         password = getrandstr(rng, digits + letters, 10)

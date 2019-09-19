@@ -17,6 +17,15 @@ class CRUDMixin(object):
     """Mixin that adds convenience methods for CRUD (create, read, update, delete) operations."""
 
     @classmethod
+    def get_or_create(cls, kwargs):
+        instance = db.session.query(cls).filter_by(**kwargs).first()
+        if instance:
+            return instance
+        else:
+            instance = cls(**kwargs)
+            return instance
+
+    @classmethod
     def create(cls, **kwargs):
         """Create a new record and save it the database."""
         instance = cls(**kwargs)
@@ -66,3 +75,26 @@ class SurrogatePK(object):
             return cls.query.get(int(record_id))
         return None
 
+
+def init_db(url):
+    """ Initialise a new database """
+    if "postgresql" in url:
+        try:
+            create_engine(url).connect().close()
+        except:
+            print("Initializing the postgres user and db")
+            engine = create_engine("postgres://postgres@localhost:5432/postgres")
+            conn = engine.connect()
+            conn.execute("commit")
+            conn.execute("CREATE USER megaqc_user;")
+            conn.execute("commit")
+            conn.execute("CREATE DATABASE megaqc OWNER megaqc_user;")
+            conn.execute("commit")
+            conn.close()
+    else:
+        engine = create_engine(url)
+
+    """Initializes the database."""
+    db.metadata.bind = engine
+    db.metadata.create_all()
+    print('Initialized the database.')

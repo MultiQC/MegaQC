@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import datetime as dt
+import json
 
+from sqlalchemy import ForeignKey, Column, Boolean, Integer, Unicode, DateTime
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Unicode, TIMESTAMP, Binary, DateTime, func
 
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
-
 
 user_plotconfig_map = db.Table('user_plotconfig_map',
             db.Column('user_id', Integer, db.ForeignKey('users.user_id')),
@@ -25,18 +24,15 @@ class Report(db.Model, CRUDMixin):
 
     __tablename__ = 'report'
     report_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
+    # If the user is deleted, we still want to retain the report
+    user_id = Column(Integer, ForeignKey('users.user_id', ondelete='SET NULL'), index=True)
     report_hash = Column(Unicode, index=True, unique=True)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     uploaded_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
-    def __init__(self, **kwargs):
-        """Create instance."""
-        db.Model.__init__(self, **kwargs)
-
-    def __repr__(self):
-        """Represent instance as a unique string."""
-        return '<Report({rid!r})>'.format(rid=self.report_id)
+    user = relationship('User', back_populates='reports')
+    meta = relationship('ReportMeta', back_populates='report')
+    samples = relationship('Sample', back_populates='report')
 
 
 class ReportMeta(db.Model, CRUDMixin):
@@ -44,7 +40,17 @@ class ReportMeta(db.Model, CRUDMixin):
     report_meta_id = Column(Integer, primary_key=True)
     report_meta_key = Column(Unicode, nullable=False)
     report_meta_value = Column(Unicode, nullable=False)
-    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
+    # If the report is deleted, remove the report metadata
+    report_id = Column(Integer, ForeignKey('report.report_id', ondelete='CASCADE'), index=True, nullable=False)
+
+    report = relationship('Report', back_populates='meta')
+
+    @classmethod
+    def get_keys(cls, session):
+        """
+        Returns all unique metadata keys
+        """
+        return session.query(ReportMeta.report_meta_key).distinct()
 
 
 class PlotConfig(db.Model, CRUDMixin):
@@ -87,6 +93,8 @@ class PlotFavourite(db.Model, CRUDMixin):
     data = Column(Unicode, nullable=False)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
+    user = relationship('User', back_populates='favourite_plots')
+
 
 class Dashboard(db.Model, CRUDMixin):
     __tablename__ = "dashboard"
@@ -98,6 +106,8 @@ class Dashboard(db.Model, CRUDMixin):
     modified_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
+    user = relationship('User', back_populates='dashboards')
+
 
 class SampleDataType(db.Model, CRUDMixin):
     __tablename__ = "sample_data_type"
@@ -106,31 +116,51 @@ class SampleDataType(db.Model, CRUDMixin):
     data_section = Column(Unicode)
     data_key = Column(Unicode, nullable=False)
 
+    @classmethod
+    def get_keys(cls, session):
+        """
+        Returns all unique metadata keys
+        """
+        return session.query(SampleDataType.report_meta_key).distinct()
+    sample_data = relationship('SampleData', back_populates='data_type')
+
 
 class SampleData(db.Model, CRUDMixin):
     __tablename__ = "sample_data"
     sample_data_id = Column(Integer, primary_key=True)
     report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
-    sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id'))
-    sample_id = Column(Integer, ForeignKey('sample.sample_id'), index=True)
+    sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id', ondelete='CASCADE'), nullable=False)
+    sample_id = Column(Integer, ForeignKey('sample.sample_id', ondelete='CASCADE'), index=True, nullable=False)
     value = Column(Unicode)
+
+    sample = relationship('Sample', back_populates='data')
+    data_type = relationship('SampleDataType', back_populates='sample_data')
 
 
 class Sample(db.Model, CRUDMixin):
     __tablename__ = "sample"
     sample_id = Column(Integer, primary_key=True)
     sample_name = Column(Unicode)
-    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
+    report_id = Column(Integer, ForeignKey('report.report_id', ondelete='CASCADE'), index=True, nullable=False)
+
+    report = relationship('Report', back_populates='samples')
+    data = relationship('SampleData', back_populates='sample')
 
 
 class SampleFilter(db.Model, CRUDMixin):
     __tablename__ = "sample_filter"
     sample_filter_id = Column(Integer, primary_key=True)
-    sample_filter_name = Column(Unicode)
+    sample_filter_name = Column(Unicode, )
     sample_filter_tag = Column(Unicode)
     is_public = Column(Boolean, index=True)
     sample_filter_data = Column(Unicode, nullable=False)
     user_id = Column(Integer, ForeignKey('users.user_id'), index=True)
+
+    user = relationship('User', back_populates='filters')
+
+    @property
+    def filter_json(self):
+        return json.loads(self.sample_filter_data)
 
 
 class Upload(db.Model, CRUDMixin):
@@ -142,3 +172,5 @@ class Upload(db.Model, CRUDMixin):
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     modified_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     user_id = Column(Integer, ForeignKey('users.user_id'))
+
+    user = relationship('User', back_populates='uploads')

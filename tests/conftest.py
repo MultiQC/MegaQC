@@ -5,7 +5,7 @@ import pytest
 from webtest import TestApp
 
 from megaqc.app import create_app
-from megaqc.database import db as _db
+from megaqc.database import init_db, db as _db
 from megaqc.settings import TestConfig
 
 from .factories import UserFactory
@@ -14,7 +14,9 @@ from .factories import UserFactory
 @pytest.yield_fixture(scope='function')
 def app():
     """An application for the tests."""
-    _app = create_app(TestConfig)
+    config = TestConfig()
+    init_db(config.SQLALCHEMY_DATABASE_URI)
+    _app = create_app(config)
     ctx = _app.test_request_context()
     ctx.push()
 
