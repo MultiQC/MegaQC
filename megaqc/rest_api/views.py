@@ -502,13 +502,14 @@ class Filter(Resource):
 
 class TrendSeries(Resource):
     @use_kwargs(schemas.TrendInputSchema(), locations=('querystring',))
-    def get(self, fields, filter):
+    def get(self, fields, filter, outliers):
         # We need to give each resource a unique ID so the client doesn't try to cache or reconcile different plots
         request_hash = sha1(request.query_string).hexdigest()
 
         plots = plot.trend_data(
             fields=fields,
             filters=filter,
+            outlier_det=outliers,
             plot_prefix=request_hash
         )
 
