@@ -34,14 +34,13 @@ def trend_data(fields, filters, plot_prefix):
             break
 
         names, data_types, x, y = zip(*data)
-        data_type = data_types[0]
         names = numpy.asarray(names, dtype=str)
         x = numpy.asarray(x)
         y = numpy.asarray(y, dtype=float)
 
         # Add the raw data
         plots.append(dict(
-            id=plot_prefix + '_outlier_' + field,
+            id=plot_prefix + '_raw_' + field,
             type='scatter',
             text=names,
             hoverinfo='text+x+y',
@@ -49,7 +48,7 @@ def trend_data(fields, filters, plot_prefix):
             y=y,
             line=dict(color='rgb(250,0,0)'),
             mode='markers',
-            name='Outliers'
+            name='Raw Data'
         ))
 
         # Add the mean
