@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 const {DuplicatesPlugin} = require("inspectpack/plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 
 module.exports = {

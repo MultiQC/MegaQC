@@ -26,7 +26,7 @@
     "just-debounce-it": "^1.1.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "plotly.js": "^1.48.1",
+    "plotly.js-basic-dist": "^1.49.5",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-plotly.js": "^2.3.0",
@@ -35,8 +35,5 @@
     "webpack-cli": "^3.3.1",
     "webpack-dev-server": "^3.3.1",
     "yup": "^0.27.0"
-  },
-  "dependencies": {
-    "inspectpack": "^4.2.1"
   }
 }
