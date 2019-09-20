@@ -45,9 +45,6 @@ export const SampleList = props => (
         <Datagrid rowClick="edit">
             <TextField source="id" />
             <TextField source="name" />
-             <ReferenceField label="Report" source="report_id" reference="reports">
-                <TextField source="id" />
-            </ReferenceField>
             <EditButton/>
             <ShowButton/>
         </Datagrid>
