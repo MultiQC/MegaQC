@@ -15,7 +15,7 @@ import {
     CardTitle,
     CardHeader,
 } from 'reactstrap';
-import Plot from 'react-plotly.js';
+import Plot from 'plotly.js-basic-dist'
 import {client} from './util/api';
 import {SampleFilter} from './components/sampleFilter';
 import OutlierDetection from './components/outlierDetection';

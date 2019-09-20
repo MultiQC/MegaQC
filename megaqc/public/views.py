@@ -247,7 +247,7 @@ def trends():
 
 @blueprint.route('/admin/')
 @login_required
-def trends():
+def admin():
     # Get the fields from the add-new-filters form
     return render_template(
         'public/react.html',
