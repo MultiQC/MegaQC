@@ -46,6 +46,7 @@ dev_reqs = [
     "querystring-parser~=1.2.4",
     "scipy~=1.3.1",
     "flatten_json~=0.1.7",
+    "Flask-Migrate~=2.5.2",
 
     # Testing
     "pytest==3.0.6",
