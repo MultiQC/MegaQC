@@ -25,6 +25,14 @@ module.exports = {
                         loader: 'babel-loader'
                     }
                 ]
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /\.svg$/,
+                use: ['url-loader']
             }
         ]
     },
@@ -39,8 +47,7 @@ module.exports = {
         publicPath: '/',
         filename: '[name].js'
     },
-    plugins: [
-    ],
+    plugins: [],
     devServer: {
         contentBase: './dist',
         hot: true

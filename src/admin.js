@@ -1,62 +1,55 @@
 import ReactDOM from 'react-dom';
-import React, {useState, useEffect} from 'react';
-import {Admin, Resource} from 'react-admin';
+import React, {useEffect, useRef, useState} from 'react';
+import {Admin, Resource, EditGuesser, ListGuesser, ShowGuesser} from 'react-admin';
 import jsonapiClient from "ra-jsonapi-client";
-import {
-    List,
-    Datagrid,
-    Edit,
-    Create,
-    SimpleForm,
-    DateField,
-    TextField,
-    EditButton,
-    ShowButton,
-    DisabledInput,
-    TextInput,
-    LongTextInput,
-    DateInput,
-    ListGuesser,
-    ShowGuesser,
-    EditGuesser,
-    ReferenceField,
-    ReferenceManyField,
-    SingleFieldList,
-    ChipField
-} from 'react-admin';
+import {ReportEdit, ReportList, ReportShow} from "./admin/report";
+import {SampleEdit, SampleList, SampleShow} from "./admin/sample";
+import {UploadEdit, UploadList, UploadShow} from "./admin/upload";
+import {ReportMetaList} from "./admin/meta";
+import {FilterGroupList} from "./admin/filterGroup";
+import {DataTypeList, DataTypeEdit, DataTypeShow} from "./admin/dataType";
+import {FavouriteList, FavouriteEdit, FavouriteShow} from "./admin/favourite";
+import {DashboardList, DashboardEdit, DashboardShow} from "./admin/dashboards";
+import {UserList, UserEdit, UserShow} from "./admin/user";
+import {getClient, getToken} from './util/api';
 
-const dataProvider = jsonapiClient('/rest_api/v1', {total: null});
 
-const ReportList = props => (
-    <List {...props}>
-        <Datagrid rowClick="edit">
-            <TextField source="id" />
-            <DateField source="uploaded_at" />
-            <DateField source="created_at" />
-            <TextField source="hash" />
-            <EditButton/>
-            <ShowButton/>
-        </Datagrid>
-    </List>
-);
+function App() {
+    // Start with a client that has no auth, but immediately request an auth token
+    const [token, setToken] = useState(null);
 
-export const SampleList = props => (
-    <List {...props}>
-        <Datagrid rowClick="edit">
-            <TextField source="id" />
-            <TextField source="name" />
-            <EditButton/>
-            <ShowButton/>
-        </Datagrid>
-    </List>
-);
+    const provider = jsonapiClient('/rest_api/v1', {
+        total: null,
+        headers: {
+            access_token: token
+        }
+    });
 
-const App = () => (
-    <Admin dataProvider={dataProvider}>
-        <Resource name="reports" list={ReportList} show={ShowGuesser} edit={EditGuesser}/>
-        <Resource name="samples" list={SampleList} show={ShowGuesser} edit={EditGuesser}/>
-    </Admin>
-);
+    useEffect(() => {
+        const client = getClient();
+        getToken(client).then(token => {
+            setToken(token);
+        })
+    }, []);
+
+    if (token === null)
+        return null;
+    else
+        return (
+            <Admin dataProvider={provider}>
+                <Resource name="reports" list={ReportList} show={ReportShow} edit={ReportEdit}/>
+                <Resource name="samples" list={SampleList} show={SampleShow} edit={SampleEdit}/>
+                <Resource name="uploads" list={UploadList} show={UploadShow} edit={UploadEdit}/>
+                <Resource name="report_meta" list={ReportMetaList}/>
+                {/*<Resource name="data" list={ListGuesser} show={ShowGuesser} edit={EditGuesser}/>*/}
+                <Resource name="data_types" list={DataTypeList} show={DataTypeShow} edit={DataTypeEdit}/>
+                <Resource name="users" list={UserList} show={UserShow} edit={UserEdit}/>
+                <Resource name="filter_groups" list={FilterGroupList}/>
+                <Resource name="favourites" list={FavouriteList} show={FavouriteShow} edit={FavouriteEdit}/>
+                <Resource name="dashboards" list={DashboardList} show={DashboardShow} edit={DashboardEdit}/>
+            </Admin>
+        );
+}
 
 ReactDOM.render(
     <App/>,

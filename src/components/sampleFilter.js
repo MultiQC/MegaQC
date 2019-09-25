@@ -10,7 +10,6 @@ import {
     ListGroup,
     ListGroupItem
 } from 'reactstrap';
-import MegaQcApi from '../util/api';
 import groupBy from 'lodash/groupBy';
 
 import NewFilter from './newFilter';
@@ -125,7 +124,7 @@ export function SampleFilter(props) {
 }
 
 SampleFilter.propTypes = {
-    qcApi: PropTypes.instanceOf(MegaQcApi),
+    qcApi: PropTypes.object,
 
     /**
      * Function to run when the user selects a filter. Calls the function with the

@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
     Button,
     Form,
@@ -16,7 +16,7 @@ import {
     CardHeader,
 } from 'reactstrap';
 import Plot from 'plotly.js-basic-dist'
-import {client} from './util/api';
+import {getClient, getToken} from './util/api';
 import {SampleFilter} from './components/sampleFilter';
 import OutlierDetection from './components/outlierDetection';
 import SavePlot from './components/savePlot';
@@ -28,6 +28,7 @@ function selectValue(select) {
 }
 
 function Trend(props) {
+
     const [dataTypes, setDataTypes] = useState([]);
     const [selectedFilter, selectFilter] = useState(null);
     const [selectedDataTypes, selectDataTypes] = useState([]);
@@ -35,6 +36,15 @@ function Trend(props) {
     const [revision, setRevision] = useState(0);
     const [outlier, setOutlier] = useState(null);
     const [saveBoxOpen, openSaveBox] = useState(false);
+
+    // Start with an unauthenticated client, then request a token ASAP
+    const client = useRef(getClient());
+    useEffect(() => {
+        const client = getClient();
+        getToken(client).then(token => {
+            clientRef.current._transport._auth.header = {access_token: token};
+        })
+    }, []);
 
     // Whenever the plot data type or filter changes, we have to re-calculate the plot data
     useEffect(() => {
