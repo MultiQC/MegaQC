@@ -31,7 +31,7 @@ class OptionalLinkSchema(JsonApiSchema):
         return item
 
 
-# Make every schema use this
+# Make every JSON API schema use this
 Schema = OptionalLinkSchema
 
 
@@ -66,7 +66,9 @@ class SampleDataSchema(Schema):
         },
         many=False,
         type_='data_types',
-        schema='SampleDataTypeSchema'
+        schema='SampleDataTypeSchema',
+        include_resource_linkage=True,
+        id_field='sample_data_type_id'
     )
 
 
@@ -86,7 +88,6 @@ class SampleSchema(Schema):
         related_view_kwargs={
             'sample_id': '<sample_id>'
         },
-        include_resource_linkage=False,
         many=True,
         type_='sample_data',
         schema="SampleDataSchema"
@@ -113,7 +114,10 @@ class SampleFilterSchema(OptionalLinkSchema):
         related_view='rest_api.user',
         related_view_kwargs={
             'user_id': '<user_id>'
-        }
+        },
+        type_='users',
+        include_resource_linkage=True,
+        id_field='user_id'
     )
 
 
@@ -153,7 +157,7 @@ class ReportSchema(Schema):
             'report_id': '<report_id>'
         },
         many=True,
-        type_='report_meta'
+        type_='report_meta',
     )
 
     samples = Relationship(
@@ -162,7 +166,7 @@ class ReportSchema(Schema):
             'report_id': '<report_id>'
         },
         many=True,
-        type_='sample'
+        type_='sample',
     )
 
     user = Relationship(
@@ -171,7 +175,9 @@ class ReportSchema(Schema):
             'user_id': '<user_id>'
         },
         many=False,
-        type_='user'
+        type_='users',
+        id_field='user_id',
+        include_resource_linkage=True
     )
 
 
@@ -198,8 +204,9 @@ class UploadSchema(Schema):
             'user_id': '<user_id>'
         },
         many=False,
-        type_='user',
-        id_field='user_id'
+        type_='users',
+        id_field='user_id',
+        include_resource_linkage=True
     )
 
 
@@ -242,8 +249,9 @@ class FavouritePlotSchema(Schema):
             'user_id': '<user_id>'
         },
         many=False,
-        type_='user',
-        id_field='user_id'
+        type_='users',
+        id_field='user_id',
+        include_resource_linkage=True
     )
 
 
@@ -257,6 +265,17 @@ class DashboardSchema(Schema):
     is_public = f.Bool()
     modified_at = f.DateTime()
     created_at = f.DateTime()
+
+    user = Relationship(
+        related_view='rest_api.user',
+        related_view_kwargs={
+            'user_id': '<user_id>'
+        },
+        many=False,
+        type_='users',
+        id_field='user_id',
+        include_resource_linkage=True
+    )
 
 
 class ReportMetaTypeSchema(Schema):
@@ -297,7 +316,7 @@ class UserSchema(Schema):
         },
         many=True,
         type_='report',
-        required=False
+        required=False,
     )
 
 
