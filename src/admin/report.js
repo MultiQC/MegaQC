@@ -11,29 +11,33 @@ import {
     SimpleForm,
     SimpleShowLayout,
     TextField,
-    TextInput
+    TextInput,
+    ReferenceField
 } from 'react-admin';
 
 export const ReportList = props => (
     <List {...props}>
-    <Datagrid rowClick="edit">
-    <TextField source="id" />
-    <DateField source="uploaded_at" />
-    <DateField source="created_at" />
-    <TextField source="hash" />
-    <EditButton/>
-    <ShowButton/>
-    </Datagrid>
+        <Datagrid rowClick="edit">
+            <TextField source="id"/>
+            <DateField source="uploaded_at"/>
+            <DateField source="created_at"/>
+            <TextField source="hash"/>
+            <EditButton/>
+            <ShowButton/>
+        </Datagrid>
     </List>
 );
 
 export const ReportEdit = props => (
     <Edit {...props}>
         <SimpleForm>
-            <TextInput source="id" />
-            <DateInput source="uploaded_at" />
-            <TextInput source="hash" />
-            <DateInput source="created_at" />
+            <TextInput source="id"/>
+            <DateInput source="uploaded_at"/>
+            <TextInput source="hash"/>
+            <DateInput source="created_at"/>
+            <ReferenceField label="Owner" source="relationships.user.id" reference="users">
+                <TextField source="username"/>
+            </ReferenceField>
         </SimpleForm>
     </Edit>
 );
@@ -41,10 +45,10 @@ export const ReportEdit = props => (
 export const ReportShow = props => (
     <Show {...props}>
         <SimpleShowLayout>
-            <TextField source="id" />
-            <DateField source="uploaded_at" />
-            <TextField source="hash" />
-            <DateField source="created_at" />
+            <TextField source="id"/>
+            <DateField source="uploaded_at"/>
+            <TextField source="hash"/>
+            <DateField source="created_at"/>
         </SimpleShowLayout>
     </Show>
 );
