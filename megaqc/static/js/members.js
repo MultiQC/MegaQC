@@ -13,7 +13,7 @@ $("#password_submit").click(function(e){
             url:"/api/set_password",
             type: 'post',
             data:JSON.stringify(data),
-            headers : {access_token:window.token},
+            headers : {access-token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
             success: function(data){

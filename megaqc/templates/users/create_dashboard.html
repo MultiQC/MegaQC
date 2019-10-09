@@ -254,7 +254,7 @@ $(function () {
             url: '/api/get_favourite_plot',
             type: 'post',
             data: JSON.stringify({'favourite_id': plot_id }),
-            headers : { access_token:window.token },
+            headers : { access-token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
@@ -412,7 +412,7 @@ $(function () {
                 'data': serializedData,
                 'is_public': false
             }),
-            headers : { access_token:window.token },
+            headers : { access-token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){

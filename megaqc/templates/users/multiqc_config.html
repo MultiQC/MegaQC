@@ -26,7 +26,7 @@
       Test connection command
     </div>
     <div class="card-body">
-      <pre><code id="api_key_test_cmd">curl -H "access_token: {{current_user.api_token}}" -H "Content-Type: application/json" {{url_for('api.test', _external=True)}}</code></pre>
+      <pre><code id="api_key_test_cmd">curl -H "access-token: {{current_user.api_token}}" -H "Content-Type: application/json" {{url_for('api.test', _external=True)}}</code></pre>
     </div>
   </div>
   <p>You should get a response that looks like this:</p>

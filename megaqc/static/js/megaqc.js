@@ -33,7 +33,7 @@ function save_plot_favourite(plot_type, request_data){
             'title': $('#plot_favourite_title').val(),
             'description': $('#plot_favourite_description').val()
         }),
-        headers : { access_token:window.token },
+        headers : { access-token:window.token },
         dataType: 'json',
         contentType: 'application/json; charset=UTF-8',
         success: function(data){

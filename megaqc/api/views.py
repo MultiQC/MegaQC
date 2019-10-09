@@ -26,7 +26,7 @@ api_blueprint = Blueprint('api', __name__, static_folder='../static')
 def check_user(function):
     @wraps(function)
     def user_wrap_function(*args, **kwargs):
-        user = User.query.filter_by(api_token=request.headers.get("access_token")).first()
+        user = User.query.filter_by(api_token=request.headers.get("access-token")).first()
         if not user:
             abort(403) # if no user, abort the request with 403
         kwargs['user'] = user
@@ -36,7 +36,7 @@ def check_user(function):
 def check_admin(function):
     @wraps(function)
     def user_wrap_function(*args, **kwargs):
-        user = User.query.filter_by(api_token=request.headers.get("access_token")).first()
+        user = User.query.filter_by(api_token=request.headers.get("access-token")).first()
         if not user or not user.is_admin:
             abort(403) # if no user, abort the request with 403
         kwargs['user'] = user

@@ -22,7 +22,7 @@ function init_buttons(){
             url:"/api/update_users",
             type: 'post',
             data:JSON.stringify(data),
-            headers : {access_token:window.token},
+            headers : {access-token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
             success: function(){
@@ -47,7 +47,7 @@ function init_buttons(){
             url:"/api/delete_users",
             type: 'post',
             data:JSON.stringify(data),
-            headers : {access_token:window.token},
+            headers : {access-token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
             success: function(){
@@ -71,7 +71,7 @@ function init_buttons(){
             url:"/api/reset_password",
             type: 'post',
             data:JSON.stringify(data),
-            headers : {access_token:window.token},
+            headers : {access-token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
             success: function(data){
@@ -107,7 +107,7 @@ function init_buttons(){
             url:"/api/add_user",
             type: 'post',
             data: JSON.stringify(data),
-            headers: {access_token:window.token},
+            headers: {access-token:window.token},
             dataType: 'json',
             contentType: "application/json; charset=UTF-8",
             success: function(ret_data){

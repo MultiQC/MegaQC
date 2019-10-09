@@ -67,7 +67,7 @@ $(function(){
             url: '/api/delete_plot_favourite',
             type: 'post',
             data: JSON.stringify({'favourite_id': fav_id }),
-            headers : { access_token:window.token },
+            headers : { access-token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
@@ -104,7 +104,7 @@ $(function(){
             url: '/api/get_favourite_plot',
             type: 'post',
             data: JSON.stringify({'favourite_id': $(this).data('favouriteid') }),
-            headers : { access_token:window.token },
+            headers : { access-token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){

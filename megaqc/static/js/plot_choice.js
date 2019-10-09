@@ -20,7 +20,7 @@ function init_report_checkboxes(){
             url:"/api/get_samples_per_report",
             type: 'post',
             data:JSON.stringify({"report_id":report_id}),
-            headers : {access_token:window.token},
+            headers : {access-token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
             success: function(data){
@@ -49,7 +49,7 @@ function init_btns(){
             url:"/api/get_report_plot",
             type: 'post',
             data:JSON.stringify({"samples":selected_samples, "plot_type":window.graph_type}),
-            headers : {access_token:window.token},
+            headers : {access-token:window.token},
             dataType: 'json',
             contentType:"application/json; charset=UTF-8",
             success: function(json){

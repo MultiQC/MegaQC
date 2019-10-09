@@ -192,7 +192,7 @@ $(function(){
             url: '/api/report_filter_fields',
             type: 'post',
             data:JSON.stringify( {'filters': window.active_filters} ),
-            headers : { access_token:window.token },
+            headers : { access-token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
@@ -296,7 +296,7 @@ $(function(){
             url: '/api/save_filters',
             type: 'post',
             data:JSON.stringify(new_filters),
-            headers : { access_token:window.token },
+            headers : { access-token:window.token },
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8',
             success: function(data){
