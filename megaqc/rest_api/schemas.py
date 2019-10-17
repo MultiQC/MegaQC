@@ -39,7 +39,7 @@ class SampleDataTypeSchema(Schema):
     class Meta:
         type_ = 'data_types'
 
-    id = f.String(attribute='sample_data_type_id')
+    id = f.Integer(attribute='sample_data_type_id', as_string=True)
     section = f.String(attribute='data_section')
     key = f.String(attribute='data_key')
 
@@ -66,9 +66,9 @@ class SampleDataSchema(Schema):
         },
         many=False,
         type_='data_types',
-        schema='SampleDataTypeSchema',
         include_resource_linkage=True,
-        id_field='sample_data_type_id'
+        id_field='sample_data_type_id',
+        schema='SampleDataTypeSchema',
     )
 
 
@@ -76,15 +76,15 @@ class SampleSchema(Schema):
     class Meta:
         type_ = 'samples'
         self_view = 'rest_api.sample'
-        self_view_many = 'rest_api.sampleslist'
+        self_view_many = 'rest_api.samplelist'
         self_view_kwargs = {
             'sample_id': '<id>'
         }
 
-    id = f.String(attribute='sample_id', allow_none=True)
+    id = f.Integer(attribute='sample_id', allow_none=True, as_string=True)
     name = f.String(attribute='sample_name')
     data = Relationship(
-        related_view='rest_api.sampledata',
+        related_view='rest_api.sampledatalist',
         related_view_kwargs={
             'sample_id': '<sample_id>'
         },
@@ -104,7 +104,7 @@ class SampleFilterSchema(OptionalLinkSchema):
             'filter_id': '<id>'
         }
 
-    id = f.String(attribute='sample_filter_id', allow_none=True)
+    id = f.Integer(attribute='sample_filter_id', allow_none=True, as_string=True)
     tag = f.String(attribute='sample_filter_tag')
     name = f.String(attribute='sample_filter_name')
     public = f.Boolean(attribute='is_public')
@@ -117,7 +117,8 @@ class SampleFilterSchema(OptionalLinkSchema):
         },
         type_='users',
         include_resource_linkage=True,
-        id_field='user_id'
+        id_field='user_id',
+        schema='UserSchema'
     )
 
 
@@ -146,27 +147,29 @@ class ReportSchema(Schema):
         }
         strict = True
 
-    id = f.String(attribute='report_id', allow_none=True)
+    id = f.Integer(attribute='report_id', allow_none=True, as_string=True)
     hash = f.String(attribute='report_hash')
     created_at = f.DateTime()
     uploaded_at = f.DateTime()
 
     meta = Relationship(
-        related_view='rest_api.reportmeta',
+        related_view='rest_api.reportmetalist',
         related_view_kwargs={
             'report_id': '<report_id>'
         },
         many=True,
         type_='report_meta',
+        schema='ReportMetaSchema'
     )
 
     samples = Relationship(
-        related_view='rest_api.sampleslist',
+        related_view='rest_api.samplelist',
         related_view_kwargs={
             'report_id': '<report_id>'
         },
         many=True,
         type_='sample',
+        schema='SampleSchema'
     )
 
     user = Relationship(
@@ -177,7 +180,8 @@ class ReportSchema(Schema):
         many=False,
         type_='users',
         id_field='user_id',
-        include_resource_linkage=True
+        include_resource_linkage=True,
+        schema='UserSchema'
     )
 
 
@@ -191,7 +195,7 @@ class UploadSchema(Schema):
         }
         strict = True
 
-    id = f.String(attribute='upload_id', allow_none=True)
+    id = f.Integer(attribute='upload_id', allow_none=True, as_string=True)
     status = f.String()
     path = f.String()
     message = f.String()
@@ -206,7 +210,8 @@ class UploadSchema(Schema):
         many=False,
         type_='users',
         id_field='user_id',
-        include_resource_linkage=True
+        include_resource_linkage=True,
+        schema='UserSchema'
     )
 
 
@@ -218,7 +223,7 @@ class ReportMetaSchema(Schema):
         #     'report_id': '<id>'
         # }
 
-    id = f.String(attribute='report_meta_id', allow_none=True)
+    id = f.Integer(attribute='report_meta_id', allow_none=True, as_string=True)
     key = f.String(attribute='report_meta_key')
     value = f.String(attribute='report_meta_value')
 
@@ -231,7 +236,7 @@ class FavouritePlotSchema(Schema):
             'favourite_id': '<id>'
         }
 
-    id = f.String(attribute='plot_favourite_id', allow_none=True)
+    id = f.Integer(attribute='plot_favourite_id', allow_none=True, as_string=True)
     title = f.String()
     description = f.String()
     plot_type = f.String(validate=validate.OneOf([
@@ -251,7 +256,8 @@ class FavouritePlotSchema(Schema):
         many=False,
         type_='users',
         id_field='user_id',
-        include_resource_linkage=True
+        include_resource_linkage=True,
+        schema='UserSchema'
     )
 
 
@@ -259,7 +265,7 @@ class DashboardSchema(Schema):
     class Meta:
         type_ = 'dashboards'
 
-    id = f.String(attribute='dashboard_id', required=False)
+    id = f.Integer(attribute='dashboard_id', required=False, as_string=True)
     title = f.String()
     data = JsonString()
     is_public = f.Bool()
@@ -274,7 +280,8 @@ class DashboardSchema(Schema):
         many=False,
         type_='users',
         id_field='user_id',
-        include_resource_linkage=True
+        include_resource_linkage=True,
+        schema='UserSchema'
     )
 
 
@@ -297,7 +304,7 @@ class UserSchema(Schema):
             'user_id': '<id>'
         }
 
-    id = f.String(attribute='user_id', required=False, allow_none=True)
+    id = f.Int(attribute='user_id', required=False, allow_none=True, as_string=True)
     username = f.String()
     email = f.String()
     salt = f.String()
@@ -317,6 +324,7 @@ class UserSchema(Schema):
         many=True,
         type_='report',
         required=False,
+        schema='ReportSchema'
     )
 
 

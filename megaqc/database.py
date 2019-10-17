@@ -2,7 +2,7 @@
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
 from past.builtins import basestring
 from builtins import object
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -48,6 +48,18 @@ class CRUDMixin(object):
         """Remove the record from the database."""
         db.session.delete(self)
         return commit and db.session.commit()
+
+    @property
+    def primary_key(self):
+        return getattr(self, self.__class__.primary_key_name())
+
+    @classmethod
+    def primary_key_columns(cls):
+        return inspect(cls).primary_key
+
+    @classmethod
+    def primary_key_name(cls):
+        return cls.primary_key_columns()[0].name
 
 
 class Model(CRUDMixin, db.Model):

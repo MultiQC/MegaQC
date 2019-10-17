@@ -142,3 +142,5 @@ class DashboardFactory(BaseFactory):
     is_public = Faker('pybool')
     modified_at = Faker('date_time')
     created_at = Faker('date_time')
+
+    user = SubFactory(UserFactory)
