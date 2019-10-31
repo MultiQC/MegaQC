@@ -14,15 +14,16 @@ from marshmallow_jsonapi.exceptions import IncorrectTypeError
 
 import megaqc.user.models as user_models
 from megaqc.api.views import check_user
-from megaqc.extensions import db
-from megaqc.extensions import restful
+from megaqc.extensions import db, restful, json_api
 from megaqc.model import models
 from megaqc.rest_api import schemas, utils, plot
 from megaqc.rest_api.content import json_to_csv
 from megaqc.rest_api.resources import ResourceDetail, ResourceList
 from megaqc.rest_api.webarg_parser import use_kwargs
+from flask_rest_jsonapi import ResourceDetail, ResourceList, ResourceRelationship
 
 api_bp = Blueprint("rest_api", __name__, url_prefix="/rest_api/v1")
+json_api.blueprint = api_bp
 
 
 @restful.representation("text/csv")
@@ -41,72 +42,125 @@ def handle_jsonapi_error(e):
     return make_response(jsonify(e.messages), HTTPStatus.BAD_REQUEST)
 
 
-@restful.resource("/uploads/<int:upload_id>")
 class Upload(ResourceDetail):
     schema = schemas.UploadSchema
-    model = models.Upload
+    data_layer = dict(
+        session=db.session,
+        model=models.Upload
+    )
 
 
-@restful.resource("/uploads", "/users/<int:user_id>/uploads")
 class UploadList(ResourceList):
-    schema = schemas.UserSchema
-    model = user_models.User
-
-    @classmethod
-    def _get_exclude(cls, **kwargs):
-        # Only show the filepath if they're an admin
-        if 'user' in kwargs:
-            return [] if kwargs['permission'] >= utils.Permission.ADMIN else ["path"]
-        else:
-            return []
-
-    @check_user
-    def post(self, **kwargs):
-        """
-        Upload a new report
-        """
-        # This doesn't exactly follow the JSON API spec, since it doesn't exactly support file uploads:
-        # https://github.com/json-api/json-api/issues/246
-        file_name = utils.get_unique_filename()
-        request.files["report"].save(file_name)
-        upload_row = models.Upload.create(
-            status="NOT TREATED",
-            path=file_name,
-            message="File has been created, loading in MegaQC is queued.",
-            user_id=kwargs["user"].user_id,
-        )
-
-        return self._dump(upload_row), HTTPStatus.CREATED
+    schema = schemas.UploadSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Upload
+    )
 
 
-@restful.resource("/reports", "/users/<int:user_id>/reports")
+class UploadRelationship(ResourceRelationship):
+    schema = schemas.UploadSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Upload
+    )
+    # @classmethod
+    # def _get_exclude(cls, **kwargs):
+    #     # Only show the filepath if they're an admin
+    #     if 'user' in kwargs:
+    #         return [] if kwargs['permission'] >= utils.Permission.ADMIN else ["path"]
+    #     else:
+    #         return []
+
+    # @check_user
+    # def post(self, **kwargs):
+    #     """
+    #     Upload a new report
+    #     """
+    #     # This doesn't exactly follow the JSON API spec, since it doesn't exactly support file uploads:
+    #     # https://github.com/json-api/json-api/issues/246
+    #     file_name = utils.get_unique_filename()
+    #     request.files["report"].save(file_name)
+    #     upload_row = models.Upload.create(
+    #         status="NOT TREATED",
+    #         path=file_name,
+    #         message="File has been created, loading in MegaQC is queued.",
+    #         user_id=kwargs["user"].user_id,
+    #     )
+    #
+    #     return self._dump(upload_row), HTTPStatus.CREATED
+
+
 class ReportList(ResourceList):
     schema = schemas.ReportSchema
-    model = models.Report
+    data_layer = dict(
+        session=db.session,
+        model=models.Report
+    )
 
 
-@restful.resource("/reports/<int:report_id>")
 class Report(ResourceDetail):
     schema = schemas.ReportSchema
-    model = models.Report
+    data_layer = dict(
+        session=db.session,
+        model=models.Report
+    )
 
 
-@restful.resource("/reports/<int:report_id>/report_meta", "/report_meta")
+class ReportRelationship(ResourceRelationship):
+    schema = schemas.ReportSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Report
+    )
+
+
 class ReportMetaList(ResourceList):
     schema = schemas.ReportMetaSchema
-    model = models.ReportMeta
+    data_layer = dict(
+        session=db.session,
+        model=models.ReportMeta
+    )
 
 
-@restful.resource("/reports/<int:report_id>/samples", "/samples")
+class ReportMetaRelationship(ResourceRelationship):
+    schema = schemas.ReportMetaSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.ReportMeta
+    )
+
+
+class Sample(ResourceDetail):
+    schema = schemas.SampleSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Sample
+    )
+
+
 class SampleList(ResourceList):
     schema = schemas.SampleSchema
-    model = models.Sample
+    data_layer = dict(
+        session=db.session,
+        model=models.Sample
+    )
 
 
-@restful.resource("/meta_type")
+class SampleRelationship(ResourceRelationship):
+    schema = schemas.SampleSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Sample
+    )
+
+
 class ReportMetaTypeList(ResourceList):
-    schema = schemas.ReportMetaSchema
-    model = models.ReportMeta
+    schema = schemas.ReportMetaTypeSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.ReportMeta
+    )
 
     def _list_query(self, **kwargs):
         # We override the query because this resource is basically simulated, and doesn't correspond to an underlying
@@ -118,40 +172,56 @@ class ReportMetaTypeList(ResourceList):
         )
 
 
-@restful.resource("/samples/<int:sample_id>")
-class Sample(ResourceDetail):
-    schema = schemas.SampleSchema
-    model = models.Sample
-
-
-@restful.resource("/samples/<int:sample_id>/sample_data")
 class SampleDataList(ResourceList):
     schema = schemas.SampleDataSchema
-    model = models.SampleData
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleData
+    )
+class SampleDataRelationship(ResourceRelationship):
+    schema = schemas.SampleDataSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleData
+    )
 
 
-@restful.resource("/data_types/<int:type_id>")
 class DataType(ResourceDetail):
     schema = schemas.SampleDataTypeSchema
-    model = models.SampleDataType
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleDataType
+    )
 
 
-@restful.resource("/data_types")
 class DataTypeList(ResourceList):
     schema = schemas.SampleDataTypeSchema
-    model = models.SampleDataType
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleDataType
+    )
 
 
-@restful.resource("/users/<int:user_id>")
 class User(ResourceDetail):
     schema = schemas.UserSchema
-    model = user_models.User
+    data_layer = dict(
+        session=db.session,
+        model=user_models.User
+    )
 
+class UserRelationship(ResourceRelationship):
+    schema = schemas.UserSchema
+    data_layer = dict(
+        session=db.session,
+        model=user_models.User
+    )
 
-@restful.resource("/users")
 class UserList(ResourceList):
     schema = schemas.UserSchema
-    model = user_models.User
+    data_layer = dict(
+        session=db.session,
+        model=user_models.User
+    )
 
     @classmethod
     def _get_exclude(cls, user, permission, **kwargs):
@@ -170,10 +240,12 @@ class UserList(ResourceList):
         new_user.save()
 
 
-@restful.resource("/users/current")
 class CurrentUser(ResourceDetail):
     schema = schemas.UserSchema
-    model = user_models.User
+    data_layer = dict(
+        session=db.session,
+        model=user_models.User
+    )
 
     def _get_exclude(self, user, permissions, **kwargs):
         # Only show the filepath if they're an admin
@@ -200,22 +272,36 @@ class CurrentUser(ResourceDetail):
         )
 
 
-@restful.resource("/filters", "/users/<int:user_id>/filters")
 class FilterList(ResourceList):
     schema = schemas.SampleFilterSchema
-    model = models.SampleFilter
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleFilter
+    )
 
 
-@restful.resource("/filters/<int:filter_id>")
 class Filter(ResourceDetail):
     schema = schemas.SampleFilterSchema
-    model = models.SampleFilter
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleFilter
+    )
 
 
-@restful.resource("/filter_groups")
+class FilterRelationship(ResourceRelationship):
+    schema = schemas.SampleFilterSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleFilter
+    )
+
+
 class FilterGroupList(ResourceList):
-    model = models.SampleFilter
     schema = schemas.FilterGroupSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleFilter
+    )
 
     def _list_query(self, **kwargs):
         return (
@@ -226,32 +312,55 @@ class FilterGroupList(ResourceList):
         )
 
 
-@restful.resource("/favourites", "/users/<int:user_id>/favourites")
 class FavouritePlotList(ResourceList):
     schema = schemas.FavouritePlotSchema
-    model = models.PlotFavourite
+    data_layer = dict(
+        session=db.session,
+        model=models.PlotFavourite
+    )
 
 
-@restful.resource("/favourites/<int:favourite_id>")
 class FavouritePlot(ResourceDetail):
     schema = schemas.FavouritePlotSchema
-    model = models.PlotFavourite
+    data_layer = dict(
+        session=db.session,
+        model=models.PlotFavourite
+    )
 
 
-@restful.resource("/dashboards", "/users/<int:user_id>/dashboards")
+class FavouritePlotRelationship(ResourceRelationship):
+    schema = schemas.FavouritePlotSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.PlotFavourite
+    )
+
+
 class DashboardList(ResourceList):
     schema = schemas.DashboardSchema
-    model = models.Dashboard
+    data_layer = dict(
+        session=db.session,
+        model=models.Dashboard
+    )
 
 
-@restful.resource("/dashboards/<int:dashboard_id>")
+class DashboardRelationship(ResourceList):
+    schema = schemas.DashboardSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Dashboard
+    )
+
+
 class Dashboard(ResourceDetail):
     schema = schemas.DashboardSchema
-    model = models.Dashboard
+    data_layer = dict(
+        session=db.session,
+        model=models.Dashboard
+    )
 
 
-@restful.resource("/plots/trends/series")
-class TrendSeries(ResourceDetail):
+class TrendSeries(ResourceList):
     @use_kwargs(schemas.TrendInputSchema(), locations=("querystring",))
     def get(self, fields, filter):
         # We need to give each resource a unique ID so the client doesn't try to cache or reconcile different plots
@@ -262,4 +371,46 @@ class TrendSeries(ResourceDetail):
         return schemas.TrendSchema(many=True, unknown=INCLUDE).dump(plots)
 
 
-restful.init_app(api_bp)
+json_api.route(Upload, 'upload', "/uploads/<int:id>")
+json_api.route(UploadList, 'uploadlist', '/uploads', "/users/<int:id>/uploads")
+json_api.route(UploadRelationship, 'userupload', "/users/<int:id>/relationships/uploads")
+
+json_api.route(Report, 'report', "/reports/<int:id>")
+json_api.route(ReportList, 'reportlist', '/reports', "/users/<int:id>/reports")
+json_api.route(ReportRelationship, 'report_samples', "/reports/<int:id>/relationships/samples")
+
+json_api.route(User, 'user', "/users/<int:id>")
+json_api.route(UserList, 'userlist', '/users')
+json_api.route(CurrentUser, 'currentuser', "/users/current")
+json_api.route(UserRelationship, 'user_reports', "/users/<int:id>/relationships/reports")
+json_api.route(UserRelationship, 'user_samples', "/users/<int:id>/relationships/samples")
+json_api.route(UserRelationship, 'user_filters', "/users/<int:id>/relationships/filters")
+
+json_api.route(ReportMetaList, 'reportmetalist', "/report_meta", "/reports/<int:id>/report_meta")
+json_api.route(ReportMetaRelationship, 'report_report_meta', "/reports/<int:id>/relationships/report_meta")
+
+json_api.route(Sample, 'sample', "/samples/<int:id>")
+json_api.route(SampleList, 'samplelist', '/samples', "/users/<int:id>/samples", "/reports/<int:id>/samples")
+
+json_api.route(ReportMetaTypeList, 'metatypelist', '/meta_types')
+
+json_api.route(SampleDataList, 'sampledatalist', "/samples/<int:id>/sample_data")
+json_api.route(SampleDataRelationship, 'sample_sampledata', "/samples/<int:id>/relationships/sample_data")
+
+json_api.route(DataType, 'datatype', "/data_types/<int:id>")
+json_api.route(DataTypeList, 'datatypelist', "/data_types")
+
+json_api.route(Filter, 'filter' "/filters")
+json_api.route(FilterList, 'filterlist', "/filters/<int:id>", "/users/<int:id>/filters")
+
+json_api.route(FilterGroupList, 'filtergrouplist', "/filter_groups")
+
+json_api.route(FavouritePlot, 'favouriteplot' "/favourites/<int:id>")
+json_api.route(FavouritePlotList, ' favouriteplotlist', "/favourites" , "/users/<int:id>/favourites")
+json_api.route(FavouritePlotRelationship, "user_favourites", "/users/<int:id>/relationships/favourites")
+
+json_api.route(Dashboard, 'dashboard', "/dashboards/<int:dashboard_id>")
+json_api.route(DashboardList, 'dashboardlist', "/dashboards", "/users/<int:id>/dashboards")
+json_api.route(DashboardRelationship, 'user_dashboards', "/users/<int:id>/relationships/dashboards")
+
+json_api.route(TrendSeries, 'trendseries', "/plots/trends/series")

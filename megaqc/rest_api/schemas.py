@@ -3,29 +3,96 @@ These schemas describe the format of the web requests to and from the API. They 
 database models, but they can be opinionated about REST-specific fields
 """
 from marshmallow import post_load, validate, Schema as BaseSchema, INCLUDE
-from marshmallow_jsonapi import fields as f
-from marshmallow_jsonapi.flask import Relationship, Schema as JsonApiSchema
+from marshmallow.schema import SchemaMeta
+from marshmallow_jsonapi import fields as f, SchemaOpts
+from marshmallow_jsonapi.flask import Relationship as BaseRelationship, Schema as JsonApiSchema
+from marshmallow_sqlalchemy.schema import ModelSchema, ModelSchemaOpts, ModelSchemaMeta
 
+from megaqc.extensions import db
+from megaqc.model import models
+from megaqc.user import models as user_models
 from megaqc.rest_api.fields import JsonString, FilterReference
 
 
-class OptionalLinkSchema(JsonApiSchema):
+class CombinedOpts(SchemaOpts, ModelSchemaOpts):
+    pass
+
+
+class CombinedMeta(ModelSchemaMeta, SchemaMeta):
+    @classmethod
+    def get_declared_fields(mcs, klass, cls_fields, inherited_fields, dict_cls):
+        return SchemaMeta.get_declared_fields(
+            klass=klass,
+            cls_fields=cls_fields,
+            inherited_fields=inherited_fields,
+            dict_cls=dict_cls
+        )
+
+
+class Relationship(BaseRelationship):
+    def extract_value(self, data):
+        ret = super().extract_value(data)
+        if isinstance(ret, (int, str)) and hasattr(self.schema.opts, 'model') and hasattr(self.schema.opts, 'sqla_session'):
+            return self.schema.opts.sqla_session.query(self.schema.opts.model).get(ret)
+        return ret
+
+
+class OptionalLinkSchema(JsonApiSchema, ModelSchema, metaclass=CombinedMeta):
+    OPTIONS_CLASS = CombinedOpts
+
     def __init__(self, use_links=True, *args, **kwargs):
         self.use_links = use_links
+
+        # include_all = kwargs.pop('include_data', False) is True
+
         super().__init__(*args, **kwargs)
+
+        # if include_all:
+        #     self.include_all_data()
+
+    # @post_load()
+    # def make_instance(self, data, **kwargs):
+    #     """Deserialize data to an instance of the model. Update an existing row
+    #     if specified in `self.instance` or loaded by primary key(s) in the data;
+    #     else create a new row.
+    #
+    #     :param data: Data to deserialize.
+    #     """
+    #     instance = self.instance or self.get_instance(data)
+    #     if instance is not None:
+    #         for key, value in data.items():
+    #             setattr(instance, key, value)
+    #         return instance
+    #     kwargs, association_attrs = self._split_model_kwargs_association(data)
+    #     instance = self.opts.model(**kwargs)
+    #     for attr, value in association_attrs.items():
+    #         setattr(instance, attr, value)
+    #     return instance
 
     def get_resource_links(self, item):
         if not self.use_links:
             return None
         return super().get_resource_links(item)
 
+    def include_all_data(self):
+        """
+        Recursively set include_data for all relationships to this schema
+        """
+        for field in self.fields.values():
+            if isinstance(field, BaseRelationship):
+                field.include_data = True
+                field.schema.include_all_data()
     @post_load()
     def remove_empty_id(self, item, **kwargs):
         """
         Hack to deal with empty ID field that has to be sent
         """
         id_field = self.fields['id'].attribute
-        if id_field in item and item[id_field] is None:
+
+        if hasattr(item, id_field):
+            if getattr(item, id_field) is None:
+                delattr(item, id_field)
+        elif id_field in item and item[id_field] is None:
             del item[id_field]
 
         return item
@@ -37,7 +104,9 @@ Schema = OptionalLinkSchema
 
 class SampleDataTypeSchema(Schema):
     class Meta:
+        sqla_session = db.session
         type_ = 'data_types'
+        model = models.SampleDataType
 
     id = f.Integer(attribute='sample_data_type_id', as_string=True)
     section = f.String(attribute='data_section')
@@ -46,34 +115,61 @@ class SampleDataTypeSchema(Schema):
 
 class SampleDataSchema(Schema):
     class Meta:
+        sqla_session = db.session
         type_ = 'sample_data'
+        model = models.SampleData
         # self_view = 'rest_api.sampledata'
         # self_view_many = 'rest_api.sampledata'
         # self_view_kwargs = {
         #     'sample_id': '<sample_id>'
         # }
 
-    id = f.String(attribute='sample_data_id', allow_none=True)
+    id = f.Integer(attribute='sample_data_id', allow_none=True, as_string=True)
     value = f.String()
 
     # We can't link to the parent sample because of
     # https://github.com/marshmallow-code/marshmallow-jsonapi/issues/247
 
-    data_type = Relationship(
-        related_view='rest_api.sampledatatype',
+    report = Relationship(
+        related_view='rest_api.report',
         related_view_kwargs={
-            'type_id': '<sample_data_type_id>'
+            'id': '<report_id>'
+        },
+        many=False,
+        type_='reports',
+        include_resource_linkage=True,
+        id_field='report_id',
+        schema='ReportSchema'
+    )
+    sample = Relationship(
+        related_view='rest_api.sample',
+        related_view_kwargs={
+            'id': '<sample_id>'
+        },
+        many=False,
+        type_='samples',
+        include_resource_linkage=True,
+        id_field='sample_id',
+        schema='SampleSchema'
+    )
+
+    data_type = Relationship(
+        related_view='rest_api.datatypelist',
+        related_view_kwargs={
+            'id': '<sample_data_type_id>'
         },
         many=False,
         type_='data_types',
         include_resource_linkage=True,
         id_field='sample_data_type_id',
-        schema='SampleDataTypeSchema',
+        schema='SampleDataTypeSchema'
     )
 
 
 class SampleSchema(Schema):
     class Meta:
+        sqla_session = db.session
+        model = models.Sample
         type_ = 'samples'
         self_view = 'rest_api.sample'
         self_view_many = 'rest_api.samplelist'
@@ -83,21 +179,36 @@ class SampleSchema(Schema):
 
     id = f.Integer(attribute='sample_id', allow_none=True, as_string=True)
     name = f.String(attribute='sample_name')
+
     data = Relationship(
         related_view='rest_api.sampledatalist',
         related_view_kwargs={
-            'sample_id': '<sample_id>'
+            'id': '<sample_id>'
         },
         many=True,
         type_='sample_data',
+        # include_resource_linkage=True,
         schema="SampleDataSchema"
+    )
+    report = Relationship(
+        related_view='rest_api.report',
+        related_view_kwargs={
+            'id': '<report_id>'
+        },
+        many=False,
+        type_='reports',
+        id_field='report_id',
+        include_resource_linkage=True,
+        schema='ReportSchema'
     )
 
 
 # By using this metaclass, we stop all the default fields being copied into the schema, allowing us to rename them
 class SampleFilterSchema(OptionalLinkSchema):
     class Meta:
+        sqla_session = db.session
         type_ = "filters"
+        model = models.SampleFilter
         self_view = 'rest_api.filter'
         self_view_many = 'rest_api.filterlist'
         self_view_kwargs = {
@@ -113,7 +224,7 @@ class SampleFilterSchema(OptionalLinkSchema):
     user = Relationship(
         related_view='rest_api.user',
         related_view_kwargs={
-            'user_id': '<user_id>'
+            'id': '<user_id>'
         },
         type_='users',
         include_resource_linkage=True,
@@ -128,9 +239,10 @@ class FilterGroupSchema(OptionalLinkSchema):
     """
 
     class Meta:
+        sqla_session = db.session
         type_ = "filter_groups"
 
-    id = f.String(attribute='sample_filter_tag', allow_none=True)
+    id = f.Integer(attribute='sample_filter_tag', allow_none=True, as_string=True)
 
 
 class ReportSchema(Schema):
@@ -139,6 +251,8 @@ class ReportSchema(Schema):
     """
 
     class Meta:
+        sqla_session = db.session
+        model = models.Report
         type_ = 'reports'
         self_view = 'rest_api.report'
         self_view_many = 'rest_api.reportlist'
@@ -155,27 +269,30 @@ class ReportSchema(Schema):
     meta = Relationship(
         related_view='rest_api.reportmetalist',
         related_view_kwargs={
-            'report_id': '<report_id>'
+            'id': '<report_id>'
         },
         many=True,
         type_='report_meta',
+        # include_resource_linkage=True,
         schema='ReportMetaSchema'
     )
 
     samples = Relationship(
         related_view='rest_api.samplelist',
         related_view_kwargs={
-            'report_id': '<report_id>'
+            'id': '<report_id>'
         },
+        id_field='sample_id',
         many=True,
-        type_='sample',
+        type_='samples',
+        # include_resource_linkage=True,
         schema='SampleSchema'
     )
 
     user = Relationship(
         related_view='rest_api.user',
         related_view_kwargs={
-            'user_id': '<user_id>'
+            'id': '<user_id>'
         },
         many=False,
         type_='users',
@@ -187,6 +304,8 @@ class ReportSchema(Schema):
 
 class UploadSchema(Schema):
     class Meta:
+        sqla_session = db.session
+        model = models.Upload
         type_ = 'uploads'
         self_view = 'rest_api.upload'
         self_view_many = 'rest_api.uploadlist'
@@ -205,7 +324,7 @@ class UploadSchema(Schema):
     user = Relationship(
         related_view='rest_api.user',
         related_view_kwargs={
-            'user_id': '<user_id>'
+            'id': '<user_id>'
         },
         many=False,
         type_='users',
@@ -217,6 +336,8 @@ class UploadSchema(Schema):
 
 class ReportMetaSchema(Schema):
     class Meta:
+        sqla_session = db.session
+        model = models.ReportMeta
         type_ = 'report_meta'
         # self_view = 'rest_api.reportmeta'
         # self_view_kwargs = {
@@ -227,9 +348,23 @@ class ReportMetaSchema(Schema):
     key = f.String(attribute='report_meta_key')
     value = f.String(attribute='report_meta_value')
 
+    report = Relationship(
+        related_view='rest_api.report',
+        related_view_kwargs={
+            'id': '<report_id>'
+        },
+        many=False,
+        type_='reports',
+        id_field='report_id',
+        include_resource_linkage=True,
+        schema='ReportSchema'
+    )
+
 
 class FavouritePlotSchema(Schema):
     class Meta:
+        sqla_session = db.session
+        model = models.PlotFavourite
         type_ = 'favourites'
         self_view = 'rest_api.favouriteplot'
         self_view_kwargs = {
@@ -251,7 +386,7 @@ class FavouritePlotSchema(Schema):
     user = Relationship(
         related_view='rest_api.user',
         related_view_kwargs={
-            'user_id': '<user_id>'
+            'id': '<user_id>'
         },
         many=False,
         type_='users',
@@ -263,6 +398,8 @@ class FavouritePlotSchema(Schema):
 
 class DashboardSchema(Schema):
     class Meta:
+        sqla_session = db.session
+        model = models.Dashboard
         type_ = 'dashboards'
 
     id = f.Integer(attribute='dashboard_id', required=False, as_string=True)
@@ -291,6 +428,7 @@ class ReportMetaTypeSchema(Schema):
     """
 
     class Meta:
+        sqla_session = db.session
         type_ = 'report_meta_types'
 
     id = f.String(attribute='report_meta_key')
@@ -298,6 +436,8 @@ class ReportMetaTypeSchema(Schema):
 
 class UserSchema(Schema):
     class Meta:
+        sqla_session = db.session
+        model = user_models.User
         type_ = "users"
         self_view = 'rest_api.user'
         self_view_kwargs = {
@@ -319,10 +459,10 @@ class UserSchema(Schema):
     reports = Relationship(
         related_view='rest_api.reportlist',
         related_view_kwargs={
-            'user_id': '<user_id>'
+            'id': '<user_id>'
         },
         many=True,
-        type_='report',
+        type_='reports',
         required=False,
         schema='ReportSchema'
     )
@@ -369,10 +509,12 @@ class FilterObjectSchema(BaseSchema):
     }
     """
 
-    type = f.String(validate=validate.OneOf(['date', 'daterange', 'timedelta', 'reportmeta', 'samplemeta']))
+    type = f.String(validate=validate.OneOf(
+        ['date', 'daterange', 'timedelta', 'reportmeta', 'samplemeta']))
     value = f.Raw()
     key = f.Raw()
-    cmp = f.String(validate=validate.OneOf(['eq', 'ne', 'le', 'lt', 'ge', 'gt', 'in', 'not in']))
+    cmp = f.String(
+        validate=validate.OneOf(['eq', 'ne', 'le', 'lt', 'ge', 'gt', 'in', 'not in']))
 
 
 class TrendInputSchema(BaseSchema):

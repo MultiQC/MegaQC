@@ -119,6 +119,55 @@ def test_get_many_resources_associated(resource, parent_model, session, client, 
         else:
             assert instance_val == value
 
+@pytest.mark.parametrize('resource', [
+    views.UploadList,
+    views.ReportList,
+    views.ReportMetaList,
+    views.SampleList,
+    views.ReportMetaTypeList,
+    views.DataTypeList,
+    views.UserList,
+    views.FilterList,
+    views.FilterGroupList,
+    views.FavouritePlotList,
+    views.DashboardList
+])
+def test_post_resource(resource, admin_token, session, client):
+    """
+    POST /resources
+    """
+
+    # Construct an instance of the model
+    factory = find_factory(resource.model)
+    instance = factory()
+
+    # Remove the object from the database, because we're going to submit it via the API
+    session.expunge_all()
+    # session.expunge(instance)
+    session.commit()
+
+    # Work out which fields are relationships, so we can attach all of it in the request
+    relationships = set([key for key, value in resource.schema._declared_fields.items() if isinstance(value, Relationship)])
+
+    # Serialize it
+    # TODO: work out how to include all relationships, not just top level ones
+    request = resource.schema(many=False, use_links=False, include_data='linkage_recursive').dump(instance)
+
+    count_1 = session.query(resource.model).count()
+
+    # Do the request
+    url = url_for('rest_api.' + resource.endpoint)
+    rv = client.post(url, json=request, headers={'access_token': admin_token})
+
+    # Check the request was successful
+    assert rv.status_code == 201
+
+    # Check that we now have data
+    count_2 = session.query(resource.model).count()
+    assert count_2 - count_1 == 1
+
+    # Validate the returned data
+    data = resource.schema(many=False).load(rv.json)
 # @pytest.mark.parametrize(argnames, [
 #     argvalues['report'],
 #     argvalues['upload'],

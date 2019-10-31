@@ -33,6 +33,7 @@ class Report(db.Model, CRUDMixin):
     user = relationship('User', back_populates='reports')
     meta = relationship('ReportMeta', back_populates='report')
     samples = relationship('Sample', back_populates='report')
+    sample_data = relationship('SampleData', back_populates='report')
 
 
 class ReportMeta(db.Model, CRUDMixin):
@@ -134,6 +135,7 @@ class SampleData(db.Model, CRUDMixin):
     value = Column(Unicode)
 
     sample = relationship('Sample', back_populates='data')
+    report = relationship('Report', back_populates='sample_data')
     data_type = relationship('SampleDataType', back_populates='sample_data')
 
 
