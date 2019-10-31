@@ -9,12 +9,14 @@ from megaqc.rest_api import views
 from megaqc.extensions import db
 from tests import factories
 from flask import url_for
-from marshmallow_jsonapi.fields import Relationship
+from marshmallow_jsonapi.fields import Relationship, BaseRelationship
 from sqlalchemy import inspect
 
 all_factories = factories.BaseFactory.__subclasses__()
-resource_details = [tuple[:2] for tuple in views.restful.resources if issubclass(tuple[0], views.ResourceDetail)]
-resource_lists = [tuple[:2] for tuple in views.restful.resources if issubclass(tuple[0], views.ResourceList)]
+resource_details = [tuple[:2] for tuple in views.restful.resources if
+                    issubclass(tuple[0], views.ResourceDetail)]
+resource_lists = [tuple[:2] for tuple in views.restful.resources if
+                  issubclass(tuple[0], views.ResourceList)]
 
 
 def find_factory(model):
@@ -50,7 +52,8 @@ def test_get_many_resources_new(resource, session, client, admin_token):
 
     # Do the request
     url = url_for(resource.view)
-    rv = client.get(url, headers={'access_token': admin_token, 'Content-Type': 'application/json'})
+    rv = client.get(url, headers={'access_token': admin_token,
+                                  'Content-Type': 'application/json'})
 
     # Check the request was successful
     assert rv.status_code == 200
@@ -67,33 +70,40 @@ def test_get_many_resources_new(resource, session, client, admin_token):
     # Check it's the same instance as we created
     assert data[-1] is instance
 
-@pytest.mark.parametrize(['resource', 'parent_model'], [
-    [views.UploadList, user_models.User],
-    [views.ReportList, user_models.User],
-    [views.ReportMetaList, models.Report],
-    [views.SampleList, models.Report],
-    [views.SampleDataList, models.Sample],
-    [views.FilterList, user_models.User],
-    [views.FavouritePlotList, user_models.User],
-    [views.DashboardList, user_models.User]
+
+@pytest.mark.parametrize(['resource', 'parent_resource'], [
+    [views.UploadList, views.User],
+    [views.ReportList, views.User],
+    [views.ReportMetaList, views.Report],
+    [views.SampleList, views.Report],
+    [views.SampleDataList, views.Sample],
+    [views.FilterList, views.User],
+    [views.FavouritePlotList, views.User],
+    [views.DashboardList, views.User]
 ])
-def test_get_many_resources_associated(resource, parent_model, session, client, admin_token, app):
+def test_get_many_resources_associated(resource, parent_resource, session, client,
+                                       admin_token, app):
     """
     Tests a list resource that is the child of another resource, e.g. /reports/1/samples
     """
-    factory = find_factory(resource.model)
+    model = resource.data_layer['model']
+    factory = find_factory(model)
 
-    # The rule object gives us access to URL parameters
-    url = url_for(resource.view, **{key: getattr(instance, key) for key in rule.arguments})
-    rule = app.url_map._rules_by_endpoint['rest_api.' + resource.endpoint][0]
+    for relationship in inspect(model).relationships:
+        column = next(iter(relationship.remote_side))
+        if column.table == parent_resource.data_layer['model'].__table__:
+            relationship= column
 
     # Construct an instance of the model
     instance = factory()
     session.commit()
 
+    # The rule object gives us access to URL parameters
+    url = url_for(resource.view, id=getattr(instance,column.name))
+
     # Do the request
-    url = url_for('rest_api.' + resource.endpoint, **{key: getattr(instance, key) for key in rule.arguments})
-    rv = client.get(url, headers={'access_token': admin_token})
+    rv = client.get(url, headers={'access_token': admin_token,
+                                  'Content-Type': 'application/json'})
 
     # Check the request was successful
     assert rv.status_code == 200
@@ -114,6 +124,7 @@ def test_get_many_resources_associated(resource, parent_model, session, client, 
             assert instance_val.primary_key == value
         else:
             assert instance_val == value
+
 
 @pytest.mark.parametrize('resource', [
     views.UploadList,
@@ -143,11 +154,13 @@ def test_post_resource(resource, admin_token, session, client):
     session.commit()
 
     # Work out which fields are relationships, so we can attach all of it in the request
-    relationships = set([key for key, value in resource.schema._declared_fields.items() if isinstance(value, Relationship)])
+    relationships = set([key for key, value in resource.schema._declared_fields.items() if
+                         isinstance(value, Relationship)])
 
     # Serialize it
     # TODO: work out how to include all relationships, not just top level ones
-    request = resource.schema(many=False, use_links=False, include_data='linkage_recursive').dump(instance)
+    request = resource.schema(many=False, use_links=False,
+                              include_data='linkage_recursive').dump(instance)
 
     count_1 = session.query(resource.model).count()
 
