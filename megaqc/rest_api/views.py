@@ -273,6 +273,7 @@ class CurrentUser(ResourceDetail):
 
 
 class FilterList(ResourceList):
+
     schema = schemas.SampleFilterSchema
     data_layer = dict(
         session=db.session,

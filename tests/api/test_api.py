@@ -42,35 +42,30 @@ def instance_pk(instance):
     views.DashboardList
 ])
 def test_get_many_resources_new(resource, session, client, admin_token):
-    factory = find_factory(resource.model)
+    factory = find_factory(resource.data_layer['model'])
 
     # Construct an instance of the model
     instance = factory()
     session.commit()
 
     # Do the request
-    url = url_for('rest_api.' + resource.endpoint)
-    rv = client.get(url, headers={'access_token': admin_token})
+    url = url_for(resource.view)
+    rv = client.get(url, headers={'access_token': admin_token, 'Content-Type': 'application/json'})
 
     # Check the request was successful
     assert rv.status_code == 200
 
-    # This also does data validation
-    data = resource.schema(many=True).load(rv.json)
+    # Load the data using the schema. This also does data validation
+    ret = rv.json
+    ret.pop('meta')
+    ret.pop('jsonapi')
+    data = resource.schema(many=True).load(ret)
 
-    # Check we got at least the instance we created
+    # Check we got at least one instance
     assert len(data) > 0
 
-    # All keys in the response data should be a subset of the keys in the model
-    for key, value in data[-1].items():
-        assert hasattr(instance, key)
-        instance_val = getattr(instance, key)
-
-        if isinstance(instance_val, db.Model):
-            assert instance_val.primary_key == value
-        else:
-            assert instance_val == value
-
+    # Check it's the same instance as we created
+    assert data[-1] is instance
 
 @pytest.mark.parametrize(['resource', 'parent_model'], [
     [views.UploadList, user_models.User],
@@ -89,6 +84,7 @@ def test_get_many_resources_associated(resource, parent_model, session, client, 
     factory = find_factory(resource.model)
 
     # The rule object gives us access to URL parameters
+    url = url_for(resource.view, **{key: getattr(instance, key) for key in rule.arguments})
     rule = app.url_map._rules_by_endpoint['rest_api.' + resource.endpoint][0]
 
     # Construct an instance of the model
