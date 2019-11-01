@@ -2,7 +2,7 @@
 Generic tests for normal resources that follow a schema for GET, POST, DELETE etc
 """
 import pytest
-from megaqc.rest_api import schemas
+from megaqc.rest_api import schemas, views
 from megaqc.model import models
 from megaqc.user import models as user_models
 from megaqc.rest_api import views
@@ -60,8 +60,8 @@ def test_get_many_resources_new(resource, session, client, admin_token):
 
     # Load the data using the schema. This also does data validation
     ret = rv.json
-    ret.pop('meta')
-    ret.pop('jsonapi')
+    del ret['meta']
+    del ret['jsonapi']
     data = resource.schema(many=True).load(ret)
 
     # Check we got at least one instance
@@ -71,59 +71,62 @@ def test_get_many_resources_new(resource, session, client, admin_token):
     assert data[-1] is instance
 
 
-@pytest.mark.parametrize(['resource', 'parent_resource'], [
-    [views.UploadList, views.User],
-    [views.ReportList, views.User],
-    [views.ReportMetaList, views.Report],
-    [views.SampleList, views.Report],
-    [views.SampleDataList, views.Sample],
-    [views.FilterList, views.User],
-    [views.FavouritePlotList, views.User],
-    [views.DashboardList, views.User]
-])
-def test_get_many_resources_associated(resource, parent_resource, session, client,
-                                       admin_token, app):
+def resource_from_endpoint(app, endpoint):
+    return app.view_functions[endpoint].view_class
+    # for resource in views.json_api.resource_registry:
+    #     if resource.view == endpoint:
+    #         return resource
+
+    # return None
+
+
+@pytest.mark.parametrize(
+    ['endpoint', 'foreign_key'],
+    [
+        ['rest_api.user_uploadlist', 'user_id'],
+        ['rest_api.user_reportlist', 'user_id'],
+        ['rest_api.report_reportmetalist', 'report_id'],
+        ['rest_api.report_samplelist', 'report_id'],
+        ['rest_api.sample_sampledatalist', 'sample_id'],
+        ['rest_api.user_filterlist', 'user_id'],
+        ['rest_api.user_favouriteplotlist', 'user_id'],
+        ['rest_api.user_dashboardlist', 'user_id'],
+    ])
+def test_get_many_resources_associated(endpoint, foreign_key, session, client, admin_token, app):
     """
     Tests a list resource that is the child of another resource, e.g. /reports/1/samples
     """
+    resource = resource_from_endpoint(app, endpoint)
     model = resource.data_layer['model']
     factory = find_factory(model)
 
-    for relationship in inspect(model).relationships:
-        column = next(iter(relationship.remote_side))
-        if column.table == parent_resource.data_layer['model'].__table__:
-            relationship= column
-
-    # Construct an instance of the model
+    # Construct an instance of the model, and a second one that we don't want returned,
+    # since it has a different parent
     instance = factory()
+    dummy_instance = factory()
     session.commit()
 
     # The rule object gives us access to URL parameters
-    url = url_for(resource.view, id=getattr(instance,column.name))
+    url = url_for(resource.view, id=getattr(instance, foreign_key))
 
     # Do the request
     rv = client.get(url, headers={'access_token': admin_token,
                                   'Content-Type': 'application/json'})
-
     # Check the request was successful
     assert rv.status_code == 200
 
+    ret = rv.json
+    del ret['meta']
+    del ret['jsonapi']
+
     # This also does data validation
-    data = resource.schema(many=True).load(rv.json)
+    data = resource.schema(many=True).load(ret)
 
     # Check we got at least the instance we created
     assert len(data) > 0
 
-    # All keys in the response data should be a subset of the keys in the model
-    # dict.items() acts as a set object here: https://docs.python.org/3/library/stdtypes.html#dictionary-view-objects
-    for key, value in data[-1].items():
-        assert hasattr(instance, key)
-        instance_val = getattr(instance, key)
-
-        if isinstance(instance_val, db.Model):
-            assert instance_val.primary_key == value
-        else:
-            assert instance_val == value
+    assert instance in data
+    assert dummy_instance not in data
 
 
 @pytest.mark.parametrize('resource', [
@@ -170,6 +173,10 @@ def test_post_resource(resource, admin_token, session, client):
 
     # Check the request was successful
     assert rv.status_code == 201
+
+    ret = rv.json
+    del ret['meta']
+    del ret['jsonapi']
 
     # Check that we now have data
     count_2 = session.query(resource.model).count()

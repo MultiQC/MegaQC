@@ -119,10 +119,10 @@ class SampleDataSchema(Schema):
         type_ = 'sample_data'
         model = models.SampleData
         # self_view = 'rest_api.sampledata'
-        # self_view_many = 'rest_api.sampledata'
-        # self_view_kwargs = {
-        #     'sample_id': '<sample_id>'
-        # }
+        self_view_many = 'rest_api.sampledatalist'
+        self_view_kwargs = {
+            'sample_id': '<sample_id>'
+        }
 
     id = f.Integer(attribute='sample_data_id', allow_none=True, as_string=True)
     value = f.String()
@@ -181,7 +181,7 @@ class SampleSchema(Schema):
     name = f.String(attribute='sample_name')
 
     data = Relationship(
-        related_view='rest_api.sampledatalist',
+        related_view='rest_api.sample_sampledatalist',
         related_view_kwargs={
             'id': '<sample_id>'
         },
@@ -267,7 +267,7 @@ class ReportSchema(Schema):
     uploaded_at = f.DateTime()
 
     meta = Relationship(
-        related_view='rest_api.reportmetalist',
+        related_view='rest_api.report_reportmetalist',
         related_view_kwargs={
             'id': '<report_id>'
         },
@@ -278,7 +278,7 @@ class ReportSchema(Schema):
     )
 
     samples = Relationship(
-        related_view='rest_api.samplelist',
+        related_view='rest_api.report_samplelist',
         related_view_kwargs={
             'id': '<report_id>'
         },
@@ -412,7 +412,7 @@ class DashboardSchema(Schema):
     user = Relationship(
         related_view='rest_api.user',
         related_view_kwargs={
-            'user_id': '<user_id>'
+            'id': '<user_id>'
         },
         many=False,
         type_='users',
@@ -457,7 +457,7 @@ class UserSchema(Schema):
     api_token = f.String()
 
     reports = Relationship(
-        related_view='rest_api.reportlist',
+        related_view='rest_api.user_reportlist',
         related_view_kwargs={
             'id': '<user_id>'
         },

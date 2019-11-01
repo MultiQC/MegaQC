@@ -51,6 +51,7 @@ class Upload(ResourceDetail):
 
 
 class UploadList(ResourceList):
+    view_kwargs = True
     schema = schemas.UploadSchema
     data_layer = dict(
         session=db.session,
@@ -92,6 +93,7 @@ class UploadRelationship(ResourceRelationship):
 
 
 class ReportList(ResourceList):
+    view_kwargs = True
     schema = schemas.ReportSchema
     data_layer = dict(
         session=db.session,
@@ -116,6 +118,7 @@ class ReportRelationship(ResourceRelationship):
 
 
 class ReportMetaList(ResourceList):
+    view_kwargs = True
     schema = schemas.ReportMetaSchema
     data_layer = dict(
         session=db.session,
@@ -140,6 +143,7 @@ class Sample(ResourceDetail):
 
 
 class SampleList(ResourceList):
+    view_kwargs = True
     schema = schemas.SampleSchema
     data_layer = dict(
         session=db.session,
@@ -156,6 +160,7 @@ class SampleRelationship(ResourceRelationship):
 
 
 class ReportMetaTypeList(ResourceList):
+    view_kwargs = True
     schema = schemas.ReportMetaTypeSchema
     data_layer = dict(
         session=db.session,
@@ -173,11 +178,14 @@ class ReportMetaTypeList(ResourceList):
 
 
 class SampleDataList(ResourceList):
+    view_kwargs = True
     schema = schemas.SampleDataSchema
     data_layer = dict(
         session=db.session,
         model=models.SampleData
     )
+
+
 class SampleDataRelationship(ResourceRelationship):
     schema = schemas.SampleDataSchema
     data_layer = dict(
@@ -195,6 +203,7 @@ class DataType(ResourceDetail):
 
 
 class DataTypeList(ResourceList):
+    view_kwargs = True
     schema = schemas.SampleDataTypeSchema
     data_layer = dict(
         session=db.session,
@@ -209,6 +218,7 @@ class User(ResourceDetail):
         model=user_models.User
     )
 
+
 class UserRelationship(ResourceRelationship):
     schema = schemas.UserSchema
     data_layer = dict(
@@ -216,7 +226,9 @@ class UserRelationship(ResourceRelationship):
         model=user_models.User
     )
 
+
 class UserList(ResourceList):
+    view_kwargs = True
     schema = schemas.UserSchema
     data_layer = dict(
         session=db.session,
@@ -273,7 +285,7 @@ class CurrentUser(ResourceDetail):
 
 
 class FilterList(ResourceList):
-
+    view_kwargs = True
     schema = schemas.SampleFilterSchema
     data_layer = dict(
         session=db.session,
@@ -298,6 +310,7 @@ class FilterRelationship(ResourceRelationship):
 
 
 class FilterGroupList(ResourceList):
+    view_kwargs = True
     schema = schemas.FilterGroupSchema
     data_layer = dict(
         session=db.session,
@@ -314,6 +327,7 @@ class FilterGroupList(ResourceList):
 
 
 class FavouritePlotList(ResourceList):
+    view_kwargs = True
     schema = schemas.FavouritePlotSchema
     data_layer = dict(
         session=db.session,
@@ -338,6 +352,7 @@ class FavouritePlotRelationship(ResourceRelationship):
 
 
 class DashboardList(ResourceList):
+    view_kwargs = True
     schema = schemas.DashboardSchema
     data_layer = dict(
         session=db.session,
@@ -346,6 +361,7 @@ class DashboardList(ResourceList):
 
 
 class DashboardRelationship(ResourceList):
+    view_kwargs = True
     schema = schemas.DashboardSchema
     data_layer = dict(
         session=db.session,
@@ -362,6 +378,8 @@ class Dashboard(ResourceDetail):
 
 
 class TrendSeries(ResourceList):
+    view_kwargs = True
+
     @use_kwargs(schemas.TrendInputSchema(), locations=("querystring",))
     def get(self, fields, filter):
         # We need to give each resource a unique ID so the client doesn't try to cache or reconcile different plots
@@ -373,45 +391,58 @@ class TrendSeries(ResourceList):
 
 
 json_api.route(Upload, 'upload', "/uploads/<int:id>")
-json_api.route(UploadList, 'uploadlist', '/uploads', "/users/<int:id>/uploads")
+json_api.route(UploadList, 'uploadlist', '/uploads')
+json_api.route(UploadList, 'user_uploadlist', "/users/<int:id>/uploads")
 json_api.route(UploadRelationship, 'userupload', "/users/<int:id>/relationships/uploads")
 
 json_api.route(Report, 'report', "/reports/<int:id>")
-json_api.route(ReportList, 'reportlist', '/reports', "/users/<int:id>/reports")
-json_api.route(ReportRelationship, 'report_samples', "/reports/<int:id>/relationships/samples")
+json_api.route(ReportList, 'reportlist', '/reports')
+json_api.route(ReportList, 'user_reportlist', "/users/<int:id>/reports")
+json_api.route(ReportRelationship, 'report_samples_rel',
+               "/reports/<int:id>/relationships/samples")
 
 json_api.route(User, 'user', "/users/<int:id>")
 json_api.route(UserList, 'userlist', '/users')
 json_api.route(CurrentUser, 'currentuser', "/users/current")
-json_api.route(UserRelationship, 'user_reports', "/users/<int:id>/relationships/reports")
-json_api.route(UserRelationship, 'user_samples', "/users/<int:id>/relationships/samples")
-json_api.route(UserRelationship, 'user_filters', "/users/<int:id>/relationships/filters")
+json_api.route(UserRelationship, 'user_reports_rel',
+               "/users/<int:id>/relationships/reports")
+json_api.route(UserRelationship, 'user_filters_rel',
+               "/users/<int:id>/relationships/filters")
 
-json_api.route(ReportMetaList, 'reportmetalist', "/report_meta", "/reports/<int:id>/report_meta")
-json_api.route(ReportMetaRelationship, 'report_report_meta', "/reports/<int:id>/relationships/report_meta")
+json_api.route(ReportMetaList, 'reportmetalist', "/report_meta")
+json_api.route(ReportMetaList, 'report_reportmetalist', "/reports/<int:id>/report_meta")
+json_api.route(ReportMetaRelationship, 'report_reportmeta_rel',
+               "/reports/<int:id>/relationships/report_meta")
 
 json_api.route(Sample, 'sample', "/samples/<int:id>")
-json_api.route(SampleList, 'samplelist', '/samples', "/users/<int:id>/samples", "/reports/<int:id>/samples")
+json_api.route(SampleList, 'samplelist', '/samples')
+json_api.route(SampleList, 'report_samplelist', "/reports/<int:id>/samples")
 
 json_api.route(ReportMetaTypeList, 'metatypelist', '/meta_types')
 
-json_api.route(SampleDataList, 'sampledatalist', "/samples/<int:id>/sample_data")
-json_api.route(SampleDataRelationship, 'sample_sampledata', "/samples/<int:id>/relationships/sample_data")
+json_api.route(SampleDataList, 'sample_sampledatalist', "/samples/<int:id>/sample_data")
+json_api.route(SampleDataRelationship, 'sample_sampledata',
+               "/samples/<int:id>/relationships/sample_data")
 
 json_api.route(DataType, 'datatype', "/data_types/<int:id>")
 json_api.route(DataTypeList, 'datatypelist', "/data_types")
 
-json_api.route(Filter, 'filter' "/filters")
-json_api.route(FilterList, 'filterlist', "/filters/<int:id>", "/users/<int:id>/filters")
+json_api.route(Filter, 'filter', "/filters/<int:id>", )
+json_api.route(FilterList, 'filterlist', "/filters")
+json_api.route(FilterList, 'user_filterlist', "/users/<int:id>/filters")
 
 json_api.route(FilterGroupList, 'filtergrouplist', "/filter_groups")
 
 json_api.route(FavouritePlot, 'favouriteplot' "/favourites/<int:id>")
-json_api.route(FavouritePlotList, ' favouriteplotlist', "/favourites" , "/users/<int:id>/favourites")
-json_api.route(FavouritePlotRelationship, "user_favourites", "/users/<int:id>/relationships/favourites")
+json_api.route(FavouritePlotList, 'favouriteplotlist', "/favourites")
+json_api.route(FavouritePlotList, 'user_favouriteplotlist', "/users/<int:id>/favourites")
+json_api.route(FavouritePlotRelationship, "user_favourites_rel",
+               "/users/<int:id>/relationships/favourites")
 
 json_api.route(Dashboard, 'dashboard', "/dashboards/<int:dashboard_id>")
-json_api.route(DashboardList, 'dashboardlist', "/dashboards", "/users/<int:id>/dashboards")
-json_api.route(DashboardRelationship, 'user_dashboards', "/users/<int:id>/relationships/dashboards")
+json_api.route(DashboardList, 'dashboardlist', "/dashboards")
+json_api.route(DashboardList, 'user_dashboardlist', "/users/<int:id>/dashboards")
+json_api.route(DashboardRelationship, 'user_dashboards_rel',
+               "/users/<int:id>/relationships/dashboards")
 
 json_api.route(TrendSeries, 'trendseries', "/plots/trends/series")
