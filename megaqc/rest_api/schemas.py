@@ -6,6 +6,7 @@ from marshmallow import post_load, validate, Schema as BaseSchema, INCLUDE
 from marshmallow.schema import SchemaMeta
 from marshmallow_jsonapi import fields as f, SchemaOpts
 from marshmallow_jsonapi.flask import Relationship as BaseRelationship, Schema as JsonApiSchema
+from marshmallow_jsonapi.utils import resolve_params
 from marshmallow_sqlalchemy.schema import ModelSchema, ModelSchemaOpts, ModelSchemaMeta
 
 from megaqc.extensions import db
@@ -37,9 +38,9 @@ class Relationship(BaseRelationship):
         return ret
 
 
-class OptionalLinkSchema(JsonApiSchema, ModelSchema, metaclass=CombinedMeta):
-    OPTIONS_CLASS = CombinedOpts
-
+# By using this metaclass, we stop all the default fields being copied into the schema, allowing us to rename them
+# class OptionalLinkSchema(ModelSchema, JsonApiSchema, metaclass=CombinedMeta):
+class OptionalLinkSchema(JsonApiSchema):
     def __init__(self, use_links=True, *args, **kwargs):
         self.use_links = use_links
 
@@ -70,18 +71,23 @@ class OptionalLinkSchema(JsonApiSchema, ModelSchema, metaclass=CombinedMeta):
     #     return instance
 
     def get_resource_links(self, item):
-        if not self.use_links:
-            return None
+        kwargs = resolve_params(item, self.opts.self_url_kwargs or {})
+        for arg in kwargs.values():
+            if arg is None:
+                return None
+
+        # if not self.use_links:
+        #     return None
         return super().get_resource_links(item)
 
-    def include_all_data(self):
-        """
-        Recursively set include_data for all relationships to this schema
-        """
-        for field in self.fields.values():
-            if isinstance(field, BaseRelationship):
-                field.include_data = True
-                field.schema.include_all_data()
+    # def include_all_data(self):
+    #     """
+    #     Recursively set include_data for all relationships to this schema
+    #     """
+    #     for field in self.fields.values():
+    #         if isinstance(field, BaseRelationship):
+    #             field.include_data = True
+    #             field.schema.include_all_data()
     @post_load()
     def remove_empty_id(self, item, **kwargs):
         """
@@ -108,7 +114,7 @@ class SampleDataTypeSchema(Schema):
         type_ = 'data_types'
         model = models.SampleDataType
 
-    id = f.Integer(attribute='sample_data_type_id', as_string=True)
+    id = f.Integer(attribute='sample_data_type_id', allow_none=True, as_string=True)
     section = f.String(attribute='data_section')
     key = f.String(attribute='data_key')
 
@@ -119,10 +125,10 @@ class SampleDataSchema(Schema):
         type_ = 'sample_data'
         model = models.SampleData
         # self_view = 'rest_api.sampledata'
-        self_view_many = 'rest_api.sampledatalist'
-        self_view_kwargs = {
-            'sample_id': '<sample_id>'
-        }
+        # self_view_many = 'rest_api.sampledatalist'
+        # self_view_kwargs = {
+        #     'sample_id': '<sample_id>'
+        # }
 
     id = f.Integer(attribute='sample_data_id', allow_none=True, as_string=True)
     value = f.String()
@@ -174,7 +180,7 @@ class SampleSchema(Schema):
         self_view = 'rest_api.sample'
         self_view_many = 'rest_api.samplelist'
         self_view_kwargs = {
-            'sample_id': '<id>'
+            'id': '<id>'
         }
 
     id = f.Integer(attribute='sample_id', allow_none=True, as_string=True)
@@ -203,7 +209,6 @@ class SampleSchema(Schema):
     )
 
 
-# By using this metaclass, we stop all the default fields being copied into the schema, allowing us to rename them
 class SampleFilterSchema(OptionalLinkSchema):
     class Meta:
         sqla_session = db.session
@@ -212,7 +217,7 @@ class SampleFilterSchema(OptionalLinkSchema):
         self_view = 'rest_api.filter'
         self_view_many = 'rest_api.filterlist'
         self_view_kwargs = {
-            'filter_id': '<id>'
+            'id': '<id>'
         }
 
     id = f.Integer(attribute='sample_filter_id', allow_none=True, as_string=True)
@@ -239,10 +244,11 @@ class FilterGroupSchema(OptionalLinkSchema):
     """
 
     class Meta:
+        model = models.SampleFilter
         sqla_session = db.session
         type_ = "filter_groups"
 
-    id = f.Integer(attribute='sample_filter_tag', allow_none=True, as_string=True)
+    id = f.String(attribute='sample_filter_tag', allow_none=True)
 
 
 class ReportSchema(Schema):
@@ -257,7 +263,7 @@ class ReportSchema(Schema):
         self_view = 'rest_api.report'
         self_view_many = 'rest_api.reportlist'
         self_view_kwargs = {
-            'report_id': '<id>'
+            'id': '<id>'
         }
         strict = True
 
@@ -310,7 +316,7 @@ class UploadSchema(Schema):
         self_view = 'rest_api.upload'
         self_view_many = 'rest_api.uploadlist'
         self_view_kwargs = {
-            'upload_id': '<id>'
+            'id': '<id>'
         }
         strict = True
 
@@ -368,7 +374,7 @@ class FavouritePlotSchema(Schema):
         type_ = 'favourites'
         self_view = 'rest_api.favouriteplot'
         self_view_kwargs = {
-            'favourite_id': '<id>'
+            'id': '<id>'
         }
 
     id = f.Integer(attribute='plot_favourite_id', allow_none=True, as_string=True)
@@ -402,7 +408,7 @@ class DashboardSchema(Schema):
         model = models.Dashboard
         type_ = 'dashboards'
 
-    id = f.Integer(attribute='dashboard_id', required=False, as_string=True)
+    id = f.Integer(attribute='dashboard_id', allow_none=True, as_string=True)
     title = f.String()
     data = JsonString()
     is_public = f.Bool()
@@ -428,6 +434,7 @@ class ReportMetaTypeSchema(Schema):
     """
 
     class Meta:
+        model = models.ReportMeta
         sqla_session = db.session
         type_ = 'report_meta_types'
 
@@ -441,7 +448,7 @@ class UserSchema(Schema):
         type_ = "users"
         self_view = 'rest_api.user'
         self_view_kwargs = {
-            'user_id': '<id>'
+            'id': '<id>'
         }
 
     id = f.Int(attribute='user_id', required=False, allow_none=True, as_string=True)

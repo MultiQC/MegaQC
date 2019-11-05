@@ -2,6 +2,8 @@
 Generic tests for normal resources that follow a schema for GET, POST, DELETE etc
 """
 import pytest
+from sqlalchemy.orm import make_transient
+
 from megaqc.rest_api import schemas, views
 from megaqc.model import models
 from megaqc.user import models as user_models
@@ -12,11 +14,20 @@ from flask import url_for
 from marshmallow_jsonapi.fields import Relationship, BaseRelationship
 from sqlalchemy import inspect
 
+def object_as_dict(obj, relationships=False):
+    ret = { c.key: getattr(obj, c.key) for c in inspect(obj).mapper.column_attrs }
+    if relationships:
+        ret.update({c.key: getattr(obj, c.key) for c in inspect(obj).mapper.relationships})
+    return ret
+
 all_factories = factories.BaseFactory.__subclasses__()
 resource_details = [tuple[:2] for tuple in views.restful.resources if
                     issubclass(tuple[0], views.ResourceDetail)]
 resource_lists = [tuple[:2] for tuple in views.restful.resources if
                   issubclass(tuple[0], views.ResourceList)]
+
+def resource_from_endpoint(app, endpoint):
+    return app.view_functions[endpoint].view_class
 
 
 def find_factory(model):
@@ -24,34 +35,69 @@ def find_factory(model):
         if factory._meta.model == model:
             return factory
 
+def relationship_fields(model):
+    return [rel.key for rel in inspect(model).relationships.values()]
 
 def instance_pk(instance):
     column_name = inspect(instance.__class__).primary_key[0].name
     return column_name, getattr(instance, column_name)
 
+def matching_resource(data, instance, model):
+    found = False
+    for result in data:
+        # Remove relationships because we can't validate them easily
+        for field in relationship_fields(model):
+            if field in result:
+                del result[field]
 
-@pytest.mark.parametrize('resource', [
-    views.UploadList,
-    views.ReportList,
-    views.ReportMetaList,
-    views.SampleList,
-    views.ReportMetaTypeList,
-    views.DataTypeList,
-    views.UserList,
-    views.FilterList,
-    views.FilterGroupList,
-    views.FavouritePlotList,
-    views.DashboardList
+        if result.items() <= object_as_dict(instance).items():
+            return True
+
+    return False
+
+def clone_model(instance):
+    # Copy the attributes as a dictionary
+    dict = object_as_dict(instance, relationships=True)
+    # Find the primary key and remove the ID
+    column_name = inspect(instance.__class__).primary_key[0].name
+    del dict[column_name]
+    # Create a new instance using this data
+    new_instance = instance.__class__(**dict)
+    return new_instance
+
+def factory_clone(instance, factory):
+    """
+    Generate a new object using the factory, except that relationships are copied from the
+    provided instance, ensuring that no new objects are created
+    """
+    rels = {key: getattr(instance, key) for key in relationship_fields(instance.__class__)}
+    return factory(**rels)
+
+
+@pytest.mark.parametrize('endpoint', [
+    'rest_api.uploadlist',
+    'rest_api.reportlist',
+    'rest_api.reportmetalist',
+    'rest_api.samplelist',
+    'rest_api.metatypelist',
+    'rest_api.datatypelist',
+    'rest_api.userlist',
+    'rest_api.filterlist',
+    'rest_api.filtergrouplist',
+    'rest_api.favouriteplotlist',
+    'rest_api.dashboardlist'
 ])
-def test_get_many_resources_new(resource, session, client, admin_token):
-    factory = find_factory(resource.data_layer['model'])
+def test_get_many_resources_new(endpoint, session, client, admin_token, app):
+    resource = resource_from_endpoint(app, endpoint)
+    model = resource.data_layer['model']
+    factory = find_factory(model)
 
     # Construct an instance of the model
     instance = factory()
     session.commit()
 
     # Do the request
-    url = url_for(resource.view)
+    url = url_for(endpoint)
     rv = client.get(url, headers={'access_token': admin_token,
                                   'Content-Type': 'application/json'})
 
@@ -67,17 +113,11 @@ def test_get_many_resources_new(resource, session, client, admin_token):
     # Check we got at least one instance
     assert len(data) > 0
 
-    # Check it's the same instance as we created
-    assert data[-1] is instance
+    match = matching_resource(data, instance, model)
+    assert match
+    # # Check it's the same instance as we created
+    # assert data[-1] is instance
 
-
-def resource_from_endpoint(app, endpoint):
-    return app.view_functions[endpoint].view_class
-    # for resource in views.json_api.resource_registry:
-    #     if resource.view == endpoint:
-    #         return resource
-
-    # return None
 
 
 @pytest.mark.parametrize(
@@ -107,7 +147,7 @@ def test_get_many_resources_associated(endpoint, foreign_key, session, client, a
     session.commit()
 
     # The rule object gives us access to URL parameters
-    url = url_for(resource.view, id=getattr(instance, foreign_key))
+    url = url_for(endpoint, id=getattr(instance, foreign_key))
 
     # Do the request
     rv = client.get(url, headers={'access_token': admin_token,
@@ -125,65 +165,68 @@ def test_get_many_resources_associated(endpoint, foreign_key, session, client, a
     # Check we got at least the instance we created
     assert len(data) > 0
 
-    assert instance in data
-    assert dummy_instance not in data
+    match = matching_resource(data, instance, model)
+    assert match
+    # assert instance in data
+    # assert dummy_instance not in data
 
 
-@pytest.mark.parametrize('resource', [
-    views.UploadList,
-    views.ReportList,
-    views.ReportMetaList,
-    views.SampleList,
-    views.ReportMetaTypeList,
-    views.DataTypeList,
-    views.UserList,
-    views.FilterList,
-    views.FilterGroupList,
-    views.FavouritePlotList,
-    views.DashboardList
+@pytest.mark.parametrize('endpoint', [
+    'rest_api.uploadlist',
+    'rest_api.reportlist',
+    'rest_api.samplelist',
+    'rest_api.datatypelist',
+    'rest_api.userlist',
+    'rest_api.filterlist',
+    'rest_api.favouriteplotlist',
+    'rest_api.dashboardlist'
 ])
-def test_post_resource(resource, admin_token, session, client):
+def test_post_resource(endpoint, admin_token, session, client, app):
     """
     POST /resources
     """
+    resource = resource_from_endpoint(app, endpoint)
 
     # Construct an instance of the model
-    factory = find_factory(resource.model)
+    model = resource.data_layer['model']
+    factory = find_factory(model)
     instance = factory()
 
-    # Remove the object from the database, because we're going to submit it via the API
-    session.expunge_all()
+    # # Remove the object from the database, because we're going to submit it via the API
+    # session.expunge_all()
     # session.expunge(instance)
     session.commit()
 
-    # Work out which fields are relationships, so we can attach all of it in the request
-    relationships = set([key for key, value in resource.schema._declared_fields.items() if
-                         isinstance(value, Relationship)])
+    clone = factory_clone(instance, factory)
+    # clone = clone_model(instance)
+    session.expunge(clone)
+
+    # # Work out which fields are relationships, so we can attach all of it in the request
+    # relationships = set([key for key, value in resource.schema._declared_fields.items() if
+    #                      isinstance(value, Relationship)])
 
     # Serialize it
     # TODO: work out how to include all relationships, not just top level ones
-    request = resource.schema(many=False, use_links=False,
-                              include_data='linkage_recursive').dump(instance)
+    request = resource.schema(many=False, use_links=False).dump(clone)
 
-    count_1 = session.query(resource.model).count()
+    count_1 = session.query(model).count()
 
     # Do the request
-    url = url_for('rest_api.' + resource.endpoint)
+    url = url_for(endpoint)
     rv = client.post(url, json=request, headers={'access_token': admin_token})
 
     # Check the request was successful
-    assert rv.status_code == 201
+    assert rv.status_code == 201, rv.json['errors']
 
     ret = rv.json
-    del ret['meta']
     del ret['jsonapi']
 
     # Check that we now have data
-    count_2 = session.query(resource.model).count()
+    count_2 = session.query(model).count()
     assert count_2 - count_1 == 1
 
     # Validate the returned data
-    data = resource.schema(many=False).load(rv.json)
+    data = resource.schema(many=False).load(ret)
 # @pytest.mark.parametrize(argnames, [
 #     argvalues['report'],
 #     argvalues['upload'],

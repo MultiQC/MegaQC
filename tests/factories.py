@@ -26,7 +26,7 @@ class BaseFactory(SQLAlchemyModelFactory):
 class UserFactory(BaseFactory):
     """User factory."""
 
-    user_id = Faker('pyint')
+    # user_id = Faker('pyint')
     username = Faker('user_name')
     email = Sequence(lambda n: '{}@example.com'.format(n))
     password = PostGenerationMethodCall('set_password', 'example')
@@ -48,7 +48,7 @@ class ReportMetaFactory(BaseFactory):
     class Meta:
         model = models.ReportMeta
 
-    report_meta_id = Faker('pyint')
+    # report_meta_id = Faker('pyint')
     report_meta_key = Faker('word')
     report_meta_value = Faker('pystr')
 
@@ -59,7 +59,7 @@ class UploadFactory(BaseFactory):
     class Meta:
         model = models.Upload
 
-    upload_id = Faker('pyint')
+    # upload_id = Faker('pyint')
     status = Faker('word')
     path = Faker('file_path')
     message = Faker('sentence')
@@ -73,7 +73,7 @@ class ReportFactory(BaseFactory):
     class Meta:
         model = models.Report
 
-    report_id = Faker('pyint')
+    # report_id = Faker('pyint')
     report_hash = Faker('sha1')
     created_at = Faker('date_time')
     uploaded_at = Faker('date_time')
@@ -87,7 +87,7 @@ class SampleFactory(BaseFactory):
     class Meta:
         model = models.Sample
 
-    sample_id = Faker('pyint')
+    # sample_id = Faker('pyint')
     sample_name = Faker('word')
 
     report = SubFactory(ReportFactory, samples=[])
@@ -98,7 +98,7 @@ class SampleDataTypeFactory(BaseFactory):
     class Meta:
         model = models.SampleDataType
 
-    sample_data_type_id = Faker('pyint')
+    # sample_data_type_id = Faker('pyint')
     data_section = Faker('word')
     data_key = Faker('word')
 
@@ -107,7 +107,7 @@ class SampleDataFactory(BaseFactory):
     class Meta:
         model = models.SampleData
 
-    sample_data_id = Faker('pyint')
+    # sample_data_id = Faker('pyint')
     value = Faker('pyint')
 
     report = SubFactory(ReportFactory)
@@ -119,7 +119,7 @@ class SampleFilterFactory(BaseFactory):
     class Meta:
         model = models.SampleFilter
 
-    sample_filter_id = Faker('pyint')
+    # sample_filter_id = Faker('pyint')
     sample_filter_tag = Faker('word')
     sample_filter_name = Faker('word')
     is_public = Faker('pybool')
@@ -131,7 +131,7 @@ class FavouritePlotFactory(BaseFactory):
     class Meta:
         model = models.PlotFavourite
 
-    plot_favourite_id = Faker('pyint')
+    # plot_favourite_id = Faker('pyint')
     title = Faker('word')
     description = Faker('sentence')
     plot_type = FuzzyChoice([
@@ -149,7 +149,7 @@ class DashboardFactory(BaseFactory):
     class Meta:
         model = models.Dashboard
 
-    dashboard_id = Faker('pyint')
+    # dashboard_id = Faker('pyint')
     title = Faker('word')
     data = json.dumps({})
     is_public = Faker('pybool')

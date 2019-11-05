@@ -167,14 +167,17 @@ class ReportMetaTypeList(ResourceList):
         model=models.ReportMeta
     )
 
-    def _list_query(self, **kwargs):
+    # def _list_query(self, **kwargs):
+    def get_collection(self, qs, kwargs, filters=None):
         # We override the query because this resource is basically simulated, and doesn't correspond to an underlying
         # model
-        return (
-            db.session.query(self.model)
+        query= (
+            db.session.query(models.ReportMeta)
                 .with_entities(models.ReportMeta.report_meta_key)
                 .distinct()
         )
+
+        return query.count(), query.all()
 
 
 class SampleDataList(ResourceList):
@@ -433,7 +436,7 @@ json_api.route(FilterList, 'user_filterlist', "/users/<int:id>/filters")
 
 json_api.route(FilterGroupList, 'filtergrouplist', "/filter_groups")
 
-json_api.route(FavouritePlot, 'favouriteplot' "/favourites/<int:id>")
+json_api.route(FavouritePlot, 'favouriteplot', "/favourites/<int:id>")
 json_api.route(FavouritePlotList, 'favouriteplotlist', "/favourites")
 json_api.route(FavouritePlotList, 'user_favouriteplotlist', "/users/<int:id>/favourites")
 json_api.route(FavouritePlotRelationship, "user_favourites_rel",

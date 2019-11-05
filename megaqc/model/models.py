@@ -152,7 +152,7 @@ class Sample(db.Model, CRUDMixin):
 class SampleFilter(db.Model, CRUDMixin):
     __tablename__ = "sample_filter"
     sample_filter_id = Column(Integer, primary_key=True)
-    sample_filter_name = Column(Unicode, )
+    sample_filter_name = Column(Unicode)
     sample_filter_tag = Column(Unicode)
     is_public = Column(Boolean, index=True)
     sample_filter_data = Column(Unicode, nullable=False)
