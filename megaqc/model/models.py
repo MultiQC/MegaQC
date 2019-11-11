@@ -31,9 +31,9 @@ class Report(db.Model, CRUDMixin):
     uploaded_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
     user = relationship('User', back_populates='reports')
-    meta = relationship('ReportMeta', back_populates='report')
-    samples = relationship('Sample', back_populates='report')
-    sample_data = relationship('SampleData', back_populates='report')
+    meta = relationship('ReportMeta', back_populates='report', passive_deletes='all')
+    samples = relationship('Sample', back_populates='report', passive_deletes='all')
+    sample_data = relationship('SampleData', back_populates='report', passive_deletes='all')
 
 
 class ReportMeta(db.Model, CRUDMixin):
@@ -129,7 +129,7 @@ class SampleDataType(db.Model, CRUDMixin):
 class SampleData(db.Model, CRUDMixin):
     __tablename__ = "sample_data"
     sample_data_id = Column(Integer, primary_key=True)
-    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
+    report_id = Column(Integer, ForeignKey('report.report_id', ondelete='CASCADE'), index=True)
     sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id', ondelete='CASCADE'), nullable=False)
     sample_id = Column(Integer, ForeignKey('sample.sample_id', ondelete='CASCADE'), index=True, nullable=False)
     value = Column(Unicode)
@@ -146,7 +146,7 @@ class Sample(db.Model, CRUDMixin):
     report_id = Column(Integer, ForeignKey('report.report_id', ondelete='CASCADE'), index=True, nullable=False)
 
     report = relationship('Report', back_populates='samples')
-    data = relationship('SampleData', back_populates='sample')
+    data = relationship('SampleData', back_populates='sample', passive_deletes='all')
 
 
 class SampleFilter(db.Model, CRUDMixin):

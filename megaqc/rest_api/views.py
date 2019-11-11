@@ -18,28 +18,11 @@ from megaqc.extensions import db, restful, json_api
 from megaqc.model import models
 from megaqc.rest_api import schemas, utils, plot
 from megaqc.rest_api.content import json_to_csv
-from megaqc.rest_api.resources import ResourceDetail, ResourceList
 from megaqc.rest_api.webarg_parser import use_kwargs
-from flask_rest_jsonapi import ResourceDetail, ResourceList, ResourceRelationship
+from flapison import ResourceDetail, ResourceList, ResourceRelationship
 
 api_bp = Blueprint("rest_api", __name__, url_prefix="/rest_api/v1")
 json_api.blueprint = api_bp
-
-
-@restful.representation("text/csv")
-def output_csv(resp, code, headers=None):
-    csv = json_to_csv(resp["data"], delimiter="\t")
-    resp = make_response(csv, code)
-    resp.headers.extend(headers or {})
-    return resp
-
-
-@api_bp.errorhandler(IncorrectTypeError)
-def handle_jsonapi_error(e):
-    """
-    Handles a marshmallow validation error, and returns a structured JSON response
-    """
-    return make_response(jsonify(e.messages), HTTPStatus.BAD_REQUEST)
 
 
 class Upload(ResourceDetail):
@@ -58,6 +41,33 @@ class UploadList(ResourceList):
         model=models.Upload
     )
 
+    def get_schema_kwargs(self, args, kwargs):
+        # Only show the filepath if they're an admin
+        if 'user' in kwargs and kwargs['permission'] <= utils.Permission.ADMIN:
+            return {
+                'exclude': ['path']
+            }
+
+        return {}
+
+    @check_user
+    def post(self, **kwargs):
+        """
+        Upload a new report
+        """
+        # This doesn't exactly follow the JSON API spec, since it doesn't exactly support file uploads:
+        # https://github.com/json-api/json-api/issues/246
+        file_name = utils.get_unique_filename()
+        request.files["report"].save(file_name)
+        upload_row = models.Upload.create(
+            status="NOT TREATED",
+            path=file_name,
+            message="File has been created, loading in MegaQC is queued.",
+            user_id=kwargs["user"].user_id,
+        )
+
+        return self._dump(upload_row), HTTPStatus.CREATED
+
 
 class UploadRelationship(ResourceRelationship):
     schema = schemas.UploadSchema
@@ -65,31 +75,6 @@ class UploadRelationship(ResourceRelationship):
         session=db.session,
         model=models.Upload
     )
-    # @classmethod
-    # def _get_exclude(cls, **kwargs):
-    #     # Only show the filepath if they're an admin
-    #     if 'user' in kwargs:
-    #         return [] if kwargs['permission'] >= utils.Permission.ADMIN else ["path"]
-    #     else:
-    #         return []
-
-    # @check_user
-    # def post(self, **kwargs):
-    #     """
-    #     Upload a new report
-    #     """
-    #     # This doesn't exactly follow the JSON API spec, since it doesn't exactly support file uploads:
-    #     # https://github.com/json-api/json-api/issues/246
-    #     file_name = utils.get_unique_filename()
-    #     request.files["report"].save(file_name)
-    #     upload_row = models.Upload.create(
-    #         status="NOT TREATED",
-    #         path=file_name,
-    #         message="File has been created, loading in MegaQC is queued.",
-    #         user_id=kwargs["user"].user_id,
-    #     )
-    #
-    #     return self._dump(upload_row), HTTPStatus.CREATED
 
 
 class ReportList(ResourceList):
@@ -171,7 +156,7 @@ class ReportMetaTypeList(ResourceList):
     def get_collection(self, qs, kwargs, filters=None):
         # We override the query because this resource is basically simulated, and doesn't correspond to an underlying
         # model
-        query= (
+        query = (
             db.session.query(models.ReportMeta)
                 .with_entities(models.ReportMeta.report_meta_key)
                 .distinct()
@@ -238,21 +223,22 @@ class UserList(ResourceList):
         model=user_models.User
     )
 
-    @classmethod
-    def _get_exclude(cls, user, permission, **kwargs):
+    def get_schema_kwargs(self, args, kwargs):
         # Only show the filepath if they're an admin
-        return (
-            []
-            if permission >= utils.Permission.ADMIN
-            else ["reports", "salt", "api_token"]
-        )
+        if 'user' in kwargs and kwargs['permission'] <= utils.Permission.ADMIN:
+            return {
+                'exclude': ["reports", "salt", "api_token"]
+            }
 
-    def _create_model(self, data, **kwargs):
+        return {}
+
+    def create_object(self, data, kwargs):
         # Creating a user requires generating a password
-        new_user = super()._create_model(data, **kwargs)
+        new_user = super().create_object(data, kwargs)
         new_user.set_password(data["password"])
         new_user.active = True
         new_user.save()
+        return new_user
 
 
 class CurrentUser(ResourceDetail):
@@ -262,9 +248,14 @@ class CurrentUser(ResourceDetail):
         model=user_models.User
     )
 
-    def _get_exclude(self, user, permissions, **kwargs):
+    def get_schema_kwargs(self, args, kwargs):
         # Only show the filepath if they're an admin
-        return [] if permissions >= utils.Permission.ADMIN else ["salt", "api_token"]
+        if 'user' in kwargs and kwargs['permission'] <= utils.Permission.ADMIN:
+            return {
+                'exclude': ["salt", "api_token"]
+            }
+
+        return {}
 
     def get(self, **kwargs):
         """
@@ -320,13 +311,13 @@ class FilterGroupList(ResourceList):
         model=models.SampleFilter
     )
 
-    def _list_query(self, **kwargs):
-        return (
-            super()
-                ._list_query(**kwargs)
-                .with_entities(models.SampleFilter.sample_filter_tag)
-                .distinct()
-        )
+    def get_collection(self, qs, kwargs, filters=None):
+        query = (self._data_layer.query(kwargs)
+                 .with_entities(models.SampleFilter.sample_filter_tag)
+                 .distinct()
+                 )
+
+        return query.count(), query.all()
 
 
 class FavouritePlotList(ResourceList):
@@ -388,7 +379,8 @@ class TrendSeries(ResourceList):
         # We need to give each resource a unique ID so the client doesn't try to cache or reconcile different plots
         request_hash = sha1(request.query_string).hexdigest()
 
-        plots = plot.trend_data(fields=fields, filters=filter, plot_prefix=request_hash)
+        plots = plot.trend_data(fields=fields, filters=filter,
+                                plot_prefix=request_hash)
 
         return schemas.TrendSchema(many=True, unknown=INCLUDE).dump(plots)
 
@@ -396,7 +388,8 @@ class TrendSeries(ResourceList):
 json_api.route(Upload, 'upload', "/uploads/<int:id>")
 json_api.route(UploadList, 'uploadlist', '/uploads')
 json_api.route(UploadList, 'user_uploadlist', "/users/<int:id>/uploads")
-json_api.route(UploadRelationship, 'userupload', "/users/<int:id>/relationships/uploads")
+json_api.route(UploadRelationship, 'userupload',
+               "/users/<int:id>/relationships/uploads")
 
 json_api.route(Report, 'report', "/reports/<int:id>")
 json_api.route(ReportList, 'reportlist', '/reports')
@@ -413,7 +406,8 @@ json_api.route(UserRelationship, 'user_filters_rel',
                "/users/<int:id>/relationships/filters")
 
 json_api.route(ReportMetaList, 'reportmetalist', "/report_meta")
-json_api.route(ReportMetaList, 'report_reportmetalist', "/reports/<int:id>/report_meta")
+json_api.route(ReportMetaList, 'report_reportmetalist',
+               "/reports/<int:id>/report_meta")
 json_api.route(ReportMetaRelationship, 'report_reportmeta_rel',
                "/reports/<int:id>/relationships/report_meta")
 
@@ -423,7 +417,8 @@ json_api.route(SampleList, 'report_samplelist', "/reports/<int:id>/samples")
 
 json_api.route(ReportMetaTypeList, 'metatypelist', '/meta_types')
 
-json_api.route(SampleDataList, 'sample_sampledatalist', "/samples/<int:id>/sample_data")
+json_api.route(SampleDataList, 'sample_sampledatalist',
+               "/samples/<int:id>/sample_data")
 json_api.route(SampleDataRelationship, 'sample_sampledata',
                "/samples/<int:id>/relationships/sample_data")
 
@@ -438,11 +433,12 @@ json_api.route(FilterGroupList, 'filtergrouplist', "/filter_groups")
 
 json_api.route(FavouritePlot, 'favouriteplot', "/favourites/<int:id>")
 json_api.route(FavouritePlotList, 'favouriteplotlist', "/favourites")
-json_api.route(FavouritePlotList, 'user_favouriteplotlist', "/users/<int:id>/favourites")
+json_api.route(FavouritePlotList, 'user_favouriteplotlist',
+               "/users/<int:id>/favourites")
 json_api.route(FavouritePlotRelationship, "user_favourites_rel",
                "/users/<int:id>/relationships/favourites")
 
-json_api.route(Dashboard, 'dashboard', "/dashboards/<int:dashboard_id>")
+json_api.route(Dashboard, 'dashboard', "/dashboards/<int:id>")
 json_api.route(DashboardList, 'dashboardlist', "/dashboards")
 json_api.route(DashboardList, 'user_dashboardlist', "/users/<int:id>/dashboards")
 json_api.route(DashboardRelationship, 'user_dashboards_rel',
