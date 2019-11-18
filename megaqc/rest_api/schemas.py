@@ -93,7 +93,7 @@ class OptionalLinkSchema(JsonApiSchema):
         """
         Hack to deal with empty ID field that has to be sent
         """
-        id_field = self.fields['id'].attribute
+        id_field = self.fields['id'].attribute or 'id'
 
         if hasattr(item, id_field):
             if getattr(item, id_field) is None:
@@ -475,7 +475,7 @@ class UserSchema(Schema):
     )
 
 
-class PlotSchema(Schema):
+class PlotSchema(JsonApiSchema):
     """
     Data that can be used to generate a plot
     """

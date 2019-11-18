@@ -18,34 +18,24 @@ def test_post_upload_list(db, client, token):
     """
     Test uploading a report
     """
+    count_1 = db.session.query(models.Upload).count()
+
     rv = client.post(
         '/rest_api/v1/uploads',
         data={'report': resource_stream('tests', 'multiqc_data.json')},
-        headers={'access_token': token}
+        headers={
+            'access_token': token,
+            'Content-Type': 'multipart/form-data',
+            'Accept': 'application/json'
+        }
     )
 
     # Check the request was successful
-    assert rv.status_code == 201
+    assert rv.status_code == 201, rv.json
 
-    data = schemas.UploadSchema().load(rv.json)
+    # Validate the response
+    schemas.UploadSchema().validate(rv.json)
 
     # Check that there is a new Upload
-    uploads = db.session.query(models.Upload).count()
-    assert uploads == 1
-
-
-def test_get_upload_path(session, upload, client, token, admin_token):
-    """
-    Check that the 'path' field is only returned to admins
-    """
-    user_rv = client.get('/rest_api/v1/uploads/{}'.format(upload.upload_id), headers={'access_token': token})
-    data = schemas.UploadSchema(many=False).load(user_rv.json)
-
-    # A regular user shouldn't receive the filepath
-    assert 'path' not in data
-
-    admin_rv = client.get('/rest_api/v1/uploads/{}'.format(upload.upload_id), headers={'access_token': admin_token})
-    data = schemas.UploadSchema(many=False).load(admin_rv.json)
-
-    # An admin should receive the filepath
-    assert 'path' in data
+    count_2 = db.session.query(models.Upload).count()
+    assert count_2 == count_1 + 1

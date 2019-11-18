@@ -191,8 +191,10 @@ def test_get_many_resources_associated(endpoint, foreign_key, session, client,
     url = url_for(endpoint, id=getattr(instance, foreign_key))
 
     # Do the request
-    rv = client.get(url, headers={'access_token': admin_token,
-                                  'Content-Type': 'application/json'})
+    rv = client.get(url, headers={
+        'access_token': admin_token,
+        'Content-Type': 'application/json'
+    })
     # Check the request was successful
     assert rv.status_code == 200, rv.json
 

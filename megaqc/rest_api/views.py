@@ -40,6 +40,9 @@ class UploadList(ResourceList):
         session=db.session,
         model=models.Upload
     )
+    request_parsers = {
+        'multipart/form-data': lambda x: x
+    }
 
     def get_schema_kwargs(self, args, kwargs):
         # Only show the filepath if they're an admin
@@ -66,7 +69,7 @@ class UploadList(ResourceList):
             user_id=kwargs["user"].user_id,
         )
 
-        return self._dump(upload_row), HTTPStatus.CREATED
+        return schemas.UploadSchema(many=False).dump(upload_row), HTTPStatus.CREATED
 
 
 class UploadRelationship(ResourceRelationship):
@@ -444,4 +447,4 @@ json_api.route(DashboardList, 'user_dashboardlist', "/users/<int:id>/dashboards"
 json_api.route(DashboardRelationship, 'user_dashboards_rel',
                "/users/<int:id>/relationships/dashboards")
 
-json_api.route(TrendSeries, 'trendseries', "/plots/trends/series")
+json_api.route(TrendSeries, 'trend_data', "/plots/trends/series")

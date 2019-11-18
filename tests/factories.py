@@ -11,6 +11,20 @@ from megaqc.database import db
 from megaqc.model import models
 from megaqc.user.models import User
 
+class SubFactoryList(SubFactory):
+    def __init__(self, factory, size=2, **defaults):
+        super().__init__(factory, **defaults)
+        self.size = size
+
+    def generate(self, step, params):
+        parent = super()
+        return [parent.generate(step, params) for i in range(self.size)]
+
+    # def call(self, instance, step, context):
+    #     return [super().call(instance, step, context)
+    #             for i in range(self.size if isinstance(self.size, int)
+    #                            else self.size())]
+
 
 class BaseFactory(SQLAlchemyModelFactory):
     """Base factory."""
@@ -79,8 +93,9 @@ class ReportFactory(BaseFactory):
     uploaded_at = Faker('date_time')
 
     user = SubFactory(UserFactory)
-    meta = RelatedFactoryList(ReportMetaFactory, 'report', size=3)
-    samples = RelatedFactoryList('tests.factories.SampleFactory', 'report', size=3)
+    meta = SubFactoryList(ReportMetaFactory, size=3, report=None)
+    samples = SubFactoryList('tests.factories.SampleFactory', size=3, report=None)
+    # samples = RelatedFactoryList('tests.factories.SampleFactory', 'report', size=3)
 
 
 class SampleFactory(BaseFactory):
@@ -91,7 +106,7 @@ class SampleFactory(BaseFactory):
     sample_name = Faker('word')
 
     report = SubFactory(ReportFactory, samples=[])
-    data = RelatedFactoryList('tests.factories.SampleDataFactory', 'sample', report=SelfAttribute('..report'))
+    data = SubFactoryList('tests.factories.SampleDataFactory', report=SelfAttribute('..report'))
 
 
 class SampleDataTypeFactory(BaseFactory):
