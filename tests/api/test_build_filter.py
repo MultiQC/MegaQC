@@ -34,46 +34,71 @@ def filter_test_reports(filter_test_types, session):
     # Constructing test data manually, rather than using factories because of:
     # https://github.com/FactoryBoy/factory_boy/issues/636
     ret = [
-        models.Report(
+        factories.ReportFactory(
+            # models.Report(
             created_at=datetime.datetime.now() - datetime.timedelta(days=1),
-            samples=[models.Sample(
-                data=[
-                    factories.SampleDataFactory.build(data_type=types[0], value=1),
-                    factories.SampleDataFactory.build(data_type=types[1], value=1),
-                ])
-            ],
+            samples=[factories.SampleFactory(
+                data=[]
+            )],
             meta=[
-                factories.ReportMetaFactory.build(report_meta_key='key_1', report_meta_value='1'),
-                factories.ReportMetaFactory.build(report_meta_key='key_2', report_meta_value=1),
+                factories.ReportMetaFactory.build(
+                    report_meta_key='key_1',
+                    report_meta_value='1',
+                    report=None
+                ),
+                factories.ReportMetaFactory.build(
+                    report_meta_key='key_2',
+                    report_meta_value=1,
+                    report=None
+                ),
             ]
         ),
-        models.Report(
+        # models.Report(
+        factories.ReportFactory(
             created_at=datetime.datetime.now() - datetime.timedelta(days=2),
-            samples=[models.Sample(
-                data=[
-                    factories.SampleDataFactory.build(data_type=types[0], value=2),
-                    factories.SampleDataFactory.build(data_type=types[1], value=2),
-                ])
-            ],
+            samples=[factories.SampleFactory(
+                data=[]
+            )],
             meta=[
-                factories.ReportMetaFactory.build(report_meta_key='key_1', report_meta_value='2'),
-                factories.ReportMetaFactory.build(report_meta_key='key_2', report_meta_value=2),
+                factories.ReportMetaFactory.build(
+                    report_meta_key='key_1',
+                    report_meta_value='2',
+                    report=None
+                ),
+                factories.ReportMetaFactory.build(
+                    report_meta_key='key_2',
+                    report_meta_value=2,
+                    report=None
+                ),
             ]
         ),
-        models.Report(
+        # models.Report(
+        factories.ReportFactory(
             created_at=datetime.datetime.now() - datetime.timedelta(days=3),
-            samples=[models.Sample(
-                data=[
-                    factories.SampleDataFactory.build(data_type=types[0], value='3'),
-                    factories.SampleDataFactory.build(data_type=types[1], value=3),
-                ])
-            ],
+            samples=[factories.SampleFactory(
+                data=[]
+            )],
             meta=[
-                factories.ReportMetaFactory.build(report_meta_key='key_1', report_meta_value=3),
-                factories.ReportMetaFactory.build(report_meta_key='key_2', report_meta_value=3),
+                factories.ReportMetaFactory.build(
+                    report_meta_key='key_1',
+                    report_meta_value='3',
+                    report=None
+                ),
+                factories.ReportMetaFactory.build(
+                    report_meta_key='key_2',
+                    report_meta_value=3,
+                    report=None
+                ),
             ]
         )
     ]
+
+    for i, report in enumerate(ret):
+        report.samples[0].data = [
+            factories.SampleDataFactory.build(data_type=types[0], value=i + 1, report=report),
+            factories.SampleDataFactory.build(data_type=types[1], value=i + 1, report=report),
+        ]
+
     session.expunge_all()
     session.add_all(ret)
     session.commit()
@@ -87,7 +112,8 @@ def test_daterange_in(filter_test_reports):
             {
                 'type': 'daterange',
                 'value': [
-                    (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(DATE_FORMAT),
+                    (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(
+                        DATE_FORMAT),
                     (datetime.datetime.now()).strftime(DATE_FORMAT),
                 ],
                 'cmp': 'in'
@@ -124,7 +150,8 @@ def test_daterange_not_in(filter_test_reports):
             {
                 'type': 'daterange',
                 'value': [
-                    (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(DATE_FORMAT),
+                    (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(
+                        DATE_FORMAT),
                     (datetime.datetime.now()).strftime(DATE_FORMAT),
                 ],
                 'cmp': 'not in'

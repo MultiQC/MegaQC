@@ -21,10 +21,10 @@ def test_get_trend_series(db, client):
         filter=json.dumps([]),
         fields=json.dumps([data_type.data_key])
     )
-    response = client.get(url)
+    response = client.get(url, headers={'Content-Type': 'application/json'})
 
     # Check the request was successful
-    assert response.status_code == 200
+    assert response.status_code == 200, response.json
 
     # unknown=EXCLUDE ensures we don't keep the ID field when we load at this point
     data = TrendSchema(many=True, unknown=EXCLUDE).load(response.json)

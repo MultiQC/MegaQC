@@ -2,379 +2,265 @@
 Location of a rewritten API in a RESTful style, with appropriate resources
 Following the JSON API standard where relevant: https://jsonapi.org/format/
 """
-from http import HTTPStatus
-from hashlib import sha1
 
-from flask import request, Blueprint, jsonify, make_response
-from flask_login import login_required, current_user
-from flask_restful import Resource
+from hashlib import sha1
+from http import HTTPStatus
+
+from flask import Blueprint
+from flask import request, jsonify, make_response
+from flask_login import current_user
 from marshmallow.utils import INCLUDE
 from marshmallow_jsonapi.exceptions import IncorrectTypeError
-from sqlalchemy.orm import joinedload, contains_eager
 
 import megaqc.user.models as user_models
-from megaqc import model
-from megaqc.api.views import check_user, check_admin
-from megaqc.extensions import db, restful
+from megaqc.api.views import check_user
+from megaqc.extensions import db, restful, json_api
 from megaqc.model import models
-from megaqc.rest_api import schemas, filters, utils, plot
-from megaqc.rest_api.webarg_parser import use_args, use_kwargs, error_handler
+from megaqc.rest_api import schemas, utils, plot
 from megaqc.rest_api.content import json_to_csv
+from megaqc.rest_api.webarg_parser import use_kwargs
+from flapison import ResourceDetail, ResourceList, ResourceRelationship
 
-api_bp = Blueprint('rest_api', __name__, url_prefix='/rest_api/v1')
-
-
-@api_bp.errorhandler(IncorrectTypeError)
-def handle_jsonapi_error(e):
-    """
-    Handles a marshmallow validation error, and returns a structured JSON response
-    """
-    return make_response(jsonify(e.messages), HTTPStatus.BAD_REQUEST)
+api_bp = Blueprint("rest_api", __name__, url_prefix="/rest_api/v1")
+json_api.blueprint = api_bp
 
 
-class UploadList(Resource):
-    @check_user
-    def get(self, user, user_id=None):
-        """
-        Get a list of pending uploads
-        """
-        query = db.session.query(
-            models.Upload,
-        )
-        if user_id is not None:
-            query = query.filter(models.Upload.user_id == user_id)
+class Upload(ResourceDetail):
+    schema = schemas.UploadSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Upload
+    )
 
+
+class UploadList(ResourceList):
+    view_kwargs = True
+    schema = schemas.UploadSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Upload
+    )
+    request_parsers = {
+        'multipart/form-data': lambda x: x
+    }
+
+    def get_schema_kwargs(self, args, kwargs):
         # Only show the filepath if they're an admin
-        exclude = [] if user.is_admin else ['path']
+        if 'user' in kwargs and kwargs['permission'] <= utils.Permission.ADMIN:
+            return {
+                'exclude': ['path']
+            }
 
-        return schemas.UploadSchema(many=True, exclude=exclude).dump(query.all())
+        return {}
 
     @check_user
-    def post(self, user):
+    def post(self, **kwargs):
         """
         Upload a new report
         """
         # This doesn't exactly follow the JSON API spec, since it doesn't exactly support file uploads:
         # https://github.com/json-api/json-api/issues/246
         file_name = utils.get_unique_filename()
-        request.files['report'].save(file_name)
+        request.files["report"].save(file_name)
         upload_row = models.Upload.create(
             status="NOT TREATED",
             path=file_name,
             message="File has been created, loading in MegaQC is queued.",
-            user_id=user.user_id
+            user_id=kwargs["user"].user_id,
         )
 
-        # Only show the filepath if they're an admin
-        exclude = [] if user.is_admin else ['path']
-
-        return schemas.UploadSchema(exclude=exclude).dump(upload_row), HTTPStatus.CREATED
+        return schemas.UploadSchema(many=False).dump(upload_row), HTTPStatus.CREATED
 
 
-class Upload(Resource):
-    @check_user
-    def get(self, upload_id, user, user_id=None):
-        """
-        Get data about a single upload
-        """
-        upload = db.session.query(
-            models.Upload,
-        ).filter(
-            models.Upload.upload_id == upload_id
-        ).first_or_404()
-
-        # Only show the filepath if they're an admin
-        exclude = [] if user.is_admin else ['path']
-
-        return schemas.UploadSchema(many=False, exclude=exclude).dump(upload)
-
-    @check_admin
-    def delete(self, upload_id, user, user_id=None):
-        """
-        Get data about a single upload
-        """
-        upload = db.session.query(
-            models.Upload,
-        ).filter(
-            models.Upload.upload_id == upload_id
-        ).first_or_404()
-
-        db.session.delete(upload)
-        db.session.commit()
-
-        return {}
+class UploadRelationship(ResourceRelationship):
+    schema = schemas.UploadSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Upload
+    )
 
 
-class ReportList(Resource):
-    def get(self, user_id=None):
-        """
-        Get a list of reports
-        """
-        query = db.session.query(
-            models.Report,
+class ReportList(ResourceList):
+    view_kwargs = True
+    schema = schemas.ReportSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Report
+    )
+
+
+class Report(ResourceDetail):
+    schema = schemas.ReportSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Report
+    )
+
+
+class ReportRelationship(ResourceRelationship):
+    schema = schemas.ReportSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Report
+    )
+
+
+class ReportMetaList(ResourceList):
+    view_kwargs = True
+    schema = schemas.ReportMetaSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.ReportMeta
+    )
+
+
+class ReportMetaRelationship(ResourceRelationship):
+    schema = schemas.ReportMetaSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.ReportMeta
+    )
+
+
+class Sample(ResourceDetail):
+    schema = schemas.SampleSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Sample
+    )
+
+
+class SampleList(ResourceList):
+    view_kwargs = True
+    schema = schemas.SampleSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Sample
+    )
+
+
+class SampleRelationship(ResourceRelationship):
+    schema = schemas.SampleSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Sample
+    )
+
+
+class ReportMetaTypeList(ResourceList):
+    view_kwargs = True
+    schema = schemas.ReportMetaTypeSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.ReportMeta
+    )
+
+    # def _list_query(self, **kwargs):
+    def get_collection(self, qs, kwargs, filters=None):
+        # We override the query because this resource is basically simulated, and doesn't correspond to an underlying
+        # model
+        query = (
+            db.session.query(models.ReportMeta)
+                .with_entities(models.ReportMeta.report_meta_key)
+                .distinct()
         )
-        if user_id is not None:
-            query = query.filter(models.Report.user_id == user_id)
 
-        return schemas.ReportSchema(many=True).dump(query.all())
-
-    @check_user
-    def post(self, user):
-        """
-        Upload a new report
-        """
-        return '', HTTPStatus.METHOD_NOT_ALLOWED
+        return query.count(), query.all()
 
 
-class Report(Resource):
-    def get(self, report_id):
-        """
-        Get data about this report
-        """
-        report_meta = db.session.query(
-            models.Report,
-        ).options(
-            joinedload(models.Report.meta)
-        ).filter(
-            models.Report.report_id == report_id
-        ).first()
-
-        return schemas.ReportSchema(many=False).dump(report_meta)
-
-    def put(self, report_id):
-        """
-        Update this report
-        """
-        return '', HTTPStatus.METHOD_NOT_ALLOWED
-
-    @check_admin
-    def delete(self, report_id, user):
-        """
-        Delete this report
-        """
-        db.session.query(models.Report).filter(models.Report.report_id == report_id).delete()
-        db.session.commit()
-        return {}
+class SampleDataList(ResourceList):
+    view_kwargs = True
+    schema = schemas.SampleDataSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleData
+    )
 
 
-class ReportMeta(Resource):
-    def get(self, report_id):
-        """
-        Get all data for a sample
-        """
-        # Here we need to prefetch the data and the data type because they will also be dumped to JSON
-        meta = db.session.query(
-            models.ReportMeta
-        ).filter(
-            models.ReportMeta.report_id == report_id
-        ).all()
-
-        return schemas.ReportMetaSchema(many=True).dump(meta)
-
-    def post(self, report_id):
-        data = schemas.ReportMetaSchema(many=False).load(request.json)
-        instance = models.ReportMeta.create(**data, report_id=report_id)
-        return schemas.ReportMetaSchema(many=False).dump(instance), HTTPStatus.CREATED
+class SampleDataRelationship(ResourceRelationship):
+    schema = schemas.SampleDataSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleData
+    )
 
 
-class ReportMetaTypeList(Resource):
-    def get(self):
-        """
-        Get all possible report data types
-        """
-        # Here we need to prefetch the data and the data type because they will also be dumped to JSON
-        type = db.session.query(
-            models.ReportMeta
-        ).with_entities(models.ReportMeta.report_meta_key).distinct().all()
-
-        return schemas.ReportMetaTypeSchema(many=True).dump(type)
+class DataType(ResourceDetail):
+    schema = schemas.SampleDataTypeSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleDataType
+    )
 
 
-class SamplesList(Resource):
-    def get(self, report_id=None):
-        """
-        Get all samples for this report
-        """
-
-        # Only apply the report filter if we had a report ID
-        filters = []
-        if report_id is not None:
-            filters.append(models.Sample.report_id == report_id)
-
-        # Here we need to prefetch the data and the data type because they will also be dumped to JSON
-        samples = db.session.query(
-            models.Sample
-        ).options(
-            joinedload(models.Sample.data).joinedload(models.SampleData.data_type)
-        ).filter(
-            *filters
-        ).all()
-
-        return schemas.SampleSchema(many=True).dump(samples)
-
-    def post(self, report_id):
-        # Currently we only support uploading samples via a report
-        return {}, HTTPStatus.METHOD_NOT_ALLOWED
+class DataTypeList(ResourceList):
+    view_kwargs = True
+    schema = schemas.SampleDataTypeSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleDataType
+    )
 
 
-class Sample(Resource):
-    def get(self, sample_id, report_id=None):
-        """
-        Get a single sample within a report
-        """
-        samples = db.session.query(
-            models.Sample
-        ).options(
-            joinedload(models.Sample.data).joinedload(models.SampleData.data_type)
-        ).filter(
-            models.Sample.sample_id == sample_id
-        ).first()
+class User(ResourceDetail):
+    schema = schemas.UserSchema
+    data_layer = dict(
+        session=db.session,
+        model=user_models.User
+    )
 
-        return schemas.SampleSchema(many=False).dump(samples)
 
-    def put(self, report_id, sample_id):
-        """
-        Update an existing sample
-        """
-        raise NotImplementedError()
+class UserRelationship(ResourceRelationship):
+    schema = schemas.UserSchema
+    data_layer = dict(
+        session=db.session,
+        model=user_models.User
+    )
 
-    @check_admin
-    def delete(self, sample_id, user, report_id=None):
-        """
-        Delete a single sample
-        """
-        db.session.query(
-            models.Sample
-        ).options(
-            joinedload(models.Sample.data).joinedload(models.SampleData.data_type)
-        ).filter(
-            models.Sample.sample_id == sample_id
-        ).delete()
 
-        db.session.commit()
+class UserList(ResourceList):
+    view_kwargs = True
+    schema = schemas.UserSchema
+    data_layer = dict(
+        session=db.session,
+        model=user_models.User
+    )
+
+    def get_schema_kwargs(self, args, kwargs):
+        # Only show the filepath if they're an admin
+        if 'user' in kwargs and kwargs['permission'] <= utils.Permission.ADMIN:
+            return {
+                'exclude': ["reports", "salt", "api_token"]
+            }
 
         return {}
 
-
-class SampleData(Resource):
-    def get(self, sample_id):
-        """
-        Get all data for a sample
-        """
-        # Here we need to prefetch the data and the data type because they will also be dumped to JSON
-        samples = db.session.query(
-            models.SampleData
-        ).options(
-            joinedload(models.SampleData.data_type)
-        ).filter(
-            models.SampleData.sample_id == sample_id
-        ).all()
-
-        return schemas.SampleDataSchema(many=True, include_data=['data_type']).dump(samples)
-
-    def post(self, sample_id):
-        loaded = schemas.SampleDataSchema(many=False, include_data=['data_type']).load(request.json)
-        data_type = models.SampleDataType.get_or_create(loaded.pop('data_type'))
-        instance = models.SampleData.create(**loaded, data_type=data_type, sample_id=sample_id)
-        return schemas.SampleDataSchema(many=False).dump(instance), HTTPStatus.CREATED
-
-
-class SampleDataType(Resource):
-    def get(self, type_id):
-        """
-        Get all possible data types
-        """
-        # Here we need to prefetch the data and the data type because they will also be dumped to JSON
-        type = db.session.query(
-            models.SampleDataType
-        ).filter(
-            models.SampleDataType.sample_data_type_id == type_id
-        ).first_or_404()
-
-        return schemas.SampleDataTypeSchema(many=False).dump(type)
-
-
-class SampleDataTypeList(Resource):
-    def get(self):
-        """
-        Get all possible data types
-        """
-        # Here we need to prefetch the data and the data type because they will also be dumped to JSON
-        types = db.session.query(
-            models.SampleDataType
-        ).all()
-
-        return schemas.SampleDataTypeSchema(many=True).dump(types)
-
-
-class UserList(Resource):
-    @check_admin
-    def get(self, user):
-        """
-        Get a list of users
-        """
-        users = db.session.query(
-            user_models.User
-        ).options(
-            joinedload(user_models.User.roles)
-        ).all()
-
-        # Only admins can do this, so it doesn't matter if we return their password/key
-        return schemas.UserSchema(many=True).dump(users)
-
-    def post(self):
-        """
-        Create a new user
-        """
-        data = schemas.UserSchema(exclude=['reports', 'salt', 'api_token']).load(request.json)
-        new_user = user_models.User(**data)
-        new_user.set_password(data['password'])
+    def create_object(self, data, kwargs):
+        # Creating a user requires generating a password
+        new_user = super().create_object(data, kwargs)
+        new_user.set_password(data["password"])
         new_user.active = True
         new_user.save()
+        return new_user
 
-        return schemas.UserSchema().dump(new_user), HTTPStatus.CREATED
 
+class CurrentUser(ResourceDetail):
+    schema = schemas.UserSchema
+    data_layer = dict(
+        session=db.session,
+        model=user_models.User
+    )
 
-class User(Resource):
-    @check_admin
-    def get(self, user_id, user):
-        """
-        Get a specific user
-        """
-        users = db.session.query(
-            user_models.User
-        ).options(
-            joinedload(user_models.User.roles)
-        ).filter(
-            user_models.User.user_id == user_id
-        ).first()
-
-        return schemas.UserSchema(many=False).dump(users)
-
-    def put(self, user_id):
-        """
-        Update a user
-        """
-        raise NotImplementedError()
-
-    @check_admin
-    def delete(self, user_id, user):
-        """
-        Delete a user
-        """
-        db.session.query(
-            user_models.User
-        ).filter(
-            user_models.User.user_id == user_id
-        ).delete()
-        db.session.commit()
+    def get_schema_kwargs(self, args, kwargs):
+        # Only show the filepath if they're an admin
+        if 'user' in kwargs and kwargs['permission'] <= utils.Permission.ADMIN:
+            return {
+                'exclude': ["salt", "api_token"]
+            }
 
         return {}
 
-
-class CurrentUser(Resource):
-    @login_required
-    def get(self):
+    def get(self, **kwargs):
         """
         Get details about the current user. This is also how the frontend can get an access token. For that reason,
         this endpoint is authenticated using the session, NOT the access token
@@ -382,125 +268,116 @@ class CurrentUser(Resource):
 
         # Fail if we aren't logged in
         if current_user.is_anonymous:
-            return '', HTTPStatus.UNAUTHORIZED
+            return "", HTTPStatus.UNAUTHORIZED
 
-        user = db.session.query(
-            user_models.User
-        ).filter(
-            user_models.User.user_id == current_user.user_id
-        ).first_or_404()
-
-        return schemas.UserSchema(many=False, exclude=('salt', 'password')).dump(user)
-
-
-class FilterGroupList(Resource):
-    def get(self):
-        """
-        Get a list of filter groups
-        """
-        results = db.session.query(
-            models.SampleFilter
-        ).with_entities(
-            models.SampleFilter.sample_filter_tag
-        ).distinct().all()
-        return schemas.FilterGroupSchema(many=True).dump(results)
-
-
-class FilterList(Resource):
-    def get(self, user_id=None):
-        query = db.session.query(
-            models.SampleFilter
-        ).join(
-            user_models.User, user_models.User.user_id == models.SampleFilter.user_id
-        ).options(
-            # We're already joining to the users table in order to filter, so use this to load the relationship
-            contains_eager(models.SampleFilter.user)
+        user = (
+            db.session.query(user_models.User)
+                .filter(user_models.User.user_id == current_user.user_id)
+                .first_or_404()
         )
 
-        # If this is the filter list for a single user, filter it down to that
-        if user_id is not None:
-            query = query.filter(user_models.User.user_id == user_id)
-
-        results = query.all()
-        return schemas.SampleFilterSchema(many=True).dump(results)
-
-    @check_user
-    def post(self, user, user_id=None):
-        load_schema = schemas.SampleFilterSchema(many=False, exclude=['user'])
-        dump_schema = schemas.SampleFilterSchema(many=False)
-
-        model = load_schema.load(request.json)
-        model['user_id'] = user.user_id
-        instance = models.SampleFilter(**model)
-        db.session.add(instance)
-        db.session.commit()
-
-        return dump_schema.dump(instance), HTTPStatus.CREATED
-
-
-class Filter(Resource):
-    def get(self, filter_id, user_id=None):
-        query = db.session.query(
-            models.SampleFilter
-        ).join(
-            user_models.User, user_models.User.user_id == models.SampleFilter.user_id
-        ).options(
-            contains_eager(models.SampleFilter.user)
-        ).filter(
-            models.SampleFilter.sample_filter_id == filter_id
+        return schemas.UserSchema(many=False, exclude=self._get_exclude(**kwargs)).dump(
+            user
         )
 
-        # If this is the filter list for a single user, filter it down to that
-        if user_id is not None:
-            query = query.filter(user_models.User.user_id == user_id)
 
-        results = query.first_or_404()
-
-        return schemas.SampleFilterSchema(many=False).dump(results)
-
-    @check_user
-    def put(self, filter_id, user, user_id=None):
-        load_schema = schemas.SampleFilterSchema(many=False, exclude=('user', 'id'))
-
-        # Find an instance that meets the user_id and filter_id constraints
-        query = db.session.query(
-            models.SampleFilter
-        ).join(
-            user_models.User, user_models.User.user_id == models.SampleFilter.user_id
-        ).options(
-            contains_eager(models.SampleFilter.user)
-        ).filter(
-            models.SampleFilter.sample_filter_id == filter_id
-        )
-        if user_id is not None:
-            query = query.filter(user_models.User.user_id == user_id)
-        curr_instance = query.first_or_404()
-
-        # Check permissions
-        if not (user.is_admin or curr_instance.user_id == user.user_id):
-            return '', HTTPStatus.UNAUTHORIZED
-
-        # Update the instance
-        new_instance = load_schema.load(request.json, session=db.session, instance=curr_instance).data
-        db.session.add(model)
-        db.session.commit()
-
-        # Dump the new instance as the response
-        dump_schema = schemas.SampleFilterSchema(many=False)
-        return dump_schema.dump(new_instance)
-
-    def delete(self, filter_id):
-        instance = db.session.query(
-            models.SampleFilter
-        ).get_or_404(filter_id)
-
-        db.session.delete(instance)
-        db.session.commit()
-
-        return {}
+class FilterList(ResourceList):
+    view_kwargs = True
+    schema = schemas.SampleFilterSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleFilter
+    )
 
 
-class TrendSeries(Resource):
+class Filter(ResourceDetail):
+    schema = schemas.SampleFilterSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleFilter
+    )
+
+
+class FilterRelationship(ResourceRelationship):
+    schema = schemas.SampleFilterSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleFilter
+    )
+
+
+class FilterGroupList(ResourceList):
+    view_kwargs = True
+    schema = schemas.FilterGroupSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleFilter
+    )
+
+    def get_collection(self, qs, kwargs, filters=None):
+        query = (self._data_layer.query(kwargs)
+                 .with_entities(models.SampleFilter.sample_filter_tag)
+                 .distinct()
+                 )
+
+        return query.count(), query.all()
+
+
+class FavouritePlotList(ResourceList):
+    view_kwargs = True
+    schema = schemas.FavouritePlotSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.PlotFavourite
+    )
+
+
+class FavouritePlot(ResourceDetail):
+    schema = schemas.FavouritePlotSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.PlotFavourite
+    )
+
+
+class FavouritePlotRelationship(ResourceRelationship):
+    schema = schemas.FavouritePlotSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.PlotFavourite
+    )
+
+
+class DashboardList(ResourceList):
+    view_kwargs = True
+    schema = schemas.DashboardSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Dashboard
+    )
+
+
+class DashboardRelationship(ResourceList):
+    view_kwargs = True
+    schema = schemas.DashboardSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Dashboard
+    )
+
+
+class Dashboard(ResourceDetail):
+    schema = schemas.DashboardSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Dashboard
+    )
+
+
+class TrendSeries(ResourceList):
+    view_kwargs = True
+
+class TrendSeries(ResourceList):
     @use_kwargs(schemas.TrendInputSchema(), locations=('querystring',))
     def get(self, fields, filter, outliers):
         # We need to give each resource a unique ID so the client doesn't try to cache or reconcile different plots
@@ -516,137 +393,63 @@ class TrendSeries(Resource):
         return schemas.TrendSchema(many=True, unknown=INCLUDE).dump(plots)
 
 
-class FavouritePlotList(Resource):
-    def get(self):
-        """
-        Get a list of favourite plots
-        """
-        plots = db.session.query(
-            models.PlotFavourite
-        ).all()
+json_api.route(Upload, 'upload', "/uploads/<int:id>")
+json_api.route(UploadList, 'uploadlist', '/uploads')
+json_api.route(UploadList, 'user_uploadlist', "/users/<int:id>/uploads")
+json_api.route(UploadRelationship, 'userupload',
+               "/users/<int:id>/relationships/uploads")
 
-        return schemas.FavouritePlotSchema(many=True, unknown=INCLUDE).dump(plots)
+json_api.route(Report, 'report', "/reports/<int:id>")
+json_api.route(ReportList, 'reportlist', '/reports')
+json_api.route(ReportList, 'user_reportlist', "/users/<int:id>/reports")
+json_api.route(ReportRelationship, 'report_samples_rel',
+               "/reports/<int:id>/relationships/samples")
 
-    @use_args(schemas.FavouritePlotSchema(), locations=('json',))
-    @check_user
-    def post(self, args, user):
-        """
-        Save a new favourite
-        """
-        favourite = models.PlotFavourite.create(**args, user=user)
-        return schemas.FavouritePlotSchema(many=False).dump(favourite), HTTPStatus.CREATED
+json_api.route(User, 'user', "/users/<int:id>")
+json_api.route(UserList, 'userlist', '/users')
+json_api.route(CurrentUser, 'currentuser', "/users/current")
+json_api.route(UserRelationship, 'user_reports_rel',
+               "/users/<int:id>/relationships/reports")
+json_api.route(UserRelationship, 'user_filters_rel',
+               "/users/<int:id>/relationships/filters")
 
+json_api.route(ReportMetaList, 'reportmetalist', "/report_meta")
+json_api.route(ReportMetaList, 'report_reportmetalist',
+               "/reports/<int:id>/report_meta")
+json_api.route(ReportMetaRelationship, 'report_reportmeta_rel',
+               "/reports/<int:id>/relationships/report_meta")
 
-class FavouritePlot(Resource):
-    def get(self, favourite_id):
-        """
-        Get a certain plot
-        """
-        plot = db.session.query(
-            models.PlotFavourite
-        ).get_or_404(favourite_id)
+json_api.route(Sample, 'sample', "/samples/<int:id>")
+json_api.route(SampleList, 'samplelist', '/samples')
+json_api.route(SampleList, 'report_samplelist', "/reports/<int:id>/samples")
 
-        return schemas.FavouritePlotSchema(many=False).dump(plot)
+json_api.route(ReportMetaTypeList, 'metatypelist', '/meta_types')
 
-    def delete(self, favourite_id):
-        """
-        Get a certain plot
-        """
-        plot = db.session.query(
-            models.PlotFavourite
-        ).get_or_404(favourite_id)
+json_api.route(SampleDataList, 'sample_sampledatalist',
+               "/samples/<int:id>/sample_data")
+json_api.route(SampleDataRelationship, 'sample_sampledata',
+               "/samples/<int:id>/relationships/sample_data")
 
-        db.session.delete(plot)
-        db.session.commit()
+json_api.route(DataType, 'datatype', "/data_types/<int:id>")
+json_api.route(DataTypeList, 'datatypelist', "/data_types")
 
-        return {}
+json_api.route(Filter, 'filter', "/filters/<int:id>", )
+json_api.route(FilterList, 'filterlist', "/filters")
+json_api.route(FilterList, 'user_filterlist', "/users/<int:id>/filters")
 
+json_api.route(FilterGroupList, 'filtergrouplist', "/filter_groups")
 
-class DashboardList(Resource):
-    def get(self):
-        """
-        Get a list of dashboards
-        """
-        dash = db.session.query(
-            models.Dashboard
-        ).all()
+json_api.route(FavouritePlot, 'favouriteplot', "/favourites/<int:id>")
+json_api.route(FavouritePlotList, 'favouriteplotlist', "/favourites")
+json_api.route(FavouritePlotList, 'user_favouriteplotlist',
+               "/users/<int:id>/favourites")
+json_api.route(FavouritePlotRelationship, "user_favourites_rel",
+               "/users/<int:id>/relationships/favourites")
 
-        return schemas.DashboardSchema(many=True, unknown=INCLUDE).dump(dash)
+json_api.route(Dashboard, 'dashboard', "/dashboards/<int:id>")
+json_api.route(DashboardList, 'dashboardlist', "/dashboards")
+json_api.route(DashboardList, 'user_dashboardlist', "/users/<int:id>/dashboards")
+json_api.route(DashboardRelationship, 'user_dashboards_rel',
+               "/users/<int:id>/relationships/dashboards")
 
-    @use_args(schemas.FavouritePlotSchema(), locations=('json',))
-    @check_user
-    def post(self, args, user):
-        """
-        Save a new favourite
-        """
-        dash = models.Dashboard.create(**args, user=user)
-        return schemas.DashboardSchema(many=False).dump(dash), HTTPStatus.CREATED
-
-
-class Dashboard(Resource):
-    def get(self, dashboard_id):
-        """
-        Get a certain plot
-        """
-        dashboard = db.session.query(
-            models.Dashboard
-        ).get_or_404(dashboard_id)
-
-        return schemas.DashboardSchema(many=False).dump(dashboard)
-
-    def delete(self, dashboard_id):
-        """
-        Get a certain plot
-        """
-        plot = db.session.query(
-            models.Dashboard
-        ).get_or_404(dashboard_id)
-
-        db.session.delete(plot)
-        db.session.commit()
-
-        return {}
-
-
-@restful.representation('text/csv')
-def output_csv(resp, code, headers=None):
-    csv = json_to_csv(resp['data'], delimiter='\t')
-    resp = make_response(csv, code)
-    resp.headers.extend(headers or {})
-    return resp
-
-
-restful.add_resource(UploadList, '/uploads', '/users/<int:user_id>/uploads')
-restful.add_resource(Upload, '/uploads/<int:upload_id>')
-
-restful.add_resource(ReportList, '/reports', '/users/<int:user_id>/reports')
-restful.add_resource(Report, '/reports/<int:report_id>')
-
-restful.add_resource(ReportMeta, '/reports/<int:report_id>/report_meta')
-restful.add_resource(ReportMetaTypeList, '/report_meta')
-
-restful.add_resource(SamplesList, '/reports/<int:report_id>/samples', '/samples')
-restful.add_resource(Sample, '/samples/<int:sample_id>')
-restful.add_resource(SampleData, '/samples/<int:sample_id>/sample_data')
-
-restful.add_resource(SampleDataType, '/data_types/<int:type_id>')
-restful.add_resource(SampleDataTypeList, '/data_types')
-
-restful.add_resource(UserList, '/users')
-restful.add_resource(CurrentUser, '/users/current')
-restful.add_resource(User, '/users/<int:user_id>')
-
-restful.add_resource(TrendSeries, '/plots/trends/series', endpoint='trend_data')
-
-restful.add_resource(FilterList, '/filters', '/users/<int:user_id>/filters')
-restful.add_resource(Filter, '/filters/<int:filter_id>')
-
-restful.add_resource(FavouritePlotList, '/favourites', '/users/<int:user_id>/favourites')
-restful.add_resource(FavouritePlot, '/favourites/<int:favourite_id>')
-
-restful.add_resource(DashboardList, '/dashboards', '/users/<int:user_id>/dashboards')
-restful.add_resource(Dashboard, '/dashboards/<int:dashboard_id>')
-
-restful.add_resource(FilterGroupList, '/filter_groups')
-
-restful.init_app(api_bp)
+json_api.route(TrendSeries, 'trend_data', "/plots/trends/series")

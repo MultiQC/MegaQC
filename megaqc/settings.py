@@ -115,7 +115,8 @@ class DevConfig(Config):
 
 class TestConfig(Config):
     """Test configuration."""
-    DEBUG = False
+    DEBUG = True
+    TESTING = True
     SQLALCHEMY_DBMS = 'sqlite'
     DB_NAME = 'megaqc.db'
     DB_PATH = os.path.join(tempfile.mkdtemp(), DB_NAME)
