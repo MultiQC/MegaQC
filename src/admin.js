@@ -21,7 +21,8 @@ function App() {
     const provider = jsonapiClient('/rest_api/v1', {
         total: null,
         headers: {
-            access_token: token
+            access_token: token,
+            Accept: 'application/vnd.api+json'
         }
     });
 
