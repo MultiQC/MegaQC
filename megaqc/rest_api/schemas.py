@@ -1,74 +1,22 @@
-"""fi
+"""
 These schemas describe the format of the web requests to and from the API. They incidentally share most fields with the
 database models, but they can be opinionated about REST-specific fields
 """
 from marshmallow import post_load, validate, Schema as BaseSchema, INCLUDE
-from marshmallow.schema import SchemaMeta
-from marshmallow_jsonapi import fields as f, SchemaOpts
-from marshmallow_jsonapi.flask import Relationship as BaseRelationship, Schema as JsonApiSchema
+from marshmallow_jsonapi import fields as f
+from marshmallow_jsonapi.flask import Relationship, Schema as JsonApiSchema
 from marshmallow_jsonapi.utils import resolve_params
-from marshmallow_sqlalchemy.schema import ModelSchema, ModelSchemaOpts, ModelSchemaMeta
 
 from megaqc.extensions import db
 from megaqc.model import models
-from megaqc.user import models as user_models
 from megaqc.rest_api.fields import JsonString, FilterReference
+from megaqc.user import models as user_models
 
 
-class CombinedOpts(SchemaOpts, ModelSchemaOpts):
-    pass
-
-
-class CombinedMeta(ModelSchemaMeta, SchemaMeta):
-    @classmethod
-    def get_declared_fields(mcs, klass, cls_fields, inherited_fields, dict_cls):
-        return SchemaMeta.get_declared_fields(
-            klass=klass,
-            cls_fields=cls_fields,
-            inherited_fields=inherited_fields,
-            dict_cls=dict_cls
-        )
-
-
-class Relationship(BaseRelationship):
-    def extract_value(self, data):
-        ret = super().extract_value(data)
-        if isinstance(ret, (int, str)) and hasattr(self.schema.opts, 'model') and hasattr(self.schema.opts, 'sqla_session'):
-            return self.schema.opts.sqla_session.query(self.schema.opts.model).get(ret)
-        return ret
-
-
-# By using this metaclass, we stop all the default fields being copied into the schema, allowing us to rename them
-# class OptionalLinkSchema(ModelSchema, JsonApiSchema, metaclass=CombinedMeta):
 class OptionalLinkSchema(JsonApiSchema):
     def __init__(self, use_links=True, *args, **kwargs):
         self.use_links = use_links
-
-        # include_all = kwargs.pop('include_data', False) is True
-
         super().__init__(*args, **kwargs)
-
-        # if include_all:
-        #     self.include_all_data()
-
-    # @post_load()
-    # def make_instance(self, data, **kwargs):
-    #     """Deserialize data to an instance of the model. Update an existing row
-    #     if specified in `self.instance` or loaded by primary key(s) in the data;
-    #     else create a new row.
-    #
-    #     :param data: Data to deserialize.
-    #     """
-    #     instance = self.instance or self.get_instance(data)
-    #     if instance is not None:
-    #         for key, value in data.items():
-    #             setattr(instance, key, value)
-    #         return instance
-    #     kwargs, association_attrs = self._split_model_kwargs_association(data)
-    #     instance = self.opts.model(**kwargs)
-    #     for attr, value in association_attrs.items():
-    #         setattr(instance, attr, value)
-    #     return instance
 
     def get_resource_links(self, item):
         kwargs = resolve_params(item, self.opts.self_url_kwargs or {})
@@ -76,18 +24,8 @@ class OptionalLinkSchema(JsonApiSchema):
             if arg is None:
                 return None
 
-        # if not self.use_links:
-        #     return None
         return super().get_resource_links(item)
 
-    # def include_all_data(self):
-    #     """
-    #     Recursively set include_data for all relationships to this schema
-    #     """
-    #     for field in self.fields.values():
-    #         if isinstance(field, BaseRelationship):
-    #             field.include_data = True
-    #             field.schema.include_all_data()
     @post_load()
     def remove_empty_id(self, item, **kwargs):
         """
