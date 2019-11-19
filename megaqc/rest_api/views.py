@@ -251,15 +251,7 @@ class CurrentUser(ResourceDetail):
         model=user_models.User
     )
 
-    def get_schema_kwargs(self, args, kwargs):
-        # Only show the filepath if they're an admin
-        if 'user' in kwargs and kwargs['permission'] <= utils.Permission.ADMIN:
-            return {
-                'exclude': ["salt", "api_token"]
-            }
-
-        return {}
-
+    @utils.check_perms
     def get(self, **kwargs):
         """
         Get details about the current user. This is also how the frontend can get an access token. For that reason,
@@ -276,7 +268,14 @@ class CurrentUser(ResourceDetail):
                 .first_or_404()
         )
 
-        return schemas.UserSchema(many=False, exclude=self._get_exclude(**kwargs)).dump(
+        if kwargs['permission'] >= utils.Permission.ADMIN:
+            # If an admin is making this request, give them everything
+            schema_kwargs = {}
+        else:
+            # If it's a user requesting their own data, exclude password info
+            schema_kwargs = {'exclude': ["salt", "password"]}
+
+        return schemas.UserSchema(many=False, **schema_kwargs).dump(
             user
         )
 
