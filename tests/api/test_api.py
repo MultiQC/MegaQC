@@ -114,6 +114,7 @@ def factory_clone(instance, factory):
 
 @pytest.mark.parametrize('endpoint', [
     'rest_api.uploadlist',
+    'rest_api.sampledatalist',
     'rest_api.reportlist',
     'rest_api.reportmetalist',
     'rest_api.samplelist',

@@ -419,8 +419,8 @@ json_api.route(SampleList, 'report_samplelist', "/reports/<int:id>/samples")
 
 json_api.route(ReportMetaTypeList, 'metatypelist', '/meta_types')
 
-json_api.route(SampleDataList, 'sample_sampledatalist',
-               "/samples/<int:id>/sample_data")
+json_api.route(SampleDataList, 'sampledatalist', "/sample_data")
+json_api.route(SampleDataList, 'sample_sampledatalist', "/samples/<int:id>/sample_data")
 json_api.route(SampleDataRelationship, 'sample_sampledata',
                "/samples/<int:id>/relationships/sample_data")
 
