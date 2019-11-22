@@ -10,6 +10,7 @@ import {FilterGroupList} from "./admin/filterGroup";
 import {DataTypeList, DataTypeEdit, DataTypeShow} from "./admin/dataType";
 import {FavouriteList, FavouriteEdit, FavouriteShow} from "./admin/favourite";
 import {DashboardList, DashboardEdit, DashboardShow} from "./admin/dashboards";
+import {DataList, DataEdit, DataShow} from "./admin/sampleData";
 import {UserList, UserEdit, UserShow} from "./admin/user";
 import {getClient, getToken} from './util/api';
 
@@ -19,7 +20,8 @@ function App() {
     const [token, setToken] = useState(null);
 
     const provider = jsonapiClient('/rest_api/v1', {
-        total: null,
+        total: 'count',
+        arrayFormat: 'comma',
         headers: {
             access_token: token,
             Accept: 'application/vnd.api+json'
@@ -48,6 +50,7 @@ function App() {
                 <Resource name="filter_groups" list={FilterGroupList}/>
                 <Resource name="favourites" list={FavouriteList} show={FavouriteShow} edit={FavouriteEdit}/>
                 <Resource name="dashboards" list={DashboardList} show={DashboardShow} edit={DashboardEdit}/>
+                <Resource name="sample_data" show={ShowGuesser} edit={EditGuesser}/>
             </Admin>
         );
 }

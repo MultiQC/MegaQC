@@ -12,12 +12,13 @@ import {
     SimpleShowLayout,
     TextField,
     TextInput,
-    ReferenceField
+    ReferenceField,
+    ReferenceManyField,
 } from 'react-admin';
 
 export const ReportList = props => (
     <List {...props}>
-        <Datagrid rowClick="edit">
+        <Datagrid rowClick="show">
             <TextField source="id"/>
             <DateField source="uploaded_at"/>
             <DateField source="created_at"/>
@@ -49,6 +50,15 @@ export const ReportShow = props => (
             <DateField source="uploaded_at"/>
             <TextField source="hash"/>
             <DateField source="created_at"/>
+            <ReferenceField label="Owner" source="relationships.user.id" reference="users">
+                <TextField source="username"/>
+            </ReferenceField>
+             <ReferenceManyField label="Samples" reference="samples" target="report">
+                <Datagrid rowClick="show">
+                    <TextField source="id"/>
+                    <TextField source="name"/>
+                </Datagrid>
+            </ReferenceManyField>
         </SimpleShowLayout>
     </Show>
 );
