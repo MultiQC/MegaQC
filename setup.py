@@ -21,19 +21,20 @@ dev_reqs = [
     "Flask-Caching>=1.0.0",
     "Flask-DebugToolbar>=0.10.1",
     "Flask-Login>=0.4.0",
-    "Flask-SQLAlchemy==2.2",
-    "Flask-WTF==0.14.2",
+    "Flask-SQLAlchemy>=2.2",
+    "Flask-WTF>=0.14.2",
     "Flask==1.0.2",
     "future==0.16.0",
     "itsdangerous>=0.24",
     "Jinja2>=2.9.5",
     "markdown>=2.6.11",
-    "numpy==1.14.3",
+    "multiqc>=1.3",
+    "numpy>=1.14.3",
     "passlib==1.7.1",
     "plotly==2.0.15",
     "pyyaml>=5.1.2",
     "SQLAlchemy>=1.1.5",
-    "Werkzeug==0.14.1",
+    "Werkzeug>=0.14.1",
     "WTForms>=2.1",
     "flask_restful>=0.3.7",
     "flask-marshmallow>=0.10.1",
@@ -70,7 +71,8 @@ prod_reqs = dev_reqs + [
     "psycopg2-binary>=2.6.2",
     "gunicorn>=19.7.1",
 ]
-install_requires = prod_reqs if os.environ.get('MEGAQC_PRODUCTION') else dev_reqs
+install_requires = prod_reqs if os.environ.get(
+    'MEGAQC_PRODUCTION') else dev_reqs
 
 print("""-----------------------------------
  Installing MegaQC version {}
@@ -85,7 +87,8 @@ setup(
     author_email='phil.ewels@scilifelab.se',
     description="Collect and visualise data across multiple MultiQC runs",
     long_description=__doc__,
-    keywords=['bioinformatics', 'biology', 'sequencing', 'NGS', 'next generation sequencing', 'quality control'],
+    keywords=['bioinformatics', 'biology', 'sequencing', 'NGS',
+              'next generation sequencing', 'quality control'],
     url='https://megaqc.info/',
     download_url='https://github.com/ewels/MegaQC/releases',
     license='GPLv3',

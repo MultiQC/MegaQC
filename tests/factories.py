@@ -106,7 +106,8 @@ class SampleFactory(BaseFactory):
     sample_name = Faker('word')
 
     report = SubFactory(ReportFactory, samples=[])
-    data = SubFactoryList('tests.factories.SampleDataFactory', report=SelfAttribute('..report'))
+    # data = SubFactoryList('tests.factories.SampleDataFactory', report=SelfAttribute('..report'))
+    data = SubFactoryList('tests.factories.SampleDataFactory', report=None)
 
 
 class SampleDataTypeFactory(BaseFactory):
@@ -125,7 +126,7 @@ class SampleDataFactory(BaseFactory):
     # sample_data_id = Faker('pyint')
     value = Faker('pyint')
 
-    report = SubFactory(ReportFactory)
+    report = SubFactory(ReportFactory, samples=[])
     sample = SubFactory(SampleFactory, data=[])
     data_type = SubFactory(SampleDataTypeFactory)
 
