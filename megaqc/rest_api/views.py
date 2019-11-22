@@ -168,6 +168,15 @@ class ReportMetaTypeList(ResourceList):
         return query.count(), query.all()
 
 
+class SampleData(ResourceDetail):
+    view_kwargs = True
+    schema = schemas.SampleDataSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.SampleData
+    )
+
+
 class SampleDataList(ResourceList):
     view_kwargs = True
     schema = schemas.SampleDataSchema
@@ -419,6 +428,7 @@ json_api.route(SampleList, 'report_samplelist', "/reports/<int:id>/samples")
 
 json_api.route(ReportMetaTypeList, 'metatypelist', '/meta_types')
 
+json_api.route(SampleData, 'sampledata', "/sample_data/<int:id>")
 json_api.route(SampleDataList, 'sampledatalist', "/sample_data")
 json_api.route(SampleDataList, 'sample_sampledatalist', "/samples/<int:id>/sample_data")
 json_api.route(SampleDataRelationship, 'sample_sampledata',
