@@ -217,6 +217,7 @@ def test_get_many_resources_associated(endpoint, foreign_key, session, client,
 
 @pytest.mark.parametrize('endpoint', [
     'rest_api.upload',
+    'rest_api.sampledata',
     'rest_api.report',
     'rest_api.sample',
     'rest_api.datatype',
