@@ -50,7 +50,7 @@ function App() {
                 <Resource name="filter_groups" list={FilterGroupList}/>
                 <Resource name="favourites" list={FavouriteList} show={FavouriteShow} edit={FavouriteEdit}/>
                 <Resource name="dashboards" list={DashboardList} show={DashboardShow} edit={DashboardEdit}/>
-                <Resource name="sample_data" show={ShowGuesser} edit={EditGuesser}/>
+                <Resource name="sample_data" list={ListGuesser} show={ShowGuesser} edit={EditGuesser}/>
             </Admin>
         );
 }

@@ -9,7 +9,8 @@ import {
     SimpleForm,
     SimpleShowLayout,
     TextField,
-    TextInput
+    TextInput,
+    ReferenceManyField
 } from 'react-admin';
 
 export const SampleList = props => (
@@ -28,10 +29,12 @@ export const SampleShow = props => (
         <SimpleShowLayout>
             <TextField source="id"/>
             <TextField source="name"/>
-            <ReferenceManyField label="Data" reference="sample_data" target="report">
+            <ReferenceManyField label="Data" reference="sample_data" target="sample">
                 <Datagrid rowClick="show">
-                    <TextField source="id"/>
-                    <TextField source="name"/>
+                    <TextField source="id" />
+                    <TextField source="value" />
+                    <EditButton/>
+                    <ShowButton/>
                 </Datagrid>
             </ReferenceManyField>
         </SimpleShowLayout>
