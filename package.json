@@ -33,7 +33,7 @@
     "plotly.js-basic-dist": "^1.49.5",
     "ra-jsonapi-client": "file:../ra-jsonapi-client",
     "react": "^16.8.6",
-    "react-admin": "^2.9.6",
+    "react-admin": "^3.0.0",
     "react-dom": "^16.8.6",
     "react-plotly.js": "^2.3.0",
     "reactstrap": "^8.0.0",

@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    Create,
     Datagrid,
     Edit,
     EditButton,
@@ -10,14 +11,27 @@ import {
     SimpleShowLayout,
     TextField,
     TextInput,
-    ReferenceField
+    ReferenceField,
+    ReferenceInput,
+    AutocompleteInput,
+    SelectInput
 } from 'react-admin';
+
+import DefaultForm from "./components/DefaultForm";
 
 export const DataList = props => (
     <List {...props}>
         <Datagrid rowClick="show">
-            <TextField source="id" />
-            <TextField source="value" />
+            <TextField source="id"/>
+            <TextField source="value"/>
+            <ReferenceField link="show" label="Type" source="relationships.data_type.id"
+                            reference="data_types">
+                <TextField source="key"/>
+            </ReferenceField>
+            <ReferenceField link="show" label="Sample" source="relationships.sample.id"
+                            reference="samples">
+                <TextField source="name"/>
+            </ReferenceField>
             <EditButton/>
             <ShowButton/>
         </Datagrid>
@@ -27,10 +41,15 @@ export const DataList = props => (
 export const DataShow = props => (
     <Show {...props}>
         <SimpleShowLayout>
-            <TextField source="id" />
-            <TextField source="value" />
-            <ReferenceField label="Type" source="relationships.data_type.id" reference="data_types">
+            <TextField source="id"/>
+            <TextField source="value"/>
+            <ReferenceField link="show" label="Type" source="relationships.data_type.id"
+                            reference="data_types">
                 <TextField source="key"/>
+            </ReferenceField>
+            <ReferenceField link="show" label="Sample" source="relationships.sample.id"
+                            reference="samples">
+                <TextField source="name"/>
             </ReferenceField>
         </SimpleShowLayout>
     </Show>
@@ -41,6 +60,46 @@ export const DataEdit = props => (
         <SimpleForm>
             <TextInput source="id"/>
             <TextInput source="value"/>
+            <ReferenceInput
+                filterToQuery={() => {}}
+                label="Type"
+                source="relationships.data_type.id"
+                reference="data_types"
+            >
+                <SelectInput optionValue="id" optionText="key"/>
+            </ReferenceInput>
+            <ReferenceInput
+                filterToQuery={() => {}}
+                label="Sample"
+                source="relationships.sample.id"
+                reference="samples"
+            >
+                <SelectInput optionValue="id" optionText="name"/>
+            </ReferenceInput>
         </SimpleForm>
     </Edit>
+);
+
+export const DataCreate = props => (
+    <Create {...props}>
+        <DefaultForm location={props.location}>
+            <TextInput source="value"/>
+            <ReferenceInput
+                filterToQuery={() => {}}
+                label="Type"
+                source="relationships.data_type.id"
+                reference="data_types"
+            >
+                <SelectInput optionValue="id" optionText="key"/>
+            </ReferenceInput>
+            <ReferenceInput
+                filterToQuery={() => {}}
+                label="Sample"
+                source="relationships.sample.id"
+                reference="samples"
+            >
+                <SelectInput optionValue="id" optionText="name"/>
+            </ReferenceInput>
+        </DefaultForm>
+    </Create>
 );

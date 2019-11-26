@@ -17,7 +17,7 @@ import {
 
 export const UploadList = props => (
     <List {...props}>
-        <Datagrid rowClick="edit">
+        <Datagrid rowClick="show">
             <TextField source="id"/>
             <TextField source="message"/>
             <TextField source="path"/>

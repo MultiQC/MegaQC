@@ -36,7 +36,7 @@ export const ReportEdit = props => (
             <DateInput source="uploaded_at"/>
             <TextInput source="hash"/>
             <DateInput source="created_at"/>
-            <ReferenceField label="Owner" source="relationships.user.id" reference="users">
+            <ReferenceField link="show" label="Owner" source="relationships.user.id" reference="users">
                 <TextField source="username"/>
             </ReferenceField>
         </SimpleForm>
@@ -50,7 +50,7 @@ export const ReportShow = props => (
             <DateField source="uploaded_at"/>
             <TextField source="hash"/>
             <DateField source="created_at"/>
-            <ReferenceField label="Owner" source="relationships.user.id" reference="users">
+            <ReferenceField link="show" label="Owner" source="relationships.user.id" reference="users">
                 <TextField source="username"/>
             </ReferenceField>
              <ReferenceManyField label="Samples" reference="samples" target="report">

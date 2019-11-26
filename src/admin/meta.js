@@ -16,7 +16,7 @@ import {
 
 export const ReportMetaList = props => (
     <List {...props}>
-        <Datagrid rowClick="edit">
+        <Datagrid rowClick="show">
             <TextField source="id" />
         </Datagrid>
     </List>

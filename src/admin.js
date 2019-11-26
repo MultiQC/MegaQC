@@ -10,7 +10,7 @@ import {FilterGroupList} from "./admin/filterGroup";
 import {DataTypeList, DataTypeEdit, DataTypeShow} from "./admin/dataType";
 import {FavouriteList, FavouriteEdit, FavouriteShow} from "./admin/favourite";
 import {DashboardList, DashboardEdit, DashboardShow} from "./admin/dashboards";
-import {DataList, DataEdit, DataShow} from "./admin/sampleData";
+import {DataList, DataEdit, DataShow, DataCreate} from "./admin/sampleData";
 import {UserList, UserEdit, UserShow} from "./admin/user";
 import {getClient, getToken} from './util/api';
 
@@ -44,13 +44,12 @@ function App() {
                 <Resource name="samples" list={SampleList} show={SampleShow} edit={SampleEdit}/>
                 <Resource name="uploads" list={UploadList} show={UploadShow} edit={UploadEdit}/>
                 <Resource name="report_meta" list={ReportMetaList}/>
-                {/*<Resource name="data" list={ListGuesser} show={ShowGuesser} edit={EditGuesser}/>*/}
                 <Resource name="data_types" list={DataTypeList} show={DataTypeShow} edit={DataTypeEdit}/>
                 <Resource name="users" list={UserList} show={UserShow} edit={UserEdit}/>
                 <Resource name="filter_groups" list={FilterGroupList}/>
                 <Resource name="favourites" list={FavouriteList} show={FavouriteShow} edit={FavouriteEdit}/>
                 <Resource name="dashboards" list={DashboardList} show={DashboardShow} edit={DashboardEdit}/>
-                <Resource name="sample_data" list={ListGuesser} show={ShowGuesser} edit={EditGuesser}/>
+                <Resource name="sample_data" create={DataCreate} list={DataList} show={DataShow} edit={DataEdit}/>
             </Admin>
         );
 }

@@ -16,7 +16,7 @@ import {
 
 export const DataTypeList = props => (
     <List {...props}>
-        <Datagrid rowClick="edit">
+        <Datagrid rowClick="show">
             <TextField source="id" />
             <TextField source="section" />
             <TextField source="key" />

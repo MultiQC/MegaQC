@@ -15,12 +15,12 @@ import {
     BooleanField,
     BooleanInput
 } from 'react-admin';
-import {Field} from 'redux-form';
-import {renderJsonField} from './jsonField'
+import {Field} from 'react-final-form';
+import {renderJsonField} from './components/jsonField'
 
 export const DashboardList = props => (
     <List {...props}>
-        <Datagrid rowClick="edit">
+        <Datagrid rowClick="show">
             <TextField source="id"/>
             <TextField source="title"/>
             <DateField source="created_at"/>

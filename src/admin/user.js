@@ -20,7 +20,7 @@ import {
 
 export const UserList = props => (
     <List {...props}>
-        <Datagrid rowClick="edit">
+        <Datagrid rowClick="show">
             <TextField source="id" />
             <TextField source="username" />
             <TextField source="first_name" />
