@@ -14,6 +14,20 @@ import {DataList, DataEdit, DataShow, DataCreate} from "./admin/sampleData";
 import {UserList, UserEdit, UserShow} from "./admin/user";
 import {getClient, getToken} from './util/api';
 
+/**
+ * Constructs a JSON API Serializer options object for the list of provided relationships
+ */
+function relationships(rels){
+    const ret = {
+        keyForAttribute: attr => attr
+    };
+    for (let rel of rels){
+        ret[rel] = {
+            ref: (outer, inner) => inner.id,
+        }
+    }
+    return ret
+}
 
 function App() {
     // Start with a client that has no auth, but immediately request an auth token
@@ -22,6 +36,12 @@ function App() {
     const provider = jsonapiClient('/rest_api/v1', {
         total: 'count',
         arrayFormat: 'comma',
+        serializerOpts: {
+            sample_data: relationships(['report', 'sample', 'data_type'])
+        },
+        deserializerOpts: {
+            keyForAttribute: attr => attr
+        },
         headers: {
             access_token: token,
             Accept: 'application/vnd.api+json'

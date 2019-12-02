@@ -29,7 +29,8 @@ export const SampleList = props => (
         <Datagrid rowClick="show">
             <TextField source="id"/>
             <TextField source="name"/>
-            <ReferenceField link="show" label="Report" source="relationships.report.id" reference="reports">
+            <ReferenceField link="show" label="Report" source="relationships.report.id"
+                            reference="reports">
                 <TextField source="id"/>
             </ReferenceField>
             <EditButton/>
@@ -43,19 +44,31 @@ export const SampleShow = props => (
         <SimpleShowLayout>
             <TextField source="id"/>
             <TextField source="name"/>
-            <ReferenceField link="show" label="Report" source="relationships.report.id" reference="reports">
+            <ReferenceField link="show" label="Report" source="relationships.report.id"
+                            reference="reports">
                 <TextField source="id"/>
             </ReferenceField>
             <ReferenceManyField label="Data" reference="sample_data" target="sample">
-                <Datagrid rowClick="show">
-                    <TextField source="id" />
-                    <TextField source="value" />
-                    <ReferenceField link="show" label="Type" source="relationships.data_type.id" reference="data_types">
-                        <TextField source="key"/>
-                    </ReferenceField>
-                    <EditButton/>
-                    <ShowButton/>
-                </Datagrid>
+                <List
+                    location={props.location}
+                    hasCreate={false}
+                    hasEdit={false}
+                    hasList={false}
+                    hasShow={false}
+                    resource="sample_data"
+                >
+                    <Datagrid rowClick="show">
+                        <TextField source="id"/>
+                        <TextField source="value"/>
+                        <ReferenceField link="show" label="Type"
+                                        source="relationships.data_type.id"
+                                        reference="data_types">
+                            <TextField source="key"/>
+                        </ReferenceField>
+                        <EditButton/>
+                        <ShowButton/>
+                    </Datagrid>
+                </List>
             </ReferenceManyField>
         </SimpleShowLayout>
     </Show>
@@ -67,18 +80,21 @@ export const SampleEdit = props => (
             <TextInput source="id"/>
             <TextInput source="name"/>
             <ReferenceInput
-                filterToQuery={() => {}}
+                filterToQuery={() => {
+                }}
                 label="Report"
                 source="relationships.report.id"
                 reference="reports"
-                >
+            >
                 <AutocompleteInput optionValue="id" optionText="id"/>
             </ReferenceInput>
             <ReferenceManyField label="Data" reference="sample_data" target="sample">
                 <Datagrid rowClick="show">
-                    <TextField source="id" />
-                    <TextField source="value" />
-                    <ReferenceField link="show" label="Type" source="relationships.data_type.id" reference="data_types">
+                    <TextField source="id"/>
+                    <TextField source="value"/>
+                    <ReferenceField link="show" label="Type"
+                                    source="relationships.data_type.id"
+                                    reference="data_types">
                         <TextField source="key"/>
                     </ReferenceField>
                     <EditButton/>
@@ -88,7 +104,7 @@ export const SampleEdit = props => (
             <ResourceLink
                 reference="sample_data"
                 source="id"
-                dest="relationships.sample.id"
+                dest="sample.id"
             />
             {/*<ReferenceArrayInput*/}
             {/*    filterToQuery={() => {}}*/}

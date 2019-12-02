@@ -24,11 +24,11 @@ export const DataList = props => (
         <Datagrid rowClick="show">
             <TextField source="id"/>
             <TextField source="value"/>
-            <ReferenceField link="show" label="Type" source="relationships.data_type.id"
+            <ReferenceField link="show" label="Type" source="data_type.id"
                             reference="data_types">
                 <TextField source="key"/>
             </ReferenceField>
-            <ReferenceField link="show" label="Sample" source="relationships.sample.id"
+            <ReferenceField link="show" label="Sample" source="sample.id"
                             reference="samples">
                 <TextField source="name"/>
             </ReferenceField>
@@ -43,11 +43,11 @@ export const DataShow = props => (
         <SimpleShowLayout>
             <TextField source="id"/>
             <TextField source="value"/>
-            <ReferenceField link="show" label="Type" source="relationships.data_type.id"
+            <ReferenceField link="show" label="Type" source="data_type.id"
                             reference="data_types">
                 <TextField source="key"/>
             </ReferenceField>
-            <ReferenceField link="show" label="Sample" source="relationships.sample.id"
+            <ReferenceField link="show" label="Sample" source="sample.id"
                             reference="samples">
                 <TextField source="name"/>
             </ReferenceField>
@@ -63,7 +63,7 @@ export const DataEdit = props => (
             <ReferenceInput
                 filterToQuery={() => {}}
                 label="Type"
-                source="relationships.data_type.id"
+                source="data_type.id"
                 reference="data_types"
             >
                 <SelectInput optionValue="id" optionText="key"/>
@@ -71,7 +71,7 @@ export const DataEdit = props => (
             <ReferenceInput
                 filterToQuery={() => {}}
                 label="Sample"
-                source="relationships.sample.id"
+                source="sample.id"
                 reference="samples"
             >
                 <SelectInput optionValue="id" optionText="name"/>
@@ -87,7 +87,7 @@ export const DataCreate = props => (
             <ReferenceInput
                 filterToQuery={() => {}}
                 label="Type"
-                source="relationships.data_type.id"
+                source="data_type.id"
                 reference="data_types"
             >
                 <SelectInput optionValue="id" optionText="key"/>
@@ -95,7 +95,7 @@ export const DataCreate = props => (
             <ReferenceInput
                 filterToQuery={() => {}}
                 label="Sample"
-                source="relationships.sample.id"
+                source="sample.id"
                 reference="samples"
             >
                 <SelectInput optionValue="id" optionText="name"/>
