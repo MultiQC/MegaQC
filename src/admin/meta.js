@@ -1,25 +1,20 @@
 import React from 'react';
 import {
+    AutocompleteInput,
+    Create,
     Datagrid,
-    DateField,
-    DateInput,
     Edit,
-    EditButton,
     List,
+    ReferenceField,
+    ReferenceInput,
     Show,
-    ShowButton,
     SimpleForm,
     SimpleShowLayout,
     TextField,
-    TextInput,
-    ReferenceField,
-    ReferenceInput,
-    SelectInput,
-    AutocompleteInput,
-    Create
+    TextInput
 } from 'react-admin';
 
-import DefaultForm from "./components/DefaultForm";
+import DefaultForm from "./components/defaultForm";
 
 export const ReportMetaList = props => (
     <List {...props}>

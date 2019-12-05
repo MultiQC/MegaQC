@@ -5,19 +5,18 @@ import {
     Edit,
     EditButton,
     List,
+    ReferenceField,
+    ReferenceInput,
+    SelectInput,
     Show,
     ShowButton,
     SimpleForm,
     SimpleShowLayout,
     TextField,
-    TextInput,
-    ReferenceField,
-    ReferenceInput,
-    AutocompleteInput,
-    SelectInput
+    TextInput
 } from 'react-admin';
 
-import DefaultForm from "./components/DefaultForm";
+import DefaultForm from "./components/defaultForm";
 
 export const DataList = props => (
     <List {...props}>

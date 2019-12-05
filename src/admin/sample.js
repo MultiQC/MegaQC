@@ -1,25 +1,20 @@
 import React from 'react';
 import {
-    Button,
+    AutocompleteInput,
     Datagrid,
     Edit,
     EditButton,
     List,
+    Pagination,
+    ReferenceField,
+    ReferenceInput,
+    ReferenceManyField,
     Show,
     ShowButton,
     SimpleForm,
     SimpleShowLayout,
     TextField,
-    TextInput,
-    ReferenceManyField,
-    ReferenceField,
-    ReferenceInput,
-    ReferenceArrayInput,
-    SelectInput,
-    AutocompleteInput,
-    AutocompleteArrayInput,
-    Link,
-    Pagination
+    TextInput
 } from 'react-admin';
 
 import ResourceLink from './components/resourceLink'

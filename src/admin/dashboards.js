@@ -1,19 +1,17 @@
 import React from 'react';
 import {
+    BooleanField,
+    BooleanInput,
     Datagrid,
     DateField,
     DateInput,
     Edit,
-    EditButton,
     List,
     Show,
-    ShowButton,
     SimpleForm,
     SimpleShowLayout,
     TextField,
-    TextInput,
-    BooleanField,
-    BooleanInput
+    TextInput
 } from 'react-admin';
 import {Field} from 'react-final-form';
 import {renderJsonField} from './components/jsonField'

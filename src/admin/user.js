@@ -1,27 +1,23 @@
 import React from 'react';
 import {
+    BooleanField,
+    BooleanInput,
     Datagrid,
     DateField,
     DateInput,
     Edit,
     EditButton,
+    EmailField,
     List,
+    Pagination,
+    ReferenceField,
+    ReferenceManyField,
     Show,
     ShowButton,
     SimpleForm,
     SimpleShowLayout,
     TextField,
-    TextInput,
-    EmailField,
-    BooleanField,
-    BooleanInput,
-    ReferenceManyField,
-    ReferenceField,
-    SelectInput,
-    AutocompleteInput,
-    AutocompleteArrayInput,
-    Link,
-    Pagination
+    TextInput
 } from 'react-admin';
 
 

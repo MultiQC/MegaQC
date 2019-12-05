@@ -1,18 +1,14 @@
 import React from 'react';
 import {
+    Create,
     Datagrid,
-    DateField,
-    DateInput,
     Edit,
-    EditButton,
     List,
     Show,
-    ShowButton,
     SimpleForm,
     SimpleShowLayout,
     TextField,
-    TextInput,
-    Create
+    TextInput
 } from 'react-admin';
 
 export const DataTypeList = props => (

@@ -6,14 +6,14 @@ import {
     Edit,
     EditButton,
     List,
+    ReferenceField,
+    ReferenceManyField,
     Show,
     ShowButton,
     SimpleForm,
     SimpleShowLayout,
     TextField,
     TextInput,
-    ReferenceField,
-    ReferenceManyField,
 } from 'react-admin';
 import ResourceLink from './components/resourceLink'
 

@@ -19,6 +19,8 @@ import {DataList, DataEdit, DataShow, DataCreate} from "./admin/sampleData";
 import {UserList, UserEdit, UserShow} from "./admin/user";
 import {getClient, getToken} from './util/api';
 
+import {MegaQcLayout} from './admin/components/layout';
+
 /**
  * Constructs a JSON API Serializer options object for the list of provided relationships
  */
@@ -33,6 +35,7 @@ function relationships(rels = []) {
     }
     return ret
 }
+
 
 function App() {
     // Start with a client that has no auth, but immediately request an auth token
@@ -84,7 +87,7 @@ function App() {
         return null;
     else
         return (
-            <Admin dataProvider={provider}>
+            <Admin layout={MegaQcLayout} dataProvider={provider}>
                 <Resource
                     name="reports" list={ReportList} show={ReportShow} edit={ReportEdit}
                 />
