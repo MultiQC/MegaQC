@@ -31,7 +31,7 @@
     "moment": "^2.24.0",
     "plotly.js": "^1.48.1",
     "plotly.js-basic-dist": "^1.49.5",
-    "ra-jsonapi-client": "file:../ra-jsonapi-client",
+    "ra-jsonapi-client": "github:tmiguelt/ra-jsonapi-client#github-publish",
     "react": "^16.8.6",
     "react-admin": "^3.0.0",
     "react-dom": "^16.8.6",
