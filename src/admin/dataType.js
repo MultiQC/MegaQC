@@ -11,7 +11,8 @@ import {
     SimpleForm,
     SimpleShowLayout,
     TextField,
-    TextInput
+    TextInput,
+    Create
 } from 'react-admin';
 
 export const DataTypeList = props => (
@@ -44,3 +45,11 @@ export const DataTypeShow = props => (
     </Show>
 );
 
+export const DataTypeCreate = props => (
+    <Create {...props}>
+        <SimpleForm redirect="show">
+            <TextInput source="section" />
+            <TextInput source="key" />
+        </SimpleForm>
+    </Create>
+);

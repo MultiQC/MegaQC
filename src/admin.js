@@ -1,13 +1,18 @@
 import ReactDOM from 'react-dom';
 import React, {useEffect, useRef, useState} from 'react';
-import {Admin, Resource, EditGuesser, ListGuesser, ShowGuesser} from 'react-admin';
+import {Admin, Resource} from 'react-admin';
 import jsonapiClient from "ra-jsonapi-client";
 import {ReportEdit, ReportList, ReportShow} from "./admin/report";
 import {SampleEdit, SampleList, SampleShow} from "./admin/sample";
 import {UploadEdit, UploadList, UploadShow} from "./admin/upload";
-import {ReportMetaList} from "./admin/meta";
+import {
+    ReportMetaList,
+    ReportMetaShow,
+    ReportMetaEdit,
+    ReportMetaCreate
+} from "./admin/meta";
 import {FilterGroupList} from "./admin/filterGroup";
-import {DataTypeList, DataTypeEdit, DataTypeShow} from "./admin/dataType";
+import {DataTypeList, DataTypeEdit, DataTypeShow, DataTypeCreate} from "./admin/dataType";
 import {FavouriteList, FavouriteEdit, FavouriteShow} from "./admin/favourite";
 import {DashboardList, DashboardEdit, DashboardShow} from "./admin/dashboards";
 import {DataList, DataEdit, DataShow, DataCreate} from "./admin/sampleData";
@@ -17,11 +22,11 @@ import {getClient, getToken} from './util/api';
 /**
  * Constructs a JSON API Serializer options object for the list of provided relationships
  */
-function relationships(rels){
+function relationships(rels = []) {
     const ret = {
         keyForAttribute: attr => attr
     };
-    for (let rel of rels){
+    for (let rel of rels) {
         ret[rel] = {
             ref: (outer, inner) => inner.id,
         }
@@ -37,10 +42,30 @@ function App() {
         total: 'count',
         arrayFormat: 'comma',
         serializerOpts: {
-            sample_data: relationships(['report', 'sample', 'data_type'])
+            sample_data: relationships(['report', 'sample', 'data_type']),
+            samples: relationships(['report', 'data', 'data_type']),
+            filters: relationships(['user']),
+            filter_groups: relationships(),
+            reports: relationships(['meta', 'samples', 'user']),
+            uploads: relationships(['user']),
+            report_meta: relationships(['report']),
+            favourites: relationships(['user']),
+            dashboards: relationships(['user']),
+            report_meta_types: relationships(),
+            users: relationships(['reports'])
         },
         deserializerOpts: {
-            keyForAttribute: attr => attr
+            sample_data: {keyForAttribute: attr => attr},
+            samples: {keyForAttribute: attr => attr},
+            filters: {keyForAttribute: attr => attr},
+            filter_groups: {keyForAttribute: attr => attr},
+            reports: {keyForAttribute: attr => attr},
+            uploads: {keyForAttribute: attr => attr},
+            report_meta: {keyForAttribute: attr => attr},
+            favourites: {keyForAttribute: attr => attr},
+            dashboards: {keyForAttribute: attr => attr},
+            report_meta_types: {keyForAttribute: attr => attr},
+            users: {keyForAttribute: attr => attr},
         },
         headers: {
             access_token: token,
@@ -60,16 +85,47 @@ function App() {
     else
         return (
             <Admin dataProvider={provider}>
-                <Resource name="reports" list={ReportList} show={ReportShow} edit={ReportEdit}/>
-                <Resource name="samples" list={SampleList} show={SampleShow} edit={SampleEdit}/>
-                <Resource name="uploads" list={UploadList} show={UploadShow} edit={UploadEdit}/>
-                <Resource name="report_meta" list={ReportMetaList}/>
-                <Resource name="data_types" list={DataTypeList} show={DataTypeShow} edit={DataTypeEdit}/>
+                <Resource
+                    name="reports" list={ReportList} show={ReportShow} edit={ReportEdit}
+                />
+                <Resource
+                    name="samples" list={SampleList} show={SampleShow} edit={SampleEdit}
+                />
+                <Resource
+                    name="uploads" list={UploadList} show={UploadShow} edit={UploadEdit}
+                />
+                <Resource
+                    name="report_meta"
+                    list={ReportMetaList}
+                    show={ReportMetaShow}
+                    edit={ReportMetaEdit}
+                    create={ReportMetaCreate}
+                />
+                <Resource
+                    name="data_types" list={DataTypeList} show={DataTypeShow}
+                    edit={DataTypeEdit} create={DataTypeCreate}
+                />
                 <Resource name="users" list={UserList} show={UserShow} edit={UserEdit}/>
                 <Resource name="filter_groups" list={FilterGroupList}/>
-                <Resource name="favourites" list={FavouriteList} show={FavouriteShow} edit={FavouriteEdit}/>
-                <Resource name="dashboards" list={DashboardList} show={DashboardShow} edit={DashboardEdit}/>
-                <Resource name="sample_data" create={DataCreate} list={DataList} show={DataShow} edit={DataEdit}/>
+                <Resource
+                    name="favourites"
+                    list={FavouriteList}
+                    show={FavouriteShow}
+                    edit={FavouriteEdit}
+                />
+                <Resource
+                    name="dashboards"
+                    list={DashboardList}
+                    show={DashboardShow}
+                    edit={DashboardEdit}
+                />
+                <Resource
+                    name="sample_data"
+                    create={DataCreate}
+                    list={DataList}
+                    show={DataShow}
+                    edit={DataEdit}
+                />
             </Admin>
         );
 }

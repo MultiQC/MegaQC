@@ -24,12 +24,20 @@ export const DataList = props => (
         <Datagrid rowClick="show">
             <TextField source="id"/>
             <TextField source="value"/>
-            <ReferenceField link="show" label="Type" source="data_type.id"
-                            reference="data_types">
+            <ReferenceField
+                link="show"
+                label="Type"
+                source="data_type.id"
+                reference="data_types"
+            >
                 <TextField source="key"/>
             </ReferenceField>
-            <ReferenceField link="show" label="Sample" source="sample.id"
-                            reference="samples">
+            <ReferenceField
+                link="show"
+                label="Sample"
+                source="sample.id"
+                reference="samples"
+            >
                 <TextField source="name"/>
             </ReferenceField>
             <EditButton/>
@@ -43,12 +51,20 @@ export const DataShow = props => (
         <SimpleShowLayout>
             <TextField source="id"/>
             <TextField source="value"/>
-            <ReferenceField link="show" label="Type" source="data_type.id"
-                            reference="data_types">
+            <ReferenceField
+                link="show"
+                label="Type"
+                source="data_type.id"
+                reference="data_types"
+            >
                 <TextField source="key"/>
             </ReferenceField>
-            <ReferenceField link="show" label="Sample" source="sample.id"
-                            reference="samples">
+            <ReferenceField
+                link="show"
+                label="Sample"
+                source="sample.id"
+                reference="samples"
+            >
                 <TextField source="name"/>
             </ReferenceField>
         </SimpleShowLayout>
@@ -61,7 +77,8 @@ export const DataEdit = props => (
             <TextInput source="id"/>
             <TextInput source="value"/>
             <ReferenceInput
-                filterToQuery={() => {}}
+                filterToQuery={() => {
+                }}
                 label="Type"
                 source="data_type.id"
                 reference="data_types"
@@ -69,7 +86,8 @@ export const DataEdit = props => (
                 <SelectInput optionValue="id" optionText="key"/>
             </ReferenceInput>
             <ReferenceInput
-                filterToQuery={() => {}}
+                filterToQuery={() => {
+                }}
                 label="Sample"
                 source="sample.id"
                 reference="samples"
@@ -85,7 +103,8 @@ export const DataCreate = props => (
         <DefaultForm location={props.location}>
             <TextInput source="value"/>
             <ReferenceInput
-                filterToQuery={() => {}}
+                filterToQuery={() => {
+                }}
                 label="Type"
                 source="data_type.id"
                 reference="data_types"
@@ -93,7 +112,8 @@ export const DataCreate = props => (
                 <SelectInput optionValue="id" optionText="key"/>
             </ReferenceInput>
             <ReferenceInput
-                filterToQuery={() => {}}
+                filterToQuery={() => {
+                }}
                 label="Sample"
                 source="sample.id"
                 reference="samples"

@@ -15,6 +15,7 @@ import {
     ReferenceField,
     ReferenceManyField,
 } from 'react-admin';
+import ResourceLink from './components/resourceLink'
 
 export const ReportList = props => (
     <List {...props}>
@@ -23,6 +24,9 @@ export const ReportList = props => (
             <DateField source="uploaded_at"/>
             <DateField source="created_at"/>
             <TextField source="hash"/>
+            <ReferenceField link="show" label="Owner" source="user.id" reference="users">
+                <TextField source="username"/>
+            </ReferenceField>
             <EditButton/>
             <ShowButton/>
         </Datagrid>
@@ -36,9 +40,27 @@ export const ReportEdit = props => (
             <DateInput source="uploaded_at"/>
             <TextInput source="hash"/>
             <DateInput source="created_at"/>
-            <ReferenceField link="show" label="Owner" source="relationships.user.id" reference="users">
+            <ReferenceField link="show" label="Owner" source="user.id" reference="users">
                 <TextField source="username"/>
             </ReferenceField>
+            <ReferenceManyField label="Samples" reference="samples" target="report">
+                <Datagrid rowClick="show">
+                    <TextField source="id"/>
+                    <TextField source="name"/>
+                </Datagrid>
+            </ReferenceManyField>
+            <ReferenceManyField label="Metadata" reference="report_meta" target="report">
+                <Datagrid rowClick="show">
+                    <TextField source="id"/>
+                    <TextField source="key"/>
+                    <TextField source="value"/>
+                </Datagrid>
+            </ReferenceManyField>
+            <ResourceLink
+                reference="report_meta"
+                source="id"
+                dest="report.id"
+            />
         </SimpleForm>
     </Edit>
 );
@@ -50,13 +72,20 @@ export const ReportShow = props => (
             <DateField source="uploaded_at"/>
             <TextField source="hash"/>
             <DateField source="created_at"/>
-            <ReferenceField link="show" label="Owner" source="relationships.user.id" reference="users">
+            <ReferenceField link="show" label="Owner" source="user.id" reference="users">
                 <TextField source="username"/>
             </ReferenceField>
              <ReferenceManyField label="Samples" reference="samples" target="report">
                 <Datagrid rowClick="show">
                     <TextField source="id"/>
                     <TextField source="name"/>
+                </Datagrid>
+            </ReferenceManyField>
+            <ReferenceManyField label="Metadata" reference="report_meta" target="report">
+                <Datagrid rowClick="show">
+                    <TextField source="id"/>
+                    <TextField source="key"/>
+                    <TextField source="value"/>
                 </Datagrid>
             </ReferenceManyField>
         </SimpleShowLayout>

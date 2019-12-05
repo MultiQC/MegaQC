@@ -44,7 +44,7 @@ export const UploadShow = props => (
 export const UploadEdit = props => (
     <Edit {...props}>
         <SimpleForm>
-            <TextInput source="id"/>
+            <TextField source="id"/>
             <TextInput source="message"/>
             <TextInput source="path"/>
             <DateInput source="created_at"/>

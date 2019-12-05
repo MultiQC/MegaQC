@@ -18,20 +18,24 @@ import {
     SelectInput,
     AutocompleteInput,
     AutocompleteArrayInput,
-    Link
+    Link,
+    Pagination
 } from 'react-admin';
 
 import ResourceLink from './components/resourceLink'
-import DefaultForm from "./components/DefaultForm";
 
 export const SampleList = props => (
     <List {...props}>
         <Datagrid rowClick="show">
             <TextField source="id"/>
             <TextField source="name"/>
-            <ReferenceField link="show" label="Report" source="relationships.report.id"
-                            reference="reports">
-                <TextField source="id"/>
+            <ReferenceField
+                link="show"
+                label="Report"
+                source="report.id"
+                reference="reports"
+            >
+                <TextField source="hash"/>
             </ReferenceField>
             <EditButton/>
             <ShowButton/>
@@ -39,40 +43,45 @@ export const SampleList = props => (
     </List>
 );
 
-export const SampleShow = props => (
-    <Show {...props}>
-        <SimpleShowLayout>
-            <TextField source="id"/>
-            <TextField source="name"/>
-            <ReferenceField link="show" label="Report" source="relationships.report.id"
-                            reference="reports">
+export const SampleShow = props => {
+    return (
+        <Show {...props}>
+            <SimpleShowLayout>
                 <TextField source="id"/>
-            </ReferenceField>
-            <ReferenceManyField label="Data" reference="sample_data" target="sample">
-                <List
-                    location={props.location}
-                    hasCreate={false}
-                    hasEdit={false}
-                    hasList={false}
-                    hasShow={false}
-                    resource="sample_data"
+                <TextField source="name"/>
+                <ReferenceField
+                    link="show"
+                    label="Report"
+                    source="report.id"
+                    reference="reports"
+                >
+                    <TextField source="hash"/>
+                </ReferenceField>
+                <ReferenceManyField
+                    label="Data"
+                    reference="sample_data"
+                    target="sample"
+                    pagination={<Pagination/>}
                 >
                     <Datagrid rowClick="show">
                         <TextField source="id"/>
                         <TextField source="value"/>
-                        <ReferenceField link="show" label="Type"
-                                        source="relationships.data_type.id"
-                                        reference="data_types">
+                        <ReferenceField
+                            link="show"
+                            label="Type"
+                            source="data_type.id"
+                            reference="data_types"
+                        >
                             <TextField source="key"/>
                         </ReferenceField>
                         <EditButton/>
                         <ShowButton/>
                     </Datagrid>
-                </List>
-            </ReferenceManyField>
-        </SimpleShowLayout>
-    </Show>
-);
+                </ReferenceManyField>
+            </SimpleShowLayout>
+        </Show>
+    );
+};
 
 export const SampleEdit = props => (
     <Edit {...props}>
@@ -80,21 +89,23 @@ export const SampleEdit = props => (
             <TextInput source="id"/>
             <TextInput source="name"/>
             <ReferenceInput
-                filterToQuery={() => {
-                }}
+                filterToQuery={() => {}}
                 label="Report"
-                source="relationships.report.id"
+                source="report.id"
                 reference="reports"
             >
-                <AutocompleteInput optionValue="id" optionText="id"/>
+                <AutocompleteInput optionValue="id" optionText="hash"/>
             </ReferenceInput>
             <ReferenceManyField label="Data" reference="sample_data" target="sample">
                 <Datagrid rowClick="show">
                     <TextField source="id"/>
                     <TextField source="value"/>
-                    <ReferenceField link="show" label="Type"
-                                    source="relationships.data_type.id"
-                                    reference="data_types">
+                    <ReferenceField
+                        link="show"
+                        label="Type"
+                        source="data_type.id"
+                        reference="data_types"
+                    >
                         <TextField source="key"/>
                     </ReferenceField>
                     <EditButton/>
@@ -106,16 +117,6 @@ export const SampleEdit = props => (
                 source="id"
                 dest="sample.id"
             />
-            {/*<ReferenceArrayInput*/}
-            {/*    filterToQuery={() => {}}*/}
-            {/*    label="Data"*/}
-            {/*    target="sample"*/}
-            {/*    reference="sample_data"*/}
-            {/*>*/}
-            {/*    <AutocompleteArrayInput*/}
-            {/*    optionValue=""*/}
-            {/*    />*/}
-            {/*</ReferenceArrayInput>*/}
         </SimpleForm>
     </Edit>
 );

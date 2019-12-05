@@ -1,6 +1,7 @@
 import {Button, Link} from "react-admin";
 import {useForm, useField} from 'react-final-form';
 import React from 'react';
+import {titleize} from 'inflection';
 
 /**
  *
@@ -16,13 +17,14 @@ export default function ResourceLink({reference, source, dest, children}){
     const query = encodeURIComponent(JSON.stringify({
         [dest]: localValue.input.value
     }));
+    const title = titleize(reference);
     return <Button
         component={Link}
         to={{
             pathname: `/${reference}/create`,
             search: `?defaults=${query}&source={}`
         }}
-        label={`Add a ${reference}`}
+        label={`Add a ${title}`}
     >
         {children}
     </Button>

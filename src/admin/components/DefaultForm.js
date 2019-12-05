@@ -5,11 +5,15 @@ import {parse} from "query-string";
 import set from 'lodash/set';
 
 export default function DefaultForm(props) {
-    const search = parse(props.location.search);
-    const parsed = JSON.parse(search.defaults);
     const defaults = {};
-    for (let key of Object.keys(parsed)){
-        set(defaults, key, parsed[key]);
+    try {
+        const search = parse(props.location.search);
+        const parsed = JSON.parse(search.defaults);
+        for (let key of Object.keys(parsed)){
+            set(defaults, key, parsed[key]);
+        }
     }
+    catch {}
+
     return <SimpleForm initialValues={defaults} {...props}/>
 }
