@@ -19,4 +19,4 @@ matrix:
         - lts/*
       install:
         - npm install
-      script: webpack --mode production
+      script: npx webpack --mode production
