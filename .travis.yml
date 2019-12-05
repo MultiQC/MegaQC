@@ -14,7 +14,7 @@ matrix:
       script: megaqc test
     -
       language: node
-      python:
+      node_js:
         - node
         - lts/*
       install:
