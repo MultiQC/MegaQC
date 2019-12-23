@@ -242,7 +242,7 @@ def trends():
     # Get the fields from the add-new-filters form
     return render_template(
         'public/react.html',
-        entrypoint='trends'
+        entrypoint='trend'
         )
 
 @blueprint.route('/admin/')

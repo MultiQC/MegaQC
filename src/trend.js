@@ -1,21 +1,17 @@
 import ReactDOM from 'react-dom';
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     Button,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    FormText,
-    Container,
-    Row,
-    Col,
     Card,
     CardBody,
-    CardTitle,
     CardHeader,
+    Col,
+    FormGroup,
+    Input,
+    Label,
+    Row,
 } from 'reactstrap';
-import Plot from 'plotly.js-basic-dist'
+import Plot from 'react-plotly.js';
 import {getClient, getToken} from './util/api';
 import {SampleFilter} from './components/sampleFilter';
 import OutlierDetection from './components/outlierDetection';
@@ -28,7 +24,6 @@ function selectValue(select) {
 }
 
 function Trend(props) {
-
     const [dataTypes, setDataTypes] = useState([]);
     const [selectedFilter, selectFilter] = useState(null);
     const [selectedDataTypes, selectDataTypes] = useState([]);
@@ -49,7 +44,7 @@ function Trend(props) {
     // Whenever the plot data type or filter changes, we have to re-calculate the plot data
     useEffect(() => {
         if (selectedDataTypes.length > 0) {
-            client.find('plots/trends/series', {
+            client.current.find('plots/trends/series', {
                 fields: JSON.stringify(selectedDataTypes),
                 filter: selectedFilter,
                 outliers: outlier
@@ -65,7 +60,7 @@ function Trend(props) {
 
     // When we first create the component, request the data types that could be plotted
     useEffect(() => {
-        client.find('data_types')
+        client.current.find('data_types')
             .then(resources => {
                 setDataTypes(resources.map(resource => resource.toJSON()));
             })
@@ -75,7 +70,7 @@ function Trend(props) {
     return (
         <div>
             <SavePlot
-                qcApi={client}
+                qcApi={client.current}
                 plotData={{
                     // This is a bit of a hack to ensure the filters save in a format expected by the old parts of MegaQC
                     filters_id: selectedFilter || -1,
@@ -91,7 +86,7 @@ function Trend(props) {
             <Row>
                 <Col sm={{size: 4}}>
                     <SampleFilter
-                        qcApi={client}
+                        qcApi={client.current}
                         onFilterChange={filter => {
                             selectFilter(filter);
                         }}
@@ -182,6 +177,6 @@ ReactDOM.render(
     <MuiPickersUtilsProvider utils={MomentUtils}>
         <Trend/>
     </MuiPickersUtilsProvider>,
-    document.getElementById('react-trend')
+    document.getElementById('react')
 );
 
