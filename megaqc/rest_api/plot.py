@@ -1,4 +1,6 @@
 from megaqc.model import models
+from megaqc.model.models import *
+from megaqc.extensions import db
 from megaqc.rest_api.filters import build_filter_query
 import numpy
 
@@ -7,18 +9,31 @@ def trend_data(fields, filters, plot_prefix, outlier_det=None):
     """
     Returns data suitable for a plotly plot
     """
-    query = build_filter_query(filters)
+    subquery = build_filter_query(filters)
     plots = []
     for field in fields:
 
         # Choose the columns to select, and further filter it down to samples with the column we want to plot
-        query = query.with_entities(
+        query = db.session.query(
+            Sample
+        ).join(
+            SampleData,
+            isouter=True
+        ).join(
+            SampleDataType,
+            isouter=True
+        ).join(
+            Report, Report.report_id == Sample.report_id,
+            isouter=True
+        ).with_entities(
             models.Sample.sample_name,
             models.SampleDataType.data_key,
             models.Report.created_at,
             models.SampleData.value
         ).order_by(
             models.Report.created_at.asc(),
+        ).filter(
+            Sample.sample_id.in_(subquery)
         ).distinct()
 
         # Fields can be specified either as type IDs, or as type names
