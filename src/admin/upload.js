@@ -41,7 +41,7 @@ export const UploadShow = props => (
 
 export const UploadEdit = props => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="show">
             <TextField source="id"/>
             <TextInput source="message"/>
             <TextInput source="path"/>

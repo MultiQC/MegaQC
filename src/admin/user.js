@@ -41,7 +41,7 @@ export const UserList = props => (
 
 export const UserEdit = props => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="show">
             <TextField source="id"/>
             <TextInput source="username"/>
             <TextInput source="first_name"/>

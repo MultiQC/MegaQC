@@ -11,8 +11,7 @@ import {
     TextField,
     TextInput,
 } from 'react-admin';
-import {Field} from 'react-final-form';
-import {renderJsonField} from './components/jsonField'
+import {JsonInput, JsonField} from './components/jsonField'
 
 export const FavouriteList = props => (
     <List {...props}>
@@ -34,20 +33,20 @@ export const FavouriteShow = props => (
             <TextField source="description"/>
             <TextField source="plot_type"/>
             <DateField source="created_at"/>
-            <Field component={renderJsonField} name="data" label="Data"/>
+            <JsonField source="data"/>
         </SimpleShowLayout>
     </Show>
 );
 
 export const FavouriteEdit = props => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="show">
             <TextInput source="id"/>
             <TextInput source="title"/>
             <TextInput source="description"/>
             <TextInput source="plot_type"/>
             <DateInput source="created_at"/>
-            <Field component={renderJsonField} name="data" label="Data"/>
+            <JsonInput source="data"/>
         </SimpleForm>
     </Edit>
 );

@@ -13,8 +13,7 @@ import {
     TextField,
     TextInput
 } from 'react-admin';
-import {Field} from 'react-final-form';
-import {renderJsonField} from './components/jsonField'
+import {JsonInput, JsonField} from './components/jsonField'
 
 export const DashboardList = props => (
     <List {...props}>
@@ -36,20 +35,20 @@ export const DashboardShow = props => (
             <DateField source="created_at"/>
             <DateField source="modified_at"/>
             <BooleanField source="is_public"/>
-            <Field component={renderJsonField} name="data" label="Data"/>
+            <JsonField source="data"/>
         </SimpleShowLayout>
     </Show>
 );
 
 export const DashboardEdit = props => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="show">
             <TextInput source="id"/>
             <TextInput source="title"/>
             <DateInput source="created_at"/>
             <DateInput source="modified_at"/>
             <BooleanInput source="is_public"/>
-            <Field component={renderJsonField} name="data" label="Data"/>
+            <JsonInput source="data"/>
         </SimpleForm>
     </Edit>
 );

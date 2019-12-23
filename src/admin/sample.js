@@ -80,7 +80,7 @@ export const SampleShow = props => {
 
 export const SampleEdit = props => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="show">
             <TextInput source="id"/>
             <TextInput source="name"/>
             <ReferenceInput

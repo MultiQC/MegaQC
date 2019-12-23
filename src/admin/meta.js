@@ -54,7 +54,7 @@ export const ReportMetaShow = props => (
 
 export const ReportMetaEdit = props => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="show">
             <TextField source="id"/>
             <TextInput source="key"/>
             <TextInput source="value"/>
@@ -72,7 +72,7 @@ export const ReportMetaEdit = props => (
 
 export const ReportMetaCreate = props => (
     <Create {...props}>
-        <DefaultForm location={props.location}>
+        <DefaultForm location={props.location} redirect="show">
             <TextInput source="key"/>
             <TextInput source="value"/>
             <ReferenceInput

@@ -23,7 +23,7 @@ export const DataTypeList = props => (
 
 export const DataTypeEdit = props => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="show">
             <TextInput source="id" />
             <TextInput source="section" />
             <TextInput source="key" />

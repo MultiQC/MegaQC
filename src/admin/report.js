@@ -35,7 +35,7 @@ export const ReportList = props => (
 
 export const ReportEdit = props => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="show">
             <TextInput source="id"/>
             <DateInput source="uploaded_at"/>
             <TextInput source="hash"/>

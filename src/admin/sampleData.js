@@ -15,7 +15,6 @@ import {
     TextField,
     TextInput
 } from 'react-admin';
-
 import DefaultForm from "./components/defaultForm";
 
 export const DataList = props => (
@@ -72,7 +71,7 @@ export const DataShow = props => (
 
 export const DataEdit = props => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="show">
             <TextInput source="id"/>
             <TextInput source="value"/>
             <ReferenceInput
@@ -99,7 +98,7 @@ export const DataEdit = props => (
 
 export const DataCreate = props => (
     <Create {...props}>
-        <DefaultForm location={props.location}>
+        <DefaultForm location={props.location} redirect="show">
             <TextInput source="value"/>
             <ReferenceInput
                 filterToQuery={() => {
