@@ -1,14 +1,15 @@
 const webpack = require('webpack');
 const path = require('path');
 
-const {DuplicatesPlugin} = require("inspectpack/plugin");
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const {DuplicatesPlugin} = require("inspectpack/plugin");
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 
 module.exports = {
     entry: {
         // This allows for multiple React "apps", for different pages
-        trend: './src/trend.js'
+        trend: './src/trend.js',
+        admin: './src/admin.js'
     },
     module: {
         rules: [
@@ -24,6 +25,14 @@ module.exports = {
                         loader: 'babel-loader'
                     }
                 ]
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /\.svg$/,
+                use: ['url-loader']
             }
         ]
     },
@@ -38,8 +47,7 @@ module.exports = {
         publicPath: '/',
         filename: '[name].js'
     },
-    plugins: [
-    ],
+    plugins: [],
     devServer: {
         contentBase: './dist',
         hot: true

@@ -146,7 +146,7 @@ def build_filter_query(filters):
     ).join(
         models.ReportMeta, models.ReportMeta.report_id == models.Report.report_id,
         isouter=True
-    ).with_entities(Sample.sample_id)
+    ).with_entities(models.Sample.sample_id)
 
     # A unified clause that does all the filtering demanded by the user
     filter_clause = concat_clauses(or_filters, 'or')

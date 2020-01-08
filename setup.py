@@ -32,7 +32,7 @@ dev_reqs = [
     "numpy>=1.14.3",
     "passlib==1.7.1",
     "plotly==2.0.15",
-    "pyyaml~=5.1.2",
+    "pyyaml>=5.1.2",
     "SQLAlchemy>=1.1.5",
     "Werkzeug>=0.14.1",
     "WTForms>=2.1",
@@ -48,6 +48,7 @@ dev_reqs = [
     "scipy>=1.3.1",
     "flatten_json>=0.1.7",
     "flapison>=0.30.1",
+    "Flask-Migrate~=2.5.2",
 
     # Testing
     "pytest==3.0.6",

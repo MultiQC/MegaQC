@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import datetime as dt
 import json
+from enum import Enum
 
 from sqlalchemy import ForeignKey, Column, Boolean, Integer, Unicode, DateTime, JSON, \
-    CheckConstraint, Table, UniqueConstraint
+    CheckConstraint, Table, UniqueConstraint, Enum as SqlEnum
 from sqlalchemy import event
 from sqlalchemy.orm import relationship
 
@@ -135,6 +136,22 @@ class SampleDataType(db.Model, CRUDMixin):
     data_id = Column(Unicode)
     data_section = Column(Unicode)
     data_key = Column(Unicode, nullable=False)
+    schema = Column(Unicode,
+                    doc='A JSON Schema for validating and describing the data of this type')
+
+    @property
+    def schema_json(self):
+        """
+        Gets the schema as JSON
+        """
+        return json.loads(self.schema)
+
+    @property
+    def type(self):
+        """
+        Gets the root level data type, or None if it doesn't have one
+        """
+        return self.schema_json.get('type')
 
     @classmethod
     def get_keys(cls, session):
@@ -157,7 +174,6 @@ class SampleData(db.Model, CRUDMixin):
     sample_id = Column(Integer, ForeignKey('sample.sample_id', ondelete='CASCADE'),
                        index=True, nullable=False)
     value = Column(Unicode)
-
     sample = relationship('Sample', back_populates='data')
     report = relationship('Report', back_populates='sample_data')
     data_type = relationship('SampleDataType', back_populates='sample_data')
@@ -285,4 +301,3 @@ def on_flush(session, context):
         threshold.generate_alerts(filters=[
             Sample.sample_id.in_(new_sample_ids)
         ])
-
