@@ -8,6 +8,7 @@ from megaqc.scheduler import upload_reports_job
 import logging
 import os
 import yaml
+import tempfile
 
 
 class Config(object):
@@ -67,15 +68,18 @@ class Config(object):
                 self.SQLALCHEMY_DATABASE
             )
 
+
 class ProdConfig(Config):
     """Production configuration."""
 
     ENV = 'prod'
     DEBUG = False
     SQLALCHEMY_DBMS = 'postgresql'
-    SQLALCHEMY_USER = 'megaqc_user'
-    SQLALCHEMY_HOST = 'localhost:5432'
-    SQLALCHEMY_DATABASE = 'megaqc'
+    SQLALCHEMY_HOST = "{}:{}".format(os.environ.get(
+        'DB_HOST', 'localhost'), os.environ.get('DB_PORT', '5432'))
+    SQLALCHEMY_USER = os.environ.get('DB_USER', 'megaqc')
+    SQLALCHEMY_PASS = os.environ.get('DB_PASS', 'megaqcpswd')
+    SQLALCHEMY_DATABASE = os.environ.get('DB_NAME', 'megaqc')
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
     def __init__(self):
@@ -114,12 +118,15 @@ class DevConfig(Config):
 
 class TestConfig(Config):
     """Test configuration."""
-    DEBUG = False
+    DEBUG = True
+    TESTING = True
     SQLALCHEMY_DBMS = 'sqlite'
     DB_NAME = 'megaqc.db'
-    DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
+    DB_PATH = os.path.join(tempfile.mkdtemp(), DB_NAME)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
     LOG_LEVEL = logging.DEBUG
+    WTF_CSRF_ENABLED = False
+
 
     def __init__(self):
         super(TestConfig, self).__init__()

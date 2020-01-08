@@ -21,44 +21,57 @@ dev_reqs = [
     "Flask-Caching>=1.0.0",
     "Flask-DebugToolbar>=0.10.1",
     "Flask-Login>=0.4.0",
-    "Flask-SQLAlchemy==2.2",
-    "Flask-WTF==0.14.2",
+    "Flask-SQLAlchemy>=2.2",
+    "Flask-WTF>=0.14.2",
     "Flask==1.0.2",
     "future==0.16.0",
     "itsdangerous>=0.24",
     "Jinja2>=2.9.5",
     "markdown>=2.6.11",
-    "numpy==1.14.3",
+    "multiqc>=1.3",
+    "numpy>=1.14.3",
     "passlib==1.7.1",
     "plotly==2.0.15",
-    "pyyaml==3.12",
+    "pyyaml>=5.1.2",
     "SQLAlchemy>=1.1.5",
-    "Werkzeug==0.14.1",
+    "Werkzeug>=0.14.1",
     "WTForms>=2.1",
+    "flask_restful>=0.3.7",
+    "flask-marshmallow>=0.10.1",
+    "marshmallow>=3.0.1",
+    "marshmallow-sqlalchemy>=0.17.0",
+    "flask-uploads>=0.2.1",
+    "marshmallow-jsonapi>=0.21.2",
+    "outlier-utils>=0.0.3",
+    "webargs>=5.5.0",
+    "querystring-parser>=1.2.4",
+    "scipy>=1.3.1",
+    "flatten_json>=0.1.7",
+    "flapison>=0.30.1",
 
     # Testing
     "pytest==3.0.6",
     "WebTest==2.0.26",
-    "factory-boy==2.8.1",
+    "factory-boy>=2.12.0",
     "livereload==2.5.1",
 
     # Lint and code style
-    #"flake8==3.3.0",
-    #flake8-blind-except==0.1.1",
-    #"flake8-debugger==1.4.0",
-    #"flake8-docstrings==1.0.3",
-    #"flake8-isort==2.1.3",
-    #"flake8-quotes==0.9.0",
-    #"isort==4.2.5",
-    #"pep8-naming==0.4.1",
+    "flake8>=3.7.8",
+    "flake8-blind-except>=0.1.1",
+    "flake8-debugger>=3.1.0",
+    "flake8-docstrings==1.3.1",
+    "flake8-isort==2.7.0",
+    "flake8-quotes==2.1.0",
+    "isort>=4.3.21",
+    "pep8-naming>=0.8.2",
 ]
 
 prod_reqs = dev_reqs + [
     "psycopg2-binary>=2.6.2",
     "gunicorn>=19.7.1",
 ]
-install_requires = prod_reqs if os.environ.get('MEGAQC_PRODUCTION') else dev_reqs
-
+install_requires = prod_reqs if os.environ.get(
+    'MEGAQC_PRODUCTION') else dev_reqs
 
 print("""-----------------------------------
  Installing MegaQC version {}
@@ -67,22 +80,23 @@ print("""-----------------------------------
 """.format(version))
 
 setup(
-    name = 'megaqc',
-    version = version,
-    author = 'Phil Ewels',
-    author_email = 'phil.ewels@scilifelab.se',
-    description = "Collect and visualise data across multiple MultiQC runs",
-    long_description = __doc__,
-    keywords = ['bioinformatics', 'biology', 'sequencing', 'NGS', 'next generation sequencing', 'quality control'],
-    url = 'https://megaqc.info/',
-    download_url = 'https://github.com/ewels/MegaQC/releases',
-    license = 'GPLv3',
-    packages = ['megaqc'],
-    include_package_data = True,
-    zip_safe = False,
-    scripts = ['scripts/megaqc'],
-    install_requires = install_requires,
-    classifiers = [
+    name='megaqc',
+    version=version,
+    author='Phil Ewels',
+    author_email='phil.ewels@scilifelab.se',
+    description="Collect and visualise data across multiple MultiQC runs",
+    long_description=__doc__,
+    keywords=['bioinformatics', 'biology', 'sequencing', 'NGS',
+              'next generation sequencing', 'quality control'],
+    url='https://megaqc.info/',
+    download_url='https://github.com/ewels/MegaQC/releases',
+    license='GPLv3',
+    packages=['megaqc'],
+    include_package_data=True,
+    zip_safe=False,
+    scripts=['scripts/megaqc'],
+    install_requires=install_requires,
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Environment :: Web Environment',

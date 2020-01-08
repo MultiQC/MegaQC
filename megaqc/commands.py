@@ -5,7 +5,8 @@ from builtins import next, str
 
 import os
 from glob import glob
-from subprocess import call
+from subprocess import call, check_output
+from datetime import datetime
 
 import click
 from flask import current_app
@@ -14,10 +15,12 @@ from sqlalchemy import create_engine
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 
 from megaqc.extensions import db
+from megaqc.database import init_db
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(HERE, os.pardir)
 TEST_PATH = os.path.join(PROJECT_ROOT, 'tests')
+MEGAQC_DATE_FORMAT = "%Y-%m-%d, %H:%M"
 
 
 @click.command()
@@ -33,16 +36,11 @@ def test():
               help='Fix imports using isort, before linting')
 def lint(fix_imports):
     """ Lint and check code style """
-    skip = ['requirements']
-    root_files = glob('*.py')
-    root_directories = [
-        name for name in next(os.walk('.'))[1] if not name.startswith('.')]
-    files_and_directories = [
-        arg for arg in root_files + root_directories if arg not in skip]
+    all_py = check_output(['git', 'ls-files', '*.py']).decode().split('\n')
 
     def execute_tool(description, *args):
         """Execute a checking tool with its arguments."""
-        command_line = list(args) + files_and_directories
+        command_line = list(args) + all_py
         click.echo('{}: {}'.format(description, ' '.join(command_line)))
         rv = call(command_line)
         if rv != 0:
@@ -130,31 +128,22 @@ def urls(url, order):
 @click.command()
 @with_appcontext
 def initdb():
-    """ Initialise a new database """
-    if "postgresql" in current_app.config['SQLALCHEMY_DATABASE_URI']:
-        try:
-            create_engine(current_app.config['SQLALCHEMY_DATABASE_URI']).connect().close()
-        except:
-            print("Initializing the postgres user and db")
-            engine = create_engine("postgres://postgres@localhost:5432/postgres")
-            conn = engine.connect()
-            conn.execute("commit")
-            conn.execute("CREATE USER megaqc_user;")
-            conn.execute("commit")
-            conn.execute("CREATE DATABASE megaqc OWNER megaqc_user;")
-            conn.execute("commit")
-            conn.close()
+    init_db(current_app.config['SQLALCHEMY_DATABASE_URI'])
 
+def megaqc_date_type(arg):
+    return datetime.strptime(arg, MEGAQC_DATE_FORMAT)
 
-    """Initializes the database."""
-    db.metadata.bind=db.engine
-    db.metadata.create_all()
-    print('Initialized the database.')
-
-
+@click.option(
+    '--date',
+    default=None,
+    help='Custom date to be stored for all the MultiQC files provided. Should be provided in the date format {}'.format(
+        MEGAQC_DATE_FORMAT
+    ),
+    type=megaqc_date_type
+)
 @click.command( context_settings=dict( help_option_names = ['-h', '--help'] ) )
 @click.argument('json_files', type=click.Path(exists=True), nargs=-1, required=True, metavar="<multiqc_data.json>" )
-def upload(json_files):
+def upload(json_files, date):
     """
     Manually upload MultiQC JSON files to MegaQC
 
@@ -193,4 +182,8 @@ def upload(json_files):
                 else:
                     with open(fn, 'r') as fh:
                         multiqc_json_dump = json.load(fh)
+
+                # Patch in the date provided on the CLI
+                if date is not None:
+                    multiqc_json_dump['config_creation_date'] = date.strftime(MEGAQC_DATE_FORMAT)
                 multiqc_megaqc.multiqc_api_post(multiqc_json_dump)
