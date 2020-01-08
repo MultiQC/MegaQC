@@ -2,15 +2,17 @@
 These schemas describe the format of the web requests to and from the API. They incidentally share most fields with the
 database models, but they can be opinionated about REST-specific fields
 """
+from marshmallow_sqlalchemy.fields import Related
 from marshmallow import post_load, validate, Schema as BaseSchema, INCLUDE
 from marshmallow_jsonapi import fields as f
 from marshmallow_jsonapi.flask import Relationship, Schema as JsonApiSchema
 from marshmallow_jsonapi.utils import resolve_params
 
 from megaqc.extensions import db
-from megaqc.model import models
-from megaqc.rest_api.fields import JsonString, FilterReference
 from megaqc.user import models as user_models
+from megaqc.rest_api.fields import JsonString, ModelAssociation, FilterReference
+from megaqc.model import models
+from megaqc.rest_api import outlier
 
 
 class OptionalLinkSchema(JsonApiSchema):
@@ -462,9 +464,27 @@ class FilterObjectSchema(BaseSchema):
         validate=validate.OneOf(['eq', 'ne', 'le', 'lt', 'ge', 'gt', 'in', 'not in']))
 
 
+class OutlierSchema(BaseSchema):
+    """
+    Schema for defining how we mark outliers for a dataset
+    """
+    type = f.String(validate=validate.OneOf(['grubbs', 'z', 'none']))
+    threshold = f.Float()
+
+    @post_load()
+    def get_detector(self, data, **kwargs):
+        if data['type'] == 'grubbs':
+            return outlier.GrubbsDetector(data['threshold'])
+        elif data['type'] == 'z':
+            return outlier.ZScoreDetector(data['threshold'])
+        else:
+            return outlier.OutlierDetector()
+
+
 class TrendInputSchema(BaseSchema):
     """
     Schema for the request for trend data (not the response)
     """
     fields = JsonString(invert=True)
     filter = FilterReference()
+    outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)

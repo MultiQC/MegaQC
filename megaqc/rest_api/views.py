@@ -386,12 +386,16 @@ class TrendSeries(ResourceList):
     view_kwargs = True
 
     @use_kwargs(schemas.TrendInputSchema(), locations=("querystring",))
-    def get(self, fields, filter):
+    def get(self, fields, filter, outliers):
         # We need to give each resource a unique ID so the client doesn't try to cache or reconcile different plots
         request_hash = sha1(request.query_string).hexdigest()
 
-        plots = plot.trend_data(fields=fields, filters=filter,
-                                plot_prefix=request_hash)
+        plots = plot.trend_data(
+            fields=fields,
+            filters=filter,
+            outlier_det=outliers,
+            plot_prefix=request_hash
+        )
 
         return schemas.TrendSchema(many=True, unknown=INCLUDE).dump(plots)
 

@@ -32,7 +32,7 @@ dev_reqs = [
     "numpy>=1.14.3",
     "passlib==1.7.1",
     "plotly==2.0.15",
-    "pyyaml>=5.1.2",
+    "pyyaml~=5.1.2",
     "SQLAlchemy>=1.1.5",
     "Werkzeug>=0.14.1",
     "WTForms>=2.1",
