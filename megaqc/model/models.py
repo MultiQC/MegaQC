@@ -235,6 +235,7 @@ class AlertThreshold(db.Model, CRUDMixin):
     threshold = Column(JSON)
     name = Column(Unicode)
     description = Column(Unicode)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     modified_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     importance = Column(
@@ -245,6 +246,7 @@ class AlertThreshold(db.Model, CRUDMixin):
             'the highest and 1 being the lowest',
     )
 
+    user = relationship('User', back_populates='thresholds')
     alerts = relationship("Alert", back_populates='threshold')
 
     def calculate_alerts(self, filters=[]):

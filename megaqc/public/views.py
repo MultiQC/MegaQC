@@ -254,6 +254,15 @@ def admin():
         entrypoint='admin'
     )
 
+@blueprint.route('/alerts/')
+@login_required
+def alerts():
+    # Get the fields from the add-new-filters form
+    return render_template(
+        'public/react.html',
+        entrypoint='alerts'
+    )
+
 @blueprint.route('/comparisons/')
 @login_required
 def comparisons():

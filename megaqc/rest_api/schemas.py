@@ -416,6 +416,22 @@ class UserSchema(Schema):
         schema='ReportSchema'
     )
 
+class AlertThresholdSchema(Schema):
+    class Meta:
+        sqla_session = db.session
+        type_ = "alert_thresholds"
+        self_view = 'rest_api.alert_threshold'
+        self_view_kwargs = {
+            'id': '<id>'
+        }
+
+    id = f.Int(attribute='alert_threshold_id', required=False, allow_none=True, as_string=True)
+    threshold = f.Int()
+    name = f.String()
+    description = f.String()
+    created_at = f.DateTime()
+    modified_at = f.DateTime()
+    importance = f.Integer()
 
 class PlotSchema(JsonApiSchema):
     """

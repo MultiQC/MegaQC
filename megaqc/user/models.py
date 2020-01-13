@@ -66,6 +66,7 @@ class User(db.Model, CRUDMixin, UserMixin):
     filters = relationship('SampleFilter', back_populates='user')
     favourite_plots = relationship('PlotFavourite', back_populates='user')
     dashboards = relationship('Dashboard', back_populates='user')
+    thresholds = relationship('AlertThreshold', back_populates='user')
 
     def __init__(self, password=None, **kwargs):
         """Create instance."""
