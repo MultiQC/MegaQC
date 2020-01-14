@@ -13,6 +13,14 @@ from .factories import UserFactory
 class TestUser:
     """User tests."""
 
+    def test_get_by_id(self):
+        """Get user by ID."""
+        user = User('foo', 'foo@bar.com')
+        user.save()
+
+        retrieved = User.get_by_id(user.id)
+        assert retrieved == user
+
     def test_created_at_defaults_to_datetime(self):
         """Test creation date."""
         user = User(username='foo', email='foo@bar.com')

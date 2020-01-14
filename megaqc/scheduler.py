@@ -19,9 +19,8 @@ import traceback
 scheduler = APScheduler()
 
 def init_scheduler(app):
-    if not scheduler.running:
-        scheduler.init_app(app)
-        scheduler.start()
+    scheduler.init_app(app)
+    scheduler.start()
 
 def upload_reports_job():
     with scheduler.app.app_context():

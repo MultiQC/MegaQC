@@ -8,7 +8,6 @@ from megaqc.scheduler import upload_reports_job
 import logging
 import os
 import yaml
-import tempfile
 
 
 class Config(object):
@@ -118,15 +117,12 @@ class DevConfig(Config):
 
 class TestConfig(Config):
     """Test configuration."""
-    DEBUG = True
-    TESTING = True
+    DEBUG = False
     SQLALCHEMY_DBMS = 'sqlite'
     DB_NAME = 'megaqc.db'
-    DB_PATH = os.path.join(tempfile.mkdtemp(), DB_NAME)
+    DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
     LOG_LEVEL = logging.DEBUG
-    WTF_CSRF_ENABLED = False
-
 
     def __init__(self):
         super(TestConfig, self).__init__()
