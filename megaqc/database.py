@@ -2,7 +2,7 @@
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
 from past.builtins import basestring
 from builtins import object
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -15,6 +15,15 @@ Column = db.Column
 
 class CRUDMixin(object):
     """Mixin that adds convenience methods for CRUD (create, read, update, delete) operations."""
+
+    @classmethod
+    def get_or_create(cls, kwargs):
+        instance = db.session.query(cls).filter_by(**kwargs).first()
+        if instance:
+            return instance
+        else:
+            instance = cls(**kwargs)
+            return instance
 
     @classmethod
     def create(cls, **kwargs):
@@ -39,6 +48,18 @@ class CRUDMixin(object):
         """Remove the record from the database."""
         db.session.delete(self)
         return commit and db.session.commit()
+
+    @property
+    def primary_key(self):
+        return getattr(self, self.__class__.primary_key_name())
+
+    @classmethod
+    def primary_key_columns(cls):
+        return inspect(cls).primary_key
+
+    @classmethod
+    def primary_key_name(cls):
+        return cls.primary_key_columns()[0].name
 
 
 class Model(CRUDMixin, db.Model):
@@ -66,3 +87,26 @@ class SurrogatePK(object):
             return cls.query.get(int(record_id))
         return None
 
+
+def init_db(url):
+    """ Initialise a new database """
+    if "postgresql" in url:
+        try:
+            create_engine(url).connect().close()
+        except:
+            print("Initializing the postgres user and db")
+            engine = create_engine("postgres://postgres@localhost:5432/postgres")
+            conn = engine.connect()
+            conn.execute("commit")
+            conn.execute("CREATE USER megaqc_user;")
+            conn.execute("commit")
+            conn.execute("CREATE DATABASE megaqc OWNER megaqc_user;")
+            conn.execute("commit")
+            conn.close()
+    else:
+        engine = create_engine(url)
+
+    """Initializes the database."""
+    db.metadata.bind = engine
+    db.metadata.create_all()
+    print('Initialized the database.')
