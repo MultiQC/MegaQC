@@ -2,8 +2,10 @@
 """Test configs."""
 from megaqc.app import create_app
 from megaqc.settings import DevConfig, ProdConfig
+import pytest
 
 
+@pytest.mark.noautofixt
 def test_production_config():
     """Production config."""
     app = create_app(ProdConfig)
@@ -12,6 +14,7 @@ def test_production_config():
     assert app.config['DEBUG_TB_ENABLED'] is False
 
 
+@pytest.mark.noautofixt
 def test_dev_config():
     """Development config."""
     app = create_app(DevConfig)

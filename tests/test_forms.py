@@ -1,33 +1,56 @@
 # -*- coding: utf-8 -*-
 """Test forms."""
+import pytest
 
 from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
+from tests.factories import UserFactory
 
+@pytest.fixture()
+def user_attrs():
+    return UserFactory.build()
 
 class TestRegisterForm:
     """Register form."""
 
-    def test_validate_user_already_registered(self, user):
+    def test_validate_user_already_registered(self, user, user_attrs):
         """Enter username that is already registered."""
-        form = RegisterForm(username=user.username, email='foo@bar.com',
-                            password='example', confirm='example')
+        form = RegisterForm(
+            username=user.username,
+            email=user_attrs.email,
+            first_name=user_attrs.first_name,
+            last_name=user_attrs.last_name,
+            password='password',
+            confirm='password'
+        )
 
         assert form.validate() is False
         assert 'Username already registered' in form.username.errors
 
-    def test_validate_email_already_registered(self, user):
+    def test_validate_email_already_registered(self, user, user_attrs):
         """Enter email that is already registered."""
-        form = RegisterForm(username='unique', email=user.email,
-                            password='example', confirm='example')
+        form = RegisterForm(
+            username=user_attrs.username,
+            email=user.email,
+            first_name=user_attrs.first_name,
+            last_name=user_attrs.last_name,
+            password='password',
+            confirm='password'
+        )
 
         assert form.validate() is False
         assert 'Email already registered' in form.email.errors
 
-    def test_validate_success(self, db):
+    def test_validate_success(self, user_attrs, app):
         """Register with success."""
-        form = RegisterForm(username='newusername', email='new@test.test',
-                            password='example', confirm='example')
+        form = RegisterForm(
+            username=user_attrs.username,
+            email=user_attrs.email,
+            first_name=user_attrs.first_name,
+            last_name=user_attrs.last_name,
+            password='password',
+            confirm='password'
+        )
         assert form.validate() is True
 
 
