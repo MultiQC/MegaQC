@@ -62,7 +62,7 @@ dev_reqs = [
     "flake8-docstrings~=1.3",
     "flake8-isort~=2.7",
     "flake8-quotes~=2.1",
-    "isort~=4.3.21",
+    "isort[pyproject]~=4.3",
     "pep8-naming~=0.8",
 ]
 
