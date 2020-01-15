@@ -19,7 +19,7 @@ def test_get_trend_series(db, client):
     url = url_for(
         'rest_api.trend_data',
         filter=json.dumps([]),
-        fields=json.dumps([data_type.data_key]),
+        fields=json.dumps([data_type.data_key])
     )
     response = client.get(url, headers={'Content-Type': 'application/json'})
 
@@ -30,7 +30,7 @@ def test_get_trend_series(db, client):
     data = TrendSchema(many=True, unknown=EXCLUDE).load(response.json)
 
     # Check that there are 4 series (mean, stdev, raw data, outliers)
-    assert len(data) == 3
+    assert len(data) == 4
 
     # Test that this is valid plot data
     plot({'data': data}, validate=True, auto_open=False)

@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify, abort
 
 from megaqc.extensions import db
 from megaqc.user.models import User
-from megaqc.model.models import PlotData, Report, SampleFilter, PlotFavourite, Dashboard
+from megaqc.model.models import PlotData, Report, SampleFilter, PlotFavourite, Dashboard, AlertThreshold
 from megaqc.api.utils import handle_report_data, generate_report_plot, generate_distribution_plot, \
                             generate_trend_plot, generate_comparison_plot, get_samples, get_report_metadata_fields, \
                             get_sample_metadata_fields, aggregate_new_parameters, get_user_filters, update_fav_report_plot_type, \
@@ -452,3 +452,21 @@ def count_queued_uploads():
             'success': True,
             'count': count
             })
+
+@api_blueprint.route('/api/save_alert_threshold', methods=['POST'])
+@check_user
+def save_alert_threshold(user, *args, **kwargs):
+    data = request.get_json()
+    AlertThreshold.create(threshold=data['filters'], name=data['meta']['name'], description=data['meta']['description'])
+    return jsonify({
+        'success': True
+    })
+
+@api_blueprint.route('/api/get_alert_thresholds', methods=['POST'])
+@check_user
+def get_alert_thresholds(user, *args, **kwargs):
+    data = AlertThreshold.query().all()
+    return jsonify({
+        'success': True,
+        'thresholds': data
+    })

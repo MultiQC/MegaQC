@@ -2,15 +2,19 @@
 These schemas describe the format of the web requests to and from the API. They incidentally share most fields with the
 database models, but they can be opinionated about REST-specific fields
 """
+from marshmallow_sqlalchemy.fields import Related
 from marshmallow import post_load, validate, Schema as BaseSchema, INCLUDE
 from marshmallow_jsonapi import fields as f
 from marshmallow_jsonapi.flask import Relationship, Schema as JsonApiSchema
 from marshmallow_jsonapi.utils import resolve_params
+from marshmallow_sqlalchemy.schema import ModelSchema, ModelSchemaOpts, ModelSchemaMeta
+from megaqc.rest_api import outlier
 
 from megaqc.extensions import db
-from megaqc.model import models
-from megaqc.rest_api.fields import JsonString, FilterReference
 from megaqc.user import models as user_models
+from megaqc.rest_api.fields import JsonString, ModelAssociation, FilterReference
+from megaqc.model import models
+from megaqc.rest_api import outlier
 
 
 class OptionalLinkSchema(JsonApiSchema):
@@ -413,6 +417,81 @@ class UserSchema(Schema):
     )
 
 
+class AlertThresholdSchema(Schema):
+    class Meta:
+        sqla_session = db.session
+        type_ = "alert_thresholds"
+        self_view = 'rest_api.alert_threshold'
+        self_view_kwargs = {
+            'id': '<id>'
+        }
+        model = models.AlertThreshold
+
+    id = f.Int(attribute='alert_threshold_id', required=False, allow_none=True, as_string=True)
+    threshold = f.Int()
+    name = f.String()
+    description = f.String()
+    created_at = f.DateTime()
+    modified_at = f.DateTime()
+    importance = f.Integer()
+
+    user = Relationship(
+        related_view='rest_api.user',
+        related_view_kwargs={
+            'id': '<user_id>'
+        },
+        many=False,
+        type_='users',
+        required=True,
+        schema='UserSchema'
+    )
+    alerts = Relationship(
+        related_view='rest_api.alertthreshold_alerts',
+        related_view_kwargs={
+            'id': '<alert_threshold_id>'
+        },
+        many=False,
+        type_='alert_thresholds',
+        required=True,
+        schema='AlertThresholdSchema'
+    )
+
+
+class AlertSchema(Schema):
+    class Meta:
+        sqla_session = db.session
+        type_ = "alerts"
+        self_view = 'rest_api.alert'
+        self_view_kwargs = {
+            'id': '<id>'
+        }
+        model = models.Alert
+
+    id = f.Int(attribute='alert_id', required=False, allow_none=True, as_string=True)
+    created_at = f.DateTime()
+
+    threshold = Relationship(
+        related_view='rest_api.alert_threshold',
+        related_view_kwargs={
+            'id': '<alert_threshold_id>'
+        },
+        many=False,
+        type_='alert_thresholds',
+        required=True,
+        schema='AlertThresholdSchema'
+    )
+    samples = Relationship(
+        related_view='rest_api.alert_samples',
+        related_view_kwargs={
+            'id': '<alert_id>'
+        },
+        many=True,
+        type_='samples',
+        required=True,
+        schema='SampleSchema'
+    )
+
+
 class PlotSchema(JsonApiSchema):
     """
     Data that can be used to generate a plot
@@ -462,9 +541,27 @@ class FilterObjectSchema(BaseSchema):
         validate=validate.OneOf(['eq', 'ne', 'le', 'lt', 'ge', 'gt', 'in', 'not in']))
 
 
+class OutlierSchema(BaseSchema):
+    """
+    Schema for defining how we mark outliers for a dataset
+    """
+    type = f.String(validate=validate.OneOf(['grubbs', 'z', 'none']))
+    threshold = f.Float()
+
+    @post_load()
+    def get_detector(self, data, **kwargs):
+        if data['type'] == 'grubbs':
+            return outlier.GrubbsDetector(data['threshold'])
+        elif data['type'] == 'z':
+            return outlier.ZScoreDetector(data['threshold'])
+        else:
+            return outlier.OutlierDetector()
+
+
 class TrendInputSchema(BaseSchema):
     """
     Schema for the request for trend data (not the response)
     """
     fields = JsonString(invert=True)
     filter = FilterReference()
+    outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)

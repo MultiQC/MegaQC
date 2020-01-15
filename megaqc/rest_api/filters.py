@@ -1,6 +1,7 @@
-from megaqc.model.models import *
+from megaqc.model import models
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Query
+from megaqc.database import db
 from sqlalchemy.dialects import postgresql
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -58,8 +59,8 @@ def round_date(date, direction):
 
 def build_filter_query(filters):
     """
-    Returns an SQLAlchemy query with the provided filters applied. Note that this query will not actually select any
-    data by itself, so you will likely want to add .with_entities().all() to the result of this function
+    Returns an SQLAlchemy query with the provided filters applied. This filter will only
+    select Sample IDs that meet the filter, so you should only use this as a subquery
     :param filters: Array of filters in the MegaQC filter format (each filter is a dictionary)
     :type filters: list
     :rtype: Query
@@ -75,7 +76,7 @@ def build_filter_query(filters):
                 # Finding all reports between two fixed dates
 
                 # Select reports between the two dates
-                clause = Report.created_at.between(
+                clause = models.Report.created_at.between(
 
                     # Set the left boundary to midnight on the day indicated, so it covers that entire day
                     round_date(datetime.strptime(filter['value'][0], DATE_FORMAT), 'down'),
@@ -93,14 +94,14 @@ def build_filter_query(filters):
             elif filter['type'] == 'date':
                 # Finding all reports produced on this date
                 and_filters.append(add_operator(
-                    Report.created_at,
+                    models.Report.created_at,
                     filter['cmp'],
                     filter['value'][0]
                 ))
 
             elif filter['type'] == 'timedelta':
                 # Finding all reports produced between now and some amount of days prior to now
-                clause = Report.created_at.between(
+                clause = models.Report.created_at.between(
                     round_date(datetime.now() - timedelta(days=filter['value'][0]), 'down'),
                     round_date(datetime.now(), 'up')
                 )
@@ -115,16 +116,16 @@ def build_filter_query(filters):
                 # Finding all samples with the given metadata
                 and_filters.append(
                     # The report metadata is stored as rows of key, value pairs, so we need to select both
-                    (ReportMeta.report_meta_key == filter['key'])
-                    & add_operator(ReportMeta.report_meta_value, filter['cmp'], filter['value'][0])
+                    (models.ReportMeta.report_meta_key == filter['key'])
+                    & add_operator(models.ReportMeta.report_meta_value, filter['cmp'], filter['value'][0])
                 )
 
             elif filter['type'] == 'samplemeta':
                 # Finding all samples with the given data
                 and_filters.append(
                     # The report metadata is stored as rows of key, value pairs, so we need to select both
-                    (SampleDataType.data_key == filter['key'])
-                    & add_operator(SampleData.value, filter['cmp'], filter['value'][0])
+                    (models.SampleDataType.data_key == filter['key'])
+                    & add_operator(models.SampleData.value, filter['cmp'], filter['value'][0])
                 )
             else:
                 raise Exception('Unsupported filter type "{}"'.format(filter['type']))
@@ -132,20 +133,20 @@ def build_filter_query(filters):
         or_filters.append(concat_clauses(and_filters, 'and'))
 
     query = db.session.query(
-        Sample
+        models.Sample
     ).join(
-        SampleData,
+        models.SampleData,
         isouter=True
     ).join(
-        SampleDataType, SampleData.sample_data_type_id == SampleDataType.sample_data_type_id,
+        models.SampleDataType, models.SampleData.sample_data_type_id == models.SampleDataType.sample_data_type_id,
         isouter=True
     ).join(
-        Report, Report.report_id == Sample.report_id,
+        models.Report, models.Report.report_id == models.Sample.report_id,
         isouter=True
     ).join(
-        ReportMeta, ReportMeta.report_id == Report.report_id,
+        models.ReportMeta, models.ReportMeta.report_id == models.Report.report_id,
         isouter=True
-    )
+    ).with_entities(models.Sample.sample_id)
 
     # A unified clause that does all the filtering demanded by the user
     filter_clause = concat_clauses(or_filters, 'or')

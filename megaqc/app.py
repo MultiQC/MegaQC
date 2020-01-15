@@ -12,7 +12,8 @@ import logging
 import markdown
 from flask import Flask, jsonify, render_template, request
 from megaqc import commands, public, user, version, api, rest_api
-from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager, ma, restful, json_api
+from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_manager, ma, restful, json_api, migrate
+from megaqc.rest_api.views import api_bp
 from megaqc.scheduler import init_scheduler
 from megaqc.settings import ProdConfig, TestConfig
 from megaqc.api.views import api_blueprint
@@ -47,6 +48,7 @@ def register_extensions(app):
     debug_toolbar.init_app(app)
     ma.init_app(app)
     json_api.init_app(app)
+    migrate.init_app(app, db)
 
     @app.context_processor
     def inject_debug():
@@ -67,7 +69,7 @@ def register_blueprints(app):
     csrf_protect.exempt(api.views.api_blueprint)
     app.register_blueprint(api.views.api_blueprint)
     # restful.init_app(api.rest_api.api_bp)
-    app.register_blueprint(rest_api.views.api_bp)
+    app.register_blueprint(api_bp)
     return None
 
 

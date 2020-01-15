@@ -7,6 +7,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Unicode, TIMESTAMP, Binary, DateTime
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from flask_login import UserMixin
 
 from flask_login import UserMixin
 
@@ -65,6 +66,7 @@ class User(db.Model, CRUDMixin, UserMixin):
     filters = relationship('SampleFilter', back_populates='user')
     favourite_plots = relationship('PlotFavourite', back_populates='user')
     dashboards = relationship('Dashboard', back_populates='user')
+    thresholds = relationship('AlertThreshold', back_populates='user')
 
     def __init__(self, password=None, **kwargs):
         """Create instance."""

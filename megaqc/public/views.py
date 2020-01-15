@@ -240,20 +240,28 @@ def distributions():
 @login_required
 def trends():
     # Get the fields from the add-new-filters form
-    return_data = aggregate_new_parameters(current_user, [], False)
-    sample_filters = order_sample_filters()
     return render_template(
-        'public/trends.html',
-        db = db,
-        User = User,
-        user_token = current_user.api_token,
-        sample_filters = sample_filters,
-        num_samples = return_data[0],
-        report_fields = return_data[1],
-        sample_fields = return_data[2],
-        report_fields_json = json.dumps(return_data[1]),
-        sample_fields_json = json.dumps(return_data[2])
+        'public/react.html',
+        entrypoint='trend'
         )
+
+@blueprint.route('/admin/')
+@login_required
+def admin():
+    # Get the fields from the add-new-filters form
+    return render_template(
+        'public/react.html',
+        entrypoint='admin'
+    )
+
+@blueprint.route('/alerts/')
+@login_required
+def alerts():
+    # Get the fields from the add-new-filters form
+    return render_template(
+        'public/react.html',
+        entrypoint='alerts'
+    )
 
 @blueprint.route('/comparisons/')
 @login_required
