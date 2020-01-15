@@ -31,13 +31,17 @@ function Trend(props) {
     const [revision, setRevision] = useState(0);
     const [outlier, setOutlier] = useState(null);
     const [saveBoxOpen, openSaveBox] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
 
     // Start with an unauthenticated client, then request a token ASAP
     const client = useRef(getClient());
+
     useEffect(() => {
-        const client = getClient();
-        getToken(client).then(token => {
-            clientRef.current._transport._auth.header = {access_token: token};
+        client.current.get('users', 'current').then(user => {
+            // Update the API token, and also store the current user
+            const token = user.toJSON().api_token;
+            client.current._transport._auth.header = {access_token: token};
+            setCurrentUser(user);
         })
     }, []);
 
@@ -70,6 +74,7 @@ function Trend(props) {
     return (
         <div>
             <SavePlot
+                user={currentUser}
                 qcApi={client.current}
                 plotData={{
                     // This is a bit of a hack to ensure the filters save in a format expected by the old parts of MegaQC

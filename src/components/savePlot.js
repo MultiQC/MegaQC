@@ -1,14 +1,24 @@
 import React from 'react';
-import {Button, Container, FormGroup, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row} from 'reactstrap';
+import {
+    Button,
+    Container,
+    FormGroup,
+    Label,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    Row
+} from 'reactstrap';
 import BootstrapField from './bootstrapField';
 import filterSchema from '../util/filterSchema';
 import * as Yup from 'yup';
-
+import PropTypes from 'prop-types';
 import {Field, Form, Formik} from 'formik';
 
 
 export default function SavePlot(props) {
-    const {isOpen, toggle, qcApi, plotData, plotType} = props;
+    const {isOpen, toggle, qcApi, plotData, plotType, user} = props;
 
     return <Formik
         initialValues={{
@@ -28,6 +38,8 @@ export default function SavePlot(props) {
             resource.set('description', values.description);
             resource.set('plot_type', plotType);
             resource.set('data', plotData);
+
+            resource.relationships("user").set(user);
 
             // Save it
             resource.sync()
@@ -64,7 +76,12 @@ export default function SavePlot(props) {
                         </Container>
                     </ModalBody>
                     <ModalFooter>
-                        <Button type="submit" disabled={isSubmitting} color="primary" block>Save
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
+                            color="primary"
+                            block
+                        >Save
                             Filter</Button>
                     </ModalFooter>
                 </Form>
@@ -72,3 +89,12 @@ export default function SavePlot(props) {
         )}
     </Formik>;
 }
+
+SavePlot.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    toggle: PropTypes.func.isRequired,
+    qcApi: PropTypes.object.isRequired,
+    plotData: PropTypes.object.isRequired,
+    plotType: PropTypes.string.isRequired,
+    user: PropTypes.object.isRequired
+};
