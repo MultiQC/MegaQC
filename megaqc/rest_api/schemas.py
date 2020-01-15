@@ -416,6 +416,7 @@ class UserSchema(Schema):
         schema='ReportSchema'
     )
 
+
 class AlertThresholdSchema(Schema):
     class Meta:
         sqla_session = db.session
@@ -424,6 +425,7 @@ class AlertThresholdSchema(Schema):
         self_view_kwargs = {
             'id': '<id>'
         }
+        model = models.AlertThreshold
 
     id = f.Int(attribute='alert_threshold_id', required=False, allow_none=True, as_string=True)
     threshold = f.Int()
@@ -432,6 +434,63 @@ class AlertThresholdSchema(Schema):
     created_at = f.DateTime()
     modified_at = f.DateTime()
     importance = f.Integer()
+
+    user = Relationship(
+        related_view='rest_api.user',
+        related_view_kwargs={
+            'id': '<user_id>'
+        },
+        many=False,
+        type_='users',
+        required=True,
+        schema='UserSchema'
+    )
+    alerts = Relationship(
+        related_view='rest_api.alertthreshold_alerts',
+        related_view_kwargs={
+            'id': '<alert_threshold_id>'
+        },
+        many=False,
+        type_='alert_thresholds',
+        required=True,
+        schema='AlertThresholdSchema'
+    )
+
+
+class AlertSchema(Schema):
+    class Meta:
+        sqla_session = db.session
+        type_ = "alerts"
+        self_view = 'rest_api.alert'
+        self_view_kwargs = {
+            'id': '<id>'
+        }
+        model = models.Alert
+
+    id = f.Int(attribute='alert_id', required=False, allow_none=True, as_string=True)
+    created_at = f.DateTime()
+
+    threshold = Relationship(
+        related_view='rest_api.alert_threshold',
+        related_view_kwargs={
+            'id': '<alert_threshold_id>'
+        },
+        many=False,
+        type_='alert_thresholds',
+        required=True,
+        schema='AlertThresholdSchema'
+    )
+    samples = Relationship(
+        related_view='rest_api.alert_samples',
+        related_view_kwargs={
+            'id': '<alert_id>'
+        },
+        many=True,
+        type_='samples',
+        required=True,
+        schema='SampleSchema'
+    )
+
 
 class PlotSchema(JsonApiSchema):
     """

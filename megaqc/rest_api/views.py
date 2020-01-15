@@ -374,7 +374,7 @@ class DashboardList(ResourceList):
     )
 
 
-class DashboardRelationship(ResourceList):
+class DashboardRelationship(ResourceRelationship):
     view_kwargs = True
     schema = schemas.DashboardSchema
     data_layer = dict(
@@ -390,6 +390,55 @@ class Dashboard(ResourceDetail):
         model=models.Dashboard
     )
 
+class AlertThresholdList(ResourceList):
+    view_kwargs = True
+    schema = schemas.AlertThresholdSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.AlertThreshold
+    )
+
+
+class AlertThresholdRelationship(ResourceRelationship):
+    view_kwargs = True
+    schema = schemas.AlertThresholdSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.AlertThreshold
+    )
+
+
+class AlertThreshold(ResourceDetail):
+    schema = schemas.AlertThresholdSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.AlertThreshold
+    )
+    
+class AlertList(ResourceList):
+    view_kwargs = True
+    schema = schemas.AlertSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Alert
+    )
+
+
+class AlertRelationship(ResourceRelationship):
+    view_kwargs = True
+    schema = schemas.AlertSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Alert
+    )
+
+
+class Alert(ResourceDetail):
+    schema = schemas.AlertSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.Alert
+    )
 
 class TrendSeries(ResourceList):
     view_kwargs = True
@@ -439,6 +488,7 @@ json_api.route(ReportMetaRelationship, 'report_reportmeta_rel',
 json_api.route(Sample, 'sample', "/samples/<int:id>")
 json_api.route(SampleList, 'samplelist', '/samples')
 json_api.route(SampleList, 'report_samplelist', "/reports/<int:id>/samples")
+json_api.route(SampleList, 'alert_samplelist', "/alerts/<int:id>/samples")
 
 json_api.route(ReportMetaTypeList, 'metatypelist', '/meta_types')
 
@@ -469,5 +519,17 @@ json_api.route(DashboardList, 'dashboardlist', "/dashboards")
 json_api.route(DashboardList, 'user_dashboardlist', "/users/<int:id>/dashboards")
 json_api.route(DashboardRelationship, 'user_dashboards_rel',
                "/users/<int:id>/relationships/dashboards")
+
+json_api.route(AlertThreshold, 'alertthreshold', "/thresholds/<int:id>")
+json_api.route(AlertThresholdList, 'alertthresholdlist', "/thresholds")
+json_api.route(AlertThresholdList, 'user_alertthresholdlist', "/users/<int:id>/thresholds")
+json_api.route(AlertThresholdRelationship, 'user_alertthreshold_rel',
+               "/users/<int:id>/relationships/thresholds")
+               
+json_api.route(Alert, 'alert', "/alerts/<int:id>")
+json_api.route(AlertList, 'alertlist', "/alerts")
+json_api.route(AlertList, 'threshold_alertlist', "/thresholds/<int:id>/alerts")
+json_api.route(AlertRelationship, 'threshold_alert_rel',
+               "/thresholds/<int:id>/relationships/alerts")
 
 json_api.route(TrendSeries, 'trend_data', "/plots/trends/series")
