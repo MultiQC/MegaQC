@@ -48,6 +48,7 @@ dev_reqs = [
     "scipy~=1.3",
     "flatten_json~=0.1",
     "flapison~=0.30",
+    "Flask-Migrate~=2.5",
 
     # Testing
     "pytest~=3.0",

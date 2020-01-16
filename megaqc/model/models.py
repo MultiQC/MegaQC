@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 import datetime as dt
 import json
+from enum import Enum
 
-from sqlalchemy import ForeignKey, Column, Boolean, Integer, Unicode, DateTime
+from sqlalchemy import ForeignKey, Column, Boolean, Integer, Unicode, DateTime, Enum as SqlEnum
 from sqlalchemy.orm import relationship
 
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
 
 user_plotconfig_map = db.Table('user_plotconfig_map',
-            db.Column('user_id', Integer, db.ForeignKey('users.user_id')),
-            db.Column('plot_config_id', Integer, db.ForeignKey('plot_config.config_id'))
-            )
+                               db.Column('user_id', Integer, db.ForeignKey('users.user_id')),
+                               db.Column('plot_config_id', Integer, db.ForeignKey('plot_config.config_id'))
+                               )
 
 user_sampletype_map = db.Table('user_sampletype_map',
-            db.Column('user_id', Integer, db.ForeignKey('users.user_id')),
-            db.Column('sample_data_type_id', Integer, db.ForeignKey('sample_data_type.sample_data_type_id'))
-            )
+                               db.Column('user_id', Integer, db.ForeignKey('users.user_id')),
+                               db.Column('sample_data_type_id', Integer,
+                                         db.ForeignKey('sample_data_type.sample_data_type_id'))
+                               )
 
 
 class Report(db.Model, CRUDMixin):
@@ -53,11 +55,18 @@ class ReportMeta(db.Model, CRUDMixin):
         """
         return session.query(ReportMeta.report_meta_key).distinct()
 
+    @classmethod
+    def get_keys(cls, session):
+        """
+        Returns all unique metadata keys
+        """
+        return session.query(ReportMeta.report_meta_key).distinct()
+
 
 class PlotConfig(db.Model, CRUDMixin):
     __tablename__ = 'plot_config'
     config_id = Column(Integer, primary_key=True)
-    config_type = Column(Unicode,  nullable=False)
+    config_type = Column(Unicode, nullable=False)
     config_name = Column(Unicode, nullable=False)
     config_dataset = Column(Unicode, nullable=True)
     data = Column(Unicode, nullable=False)
@@ -116,6 +125,21 @@ class SampleDataType(db.Model, CRUDMixin):
     data_id = Column(Unicode)
     data_section = Column(Unicode)
     data_key = Column(Unicode, nullable=False)
+    schema = Column(Unicode, doc='A JSON Schema for validating and describing the data of this type')
+
+    @property
+    def schema_json(self):
+        """
+        Gets the schema as JSON
+        """
+        return json.loads(self.schema)
+
+    @property
+    def type(self):
+        """
+        Gets the root level data type, or None if it doesn't have one
+        """
+        return self.schema_json.get('type')
 
     @classmethod
     def get_keys(cls, session):
@@ -123,17 +147,18 @@ class SampleDataType(db.Model, CRUDMixin):
         Returns all unique metadata keys
         """
         return session.query(SampleDataType.report_meta_key).distinct()
+
     sample_data = relationship('SampleData', back_populates='data_type')
 
 
 class SampleData(db.Model, CRUDMixin):
     __tablename__ = "sample_data"
     sample_data_id = Column(Integer, primary_key=True)
-    report_id = Column(Integer, ForeignKey('report.report_id', ondelete='CASCADE'), index=True)
-    sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id', ondelete='CASCADE'), nullable=False)
+    report_id = Column(Integer, ForeignKey('report.report_id'), index=True)
+    sample_data_type_id = Column(Integer, ForeignKey('sample_data_type.sample_data_type_id', ondelete='CASCADE'),
+                                 nullable=False)
     sample_id = Column(Integer, ForeignKey('sample.sample_id', ondelete='CASCADE'), index=True, nullable=False)
     value = Column(Unicode)
-
     sample = relationship('Sample', back_populates='data')
     report = relationship('Report', back_populates='sample_data')
     data_type = relationship('SampleDataType', back_populates='sample_data')

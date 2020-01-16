@@ -58,8 +58,8 @@ def round_date(date, direction):
 
 def build_filter_query(filters):
     """
-    Returns an SQLAlchemy query with the provided filters applied. Note that this query will not actually select any
-    data by itself, so you will likely want to add .with_entities().all() to the result of this function
+    Returns an SQLAlchemy query with the provided filters applied. This filter will only
+    select Sample IDs that meet the filter, so you should only use this as a subquery
     :param filters: Array of filters in the MegaQC filter format (each filter is a dictionary)
     :type filters: list
     :rtype: Query
@@ -145,7 +145,7 @@ def build_filter_query(filters):
     ).join(
         ReportMeta, ReportMeta.report_id == Report.report_id,
         isouter=True
-    )
+    ).with_entities(Sample.sample_id)
 
     # A unified clause that does all the filtering demanded by the user
     filter_clause = concat_clauses(or_filters, 'or')

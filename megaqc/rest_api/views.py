@@ -105,6 +105,15 @@ class ReportRelationship(ResourceRelationship):
     )
 
 
+class ReportMeta(ResourceDetail):
+    view_kwargs = True
+    schema = schemas.ReportMetaSchema
+    data_layer = dict(
+        session=db.session,
+        model=models.ReportMeta
+    )
+
+
 class ReportMetaList(ResourceList):
     view_kwargs = True
     schema = schemas.ReportMetaSchema
@@ -385,13 +394,19 @@ class Dashboard(ResourceDetail):
 class TrendSeries(ResourceList):
     view_kwargs = True
 
-    @use_kwargs(schemas.TrendInputSchema(), locations=("querystring",))
-    def get(self, fields, filter):
+
+class TrendSeries(ResourceList):
+    @use_kwargs(schemas.TrendInputSchema(), locations=('querystring',))
+    def get(self, fields, filter, outliers):
         # We need to give each resource a unique ID so the client doesn't try to cache or reconcile different plots
         request_hash = sha1(request.query_string).hexdigest()
 
-        plots = plot.trend_data(fields=fields, filters=filter,
-                                plot_prefix=request_hash)
+        plots = plot.trend_data(
+            fields=fields,
+            filters=filter,
+            outlier_det=outliers,
+            plot_prefix=request_hash
+        )
 
         return schemas.TrendSchema(many=True, unknown=INCLUDE).dump(plots)
 
@@ -416,6 +431,7 @@ json_api.route(UserRelationship, 'user_reports_rel',
 json_api.route(UserRelationship, 'user_filters_rel',
                "/users/<int:id>/relationships/filters")
 
+json_api.route(ReportMeta, 'reportmeta', "/report_meta/<int:id>")
 json_api.route(ReportMetaList, 'reportmetalist', "/report_meta")
 json_api.route(ReportMetaList, 'report_reportmetalist',
                "/reports/<int:id>/report_meta")
