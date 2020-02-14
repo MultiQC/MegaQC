@@ -1,43 +1,36 @@
-# MegaQC installation: Testing and development
+# MegaQC installation: Development
 
-By default, MegaQC installs with configuration to use the Flask development
-server and a SQLite database. This allows a very simple pure-Python installation
-where you can get up and running almost immediately.
+## Prerequisites
+You will need:
+* [node](https://nodejs.org/en/download/)
+* [Python 3](https://www.python.org/downloads/)
 
-> #### WARNING!
-> _The flask server is single-threaded, meaning that only one person can load
-> a page or a plot at a time. The SQLite database works using flat files on the
-> disk and much slower than fully fledged SQL databases. As such, it should
-> **not be used in production** and will run slowly during testing._
-
-## 1. Install the MegaQC package
-
-MegaQC is available on both the Python Package Index (PyPI) and conda (bioconda channel).
-To install using PyPI,  run the following command:
-
+## 1. Clone the repo
+If you're doing development work, you need access to the source code
 ```bash
-pip install megaqc
+git clone git@github.com:ewels/MegaQC.git
 ```
 
-To install with conda:
-
+## 2. Install the Python into a virtual environment
+You should do your development in a virtual environment. You also need to install MegaQC
+and all its dependencies there:
 ```bash
-conda install -c bioconda megaqc
+cd MegaQC
+python3 -m venv venv
+source venv/bin/activate
+pip install -e .
 ```
 
-## 2. (Optional) Set the variable for the development mode:
+## 3. Enable development mode:
 Setting this bash variable runs MegaQC in development mode. This means
 that it will show full Python exception tracebacks in the web browser
 as well as additional Flask plugins which help with debugging and performance testing.
-
-This is only useful when actively developing MegaQC code and should
-be skipped if you're just trying MegaQC out.
 
 ```bash
 export FLASK_DEBUG=1
 ```
 
-## 3. Set up the database
+## 4. Set up the database
 Running this command creates an empty SQLite MegaQC database file in the
 installation directory called `megaqc.db`
 
@@ -45,10 +38,32 @@ installation directory called `megaqc.db`
 megaqc initdb
 ```
 
-## 4. Start megaqc
+## 5. Load test data
+In order to develop new features you need some data to test it with:
+
+```
+git clone https://github.com/TMiguelT/1000gFastqc
+for report in $(find . -name '*.json')
+    do megaqc upload $report
+done
+```
+
+## 6. Install the JavaScript and start compiling
+This command will run until you cancel it, but will ensure that any changes to the 
+JavaScript are compiled instantly:
+```bash
+npm install
+npm run watch
+```
+
+## 7. Start megaqc
+In another terminal window, start MegaQC:
 ```bash
 megaqc run
 ```
 
 You should now have a fully functional MegaQC test server running,
 accessible on your localhost at http://127.0.0.1:5000
+
+Now, head over to the [development docs](development.md) for a description of the 
+project structure.
