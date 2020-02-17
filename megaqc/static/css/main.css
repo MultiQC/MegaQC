@@ -1,37 +1,32 @@
 /* MegaQC Styles */
 
-input[type="button"],
-button {
-  cursor: pointer;
+input[type=button], button {
+    cursor: pointer;
 }
-button.disabled,
-.btn.disabled,
-button:disabled,
-.btn:disabled {
-  cursor: not-allowed !important;
+button.disabled, .btn.disabled, button:disabled, .btn:disabled {
+    cursor: not-allowed !important;
 }
 img {
-  max-width: 100%;
+    max-width: 100%;
 }
 label {
-  font-weight: bold;
+    font-weight: bold;
 }
 blockquote {
-  border-left: 5px solid #8eb9dd;
-  background-color: #e8f1f8;
-  padding: 10px 10px 10px 20px;
-  margin: 25px 0;
-  color: #666;
+    border-left: 5px solid #8eb9dd;
+    background-color: #e8f1f8;
+    padding: 10px 10px 10px 20px;
+    margin: 25px 0;
+    color: #666;
 }
 .monospace {
-  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    monospace;
+    font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
 code {
-  color: #666;
+    color: #666;
 }
 div.alert.alert-light {
-  border-color: #ededed;
+    border-color: #ededed;
 }
 .btn-outline-warning.active,
 .btn-outline-warning:hover,
@@ -41,349 +36,291 @@ div.alert.alert-light {
 .btn-outline-light:hover,
 .btn-outline-light:active,
 .btn-outline-light:focus {
-  color: #666;
+    color: #666;
 }
 
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-Thin.ttf);
-  font-weight: 100;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-Light.ttf);
-  font-weight: 300;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-Regular.ttf);
-  font-weight: 400;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-Medium.ttf);
-  font-weight: 500;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-Bold.ttf);
-  font-weight: 700;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-Black.ttf);
-  font-weight: 900;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-ThinItalic.ttf);
-  font-weight: 100;
-  font-style: italic;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-LightItalic.ttf);
-  font-weight: 300;
-  font-style: italic;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-Italic.ttf);
-  font-weight: 400;
-  font-style: italic;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-MediumItalic.ttf);
-  font-weight: 500;
-  font-style: italic;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-BoldItalic.ttf);
-  font-weight: 700;
-  font-style: italic;
-}
-@font-face {
-  font-family: Roboto;
-  src: url(../fonts/roboto/Roboto-BlackItalic.ttf);
-  font-weight: 900;
-  font-style: italic;
-}
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Thin.ttf); font-weight: 100; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Light.ttf); font-weight: 300; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Regular.ttf); font-weight: 400; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Medium.ttf); font-weight: 500; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Bold.ttf); font-weight: 700; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Black.ttf); font-weight: 900; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-ThinItalic.ttf); font-weight: 100; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-LightItalic.ttf); font-weight: 300; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-Italic.ttf); font-weight: 400; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-MediumItalic.ttf); font-weight: 500; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-BoldItalic.ttf); font-weight: 700; font-style: italic; }
+@font-face { font-family: Roboto; src: url(../fonts/roboto/Roboto-BlackItalic.ttf); font-weight: 900; font-style: italic; }
 
 .navbar-brand {
-  font-family: Roboto;
+    font-family: Roboto;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: Roboto;
+h1, h2, h3, h4, h5, h6 {
+    font-family: Roboto;
 }
-h5,
-h6 {
-  font-weight: 400;
+h5, h6 {
+    font-weight: 400;
 }
 
 body {
-  background-color: #eeeeee;
-  color: #666666;
+    background-color: #EEEEEE;
+    color: #666666;
 }
 .page-content {
-  background-color: #ffffff;
+    background-color: #FFFFFF;
 }
 nav.navbar {
-  margin-bottom: 1rem;
-  background-color: #eeeeee;
-  border-bottom: 1px solid #cccccc;
+    margin-bottom: 1rem;
+    background-color: #eeeeee;
+    border-bottom: 1px solid #cccccc;
 }
 .megaqc-header-samplecount {
-  text-align: right;
-  font-size: 1.6rem;
-  font-weight: 300;
-  padding: 1.6rem 3rem;
+    text-align: right;
+    font-size: 1.6rem;
+    font-weight: 300;
+    padding: 1.6rem 3rem;
 }
 .megaqc-header-samplecount a {
-  color: #666666;
-  text-decoration: none;
+    color: #666666;
+    text-decoration: none;
 }
 
 footer {
-  background-color: #eeeeee;
-  border-top: 1px solid #ccc;
-  font-size: 0.7rem;
-  color: #999;
-  padding: 1.5rem 0;
-  margin-top: 2rem;
+    background-color: #eeeeee;
+    border-top: 1px solid #ccc;
+    font-size: 0.7rem;
+    color: #999;
+    padding: 1.5rem 0;
+    margin-top: 2rem;
 }
 footer p {
-  margin: 0;
+    margin: 0;
 }
 footer p a {
-  color: #999;
-  text-decoration: underline;
+    color: #999;
+    text-decoration: underline;
 }
 
 #megaqc-homepage-jumbotron {
-  padding: 2rem;
+    padding: 2rem;
 }
 #megaqc-homepage-title-img {
-  max-width: 400px;
-  margin: 10px 0;
+    max-width: 400px;
+    margin: 10px 0;
 }
 
 .loading-spinner {
-  color: #999;
-  font-size: 1rem;
+    color: #999;
+    font-size: 1rem;
 }
 
 .modal-xl {
-  max-width: 1200px;
-  width: 90%;
+    max-width: 1200px;
+    width:90%;
 }
 
 .plot-chooser-card {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 .plot-chooser-card h4 {
-  margin-top: 0;
-  font-weight: 300;
+    margin-top: 0;
+    font-weight: 300;
 }
 .plot-chooser-card a {
-  color: #666666;
+    color: #666666;
 }
 .plot-chooser-card a:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .card-header .btn.btn-sm {
-  margin: -3px 0;
+    margin: -3px 0;
 }
 .card .card-body pre {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
+
 .plot-chooser-card .card-body {
-  padding: 0.8rem;
+    padding: 0.8rem;
 }
 
 .new-filter-group-card {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 .new-filter-group-card .card-body {
-  padding: 0;
+    padding: 0;
 }
 .new-filter-group-card .card-body .filter-group-table {
-  margin: 0;
+    margin: 0;
 }
 .new-filter-group-card .card-body .filter-group-table td {
-  /*min-width: 200px;*/
+    /*min-width: 200px;*/
 }
 .new-filter-group-card .card-body .filter-group-table td:last-child {
-  min-width: 0;
+    min-width: 0;
 }
 .new-filter-group-card .card-body .filter-group-table tbody td {
-  padding: 0;
+    padding: 0;
 }
 .new-filter-group-card .card-body .filter-group-table tbody td div {
-  padding: 0.75rem;
+    padding: .75rem;
 }
 .new-filter-group-card .card-body .filter-group-table tbody td:last-child div {
-  padding: 0.5rem 0.75rem;
-  text-align: center;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
 }
 .new-filter-add {
-  margin: 0.25rem 0;
+    margin: .25rem 0;
 }
 .new-filter-group-add-btn {
-  margin-left: 0.5rem;
+    margin-left: 0.5rem;
 }
 
 .num_filtered_samples {
-  font-size: 50%;
-  font-weight: 400;
-  vertical-align: middle;
-  margin-left: 12px;
+    font-size: 50%;
+    font-weight: 400;
+    vertical-align: middle;
+    margin-left: 12px;
 }
 
 .activeFiltersActions button {
-  margin-left: 8px;
+    margin-left: 8px;
 }
 
 .new-filter .btn-filter-type {
-  padding: 20px;
-  border: 3px dashed #ccc;
-  border-radius: 10px;
-  min-width: 200px;
-  margin-bottom: 20px;
+    padding: 20px;
+    border: 3px dashed #ccc;
+    border-radius: 10px;
+    min-width: 200px;
+    margin-bottom: 20px;
 }
 .new-filter .filter-filterTypeBox {
-  display: none;
+    display: none;
 }
 
 .plot-setup .card {
-  margin-bottom: 2rem;
+    margin-bottom: 2rem;
 }
 .plot-setup .card .card-body .list-group {
-  height: 300px;
-  overflow-y: auto;
+    height: 300px;
+    overflow-y: auto;
 }
 .plot-setup .card .card-body .list-group {
-  height: 300px;
-  overflow-y: auto;
+    height: 300px;
+    overflow-y: auto;
 }
 .plot-setup .card .card-body .list-group.with-filter {
-  height: 248px;
+    height: 248px;
 }
 
 #sample-filter-group-select .nav-link.active {
-  color: #007bff;
-  background-color: transparent;
-  background-image: none;
-  border: 1px solid #007bff;
-  margin: 0 -1px;
+    color: #007bff;
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #007bff;
+    margin: 0 -1px;
 }
 
 .megaqc_plot .card-body {
-  min-height: 500px;
-  text-align: center;
-  padding: 0;
+    min-height:500px;
+    text-align: center;
+    padding: 0;
 }
 .megaqc_plot .card-body p {
-  margin-top: 100px;
+    margin-top: 100px;
 }
 
 .plot_header_config div {
-  padding: 8px 15px;
-  text-align: left;
-  float: left;
+    padding: 8px 15px;
+    text-align: left;
+    float: left;
 }
 #dist_plotdiv {
-  clear: left;
+    clear: left;
 }
+
 
 #favourite_plot .favourite-plot-url,
 #favourite_plot #plot-url {
-  margin-left: 1rem;
-  font-size: 16px;
-  color: #999;
-  font-weight: normal;
-  display: none;
+    margin-left: 1rem;
+    font-size: 16px;
+    color: #999;
+    font-weight: normal;
+    display: none;
 }
 #favourite_plot .favourite-plot-url {
-  display: inline;
+    display: inline;
 }
 #favourite_plot .favourite-plot-url #plot-url {
-  margin-left: auto;
+    margin-left: auto;
 }
 
 #plot_favourites_table tbody tr {
-  cursor: pointer;
+    cursor: pointer;
 }
 #plot_favourites_table tbody tr:hover {
-  background-color: rgba(181, 222, 189, 0.5);
+    background-color: rgba(181, 222, 189, 0.5)
 }
 
 #dashboard .grid-stack {
-  min-height: 320px;
+    min-height: 320px;
 }
 #dashboard .grid-stack-item-content {
-  border: 1px solid #ededed;
-  cursor: move;
+    border: 1px solid #ededed;
+    cursor:move;
 }
 #dashboard .grid-stack-item .edit-btn {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  display: none;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    display: none;
 }
 #dashboard .grid-stack-item:hover .edit-btn {
-  display: inline-block;
+    display: inline-block;
 }
 #dashboard .grid-stack-item-content.loading {
-  background-color: #ededed;
-  text-align: center;
+    background-color: #ededed;
+    text-align: center;
 }
 .grid-stack-loading {
-  display: inline-block;
-  margin: 4rem 0.5rem;
+    display: inline-block;
+    margin: 4rem 0.5rem;
 }
 #delete-area {
-  text-align: center;
-  border: 2px dashed rgba(255, 0, 0, 0.4);
-  padding: 0.4rem 1rem;
-  font-size: 1.25rem;
-  line-height: 1.5;
-  border-radius: 0.3rem;
+    text-align: center;
+    border: 2px dashed rgba(255,0,0,0.4);
+    padding: .4rem 1rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: .3rem;
 }
 
 /* .form-control but without heading styles so we can use .display-1 etc. */
 #dashboard-add-heading {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  background-color: #fff;
-  background-image: none;
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
-  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    display: block;
+    width: 100%;
+    padding: .5rem .75rem;
+    background-color: #fff;
+    background-image: none;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 }
 
 .dashboard-body {
-  position: relative;
-  overflow: hidden;
+    position: relative;
+    overflow: hidden;
 }
 .dashboard-body-block {
-  position: absolute;
-  display: block;
-  overflow: hidden;
+    position: absolute;
+    display: block;
+    overflow: hidden;
 }
 .dashboard-block-plot.loading {
-  background-color: #ededed;
-  border: 1px solid #ccc;
-  height: 100%;
+    background-color: #ededed;
+    border: 1px solid #ccc;
+    height: 100%;
 }
