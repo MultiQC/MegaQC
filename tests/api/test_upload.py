@@ -1,6 +1,6 @@
-import pytest
 from pkg_resources import resource_stream
 
+import pytest
 from megaqc.model import models
 from megaqc.rest_api import schemas
 from tests import factories
@@ -16,18 +16,18 @@ def upload(session):
 
 def test_post_upload_list(db, client, token):
     """
-    Test uploading a report
+    Test uploading a report.
     """
     count_1 = db.session.query(models.Upload).count()
 
     rv = client.post(
-        '/rest_api/v1/uploads',
-        data={'report': resource_stream('tests', 'multiqc_data.json')},
+        "/rest_api/v1/uploads",
+        data={"report": resource_stream("tests", "multiqc_data.json")},
         headers={
-            'access_token': token,
-            'Content-Type': 'multipart/form-data',
-            'Accept': 'application/json'
-        }
+            "access_token": token,
+            "Content-Type": "multipart/form-data",
+            "Accept": "application/json",
+        },
     )
 
     # Check the request was successful

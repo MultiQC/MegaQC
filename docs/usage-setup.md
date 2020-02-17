@@ -1,10 +1,12 @@
 # MegaQC Usage: Setup
 
 ## Submitting data
+
 Before you can do anything useful in MegaQC, you need to submit some data
 to the database. You do this by configuring and then running MultiQC.
 
 ### MultiQC configuration
+
 MultiQC needs a couple of configuration variables to know how to send data to MegaQC.
 To find these, log into MegaQC and use the navigation dropdown to get to the
 _MultiQC Configuration_ page. Copy the specified text into `~/.multiqc_config.yaml`.
@@ -14,6 +16,7 @@ shared (it's effectively a password). All data uploaded using that token will be
 to your user.
 
 ### Running MultiQC
+
 Once configured, run MultiQC as you would normally. You should see a couple of additional
 log messages under the `megaqc` namespace as follows:
 

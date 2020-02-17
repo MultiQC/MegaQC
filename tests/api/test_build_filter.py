@@ -1,15 +1,16 @@
 import datetime
 import itertools
-import pytest
-from tests import factories
 
+import pytest
 from megaqc.model import models
-from megaqc.rest_api.filters import build_filter_query, DATE_FORMAT
+from megaqc.rest_api.filters import DATE_FORMAT, build_filter_query
+from tests import factories
 
 
 def unique(result, column):
     """
-    Returns all unique values of the given column
+    Returns all unique values of the given column.
+
     :param result: The return value of an SQLAlchemy query()
     :param column: The column to find unique values for
     """
@@ -19,8 +20,8 @@ def unique(result, column):
 @pytest.fixture()
 def filter_test_types(session):
     types = [
-        factories.SampleDataTypeFactory.build(data_key='field_1'),
-        factories.SampleDataTypeFactory.build(data_key='field_2')
+        factories.SampleDataTypeFactory.build(data_key="field_1"),
+        factories.SampleDataTypeFactory.build(data_key="field_2"),
     ]
     session.add_all(types)
     session.commit()
@@ -37,66 +38,52 @@ def filter_test_reports(filter_test_types, session):
         factories.ReportFactory(
             # models.Report(
             created_at=datetime.datetime.now() - datetime.timedelta(days=1),
-            samples=[factories.SampleFactory(
-                data=[]
-            )],
+            samples=[factories.SampleFactory(data=[])],
             meta=[
                 factories.ReportMetaFactory.build(
-                    report_meta_key='key_1',
-                    report_meta_value='1',
-                    report=None
+                    report_meta_key="key_1", report_meta_value="1", report=None
                 ),
                 factories.ReportMetaFactory.build(
-                    report_meta_key='key_2',
-                    report_meta_value=1,
-                    report=None
+                    report_meta_key="key_2", report_meta_value=1, report=None
                 ),
-            ]
+            ],
         ),
         # models.Report(
         factories.ReportFactory(
             created_at=datetime.datetime.now() - datetime.timedelta(days=2),
-            samples=[factories.SampleFactory(
-                data=[]
-            )],
+            samples=[factories.SampleFactory(data=[])],
             meta=[
                 factories.ReportMetaFactory.build(
-                    report_meta_key='key_1',
-                    report_meta_value='2',
-                    report=None
+                    report_meta_key="key_1", report_meta_value="2", report=None
                 ),
                 factories.ReportMetaFactory.build(
-                    report_meta_key='key_2',
-                    report_meta_value=2,
-                    report=None
+                    report_meta_key="key_2", report_meta_value=2, report=None
                 ),
-            ]
+            ],
         ),
         # models.Report(
         factories.ReportFactory(
             created_at=datetime.datetime.now() - datetime.timedelta(days=3),
-            samples=[factories.SampleFactory(
-                data=[]
-            )],
+            samples=[factories.SampleFactory(data=[])],
             meta=[
                 factories.ReportMetaFactory.build(
-                    report_meta_key='key_1',
-                    report_meta_value='3',
-                    report=None
+                    report_meta_key="key_1", report_meta_value="3", report=None
                 ),
                 factories.ReportMetaFactory.build(
-                    report_meta_key='key_2',
-                    report_meta_value=3,
-                    report=None
+                    report_meta_key="key_2", report_meta_value=3, report=None
                 ),
-            ]
-        )
+            ],
+        ),
     ]
 
     for i, report in enumerate(ret):
         report.samples[0].data = [
-            factories.SampleDataFactory.build(data_type=types[0], value=i + 1, report=report),
-            factories.SampleDataFactory.build(data_type=types[1], value=i + 1, report=report),
+            factories.SampleDataFactory.build(
+                data_type=types[0], value=i + 1, report=report
+            ),
+            factories.SampleDataFactory.build(
+                data_type=types[1], value=i + 1, report=report
+            ),
         ]
 
     session.expunge_all()
@@ -107,35 +94,40 @@ def filter_test_reports(filter_test_types, session):
 
 def test_daterange_in(filter_test_reports):
     # Finds all samples uploaded in the last 2 days
-    query = build_filter_query([
+    query = build_filter_query(
         [
-            {
-                'type': 'daterange',
-                'value': [
-                    (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(
-                        DATE_FORMAT),
-                    (datetime.datetime.now()).strftime(DATE_FORMAT),
-                ],
-                'cmp': 'in'
-            }
+            [
+                {
+                    "type": "daterange",
+                    "value": [
+                        (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(
+                            DATE_FORMAT
+                        ),
+                        (datetime.datetime.now()).strftime(DATE_FORMAT),
+                    ],
+                    "cmp": "in",
+                }
+            ]
         ]
-    ])
+    )
     for report in filter_test_reports:
         print(len(report.samples))
-    data = query.with_entities(
-        models.Report.created_at,
-        models.SampleData.value,
-        models.Sample.sample_id,
-        models.Report.report_id
-    ).group_by(
-        models.Sample.sample_id
-    ).all()
+    data = (
+        query.with_entities(
+            models.Report.created_at,
+            models.SampleData.value,
+            models.Sample.sample_id,
+            models.Report.report_id,
+        )
+        .group_by(models.Sample.sample_id)
+        .all()
+    )
 
     # This should return 2 samples
-    assert len(unique(data, 'sample_id')) == 2
+    assert len(unique(data, "sample_id")) == 2
 
     # These samples should come from only 2 reports
-    reports = unique(data, 'report_id')
+    reports = unique(data, "report_id")
     assert len(reports) == 2
 
     # Specifically, it should be the first two reports that are returned
@@ -145,31 +137,38 @@ def test_daterange_in(filter_test_reports):
 
 def test_daterange_not_in(filter_test_reports):
     # Finds all samples uploaded in the last 2 days
-    query = build_filter_query([
+    query = build_filter_query(
         [
-            {
-                'type': 'daterange',
-                'value': [
-                    (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(
-                        DATE_FORMAT),
-                    (datetime.datetime.now()).strftime(DATE_FORMAT),
-                ],
-                'cmp': 'not in'
-            }
+            [
+                {
+                    "type": "daterange",
+                    "value": [
+                        (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(
+                            DATE_FORMAT
+                        ),
+                        (datetime.datetime.now()).strftime(DATE_FORMAT),
+                    ],
+                    "cmp": "not in",
+                }
+            ]
         ]
-    ])
-    data = query.with_entities(
-        models.Report.created_at,
-        models.SampleData.value,
-        models.Sample.sample_id,
-        models.Report.report_id
-    ).group_by(models.Sample.sample_id).all()
+    )
+    data = (
+        query.with_entities(
+            models.Report.created_at,
+            models.SampleData.value,
+            models.Sample.sample_id,
+            models.Report.report_id,
+        )
+        .group_by(models.Sample.sample_id)
+        .all()
+    )
 
     # This should return 1 sample
-    assert len(unique(data, 'sample_id')) == 1
+    assert len(unique(data, "sample_id")) == 1
 
     # These samples should come from only 1 reports
-    reports = unique(data, 'report_id')
+    reports = unique(data, "report_id")
     assert len(reports) == 1
 
     # Specifically, it should be the last report that is returned
@@ -178,27 +177,19 @@ def test_daterange_not_in(filter_test_reports):
 
 def test_timedelta_in(filter_test_reports):
     # Finds all samples uploaded in the last 2 days
-    query = build_filter_query([
-        [
-            {
-                'type': 'timedelta',
-                'value': [2],
-                'cmp': 'in'
-            }
-        ]
-    ])
+    query = build_filter_query([[{"type": "timedelta", "value": [2], "cmp": "in"}]])
     data = query.with_entities(
         models.Report.created_at,
         models.SampleData.value,
         models.Sample.sample_id,
-        models.Report.report_id
+        models.Report.report_id,
     ).all()
 
     # This should return 2 samples
-    assert len(unique(data, 'sample_id')) == 2
+    assert len(unique(data, "sample_id")) == 2
 
     # These samples should come from only 2 reports
-    reports = unique(data, 'report_id')
+    reports = unique(data, "report_id")
     assert len(reports) == 2
 
     # Specifically, it should be the first two reports that are returned
@@ -208,27 +199,19 @@ def test_timedelta_in(filter_test_reports):
 
 def test_timedelta_not_in(filter_test_reports):
     # Finds all samples uploaded in the last 2 days, but using timedelta
-    query = build_filter_query([
-        [
-            {
-                'type': 'timedelta',
-                'value': [2],
-                'cmp': 'not in'
-            }
-        ]
-    ])
+    query = build_filter_query([[{"type": "timedelta", "value": [2], "cmp": "not in"}]])
     data = query.with_entities(
         models.Report.created_at,
         models.SampleData.value,
         models.Sample.sample_id,
-        models.Report.report_id
+        models.Report.report_id,
     ).all()
 
     # This should return 1 sample
-    assert len(unique(data, 'sample_id')) == 1
+    assert len(unique(data, "sample_id")) == 1
 
     # These samples should come from only 1 reports
-    reports = unique(data, 'report_id')
+    reports = unique(data, "report_id")
     assert len(reports) == 1
 
     # Specifically, it should be the last report that is returned
@@ -236,42 +219,34 @@ def test_timedelta_not_in(filter_test_reports):
 
 
 @pytest.mark.parametrize(
-    ['meta_key', 'value'],
+    ["meta_key", "value"],
     itertools.product(
         # Test this using a string meta property, and an integer meta property
-        ['key_1', 'key_2'],
-
+        ["key_1", "key_2"],
         # Likewise, test the value using a string and an integer
-        [2, '2']
-    )
+        [2, "2"],
+    ),
 )
 def test_reportmeta_equals(filter_test_reports, meta_key, value):
     # db.session.add_all(filter_test_reports)
 
     # Finds all samples that have a certain metadata key
-    query = build_filter_query([
-        [
-            {
-                'type': 'reportmeta',
-                'key': meta_key,
-                'value': [value],
-                'cmp': 'eq'
-            }
-        ]
-    ])
+    query = build_filter_query(
+        [[{"type": "reportmeta", "key": meta_key, "value": [value], "cmp": "eq"}]]
+    )
     data = query.with_entities(
         models.Report.created_at,
         models.SampleData.value,
         models.Sample.sample_id,
-        models.Report.report_id
+        models.Report.report_id,
     ).all()
 
     # We should get one report
-    reports = unique(data, 'report_id')
+    reports = unique(data, "report_id")
     assert len(reports) == 1
 
     # We should get one sample
-    samples = unique(data, 'sample_id')
+    samples = unique(data, "sample_id")
     assert len(samples) == 1
 
     # And that one sample should be the second sample
@@ -280,29 +255,22 @@ def test_reportmeta_equals(filter_test_reports, meta_key, value):
 
 def test_reportmeta_not_equals(filter_test_reports):
     # Finds all samples that don't have a certain metadata key
-    query = build_filter_query([
-        [
-            {
-                'type': 'reportmeta',
-                'key': 'key_1',
-                'value': [2],
-                'cmp': 'ne'
-            }
-        ]
-    ])
+    query = build_filter_query(
+        [[{"type": "reportmeta", "key": "key_1", "value": [2], "cmp": "ne"}]]
+    )
     data = query.with_entities(
         models.Report.created_at,
         models.SampleData.value,
         models.Sample.sample_id,
-        models.Report.report_id
+        models.Report.report_id,
     ).all()
 
     # We should get two reports
-    reports = unique(data, 'report_id')
+    reports = unique(data, "report_id")
     assert len(reports) == 2
 
     # We should get two samples
-    samples = unique(data, 'sample_id')
+    samples = unique(data, "sample_id")
     assert len(samples) == 2
 
     # And neither sample should be sample 2
@@ -313,44 +281,46 @@ def test_reportmeta_not_equals(filter_test_reports):
 # Use the "cmp" operator to compare the value with the number 2, and then assert that the array of report IDs is
 # equal to the "correct" array
 @pytest.mark.parametrize(
-    ['cmp', 'correct'],
+    ["cmp", "correct"],
     [
-        ['eq', [1]],
-        ['ne', [0, 2]],
-        ['le', [0, 1]],
-        ['lt', [0]],
-        ['ge', [1, 2]],
-        ['gt', [2]],
-    ]
+        ["eq", [1]],
+        ["ne", [0, 2]],
+        ["le", [0, 1]],
+        ["lt", [0]],
+        ["ge", [1, 2]],
+        ["gt", [2]],
+    ],
 )
 def test_samplemeta_operator(filter_test_reports, filter_test_types, cmp, correct):
     """
-    Tests all comparison operators, and the samplemeta filter
+    Tests all comparison operators, and the samplemeta filter.
     """
     # Finds all samples that have less than 2 for some value
-    query = build_filter_query([
+    query = build_filter_query(
         [
-            {
-                'type': 'samplemeta',
-                'key': filter_test_types[0].data_key,
-                'value': [2],
-                'cmp': cmp
-            }
+            [
+                {
+                    "type": "samplemeta",
+                    "key": filter_test_types[0].data_key,
+                    "value": [2],
+                    "cmp": cmp,
+                }
+            ]
         ]
-    ])
+    )
     data = query.with_entities(
         models.Report.created_at,
         models.SampleData.value,
         models.Sample.sample_id,
-        models.Report.report_id
+        models.Report.report_id,
     ).all()
 
     # We should get the right number of reports
-    reports = unique(data, 'report_id')
+    reports = unique(data, "report_id")
     assert len(reports) == len(correct)
 
     # We should get two samples
-    samples = unique(data, 'sample_id')
+    samples = unique(data, "sample_id")
     assert len(samples) == len(correct)
 
     # And the sample should be sample 1
@@ -360,39 +330,36 @@ def test_samplemeta_operator(filter_test_reports, filter_test_types, cmp, correc
 
 def test_and_query(filter_test_types, filter_test_reports):
     """
-    Find the intersections of two queries
+    Find the intersections of two queries.
     """
 
     # Finds all samples that have greater than 1 for some sample value, AND greater than 2 for some report metadata
-    query = build_filter_query([
+    query = build_filter_query(
         [
-            {
-                'type': 'samplemeta',
-                'key': filter_test_types[0].data_key,
-                'value': [1],
-                'cmp': 'gt'
-            },
-            {
-                'type': 'reportmeta',
-                'key': 'key_1',
-                'value': [2],
-                'cmp': 'gt'
-            }
+            [
+                {
+                    "type": "samplemeta",
+                    "key": filter_test_types[0].data_key,
+                    "value": [1],
+                    "cmp": "gt",
+                },
+                {"type": "reportmeta", "key": "key_1", "value": [2], "cmp": "gt"},
+            ]
         ]
-    ])
+    )
     data = query.with_entities(
         models.Report.created_at,
         models.SampleData.value,
         models.Sample.sample_id,
-        models.Report.report_id
+        models.Report.report_id,
     ).all()
 
     # We should get two reports
-    reports = unique(data, 'report_id')
+    reports = unique(data, "report_id")
     assert len(reports) == 1
 
     # We should get two samples
-    samples = unique(data, 'sample_id')
+    samples = unique(data, "sample_id")
     assert len(samples) == 1
 
     # And the sample returned should be the third sample
@@ -401,41 +368,36 @@ def test_and_query(filter_test_types, filter_test_reports):
 
 def test_or_query(filter_test_types, filter_test_reports):
     """
-    Find the intersections of two queries
+    Find the intersections of two queries.
     """
 
     # Finds all samples that have greater than 2 for some sample value, OR less than 2 for some report metadata
-    query = build_filter_query([
+    query = build_filter_query(
         [
-            {
-                'type': 'samplemeta',
-                'key': filter_test_types[0].data_key,
-                'value': [2],
-                'cmp': 'gt'
-            },
-        ],
-        [
-            {
-                'type': 'reportmeta',
-                'key': 'key_1',
-                'value': [2],
-                'cmp': 'lt'
-            }
+            [
+                {
+                    "type": "samplemeta",
+                    "key": filter_test_types[0].data_key,
+                    "value": [2],
+                    "cmp": "gt",
+                },
+            ],
+            [{"type": "reportmeta", "key": "key_1", "value": [2], "cmp": "lt"}],
         ]
-    ])
+    )
     data = query.with_entities(
         models.Report.created_at,
         models.SampleData.value,
         models.Sample.sample_id,
-        models.Report.report_id
+        models.Report.report_id,
     ).all()
 
     # We should get two reports
-    reports = unique(data, 'report_id')
+    reports = unique(data, "report_id")
     assert len(reports) == 2
 
     # We should get two samples
-    samples = unique(data, 'sample_id')
+    samples = unique(data, "sample_id")
     assert len(samples) == 2
 
     # And the sample returned should not be the second sample

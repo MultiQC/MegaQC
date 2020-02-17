@@ -1,16 +1,18 @@
-from flask_restful import url_for
-from sqlalchemy.orm.collections import InstrumentedList
 import json
-from megaqc.extensions import ma
-from sqlalchemy.inspection import inspect
-from megaqc.extensions import db
+
+from flask_restful import url_for
+from megaqc.extensions import db, ma
 from megaqc.model import models
+from sqlalchemy.inspection import inspect
+from sqlalchemy.orm.collections import InstrumentedList
 
 
 class JsonString(ma.Field):
     """
-    Serializes a JSON structure as JSON, but deserializes it as a string (for DB storage), or vice-versa
+    Serializes a JSON structure as JSON, but deserializes it as a string (for
+    DB storage), or vice-versa.
     """
+
     def __init__(self, *args, invert=False, **kwargs):
         self.invert = invert
         super().__init__(*args, **kwargs)
@@ -30,7 +32,7 @@ class JsonString(ma.Field):
 
 class ModelAssociation(ma.Field):
     """
-    Dumps as a foreign key, e.g. "3", and loads as a model instance, e.g. User
+    Dumps as a foreign key, e.g. "3", and loads as a model instance, e.g. User.
     """
 
     def __init__(self, model, *args, **kwargs):
@@ -49,7 +51,7 @@ class ModelAssociation(ma.Field):
 
 class FilterReference(ModelAssociation):
     """
-    Dumps as a SampleFilter foreign key, e.g. "3", and loads as a filter array
+    Dumps as a SampleFilter foreign key, e.g. "3", and loads as a filter array.
     """
 
     def __init__(self, *args, **kwargs):

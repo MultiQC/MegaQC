@@ -1,6 +1,6 @@
-#!/usr/bin/env python
 """
-MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.
+MegaQC is a web application that collects results from multiple runs of MultiQC
+and allows bulk visualisation.
 
 See the MultiQC website for installation instructions and documentation: https://megaqc.info/
 
@@ -10,18 +10,24 @@ MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at S
 from setuptools import setup
 
 setup(
-    name='megaqc',
-    version='0.2.0',
-    author='Phil Ewels',
-    author_email='phil.ewels@scilifelab.se',
+    name="megaqc",
+    version="0.2.0",
+    author="Phil Ewels",
+    author_email="phil.ewels@scilifelab.se",
     description="Collect and visualise data across multiple MultiQC runs",
     long_description=__doc__,
-    keywords=['bioinformatics', 'biology', 'sequencing', 'NGS',
-              'next generation sequencing', 'quality control'],
-    url='https://megaqc.info/',
-    download_url='https://github.com/ewels/MegaQC/releases',
-    license='GPLv3',
-    packages=['megaqc'],
+    keywords=[
+        "bioinformatics",
+        "biology",
+        "sequencing",
+        "NGS",
+        "next generation sequencing",
+        "quality control",
+    ],
+    url="https://megaqc.info/",
+    download_url="https://github.com/ewels/MegaQC/releases",
+    license="GPLv3",
+    packages=["megaqc"],
     include_package_data=True,
     zip_safe=False,
     entry_points={
@@ -30,7 +36,7 @@ setup(
             # more script entry points ...
         ],
     },
-        install_requires=[
+    install_requires=[
         "argon2-cffi~=16.3",
         "click~=5.0",
         "Flask-APScheduler~=1.7",
@@ -73,36 +79,31 @@ setup(
             "WebTest~=2.0",
             "factory-boy~=2.12",
             "livereload~=2.5",
-
             # Lint and code style
             "flake8~=3.7",
             "flake8-blind-except~=0.1",
             "flake8-debugger~=3.1",
             "flake8-docstrings~=1.3",
-            "flake8-isort~=2.7",
-            "flake8-quotes~=2.1",
             "isort[pyproject]~=4.3",
             "pep8-naming~=0.8",
+            "pre-commit",
         ],
-        "prod": [
-            "psycopg2-binary~=2.6",
-            "gunicorn~=19.7",
-        ],
+        "prod": ["psycopg2-binary~=2.6", "gunicorn~=19.7",],
     },
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Environment :: Web Environment',
-        'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-        'Natural Language :: English',
-        'Operating System :: MacOS :: MacOS X',
-        'Operating System :: POSIX',
-        'Operating System :: Unix',
-        'Programming Language :: Python',
-        'Programming Language :: JavaScript',
-        'Topic :: Scientific/Engineering',
-        'Topic :: Scientific/Engineering :: Bio-Informatics',
-        'Topic :: Scientific/Engineering :: Visualization',
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Environment :: Web Environment",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Natural Language :: English",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX",
+        "Operating System :: Unix",
+        "Programming Language :: Python",
+        "Programming Language :: JavaScript",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
+        "Topic :: Scientific/Engineering :: Visualization",
     ],
 )

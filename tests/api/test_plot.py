@@ -1,10 +1,9 @@
-from flask import url_for
-from plotly.offline import plot
 import json
 
-from megaqc.rest_api.schemas import TrendSchema
+from flask import url_for
 from marshmallow.utils import EXCLUDE
-
+from megaqc.rest_api.schemas import TrendSchema
+from plotly.offline import plot
 from tests import factories
 
 
@@ -17,11 +16,11 @@ def test_get_trend_series(db, client):
 
     # plots = jpi.get('plots/trends/series')
     url = url_for(
-        'rest_api.trend_data',
+        "rest_api.trend_data",
         filter=json.dumps([]),
-        fields=json.dumps([data_type.data_key])
+        fields=json.dumps([data_type.data_key]),
     )
-    response = client.get(url, headers={'Content-Type': 'application/json'})
+    response = client.get(url, headers={"Content-Type": "application/json"})
 
     # Check the request was successful
     assert response.status_code == 200, response.json
@@ -33,4 +32,4 @@ def test_get_trend_series(db, client):
     assert len(data) == 4
 
     # Test that this is valid plot data
-    plot({'data': data}, validate=True, auto_open=False)
+    plot({"data": data}, validate=True, auto_open=False)
