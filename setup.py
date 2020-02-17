@@ -33,7 +33,6 @@ setup(
     entry_points={
         "console_scripts": [
             "megaqc = megaqc.cli:main",
-            # more script entry points ...
         ],
     },
     install_requires=[

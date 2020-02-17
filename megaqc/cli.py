@@ -5,6 +5,8 @@
 
 import os
 
+import pkg_resources
+
 import click
 from flask.cli import FlaskGroup
 
@@ -34,9 +36,7 @@ def cli():
     """
 
 
-if __name__ == "__main__":
-    import pkg_resources
-
+def main():
     version = pkg_resources.get_distribution("megaqc").version
     print("This is MegaQC v{}\n".format(version))
     if os.environ.get("FLASK_DEBUG", False):
@@ -45,3 +45,7 @@ if __name__ == "__main__":
     elif not os.environ.get("MEGAQC_PRODUCTION", False):
         os.environ["FLASK_ENV"] = "test"
     cli()
+
+
+if __name__ == "__main__":
+    main()
