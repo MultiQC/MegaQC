@@ -73,17 +73,14 @@ class Model(CRUDMixin, db.Model):
 class SurrogatePK(object):
     """A mixin that adds a surrogate integer 'primary key' column named ``id`` to any declarative-mapped class."""
 
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
 
     id = db.Column(db.Integer, primary_key=True)
 
     @classmethod
     def get_by_id(cls, record_id):
         """Get record by ID."""
-        if any(
-                (isinstance(record_id, basestring) and record_id.isdigit(),
-                 isinstance(record_id, (int, float))),
-        ):
+        if any((isinstance(record_id, basestring) and record_id.isdigit(), isinstance(record_id, (int, float))),):
             return cls.query.get(int(record_id))
         return None
 
@@ -92,10 +89,11 @@ def init_db(url):
     """ Initialise a new database """
     if "postgresql" in url:
         try:
-            create_engine(url).connect().close()
+            engine = create_engine(url)
+            engine.connect().close()
         except:
             print("Initializing the postgres user and db")
-            engine = create_engine("postgres://postgres@localhost:5432/postgres")
+            engine = create_engine(url)
             conn = engine.connect()
             conn.execute("commit")
             conn.execute("CREATE USER megaqc_user;")
@@ -109,4 +107,4 @@ def init_db(url):
     """Initializes the database."""
     db.metadata.bind = engine
     db.metadata.create_all()
-    print('Initialized the database.')
+    print("Initialized the database.")
