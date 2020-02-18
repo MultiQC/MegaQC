@@ -10,6 +10,7 @@ from builtins import str
 import jinja2
 import markdown
 from flask import Flask, jsonify, render_template, request
+from flask_login import FlaskLoginClient
 from future import standard_library
 from megaqc import api, commands, public, rest_api, user, version
 from megaqc.api.views import api_blueprint
@@ -44,6 +45,7 @@ def create_app(config_object):
     app.config.from_object(config_object)
     if app.config["SERVER_NAME"] is not None:
         print(" * Server name: {}".format(app.config["SERVER_NAME"]))
+    app.test_client_class = FlaskLoginClient
     register_extensions(app)
     register_blueprints(app)
     register_errorhandlers(app)

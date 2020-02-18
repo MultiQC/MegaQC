@@ -7,7 +7,7 @@ from megaqc.rest_api import schemas
 from tests import factories
 
 
-def test_current_user_session_working(session, client, token):
+def test_current_user_session_working(session, token, app):
     """
     Test the current_user endpoint, using a valid session.
 
@@ -18,12 +18,9 @@ def test_current_user_session_working(session, client, token):
     session.add(user)
     session.commit()
 
-    # Login with that user
-    with client.session_transaction() as sess:
-        sess["user_id"] = user.user_id
-        sess["_fresh"] = True
-
-    rv = client.get("/rest_api/v1/users/current")
+    # Login with that user (we have to use a custom client here)
+    with app.test_client(user=user) as client:
+        rv = client.get("/rest_api/v1/users/current")
 
     # Check the request was successful
     assert rv.status_code == 200, rv.json
