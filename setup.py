@@ -41,7 +41,7 @@ setup(
         "Flask-APScheduler~=1.7",
         "Flask-Caching~=1.0",
         "Flask-DebugToolbar~=0.10",
-        "Flask-Login~=0.4",
+        "Flask-Login~=0.5",
         "Flask-SQLAlchemy~=2.2",
         "Flask-WTF~=0.14",
         "Flask~=1.0",
