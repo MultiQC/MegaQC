@@ -95,7 +95,7 @@ class SurrogatePK(object):
     any declarative-mapped class.
     """
 
-    __table_args__ = {"extend_existing": True}
+    __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
 
@@ -168,4 +168,4 @@ def init_db(url):
     """Initializes the database."""
     db.metadata.bind = engine
     db.metadata.create_all()
-    print("Initialized the database.")
+    print('Initialized the database.')
