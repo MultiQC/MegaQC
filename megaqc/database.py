@@ -2,7 +2,6 @@
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
 from builtins import object
 from past.builtins import basestring
-from psycopg2.errors import DuplicateObject
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import ProgrammingError, OperationalError
@@ -95,6 +94,8 @@ def init_db(url):
     """ Initialise a new database """
     if "postgresql" in url:
         try:
+            # lazy load for test envs without psycopg2 installed
+            from psycopg2.errors import DuplicateObject
             # attempt to connect to an existing database using provided credentials
             engine = create_engine(url)
             engine.connect().close()
