@@ -121,6 +121,7 @@ def init_db(url):
                 create_user_cmd += f" WITH ENCRYPTED PASSWORD '{config_pass}'"
             try:
                 conn.execute(create_user_cmd)
+                conn.execute("commit")
                 print(f"User {config_user} created successfully")
             except ProgrammingError as user_err:
                 # it's okay if user already exists
