@@ -120,6 +120,8 @@ def init_db(url):
     """
     if "postgresql" in url:
         try:
+            # lazy load for test envs without psycopg2 installed
+            from psycopg2.errors import DuplicateObject
             # attempt to connect to an existing database using provided credentials
             engine = create_engine(url)
             engine.connect().close()
