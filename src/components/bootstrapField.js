@@ -2,6 +2,9 @@ import React from 'react';
 import {Input, FormFeedback} from 'reactstrap';
 import {ErrorMessage, getIn} from 'formik';
 
+/**
+ * For use with Formik's Field
+ */
 export default function BootstrapField(props) {
     const {field, form, type, ...rest} = props;
     const touched = getIn(form.touched, field.name);
