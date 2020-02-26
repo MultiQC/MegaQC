@@ -1,144 +1,113 @@
-import ReactDOM from 'react-dom';
-import React, {useEffect, useRef, useState} from 'react';
-import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    FormGroup,
-    Input,
-    Label,
-    Row,
-    Form
-} from 'reactstrap';
-import Plot from 'react-plotly.js';
-import {getClient, getToken} from './util/api';
-import {SampleFilter} from './components/sampleFilter';
-import OutlierDetection from './components/outlierDetection';
-import SavePlot from './components/savePlot';
-import {MuiPickersUtilsProvider} from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
-import {useFormik, Field, Formik} from 'formik';
+import React from 'react';
+import {Card, CardBody, CardHeader, Form, FormGroup, Label} from 'reactstrap';
+import OutlierDetection from './outlierDetection';
+import {Field, Formik} from 'formik';
+import BootstrapField from './bootstrapField';
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import BootstrapField from './components/bootstrapField';
+import AutoSave from "../util/autoSave";
 
-export default function TrendForm(props){
-    return <Formik
-        initialValues={{
-            // Which field to plot
-            fields: [],
-            // What outlier detection (if any) to use
-            outlier: null,
-            // The statistic plotted on the center line
-            centerLine: 'mean',
-            // Whether or not to show control limits
-            controlLimits: true,
-            // Number of standard deviations to use as the control limit
-            stdDevs: 3
+export default function TrendForm({dataTypes, onSubmit}) {
+
+    return (
+        <Formik
+            initialValues={{
+                // Which field to plot
+                fields: [],
+                // What outlier detection (if any) to use
+                outlier: null,
+                // The statistic plotted on the center line
+                centerLine: 'mean',
+                // Whether or not to show control limits
+                controlLimits: true,
+                // Number of standard deviations to use as the control limit
+                stdDevs: 3
+            }}
+            validationSchema={
+                Yup.object().shape({
+                    fields: Yup.array().min(1).label('Fields'),
+                    // Outlier has its own internal field validation
+                    centerLine: Yup.string().oneOf(['mean', 'median']).label('Center Line'),
+                    controlLimits: Yup.bool().label('Show Control Limits'),
+                    stdDevs: Yup.number().min(0).label('Control Limits'),
+                })
+            }
+            onSubmit={onSubmit}
+        >{({setFieldValue}) => {
+            // Whenever the plot data type or filter changes, we have to re-calculate the plot data
+
+            return (
+                <Card>
+                    <AutoSave debounceMs={100}/>
+                    <CardHeader>
+                        <h2>
+                            Options
+                        </h2>
+                    </CardHeader>
+                    <CardBody>
+                        <Form>
+                            <FormGroup>
+                                <Label>Data Types</Label>
+                                <Field
+                                    component={BootstrapField}
+                                    name={'fields'}
+                                    type={'select'}
+                                    multiple={true}
+                                    onChange={e => {
+                                        setFieldValue(
+                                            'fields',
+                                            Array.from(e.target.selectedOptions).map(opt => opt.value)
+                                        )
+                                    }}
+                                >
+                                    {dataTypes.map((type, i) => {
+                                        return <option
+                                            key={i}
+                                            value={type.id}
+                                        >{type.niceName}</option>
+                                    })}
+                                </Field>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label>Center Line</Label>
+                                <Field
+                                    component={BootstrapField}
+                                    name={`centerLine`}
+                                    type={'select'}
+                                >
+                                    <option value="median">Median</option>
+                                    <option value="mean">Mean</option>
+                                </Field>
+                            </FormGroup>
+                            <FormGroup check>
+                                <Label check>
+                                    <Field
+                                        component={BootstrapField}
+                                        name={`controlLimits`}
+                                        type={'checkbox'}
+                                    />
+                                    &nbsp; Show Control Limits
+                                </Label>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label>Control Limits</Label>
+                                <Field
+                                    component={BootstrapField}
+                                    name={`stdDevs`}
+                                    type={'number'}
+                                />
+                            </FormGroup>
+                            <OutlierDetection/>
+                        </Form>
+                    </CardBody>
+                </Card>
+            );
         }}
-    >{({handleSubmit, handleChange, handleBlur, values, errors}) => {
-        // Whenever the plot data type or filter changes, we have to re-calculate the plot data
-
-        return (
-            <div>
-                <SavePlot
-                    user={currentUser}
-                    qcApi={client.current}
-                    plotData={{
-                        // This is a bit of a hack to ensure the filters save in a format expected by the old parts of MegaQC
-                        filters_id: selectedFilter || -1,
-                        fields: selectedDataTypes
-                    }}
-                    plotType={'trend'}
-                    isOpen={saveBoxOpen}
-                    toggle={() => {
-                        openSaveBox(open => !open)
-                    }}
-                />
-                <h1>Data Trends</h1>
-                <Row>
-                    <Col sm={{size: 4}}>
-                        <SampleFilter
-                            qcApi={client.current}
-                            onFilterChange={filter => {
-                                selectFilter(filter);
-                            }}
-                        />
-                    </Col>
-                    <Col sm={{size: 8}}>
-                        <Card>
-                            <CardHeader>
-                                <h2>
-                                    Options
-                                </h2>
-                            </CardHeader>
-                            <CardBody>
-                                <Form>
-                                    <FormGroup>
-                                        <Label for="exampleSelectMulti">Data
-                                            Types</Label>
-                                        <Input
-                                            multiple={true}
-                                            type="select"
-                                            value={selectedDataTypes}
-                                            onChange={e => selectDataTypes(selectValue(e.target))}
-                                            name="selectMulti"
-                                            id="exampleSelectMulti"
-                                        >
-                                            {dataTypes.map((type, i) => {
-                                                return <option
-                                                    key={i}
-                                                    value={type.id}
-                                                >{type.niceName}</option>
-                                            })}
-                                        </Input>
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label>Center Line</Label>
-                                        <Field
-                                            component={BootstrapField}
-                                            name={`centerLine`}
-                                            type={'select'}
-                                        >
-                                            <option value="median">Median</option>
-                                            <option value="mean">Mean</option>
-                                        </Field>
-                                    </FormGroup>
-                                    <FormGroup check>
-                                        <Label check>
-                                            <Field
-                                                component={BootstrapField}
-                                                name={`controlLimits`}
-                                                type={'checkbox'}
-                                            />
-                                            &nbsp; Show Control Limits
-                                        </Label>
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label>Control Limits</Label>
-                                        <Field
-                                            component={BootstrapField}
-                                            name={`stdDevs`}
-                                            type={'number'}
-                                        />
-                                    </FormGroup>
-                                    <OutlierDetection/>
-                                </Form>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
-                <Row
-                    style={{
-                        paddingTop: '20px'
-                    }}
-                >
-                    <Col sm={12}>
-                    </Col>
-                </Row>
-            </div>
-        );
-    }}
-    </Formik>
+        </Formik>
+    );
 }
+
+TrendForm.propTypes = {
+    dataTypes: PropTypes.array.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+};

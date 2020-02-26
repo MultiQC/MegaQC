@@ -1,31 +1,27 @@
-import ReactDOM from 'react-dom';
-import React, {useEffect, useRef, useState} from 'react';
-import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    FormGroup,
-    Input,
-    Label,
-    Row,
-    Form
-} from 'reactstrap';
+import React, {useState} from 'react';
+import {Button, Card, CardBody, CardHeader} from 'reactstrap';
 import Plot from 'react-plotly.js';
-import {getClient, getToken} from './util/api';
-import {SampleFilter} from './components/sampleFilter';
-import OutlierDetection from './components/outlierDetection';
-import SavePlot from './components/savePlot';
-import {MuiPickersUtilsProvider} from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
-import {useFormik, Field, Formik} from 'formik';
-import * as Yup from 'yup';
-import BootstrapField from './components/bootstrapField';
+import SavePlot from './savePlot';
+import PropTypes from "prop-types";
 
-export default function TrendPlot(props){
+export default function TrendPlot({currentUser, client, plotData, selectedFilter}) {
+    const [saveBoxOpen, openSaveBox] = useState(false);
     return (
         <Card>
+            <SavePlot
+                user={currentUser}
+                qcApi={client.current}
+                plotData={{
+                    // This is a bit of a hack to ensure the filters save in a format expected by the old parts of MegaQC
+                    filters_id: selectedFilter || -1,
+                    fields: plotData.selectedDataTypes || []
+                }}
+                plotType={'trend'}
+                isOpen={saveBoxOpen}
+                toggle={() => {
+                    openSaveBox(open => !open)
+                }}
+            />
             <CardHeader className={'clearfix'}>
                 <Button
                     className={'float-right'}
@@ -41,7 +37,7 @@ export default function TrendPlot(props){
             </CardHeader>
             <CardBody>
                 <Plot
-                    revision={revision}
+                    // revision={revision}
                     data={plotData}
                     useResizeHandler={true}
                     layout={{
@@ -57,3 +53,9 @@ export default function TrendPlot(props){
         </Card>
     );
 }
+TrendPlot.propTypes = {
+    currentUser: PropTypes.object,
+    client: PropTypes.object.isRequired,
+    plotData: PropTypes.object.isRequired,
+    selectedFilter: PropTypes.object.isRequired,
+};

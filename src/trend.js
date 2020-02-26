@@ -7,6 +7,8 @@ import * as Yup from 'yup';
 
 import TrendForm from "./trend/form";
 import TrendPlot from "./trend/plot";
+import {Col, Row} from "reactstrap";
+import {SampleFilter} from "./trend/sampleFilter";
 
 function selectValue(select) {
     return Array.from(select.options).filter(o => o.selected).map(o => o.value)
@@ -19,16 +21,14 @@ const trendSchema = Yup.object().shape({
 
 function Trend(props) {
     const [dataTypes, setDataTypes] = useState([]);
-    const [selectedDataTypes, selectDataTypes] = useState([]);
+    const [plotData, setPlotData] = useState({});
     const [selectedFilter, selectFilter] = useState(null);
-    const [plotData, setPlotData] = useState([]);
     const [revision, setRevision] = useState(0);
-    const [saveBoxOpen, openSaveBox] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
+    const [plotSettings, setPlotSettings] = useState({});
 
     // Start with an unauthenticated client, then request a token ASAP
     const client = useRef(getClient());
-
     useEffect(() => {
         client.current.get('users', 'current').then(user => {
             // Update the API token, and also store the current user
@@ -37,7 +37,6 @@ function Trend(props) {
             setCurrentUser(user);
         })
     }, []);
-
 
     // When we first create the component, request the data types that could be plotted
     useEffect(() => {
@@ -53,28 +52,55 @@ function Trend(props) {
             })
     }, []);
 
+    // Whenever the form data changes, redraw the plot
     useEffect(() => {
-        if (selectedDataTypes.length > 0) {
-            client.current.find('plots/trends/series', {
-                // filter, unlike the Formik fields is special because it is
-                // a reuseable component that isn't a field
-                filter: selectedFilter,
-                fields: JSON.stringify(values.fields),
-                outliers: values.outlier
+        client.current.find('plots/trends/series', {
+            // filter, unlike the Formik fields is special because it is
+            // a reuseable component that isn't a field
+            filter: selectedFilter,
+            fields: JSON.stringify(plotSettings.fields),
+            outliers: plotData.outlier
+        })
+            .then(data => {
+                const newData = data.map(datum => datum.toJSON());
+                setPlotData(newData);
+                setRevision(rev => rev + 1);
             })
-                .then(data => {
-                    const newData = data.map(datum => datum.toJSON());
-                    setPlotData(newData);
-                    setRevision(rev => rev + 1);
-                })
-        }
-    }, [values, values.fields, values.outlier, selectedFilter]);
-    // The template
+    }, [selectedFilter, plotSettings]);
 
     return (
         <>
-            <TrendForm/>
-            <TrendPlot/>
+            <h1>Data Trends</h1>
+            <Row>
+                <Col sm={{size: 4}}>
+                    <SampleFilter
+                        qcApi={client.current}
+                        onFilterChange={selectFilter}
+                    />
+                </Col>
+                <Col sm={{size: 8}}>
+                    <TrendForm
+                        dataTypes={dataTypes}
+                        onSubmit={props => {
+                            setPlotSettings(props)
+                        }}
+                    />
+                </Col>
+            </Row>
+            <Row
+                style={{
+                    paddingTop: '20px'
+                }}
+            >
+                <Col sm={12}>
+                    <TrendPlot
+                        currentUser={currentUser}
+                        client={client}
+                        plotData={plotData}
+                        selectedFilter={selectedFilter}
+                    />
+                </Col>
+            </Row>
         </>
     );
 }

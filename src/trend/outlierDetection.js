@@ -1,9 +1,9 @@
 import React from 'react';
 import {FormGroup, Label} from 'reactstrap';
 import BootstrapField from './bootstrapField';
-import AutoSave from './autoSave';
 import * as Yup from 'yup';
 import BootstrapHookField from './bootstrapHookField';
+import AutoSave from "../util/autoSave";
 
 import {Field, Formik, useField} from 'formik';
 
