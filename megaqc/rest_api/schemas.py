@@ -427,6 +427,7 @@ class PlotSchema(JsonApiSchema):
 
     id = f.String(dump_only=True)
     type = f.String()
+    opacity = f.Float()
     x = f.List(f.Raw())
     y = f.List(f.Raw())
     text = f.List(f.Raw())
@@ -482,10 +483,22 @@ class OutlierSchema(BaseSchema):
             return outlier.OutlierDetector()
 
 
+class ControlLimitSchema(BaseSchema):
+    """
+    Defines "control limits" for a control chart
+    """
+    # If we should enable the limits at all
+    enabled = f.Bool()
+    # Number of standard deviations on each side
+    sigma = f.Float()
+
+
 class TrendInputSchema(BaseSchema):
     """
     Schema for the request for trend data (not the response)
     """
-    fields = JsonString(invert=True)
+    fields = JsonString(invert=True, required=True)
     filter = FilterReference()
-    outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)
+    control_limits = f.Nested(ControlLimitSchema, required=True)
+    center_line = f.String(validate=validate.OneOf(['mean', 'median']), required=True)
+    # outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)

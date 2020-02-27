@@ -59,7 +59,12 @@ function Trend(props) {
             // a reuseable component that isn't a field
             filter: selectedFilter,
             fields: JSON.stringify(plotSettings.fields),
-            outliers: plotData.outlier
+            control_limits: {
+                enabled: plotSettings.controlLimits,
+                sigma: plotSettings.stdDevs
+            },
+            center_line: plotSettings.centerLine
+            // outliers: plotData.outlier
         })
             .then(data => {
                 const newData = data.map(datum => datum.toJSON());
