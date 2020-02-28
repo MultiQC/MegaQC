@@ -10,6 +10,9 @@ import re
 
 
 def rgb_to_rgba(rgb, alpha):
+    """
+    Appends an alpha (transparency) value to an RGB string
+    """
     match = re.match(r'rgb\((\d+), (\d+), (\d+)\)', rgb)
     return 'rgba({}, {}, {}, {})'.format(
         match.group(1),
@@ -68,7 +71,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
         x = numpy.asarray(x)
         y = numpy.asarray(y, dtype=float)
 
-        # Anything about the control limits is an outlier
+        # Anything outside the control limits is an outlier
         outliers = absolute(zscore(y)) > control_limits['sigma']
         inliers = ~outliers
         # outliers = outlier_det.get_outliers(y)

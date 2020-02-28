@@ -212,10 +212,6 @@ class DataType(ResourceDetail):
 
 
 class DataTypeList(ResourceList):
-    post_schema_kwargs = {
-        # 'unknown': EXCLUDE
-        # 'exclude': ['nice_key', 'nice_section', 'nice_name']
-    }
     view_kwargs = True
     schema = schemas.SampleDataTypeSchema
     data_layer = dict(

@@ -11,6 +11,9 @@ from tests import factories
 
 
 def unset_dump_only(schema):
+    """
+    Unset the "dump_only" property for every field in this schema
+    """
     for field in schema.declared_fields.values():
         field.dump_only = False
     schema._init_fields()
