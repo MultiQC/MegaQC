@@ -58,6 +58,9 @@ class SampleDataTypeSchema(Schema):
     id = f.Integer(attribute='sample_data_type_id', allow_none=True, as_string=True)
     section = f.String(attribute='data_section')
     key = f.String(attribute='data_key')
+    nice_key = f.String()
+    nice_section = f.String()
+    nice_name = f.String()
 
 
 class SampleDataSchema(Schema):
@@ -427,7 +430,6 @@ class PlotSchema(JsonApiSchema):
 
     id = f.String(dump_only=True)
     type = f.String()
-    opacity = f.Float()
     x = f.List(f.Raw())
     y = f.List(f.Raw())
     text = f.List(f.Raw())
@@ -500,5 +502,5 @@ class TrendInputSchema(BaseSchema):
     fields = JsonString(invert=True, required=True)
     filter = FilterReference()
     control_limits = f.Nested(ControlLimitSchema, required=True)
-    center_line = f.String(validate=validate.OneOf(['mean', 'median']), required=True)
+    center_line = f.String(validate=validate.OneOf(['mean', 'median', 'none']), required=True)
     # outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)

@@ -40,15 +40,11 @@ function Trend(props) {
 
     // When we first create the component, request the data types that could be plotted
     useEffect(() => {
-        client.current.find('data_types')
+        client.current.find('data_types', {
+            'page[size]': 0
+        })
             .then(resources => {
-                setDataTypes(resources.map(resource => {
-                    const dType = resource.toJSON();
-                    dType.niceName = dType.section.replace(/_/g, ' ')
-                        + ': '
-                        + dType.key.replace(/_/g, ' ');
-                    return dType;
-                }));
+                setDataTypes(resources.map(resource => resource.toJSON()));
             })
     }, []);
 
@@ -102,6 +98,7 @@ function Trend(props) {
                         currentUser={currentUser}
                         client={client}
                         plotData={plotData}
+                        plotSettings={plotSettings}
                         selectedFilter={selectedFilter}
                     />
                 </Col>

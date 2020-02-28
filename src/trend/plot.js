@@ -4,7 +4,7 @@ import Plot from 'react-plotly.js';
 import SavePlot from './savePlot';
 import PropTypes from "prop-types";
 
-export default function TrendPlot({currentUser, client, plotData, selectedFilter}) {
+export default function TrendPlot({currentUser, client, plotData, plotSettings, selectedFilter}) {
     const [saveBoxOpen, openSaveBox] = useState(false);
     return (
         <Card>
@@ -13,8 +13,8 @@ export default function TrendPlot({currentUser, client, plotData, selectedFilter
                 qcApi={client.current}
                 plotData={{
                     // This is a bit of a hack to ensure the filters save in a format expected by the old parts of MegaQC
-                    filters_id: selectedFilter || -1,
-                    fields: plotData.selectedDataTypes || []
+                    filters_id: plotSettings.selectedFilter || -1,
+                    ...plotSettings
                 }}
                 plotType={'trend'}
                 isOpen={saveBoxOpen}
@@ -56,6 +56,11 @@ export default function TrendPlot({currentUser, client, plotData, selectedFilter
 TrendPlot.propTypes = {
     currentUser: PropTypes.object,
     client: PropTypes.object.isRequired,
+
+    // The plot series
     plotData: PropTypes.object.isRequired,
+
+    // The settings, used for saving the plot
+    plotSettings: PropTypes.object.isRequired,
     selectedFilter: PropTypes.object.isRequired,
 };

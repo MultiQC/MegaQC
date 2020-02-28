@@ -394,7 +394,8 @@ class Dashboard(ResourceDetail):
 class TrendSeries(ResourceList):
     @use_args(schemas.TrendInputSchema(), locations=('querystring',))
     def get(self, args):
-        # We need to give each resource a unique ID so the client doesn't try to cache or reconcile different plots
+        # We need to give each resource a unique ID so the client doesn't try to cache
+        # or reconcile different plots
         request_hash = sha1(request.query_string).hexdigest()
 
         plots = plot.trend_data(

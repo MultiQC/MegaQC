@@ -15,7 +15,7 @@ export default function TrendForm({dataTypes, onSubmit}) {
                 // Which field to plot
                 fields: [],
                 // What outlier detection (if any) to use
-                outlier: null,
+                // outlier: null,
                 // The statistic plotted on the center line
                 centerLine: 'mean',
                 // Whether or not to show control limits
@@ -27,7 +27,7 @@ export default function TrendForm({dataTypes, onSubmit}) {
                 Yup.object().shape({
                     fields: Yup.array().min(1).label('Fields'),
                     // Outlier has its own internal field validation
-                    centerLine: Yup.string().oneOf(['mean', 'median']).label('Center Line'),
+                    centerLine: Yup.string().oneOf(['mean', 'median', 'none']).label('Center Line'),
                     controlLimits: Yup.bool().label('Show Control Limits'),
                     stdDevs: Yup.number().min(0).label('Control Limits'),
                 })
@@ -64,7 +64,7 @@ export default function TrendForm({dataTypes, onSubmit}) {
                                         return <option
                                             key={i}
                                             value={type.id}
-                                        >{type.niceName}</option>
+                                        >{type.nice_name}</option>
                                     })}
                                 </Field>
                             </FormGroup>
@@ -77,6 +77,7 @@ export default function TrendForm({dataTypes, onSubmit}) {
                                 >
                                     <option value="median">Median</option>
                                     <option value="mean">Mean</option>
+                                    <option value="none">None</option>
                                 </Field>
                             </FormGroup>
                             <FormGroup check>
@@ -97,7 +98,7 @@ export default function TrendForm({dataTypes, onSubmit}) {
                                     type={'number'}
                                 />
                             </FormGroup>
-                            <OutlierDetection/>
+                            {/*<OutlierDetection/>*/}
                         </Form>
                     </CardBody>
                 </Card>

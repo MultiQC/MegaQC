@@ -41,7 +41,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
             isouter=True
         ).with_entities(
             models.Sample.sample_name,
-            models.SampleDataType.data_key,
+            models.SampleDataType.nice_name,
             models.Report.created_at,
             models.SampleData.value
         ).order_by(
@@ -122,23 +122,27 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
                 mode='lines',
                 name='Median {}'.format(data_type)
             ))
+        else:
+            # The user could request control limits without a center line. Assume they
+            # want a mean in this case
+            y2 = numpy.repeat(numpy.mean(y), len(x))
 
         # Add the stdev
-        x3 = numpy.concatenate((x, numpy.flip(x, axis=0)))
-        stdev = numpy.repeat(numpy.std(y) * control_limits['sigma'], len(x))
-        upper = y2 + stdev
-        lower = y2 - stdev
-        y3 = numpy.concatenate((lower, upper))
-        plots.append(dict(
-            id=plot_prefix + '_stdev_' + field,
-            opacity=0.5,
-            type='scatter',
-            x=x3.tolist(),
-            y=y3.tolist(),
-            fill='tozerox',
-            fillcolor=rgb_to_rgba(colour, 0.5),
-            line=dict(color=colour),
-            name='Standard Deviation {}'.format(data_type)
-        ))
+        if control_limits['enabled']:
+            x3 = numpy.concatenate((x, numpy.flip(x, axis=0)))
+            stdev = numpy.repeat(numpy.std(y) * control_limits['sigma'], len(x))
+            upper = y2 + stdev
+            lower = y2 - stdev
+            y3 = numpy.concatenate((lower, upper))
+            plots.append(dict(
+                id=plot_prefix + '_stdev_' + field,
+                type='scatter',
+                x=x3.tolist(),
+                y=y3.tolist(),
+                fill='tozerox',
+                fillcolor=rgb_to_rgba(colour, 0.5),
+                line=dict(color='rgba(255,255,255,0)'),
+                            name='Standard Deviation {}'.format(data_type)
+            ))
 
     return plots
