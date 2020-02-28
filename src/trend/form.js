@@ -25,7 +25,7 @@ export default function TrendForm({dataTypes, onSubmit}) {
             }}
             validationSchema={
                 Yup.object().shape({
-                    fields: Yup.array().min(1).label('Fields'),
+                    fields: Yup.array().min(1).label('Data Types'),
                     // Outlier has its own internal field validation
                     centerLine: Yup.string().oneOf(['mean', 'median', 'none']).label('Center Line'),
                     controlLimits: Yup.bool().label('Show Control Limits'),

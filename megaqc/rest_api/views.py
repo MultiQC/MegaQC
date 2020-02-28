@@ -9,7 +9,7 @@ from http import HTTPStatus
 from flask import Blueprint
 from flask import request, jsonify, make_response
 from flask_login import current_user
-from marshmallow.utils import INCLUDE
+from marshmallow.utils import INCLUDE, EXCLUDE
 from marshmallow_jsonapi.exceptions import IncorrectTypeError
 
 import megaqc.user.models as user_models
@@ -212,6 +212,10 @@ class DataType(ResourceDetail):
 
 
 class DataTypeList(ResourceList):
+    post_schema_kwargs = {
+        # 'unknown': EXCLUDE
+        # 'exclude': ['nice_key', 'nice_section', 'nice_name']
+    }
     view_kwargs = True
     schema = schemas.SampleDataTypeSchema
     data_layer = dict(
