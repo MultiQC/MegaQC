@@ -60,7 +60,6 @@ function Trend(props) {
                 sigma: plotSettings.stdDevs
             },
             center_line: plotSettings.centerLine
-            // outliers: plotData.outlier
         })
             .then(data => {
                 const newData = data.map(datum => datum.toJSON());

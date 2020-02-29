@@ -58,8 +58,6 @@ class SampleDataTypeSchema(Schema):
     id = f.Integer(attribute='sample_data_type_id', allow_none=True, as_string=True)
     section = f.String(attribute='data_section')
     key = f.String(attribute='data_key')
-    nice_key = f.String(dump_only=True)
-    nice_section = f.String(dump_only=True)
     nice_name = f.String(dump_only=True)
 
 

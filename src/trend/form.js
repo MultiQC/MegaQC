@@ -98,7 +98,6 @@ export default function TrendForm({dataTypes, onSubmit}) {
                                     type={'number'}
                                 />
                             </FormGroup>
-                            {/*<OutlierDetection/>*/}
                         </Form>
                     </CardBody>
                 </Card>

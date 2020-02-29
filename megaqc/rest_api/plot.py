@@ -74,7 +74,6 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
         # Anything outside the control limits is an outlier
         outliers = absolute(zscore(y)) > control_limits['sigma']
         inliers = ~outliers
-        # outliers = outlier_det.get_outliers(y)
 
         # Add the outliers
         plots.append(dict(
@@ -86,7 +85,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
             y=y[outliers],
             line=dict(color='rgb(250,0,0)'),
             mode='markers',
-            name='Outliers {}'.format(data_type)
+            name='{} Outliers'.format(data_type)
         ))
 
         # Add the non-outliers
@@ -99,7 +98,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
             y=y[inliers],
             line=dict(color=colour),
             mode='markers',
-            name='Samples {}'.format(data_type)
+            name='{} Samples'.format(data_type)
         ))
 
         # Add the mean
@@ -112,7 +111,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
                 y=y2.tolist(),
                 line=dict(color=colour),
                 mode='lines',
-                name='Mean {}'.format(data_type)
+                name='{} Mean'.format(data_type)
             ))
         elif center_line == 'median':
             y2 = numpy.repeat(numpy.median(y), len(x))
@@ -123,7 +122,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
                 y=y2.tolist(),
                 line=dict(color=colour),
                 mode='lines',
-                name='Median {}'.format(data_type)
+                name='{} Median'.format(data_type)
             ))
         else:
             # The user could request control limits without a center line. Assume they
@@ -145,7 +144,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
                 fill='tozerox',
                 fillcolor=rgb_to_rgba(colour, 0.5),
                 line=dict(color='rgba(255,255,255,0)'),
-                            name='Standard Deviation {}'.format(data_type)
+                            name='{} Standard Deviation'.format(data_type)
             ))
 
     return plots

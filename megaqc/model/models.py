@@ -143,39 +143,18 @@ class SampleDataType(db.Model, CRUDMixin):
         return self.schema_json.get('type')
 
     @hybrid_property
-    def nice_section(self):
-        """
-        A more human-readable version of the "section" field
-        """
-        return self.data_section.replace('_', ' ')
-
-    @nice_section.expression
-    def nice_section(cls):
-        # Technically string replacement isn't in the SQL standard, but it is 
-        # implemented by all the DBMSs:
-        # https://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
-        return func.replace(cls.data_section, '_', ' ')
-
-    @hybrid_property
-    def nice_key(self):
+    def nice_name(self):
         """
         A more human-readable version of the "key" field
         """
-        return self.data_key.replace('_', ' ')
+        return self.data_key.replace('__', ' ')
 
-    @nice_key.expression
-    def nice_key(cls):
+    @nice_name.expression
+    def nice_name(cls):
         # Technically string replacement isn't in the SQL standard, but it is
         # implemented by all the DBMSs:
         # https://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
-        return func.replace(cls.data_key, '_', ' ')
-
-    @hybrid_property
-    def nice_name(self):
-        """
-        A human-readable representation of the full name of this data type
-        """
-        return self.nice_section + ': ' + self.nice_key
+        return func.replace(cls.data_key, '__', ' ')
 
     @classmethod
     def get_keys(cls, session):
