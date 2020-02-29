@@ -143,8 +143,10 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
                 y=y3.tolist(),
                 fill='tozerox',
                 fillcolor=rgb_to_rgba(colour, 0.5),
-                line=dict(color='rgba(255,255,255,0)'),
-                            name='{} Standard Deviation'.format(data_type)
+                line=dict(
+                    color='rgba(255,255,255,0)'
+                ),
+                name='{} Control Limits'.format(data_type)
             ))
 
     return plots
