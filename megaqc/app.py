@@ -16,6 +16,7 @@ from megaqc.extensions import cache, csrf_protect, db, debug_toolbar, login_mana
 from megaqc.scheduler import init_scheduler
 from megaqc.settings import ProdConfig, TestConfig
 from megaqc.api.views import api_blueprint
+from flask_login import FlaskLoginClient
 
 def create_app(config_object):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -29,6 +30,7 @@ def create_app(config_object):
     app.config.from_object(config_object)
     if app.config['SERVER_NAME'] is not None:
         print(" * Server name: {}".format(app.config['SERVER_NAME']))
+    app.test_client_class = FlaskLoginClient
     register_extensions(app)
     register_blueprints(app)
     register_errorhandlers(app)

@@ -4,8 +4,26 @@ Generic tests for normal resources that follow a schema for GET, POST, DELETE et
 import pytest
 from flask import url_for
 from sqlalchemy import inspect
+from sqlalchemy.orm import RelationshipProperty
+from marshmallow import EXCLUDE
 
 from tests import factories
+
+
+def unset_dump_only(schema):
+    """
+    Unset the "dump_only" property for every field in this schema
+    """
+    for field in schema.declared_fields.values():
+        field.dump_only = False
+    schema._init_fields()
+
+
+def dump_only_fields(schema):
+    """
+    Returns a list of field names for the dump_only fields
+    """
+    return [key for key, field in schema._declared_fields.items() if field.dump_only]
 
 
 def object_as_dict(obj, relationships=False):
@@ -13,11 +31,16 @@ def object_as_dict(obj, relationships=False):
     Converts an SQLAlchemy instance to a dictionary
     :param relationships: If true, also include relationships in the output dict
     """
-    ret = {c.key: getattr(obj, c.key) for c in inspect(obj).mapper.column_attrs}
-    if relationships:
-        ret.update(
-            {c.key: getattr(obj, c.key) for c in inspect(obj).mapper.relationships})
-    return ret
+    properties = inspect(obj).mapper.all_orm_descriptors
+
+    if not relationships:
+        properties = {
+            key: value for key, value in properties.items()
+            if not hasattr(value, 'prop') or not isinstance(value.prop,
+                                                            RelationshipProperty)
+        }
+
+    return {key: getattr(obj, key) for key, value in properties.items()}
 
 
 def resource_from_endpoint(app, endpoint):
@@ -152,7 +175,13 @@ def test_get_many_resources(endpoint, session, client, admin_token, app):
     ret = rv.json
     del ret['meta']
     del ret['jsonapi']
-    data = resource.schema(many=True).load(ret)
+    schema = resource.schema(many=True)
+
+    # We actually want to load the "dump_only" fields here, so that we can validate they
+    # were dumped correctly. We don't normally want to do this, which is why this is a
+    # test function only
+    unset_dump_only(schema)
+    data = schema.load(ret)
 
     # Check we got at least one instance
     assert len(data) > 0
@@ -252,7 +281,10 @@ def test_get_single_resource(endpoint, session, client, admin_token, app):
     # Load the data using the schema. This also does data validation
     ret = rv.json
     del ret['jsonapi']
-    data = resource.schema(many=False).load(ret)
+    schema = resource.schema(many=False)
+    # See above for explanation
+    unset_dump_only(schema)
+    data = schema.load(ret)
 
     # Check we got at least one instance
     assert is_matching_resource(data, instance, model)
@@ -323,7 +355,12 @@ def test_post_resource(endpoint, admin_token, session, client, app):
     # clone = clone_model(instance)
     session.expunge(clone)
 
-    request = resource.schema(many=False, use_links=False).dump(clone)
+    # If we're pretending to be a client, we don't want to send the dump_only fields
+    # that might be computed
+    dump_only = dump_only_fields(resource.schema)
+    request = resource.schema(many=False, use_links=False, exclude=dump_only).dump(
+        clone
+    )
 
     count_1 = session.query(model).count()
 
@@ -342,4 +379,4 @@ def test_post_resource(endpoint, admin_token, session, client, app):
     assert count_2 - count_1 == 1
 
     # Validate the returned data
-    data = resource.schema(many=False).load(ret)
+    data = resource.schema(many=False, unknown=EXCLUDE).load(ret)

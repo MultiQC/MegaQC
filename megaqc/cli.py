@@ -6,6 +6,7 @@
 import click
 import os
 from flask.cli import FlaskGroup
+import pkg_resources
 
 def create_megaqc_app(info):
     import os
@@ -20,6 +21,7 @@ def create_megaqc_app(info):
         CONFIG = TestConfig()
     return create_app(CONFIG)
 
+
 @click.group(cls=FlaskGroup, create_app=create_megaqc_app)
 def cli():
     """Welcome to the MegaQC command line interface!\n
@@ -27,8 +29,8 @@ def cli():
     See below for the available commands - for example,
     to start the MegaQC server, use the command: megaqc run"""
 
-if __name__ == '__main__':
-    import pkg_resources
+
+def main():
     version = pkg_resources.get_distribution("megaqc").version
     print("This is MegaQC v{}\n".format(version))
     if os.environ.get('FLASK_DEBUG', False):
@@ -37,3 +39,6 @@ if __name__ == '__main__':
     elif not os.environ.get('MEGAQC_PRODUCTION', False):
         os.environ['FLASK_ENV'] = 'test'
     cli()
+
+if __name__ == '__main__':
+    main()
