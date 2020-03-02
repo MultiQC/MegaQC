@@ -58,3 +58,8 @@ to use.
 
 Note that all new pages going forward should be written using React, to improve the
 maintainability of the frontend.
+
+## Troubleshooting
+* I'm getting a blank page when I open the `/trends' or `/admin` pages
+    * Make sure you've compiled the JavaScript correctly.
+    * Ensure you've run `npm install` and then `npm run build` or `npm run watch`.
