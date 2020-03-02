@@ -8,7 +8,7 @@ install:
   - pip install -e .[dev]
 
   # Install node dependencies, always using latest node
-  - nvm install node
+  - nvm install --lts
   - npm install
 before_script:
   # Get the linting outputs, but don't fail if they're poor
