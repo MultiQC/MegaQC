@@ -15,4 +15,4 @@ before_script:
   - megaqc lint || true
 script:
   - megaqc test
-  - npx webpack --mode production
+  - npm run build
