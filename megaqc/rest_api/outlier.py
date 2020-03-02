@@ -17,7 +17,6 @@ class OutlierDetector:
 
 
 class GrubbsDetector(OutlierDetector):
-
     def get_outliers(self, y):
         outlier_indices = grubbs.two_sided_test_indices(y, alpha=self.threshold)
         mask = zeros(len(y), dtype=bool)
@@ -26,6 +25,5 @@ class GrubbsDetector(OutlierDetector):
 
 
 class ZScoreDetector(OutlierDetector):
-
     def get_outliers(self, y):
         return absolute(zscore(y)) > self.threshold

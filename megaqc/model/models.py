@@ -3,8 +3,9 @@ import datetime as dt
 import json
 from enum import Enum
 
-from sqlalchemy import ForeignKey, Column, Boolean, Integer, Unicode, DateTime, Enum as SqlEnum
+from sqlalchemy import ForeignKey, Column, Boolean, Integer, Unicode, DateTime, Enum as SqlEnum, func
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
@@ -140,6 +141,20 @@ class SampleDataType(db.Model, CRUDMixin):
         Gets the root level data type, or None if it doesn't have one
         """
         return self.schema_json.get('type')
+
+    @hybrid_property
+    def nice_name(self):
+        """
+        A more human-readable version of the "key" field
+        """
+        return self.data_key.replace('__', ' ')
+
+    @nice_name.expression
+    def nice_name(cls):
+        # Technically string replacement isn't in the SQL standard, but it is
+        # implemented by all the DBMSs:
+        # https://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
+        return func.replace(cls.data_key, '__', ' ')
 
     @classmethod
     def get_keys(cls, session):
