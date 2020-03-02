@@ -4,10 +4,10 @@
 ## 1. Install the MegaQC package
 
 MegaQC is available on both the Python Package Index (PyPI) and conda (bioconda channel).
-To install using PyPI,  run the following command:
+To install using PyPI, run the following command:
 
 ```bash
-pip install megaqc
+pip install megaqc[prod]
 ```
 
 To install with conda:
