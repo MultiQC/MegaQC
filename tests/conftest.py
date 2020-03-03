@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Defines fixtures available to all tests."""
+"""
+Defines fixtures available to all tests.
+"""
 
 import pytest
-from webtest import TestApp
-
 from megaqc.app import create_app
-from megaqc.database import init_db, db as _db
+from megaqc.database import db as _db
+from megaqc.database import init_db
 from megaqc.settings import TestConfig
+from webtest import TestApp
 
 from .factories import UserFactory
 
 
-@pytest.yield_fixture(scope='function')
+@pytest.yield_fixture(scope="function")
 def app():
-    """An application for the tests."""
+    """
+    An application for the tests.
+    """
     config = TestConfig()
     init_db(config.SQLALCHEMY_DATABASE_URI)
     _app = create_app(config)
@@ -25,15 +29,19 @@ def app():
     ctx.pop()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def testapp(app):
-    """A Webtest app."""
+    """
+    A Webtest app.
+    """
     return TestApp(app)
 
 
-@pytest.yield_fixture(scope='function')
+@pytest.yield_fixture(scope="function")
 def db(app):
-    """A database for the tests."""
+    """
+    A database for the tests.
+    """
     _db.app = app
     with app.app_context():
         _db.create_all()
@@ -47,7 +55,9 @@ def db(app):
 
 @pytest.fixture
 def user(db):
-    """A user for the tests."""
-    user = UserFactory(password='myprecious')
+    """
+    A user for the tests.
+    """
+    user = UserFactory(password="myprecious")
     db.session.commit()
     return user

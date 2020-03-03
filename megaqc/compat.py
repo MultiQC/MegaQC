@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Python 2/3 compatibility module."""
-from builtins import bytes
+"""
+Python 2/3 compatibility module.
+"""
 import sys
+from builtins import bytes
 
 PY2 = int(sys.version[0]) == 2
 

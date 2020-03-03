@@ -1,9 +1,10 @@
 # Migrations
-Migrations are updates to a database schema. This is relevant if, for example, you 
+
+Migrations are updates to a database schema. This is relevant if, for example, you
 set up a MegaQC database (using `initdb`), and then a new version of MegaQC is released
 that needs new tables or columns.
 
-Every time a new version of MegaQC is released, you should ensure your database is 
+Every time a new version of MegaQC is released, you should ensure your database is
 up to date. Do so using the following commands:
 
 ```bash

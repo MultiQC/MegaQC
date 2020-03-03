@@ -1,6 +1,7 @@
 # Frontend
-As with the API, MegaQC is currently transitioning from using an HTML + CSS + JavaScript 
-frontend to [React](https://reactjs.org/). This can be confusing, as a number of 
+
+As with the API, MegaQC is currently transitioning from using an HTML + CSS + JavaScript
+frontend to [React](https://reactjs.org/). This can be confusing, as a number of
 technologies are mixed in the same project.
 
 As explained in the backends section, each URL in MegaQC renders a Jinja2 template. The old-style

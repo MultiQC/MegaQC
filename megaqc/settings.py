@@ -1,38 +1,44 @@
 # -*- coding: utf-8 -*-
-"""Application configuration."""
+"""
+Application configuration.
+"""
 from __future__ import print_function
-from builtins import object
-
-from megaqc.scheduler import upload_reports_job
 
 import logging
 import os
-import yaml
 import tempfile
+from builtins import object
+
+import yaml
+from megaqc.scheduler import upload_reports_job
 
 
 class Config(object):
-    """Base configuration."""
+    """
+    Base configuration.
+    """
 
-    SECRET_KEY = os.environ.get('MEGAQC_SECRET', 'secret-key')  # TODO: Change me
+    SECRET_KEY = os.environ.get("MEGAQC_SECRET", "secret-key")  # TODO: Change me
     APP_DIR = os.path.abspath(os.path.dirname(__file__))  # This directory
     PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
-    UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, 'uploads')
+    UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, "uploads")
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
+    CACHE_TYPE = "simple"  # Can be "memcached", "redis", etc.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JOBS = [{'id': 'job1','func': upload_reports_job,'trigger': 'interval','seconds': 30}]
+    JOBS = [
+        {"id": "job1", "func": upload_reports_job, "trigger": "interval", "seconds": 30}
+    ]
     SCHEDULER_API_ENABLED = True
     EXTRA_CONFIG = os.environ.get("MEGAQC_CONFIG", None)
     SERVER_NAME = None
     DB_PATH = None
     LOG_LEVEL = logging.INFO
     SQLALCHEMY_DBMS = None
-    SQLALCHEMY_HOST = 'localhost:5432'
-    SQLALCHEMY_USER = 'megaqc_user'
-    SQLALCHEMY_PASS = ''
-    SQLALCHEMY_DATABASE = 'megaqc'
+    SQLALCHEMY_HOST = "localhost:5432"
+    SQLALCHEMY_USER = "megaqc_user"
+    SQLALCHEMY_PASS = ""
+    SQLALCHEMY_DATABASE = "megaqc"
 
     def __init__(self):
         if self.EXTRA_CONFIG:
@@ -50,7 +56,9 @@ class Config(object):
 
     def update_db_uri(self):
         if self.SQLALCHEMY_DBMS == "sqlite":
-            self.SQLALCHEMY_DATABASE_URI = "{}:///{}".format(self.SQLALCHEMY_DBMS, self.DB_PATH)
+            self.SQLALCHEMY_DATABASE_URI = "{}:///{}".format(
+                self.SQLALCHEMY_DBMS, self.DB_PATH
+            )
             self.SQLALCHEMY_DATABASE_URI_SAN = self.SQLALCHEMY_DATABASE_URI
         else:
             self.SQLALCHEMY_DATABASE_URI = "{}://{}:{}@{}/{}".format(
@@ -58,28 +66,31 @@ class Config(object):
                 self.SQLALCHEMY_USER,
                 self.SQLALCHEMY_PASS,
                 self.SQLALCHEMY_HOST,
-                self.SQLALCHEMY_DATABASE
+                self.SQLALCHEMY_DATABASE,
             )
             self.SQLALCHEMY_DATABASE_URI_SAN = "{}://{}:{}@{}/{}".format(
                 self.SQLALCHEMY_DBMS,
                 self.SQLALCHEMY_USER,
-                '***' if self.SQLALCHEMY_PASS else "",
+                "***" if self.SQLALCHEMY_PASS else "",
                 self.SQLALCHEMY_HOST,
-                self.SQLALCHEMY_DATABASE
+                self.SQLALCHEMY_DATABASE,
             )
 
 
 class ProdConfig(Config):
-    """Production configuration."""
+    """
+    Production configuration.
+    """
 
-    ENV = 'prod'
+    ENV = "prod"
     DEBUG = False
-    SQLALCHEMY_DBMS = 'postgresql'
-    SQLALCHEMY_HOST = "{}:{}".format(os.environ.get(
-        'DB_HOST', 'localhost'), os.environ.get('DB_PORT', '5432'))
-    SQLALCHEMY_USER = os.environ.get('DB_USER', 'megaqc')
-    SQLALCHEMY_PASS = os.environ.get('DB_PASS', 'megaqcpswd')
-    SQLALCHEMY_DATABASE = os.environ.get('DB_NAME', 'megaqc')
+    SQLALCHEMY_DBMS = "postgresql"
+    SQLALCHEMY_HOST = "{}:{}".format(
+        os.environ.get("DB_HOST", "localhost"), os.environ.get("DB_PORT", "5432")
+    )
+    SQLALCHEMY_USER = os.environ.get("DB_USER", "megaqc")
+    SQLALCHEMY_PASS = os.environ.get("DB_PASS", "megaqcpswd")
+    SQLALCHEMY_DATABASE = os.environ.get("DB_NAME", "megaqc")
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
     def __init__(self):
@@ -92,16 +103,18 @@ class ProdConfig(Config):
 
 
 class DevConfig(Config):
-    """Development configuration."""
+    """
+    Development configuration.
+    """
 
-    ENV = 'dev'
+    ENV = "dev"
     DEBUG = True
-    SQLALCHEMY_DBMS = 'sqlite'
-    DB_NAME = 'megaqc.db'
+    SQLALCHEMY_DBMS = "sqlite"
+    DB_NAME = "megaqc.db"
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     DEBUG_TB_ENABLED = True
-    CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
+    CACHE_TYPE = "simple"  # Can be "memcached", "redis", etc.
     WTF_CSRF_ENABLED = False  # Allows form testing
     SQLALCHEMY_RECORD_QUERIES = True
     LOG_LEVEL = logging.DEBUG
@@ -115,18 +128,19 @@ class DevConfig(Config):
         print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
 
 
-
 class TestConfig(Config):
-    """Test configuration."""
+    """
+    Test configuration.
+    """
+
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DBMS = 'sqlite'
-    DB_NAME = 'megaqc.db'
+    SQLALCHEMY_DBMS = "sqlite"
+    DB_NAME = "megaqc.db"
     DB_PATH = os.path.join(tempfile.mkdtemp(), DB_NAME)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
     LOG_LEVEL = logging.DEBUG
     WTF_CSRF_ENABLED = False
-
 
     def __init__(self):
         super(TestConfig, self).__init__()

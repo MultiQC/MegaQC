@@ -1,6 +1,5 @@
 # MegaQC Installation: Production
 
-
 ## 1. Install the MegaQC package
 
 MegaQC is available on both the Python Package Index (PyPI) and conda (bioconda channel).
@@ -17,6 +16,7 @@ conda install -c bioconda megaqc
 ```
 
 ## 2. Export environment variables
+
 By default, MegaQC runs in development mode with a sqlite flat file database (this is to make
 it as simple as possible to get up and running for a quick test / demo). To tell MegaQC to use
 a production server, you need to set the `MEGAQC_PRODUCTION` environment variable to true.
@@ -32,6 +32,7 @@ export SERVER_NAME='http://megaqc.yourdomain.com'
 ```
 
 ## 3. Set up the database
+
 MegaQC uses the Flask SQLAlchemy plugin, meaning that it can be used with any SQL database (PostgreSQL, MySQL, SQLite and others).
 
 MegaQC has been developed with PostgreSQL, see below. For instructions. If you use MegaQC with any
@@ -52,11 +53,13 @@ pip install psycopg2
 MegaQC can assess whether the database to use is `postgresql`. If it is, it will try to connect as `megaqc_user` to the database `megaqc` on `localhost:5432`. On failure, MegaQC will attempt to create the user and the database, and will then export the schema.
 
 In order to make this happen, run :
+
 ```bash
 megaqc initdb
 ```
 
 ### 3.2 Using a MySQL database
+
 Although PostgreSQL is highly recommended, MegaQC should work with other SQL database
 back ends, such as MySQL.
 
@@ -105,8 +108,10 @@ to include, for example (Apache 2.2):
   </Proxy>
 </VirtualHost>
 ```
+
 You also need to ensure that apache mod_proxy is activated :
-```a2enmod proxy
+
+````a2enmod proxy
 a2enmod proxy_http```
 
 ## 4. Restart apache
@@ -115,8 +120,7 @@ the following command (or equivalent on your system):
 
 ```bash
 service restart httpd
-```
-
+````
 
 ## 5. Start the web server
 
@@ -130,6 +134,6 @@ At this point, MegaQC should be running on the default gunicorn port (`8000`)
 
 You should now have a fully functional MegaQC server running! 🎉
 
-
 ## Troubleshooting
+
 The password encryption relies on the `libffi-devel` package to work. If you run an older OS, ensure that the package is installed.

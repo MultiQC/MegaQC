@@ -15,42 +15,42 @@
 # priority: customise position in list. Default priority: 0
 # hidden: True to remove from the filter-samples UI
 report_metadata_fields:
-    config_title:
-        priority: 5
-        nicename: Report title
-    config_subtitle:
-        priority: 4
-        nicename: Report subtitle
-    config_report_comment:
-        priority: 3
-        nicename: Report comment
-    config_intro_text:
-        priority: 2
-        nicename: Report intro text
-    config_creation_date:
-        priority: 1
-        nicename: Report creation date & time
-    config_short_version:
-        priority: -1
-        nicename: MultiQC version
-    config_version:
-        hidden: True
-    config_script_path:
-        hidden: True
-    config_git_hash:
-        hidden: True
+  config_title:
+    priority: 5
+    nicename: Report title
+  config_subtitle:
+    priority: 4
+    nicename: Report subtitle
+  config_report_comment:
+    priority: 3
+    nicename: Report comment
+  config_intro_text:
+    priority: 2
+    nicename: Report intro text
+  config_creation_date:
+    priority: 1
+    nicename: Report creation date & time
+  config_short_version:
+    priority: -1
+    nicename: MultiQC version
+  config_version:
+    hidden: True
+  config_script_path:
+    hidden: True
+  config_git_hash:
+    hidden: True
 
 sample_metadata_fields: {}
 
 # Same defaults as HighCharts for consistency
 default_plot_colors:
-    - '#7cb5ec'
-    - '#434348'
-    - '#90ed7d'
-    - '#f7a35c'
-    - '#8085e9'
-    - '#f15c80'
-    - '#e4d354'
-    - '#2b908f'
-    - '#f45b5b'
-    - '#91e8e1'
+  - "#7cb5ec"
+  - "#434348"
+  - "#90ed7d"
+  - "#f7a35c"
+  - "#8085e9"
+  - "#f15c80"
+  - "#e4d354"
+  - "#2b908f"
+  - "#f45b5b"
+  - "#91e8e1"

@@ -1,6 +1,6 @@
-from webargs.flaskparser import FlaskParser
-from webargs import core
 from querystring_parser import parser as qsp
+from webargs import core
+from webargs.flaskparser import FlaskParser
 
 
 class NestedQueryFlaskParser(FlaskParser):

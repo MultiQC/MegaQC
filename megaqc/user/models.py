@@ -1,24 +1,32 @@
 # -*- coding: utf-8 -*-
-"""User models."""
-from builtins import str
+"""
+User models.
+"""
 import datetime as dt
-
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Table, ForeignKey, Column, Boolean, Integer, Float, Unicode, TIMESTAMP, Binary, DateTime
-from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-from flask_login import UserMixin
-
-from flask_login import UserMixin
-
-from megaqc.database import CRUDMixin
-from megaqc.extensions import db
-
-from passlib.hash import argon2
-from passlib.utils import getrandstr, rng
-
 import string
 import sys
+from builtins import str
+
+from flask_login import UserMixin
+from megaqc.database import CRUDMixin
+from megaqc.extensions import db
+from passlib.hash import argon2
+from passlib.utils import getrandstr, rng
+from sqlalchemy import (
+    TIMESTAMP,
+    Binary,
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    Table,
+    Unicode,
+)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
+from sqlalchemy.orm import relationship
 
 if sys.version_info.major == 2:
     letters = string.letters
@@ -27,27 +35,40 @@ elif sys.version_info.major == 3:
     letters = string.ascii_letters
     digits = string.digits
 else:
-    raise(Exception("Unsupport python version: v{}.{}".format(sys.version_info.major, sys.version_info.minor)))
+    raise (
+        Exception(
+            "Unsupport python version: v{}.{}".format(
+                sys.version_info.major, sys.version_info.minor
+            )
+        )
+    )
+
 
 class Role(db.Model, CRUDMixin):
-    """A role for a user."""
+    """
+    A role for a user.
+    """
 
-    __tablename__ = 'roles'
+    __tablename__ = "roles"
     role_id = Column(Integer, primary_key=True)
     name = Column(Unicode, unique=True, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
+    user_id = Column(Integer, ForeignKey("users.user_id"))
 
-    user = relationship('User', back_populates='roles')
+    user = relationship("User", back_populates="roles")
 
     def __repr__(self):
-        """Represent instance as a unique string."""
-        return '<Role({name})>'.format(name=self.name)
+        """
+        Represent instance as a unique string.
+        """
+        return "<Role({name})>".format(name=self.name)
 
 
 class User(db.Model, CRUDMixin, UserMixin):
-    """A user of the app."""
+    """
+    A user of the app.
+    """
 
-    __tablename__ = 'users'
+    __tablename__ = "users"
     user_id = Column(Integer, primary_key=True)
     username = Column(Unicode, unique=True, nullable=False)
     email = Column(Unicode, unique=True, nullable=False)
@@ -60,15 +81,17 @@ class User(db.Model, CRUDMixin, UserMixin):
     is_admin = Column(Boolean(), default=False)
     api_token = Column(Unicode, nullable=True)
 
-    reports = relationship('Report', back_populates='user')
-    uploads = relationship('Upload', back_populates='user')
-    roles = relationship('Role', back_populates='user')
-    filters = relationship('SampleFilter', back_populates='user')
-    favourite_plots = relationship('PlotFavourite', back_populates='user')
-    dashboards = relationship('Dashboard', back_populates='user')
+    reports = relationship("Report", back_populates="user")
+    uploads = relationship("Upload", back_populates="user")
+    roles = relationship("Role", back_populates="user")
+    filters = relationship("SampleFilter", back_populates="user")
+    favourite_plots = relationship("PlotFavourite", back_populates="user")
+    dashboards = relationship("Dashboard", back_populates="user")
 
     def __init__(self, password=None, **kwargs):
-        """Create instance."""
+        """
+        Create instance.
+        """
         db.Model.__init__(self, **kwargs)
         self.salt = getrandstr(rng, digits + letters, 80)
         self.api_token = getrandstr(rng, digits + letters, 80)
@@ -82,7 +105,7 @@ class User(db.Model, CRUDMixin, UserMixin):
 
     @hybrid_property
     def full_name(self):
-        return self.first_name + ' ' + self.last_name
+        return self.first_name + " " + self.last_name
 
     def reset_password(self):
         password = getrandstr(rng, digits + letters, 10)
@@ -90,11 +113,15 @@ class User(db.Model, CRUDMixin, UserMixin):
         return password
 
     def set_password(self, password):
-        """Set password."""
+        """
+        Set password.
+        """
         self.password = argon2.using(rounds=4).hash(password + self.salt)
 
     def check_password(self, value):
-        """Check password."""
+        """
+        Check password.
+        """
         return argon2.verify(value + self.salt, self.password)
 
     def is_authenticated(self):
@@ -104,9 +131,11 @@ class User(db.Model, CRUDMixin, UserMixin):
         return self.active
 
     def get_id(self):
-        #must return unicode
+        # must return unicode
         return str(self.user_id)
 
     def __repr__(self):
-        """Represent instance as a unique string."""
-        return '<User({username!r})>'.format(username=self.username)
+        """
+        Represent instance as a unique string.
+        """
+        return "<User({username!r})>".format(username=self.username)

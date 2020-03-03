@@ -1,4 +1,4 @@
-from numpy import delete, take, absolute, zeros
+from numpy import absolute, delete, take, zeros
 from outliers import smirnov_grubbs as grubbs
 from scipy.stats import zscore
 
@@ -9,7 +9,7 @@ class OutlierDetector:
 
     def get_outliers(self, y):
         """
-        Returns a boolean "mask array" that can be used to select outliers
+        Returns a boolean "mask array" that can be used to select outliers.
         """
 
         # This default implementation returns an array of 0s

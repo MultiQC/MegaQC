@@ -1,0 +1,33 @@
+repos:
+  - repo: https://github.com/timothycrosley/isort
+    rev: 4.3.20
+    hooks:
+      - id: isort
+        types: [python]
+        args:
+          - "--multi-line=3"
+          - "--trailing-comma"
+          - "--force-grid-wrap=0"
+          - "--use-parentheses"
+          - "--line-width=88"
+
+  - repo: https://github.com/myint/docformatter
+    rev: v1.3.1
+    hooks:
+      - id: docformatter
+        args:
+          - "--make-summary-multi-line"
+          - "--pre-summary-newline"
+          - "--in-place"
+          - "--recursive"
+
+  - repo: https://github.com/psf/black
+    rev: stable
+    hooks:
+      - id: black
+
+  - repo: https://github.com/prettier/prettier
+    rev: 1.19.1
+    hooks:
+      - id: prettier
+        exclude: (megaqc/templates|megaqc/static)

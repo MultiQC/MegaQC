@@ -11,8 +11,8 @@ install:
   - nvm install --lts
   - npm install
 before_script:
-  # Get the linting outputs, but don't fail if they're poor
-  - megaqc lint || true
+  # Run the pre-commit hooks (linting etc)
+  - pre-commit run --all-files
 script:
   - megaqc test
   - npm run build

@@ -1,14 +1,15 @@
 import os
-from flask.globals import current_app
-from uuid import uuid4
-from functools import wraps
-from flask import request
 from enum import IntEnum, auto
+from functools import wraps
+from uuid import uuid4
+
+from flask import request
+from flask.globals import current_app
 from megaqc.user.models import User
 
 
 def get_upload_dir():
-    upload_dir = current_app.config['UPLOAD_FOLDER']
+    upload_dir = current_app.config["UPLOAD_FOLDER"]
     if not os.path.isdir(upload_dir):
         os.mkdir(upload_dir)
 
@@ -31,17 +32,21 @@ class Permission(IntEnum):
 
 def check_perms(function):
     """
-    Adds a "user" and "permission" kwarg to the view function
+    Adds a "user" and "permission" kwarg to the view function.
+
     :param function:
     :return:
     """
+
     @wraps(function)
     def user_wrap_function(*args, **kwargs):
         if not request.headers.has_key("access_token"):
             perms = Permission.VIEWER
             user = None
         else:
-            user = User.query.filter_by(api_token=request.headers.get("access_token")).first()
+            user = User.query.filter_by(
+                api_token=request.headers.get("access_token")
+            ).first()
             if not user:
                 perms = Permission.VIEWER
             elif user.is_anonymous:
@@ -51,8 +56,8 @@ def check_perms(function):
             else:
                 perms = Permission.USER
 
-        kwargs['user'] = user
-        kwargs['permission'] = perms
+        kwargs["user"] = user
+        kwargs["permission"] = perms
         return function(*args, **kwargs)
-    return user_wrap_function
 
+    return user_wrap_function

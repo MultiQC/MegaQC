@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 MegaQC is a web application that collects results from multiple runs of MultiQC
 and allows bulk visualisation.
@@ -30,11 +31,7 @@ setup(
     packages=["megaqc"],
     include_package_data=True,
     zip_safe=False,
-    entry_points={
-        "console_scripts": [
-            "megaqc = megaqc.cli:main",
-        ],
-    },
+    entry_points={"console_scripts": ["megaqc = megaqc.cli:main",],},
     install_requires=[
         "argon2-cffi~=16.3",
         "click~=5.0",
