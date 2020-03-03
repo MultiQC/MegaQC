@@ -74,5 +74,5 @@ npm run watch
 You should now have a fully functional MegaQC test server running,
 accessible on your localhost at http://127.0.0.1:5000
 
-Now, head over to the [development docs](development.md) for a description of the 
+Now, head over to the [development docs](../README.md#contributing) for a description of the 
 project structure.
