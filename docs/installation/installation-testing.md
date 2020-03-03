@@ -1,4 +1,4 @@
-# MegaQC installation: Testing
+# MegaQC Installation: Testing
 
 By default, MegaQC installs with configuration to use the Flask development
 server and a SQLite database. This allows a very simple pure-Python installation
