@@ -10,14 +10,14 @@ import megaqc.user.models as user_models
 from flapison import ResourceDetail, ResourceList, ResourceRelationship
 from flask import Blueprint, jsonify, make_response, request
 from flask_login import current_user
-from marshmallow.utils import INCLUDE
+from marshmallow.utils import EXCLUDE, INCLUDE
 from marshmallow_jsonapi.exceptions import IncorrectTypeError
 from megaqc.api.views import check_user
 from megaqc.extensions import db, json_api, restful
 from megaqc.model import models
 from megaqc.rest_api import plot, schemas, utils
 from megaqc.rest_api.content import json_to_csv
-from megaqc.rest_api.webarg_parser import use_kwargs
+from megaqc.rest_api.webarg_parser import use_args, use_kwargs
 
 api_bp = Blueprint("rest_api", __name__, url_prefix="/rest_api/v1")
 json_api.blueprint = api_bp
@@ -290,21 +290,13 @@ class Dashboard(ResourceDetail):
 
 
 class TrendSeries(ResourceList):
-    view_kwargs = True
-
-
-class TrendSeries(ResourceList):
-    @use_kwargs(schemas.TrendInputSchema(), locations=("querystring",))
-    def get(self, fields, filter, outliers):
-        # We need to give each resource a unique ID so the client doesn't try to cache or reconcile different plots
+    @use_args(schemas.TrendInputSchema(), locations=("querystring",))
+    def get(self, args):
+        # We need to give each resource a unique ID so the client doesn't try to cache
+        # or reconcile different plots
         request_hash = sha1(request.query_string).hexdigest()
 
-        plots = plot.trend_data(
-            fields=fields,
-            filters=filter,
-            outlier_det=outliers,
-            plot_prefix=request_hash,
-        )
+        plots = plot.trend_data(plot_prefix=request_hash, **args)
 
         return schemas.TrendSchema(many=True, unknown=INCLUDE).dump(plots)
 

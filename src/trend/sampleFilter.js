@@ -19,7 +19,7 @@ export function SampleFilter(props) {
 
   const [sampleFilters, setSampleFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(null);
-  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState("Global");
   const [modalOpen, setModalOpen] = useState(false);
 
   function updateFilters() {

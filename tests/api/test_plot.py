@@ -17,8 +17,13 @@ def test_get_trend_series(db, client):
     # plots = jpi.get('plots/trends/series')
     url = url_for(
         "rest_api.trend_data",
-        filter=json.dumps([]),
-        fields=json.dumps([data_type.data_key]),
+        **{
+            "filter": json.dumps([]),
+            "fields": json.dumps([data_type.data_key]),
+            "control_limits[enabled]": True,
+            "control_limits[sigma]": 3,
+            "center_line": "mean",
+        }
     )
     response = client.get(url, headers={"Content-Type": "application/json"})
 

@@ -62,6 +62,7 @@ class SampleDataTypeSchema(Schema):
     id = f.Integer(attribute="sample_data_type_id", allow_none=True, as_string=True)
     section = f.String(attribute="data_section")
     key = f.String(attribute="data_key")
+    nice_name = f.String(dump_only=True)
 
 
 class SampleDataSchema(Schema):
@@ -450,11 +451,26 @@ class OutlierSchema(BaseSchema):
             return outlier.OutlierDetector()
 
 
+class ControlLimitSchema(BaseSchema):
+    """
+    Defines "control limits" for a control chart.
+    """
+
+    # If we should enable the limits at all
+    enabled = f.Bool()
+    # Number of standard deviations on each side
+    sigma = f.Float()
+
+
 class TrendInputSchema(BaseSchema):
     """
     Schema for the request for trend data (not the response)
     """
 
-    fields = JsonString(invert=True)
+    fields = JsonString(invert=True, required=True)
     filter = FilterReference()
-    outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)
+    control_limits = f.Nested(ControlLimitSchema, required=True)
+    center_line = f.String(
+        validate=validate.OneOf(["mean", "median", "none"]), required=True
+    )
+    # outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)

@@ -1,17 +1,32 @@
+import re
+
 import numpy
 from megaqc.extensions import db
 from megaqc.model import models
 from megaqc.model.models import *
 from megaqc.rest_api.filters import build_filter_query
+from numpy import absolute, delete, take, zeros
+from plotly.colors import DEFAULT_PLOTLY_COLORS
+from scipy.stats import zscore
 
 
-def trend_data(fields, filters, plot_prefix, outlier_det=None):
+def rgb_to_rgba(rgb, alpha):
+    """
+    Appends an alpha (transparency) value to an RGB string.
+    """
+    match = re.match(r"rgb\((\d+), (\d+), (\d+)\)", rgb)
+    return "rgba({}, {}, {}, {})".format(
+        match.group(1), match.group(2), match.group(3), alpha
+    )
+
+
+def trend_data(fields, filter, plot_prefix, control_limits, center_line):
     """
     Returns data suitable for a plotly plot.
     """
-    subquery = build_filter_query(filters)
+    subquery = build_filter_query(filter)
     plots = []
-    for field in fields:
+    for field, colour in zip(fields, DEFAULT_PLOTLY_COLORS):
 
         # Choose the columns to select, and further filter it down to samples with the column we want to plot
         query = (
@@ -21,7 +36,7 @@ def trend_data(fields, filters, plot_prefix, outlier_det=None):
             .join(Report, Report.report_id == Sample.report_id, isouter=True)
             .with_entities(
                 models.Sample.sample_name,
-                models.SampleDataType.data_key,
+                models.SampleDataType.nice_name,
                 models.Report.created_at,
                 models.SampleData.value,
             )
@@ -48,8 +63,8 @@ def trend_data(fields, filters, plot_prefix, outlier_det=None):
         x = numpy.asarray(x)
         y = numpy.asarray(y, dtype=float)
 
-        # If we have an outlier detector, use it to split into outliers and inliers
-        outliers = outlier_det.get_outliers(y)
+        # Anything outside the control limits is an outlier
+        outliers = absolute(zscore(y)) > control_limits["sigma"]
         inliers = ~outliers
 
         # Add the outliers
@@ -63,7 +78,7 @@ def trend_data(fields, filters, plot_prefix, outlier_det=None):
                 y=y[outliers],
                 line=dict(color="rgb(250,0,0)"),
                 mode="markers",
-                name="Outliers",
+                name="{} Outliers".format(data_type),
             )
         )
 
@@ -76,43 +91,62 @@ def trend_data(fields, filters, plot_prefix, outlier_det=None):
                 hoverinfo="text+x+y",
                 x=x[inliers],
                 y=y[inliers],
-                line=dict(color="rgb(0,100,80)"),
+                line=dict(color=colour),
                 mode="markers",
-                name="Samples",
+                name="{} Samples".format(data_type),
             )
         )
 
         # Add the mean
-        y2 = numpy.repeat(numpy.mean(y), len(x))
-        plots.append(
-            dict(
-                id=plot_prefix + "_mean_" + field,
-                type="scatter",
-                x=x,
-                y=y2.tolist(),
-                line=dict(color="rgb(0,100,80)"),
-                mode="lines",
-                name="Mean",
+        if center_line == "mean":
+            y2 = numpy.repeat(numpy.mean(y), len(x))
+            plots.append(
+                dict(
+                    id=plot_prefix + "_mean_" + field,
+                    type="scatter",
+                    x=x,
+                    y=y2.tolist(),
+                    line=dict(color=colour),
+                    mode="lines",
+                    name="{} Mean".format(data_type),
+                )
             )
-        )
+        elif center_line == "median":
+            y2 = numpy.repeat(numpy.median(y), len(x))
+            plots.append(
+                dict(
+                    id=plot_prefix + "_median_" + field,
+                    type="scatter",
+                    x=x,
+                    y=y2.tolist(),
+                    line=dict(color=colour),
+                    mode="lines",
+                    name="{} Median".format(data_type),
+                )
+            )
+        else:
+            # The user could request control limits without a center line. Assume they
+            # want a mean in this case
+            y2 = numpy.repeat(numpy.mean(y), len(x))
 
         # Add the stdev
-        x3 = numpy.concatenate((x, numpy.flip(x, axis=0)))
-        stdev = numpy.repeat(numpy.std(y), len(x))
-        upper = y2 + stdev
-        lower = y2 - stdev
-        y3 = numpy.concatenate((lower, upper))
-        plots.append(
-            dict(
-                id=plot_prefix + "_stdev_" + field,
-                type="scatter",
-                x=x3.tolist(),
-                y=y3.tolist(),
-                fill="tozerox",
-                fillcolor="rgba(0,100,80,0.2)",
-                line=dict(color="rgba(255,255,255,0)"),
-                name="Standard Deviation",
+        if control_limits["enabled"]:
+            x3 = numpy.concatenate((x, numpy.flip(x, axis=0)))
+            stdev = numpy.repeat(numpy.std(y) * control_limits["sigma"], len(x))
+            upper = y2 + stdev
+            lower = y2 - stdev
+            y3 = numpy.concatenate((lower, upper))
+            plots.append(
+                dict(
+                    id=plot_prefix + "_stdev_" + field,
+                    type="scatter",
+                    x=x3.tolist(),
+                    y=y3.tolist(),
+                    fill="tozerox",
+                    fillcolor=rgb_to_rgba(colour, 0.5),
+                    line=dict(color="rgba(255,255,255,0)"),
+                    name="{} Control Limits".format(data_type),
+                )
             )
-        )
 
     return plots

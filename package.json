@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --config ./webpack.config.js --mode development",
-    "test": "echo \"No test specified\" && exit 0"
+    "watch": "webpack --mode development --watch",
+    "build": "webpack --mode production"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +22,7 @@
     "babel-loader": "^8.0.5",
     "classnames": "^2.2.6",
     "css-loader": "^3.2.0",
-    "formik": "^1.5.8",
+    "formik": "^2.1.4",
     "formik-effect": "^1.2.0",
     "jsoneditor": "^7.0.4",
     "jsoneditor-react": "^1.0.1",
@@ -40,7 +40,7 @@
     "style-loader": "^1.0.0",
     "url-loader": "^2.1.0",
     "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.1",
+    "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.3.1",
     "yup": "^0.27.0"
   }

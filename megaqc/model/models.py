@@ -7,7 +7,8 @@ from megaqc.database import CRUDMixin
 from megaqc.extensions import db
 from sqlalchemy import Boolean, Column, DateTime
 from sqlalchemy import Enum as SqlEnum
-from sqlalchemy import ForeignKey, Integer, Unicode
+from sqlalchemy import ForeignKey, Integer, Unicode, func
+from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
 
 user_plotconfig_map = db.Table(
@@ -161,6 +162,20 @@ class SampleDataType(db.Model, CRUDMixin):
         Gets the root level data type, or None if it doesn't have one.
         """
         return self.schema_json.get("type")
+
+    @hybrid_property
+    def nice_name(self):
+        """
+        A more human-readable version of the "key" field.
+        """
+        return self.data_key.replace("__", " ")
+
+    @nice_name.expression
+    def nice_name(cls):
+        # Technically string replacement isn't in the SQL standard, but it is
+        # implemented by all the DBMSs:
+        # https://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
+        return func.replace(cls.data_key, "__", " ")
 
     @classmethod
     def get_keys(cls, session):

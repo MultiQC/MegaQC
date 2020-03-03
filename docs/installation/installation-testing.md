@@ -1,4 +1,4 @@
-# MegaQC installation: Testing and development
+# MegaQC Installation: Testing
 
 By default, MegaQC installs with configuration to use the Flask development
 server and a SQLite database. This allows a very simple pure-Python installation
@@ -26,26 +26,24 @@ To install with conda:
 conda install -c bioconda megaqc
 ```
 
-## 2. (Optional) Set the variable for the development mode:
-
-Setting this bash variable runs MegaQC in development mode. This means
-that it will show full Python exception tracebacks in the web browser
-as well as additional Flask plugins which help with debugging and performance testing.
-
-This is only useful when actively developing MegaQC code and should
-be skipped if you're just trying MegaQC out.
-
-```bash
-export FLASK_DEBUG=1
-```
-
-## 3. Set up the database
+## 2. Set up the database
 
 Running this command creates an empty SQLite MegaQC database file in the
 installation directory called `megaqc.db`
 
 ```bash
 megaqc initdb
+```
+
+## 3. Load test data
+
+In order to develop new features you need some data to test it with:
+
+```bash
+git clone https://github.com/TMiguelT/1000gFastqc
+for report in $(find 1000gFastqc -name '*.json')
+    do megaqc upload $report
+done
 ```
 
 ## 4. Start megaqc

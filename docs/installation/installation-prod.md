@@ -38,7 +38,7 @@ MegaQC uses the Flask SQLAlchemy plugin, meaning that it can be used with any SQ
 MegaQC has been developed with PostgreSQL, see below. For instructions. If you use MegaQC with any
 other database tools and could contribute to the documentation, that would be great!
 
-## 3.1 Using a PostgreSQL database
+### 3.1 Using a PostgreSQL database
 
 First, install PostgreSQL: https://wiki.postgresql.org/wiki/Detailed_installation_guides
 
@@ -58,7 +58,7 @@ In order to make this happen, run :
 megaqc initdb
 ```
 
-## 3.2 Using a MySQL database
+### 3.2 Using a MySQL database
 
 Although PostgreSQL is highly recommended, MegaQC should work with other SQL database
 back ends, such as MySQL.
@@ -88,7 +88,7 @@ This should, hopefully, make everything work. If you have problems, please
 [create an issue](https://github.com/ewels/MegaQC/issues/new) and we'll do our
 best to help.
 
-### 4. (Optional, but recommended) Create an apache proxy
+## 4. (Optional, but recommended) Create an apache proxy
 
 _**Note:** You can skip this step if you wish to use gunicorn as your primary web server, but it's not recommended._
 
@@ -122,17 +122,7 @@ the following command (or equivalent on your system):
 service restart httpd
 ````
 
-## 5. Install and start the web server
-
-_**Note:** It's possible to run the MegaQC Flask app using different web servers. Below we describe gunicon which is the server that we recommend using._
-
-### 5.1. Install gunicorn
-
-```bash
-pip install gunicorn
-```
-
-### 5.2. Start megaqc as a gunicorn wsgi app:
+## 5. Start the web server
 
 ```bash
 gunicorn --log-file megaqc.log --timeout 300 megaqc.wsgi:app
