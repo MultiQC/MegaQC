@@ -8,9 +8,9 @@ Please report and inaccuracies or missing information as a [new issue](https://g
 
 ## Usage
 * Administration - [`usage-admin.md`](usage/usage-admin.md)
-* Setup (all users) - [`usage-setup.md`](usage/usage-admin.md)
+* Setup (all users) - [`usage-setup.md`](usage/usage-setup.md)
 * Database migrations (should be run each time you update MegaQC) - [`migrations.md`](installation/migrations.md)
 
 ## Contributing
-* Installation for development - [`installation-dev.md`](installation-dev.md)
-* Development primer - [`development.md`](development.md)
+* Installation for development - [`installation-dev.md`](installation/installation-dev.md)
+* Development index - [`development.md`](dev/dev.md)
