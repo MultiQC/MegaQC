@@ -84,6 +84,22 @@ npm install
 npm run watch
 ```
 
+## 9. Install the pre-commit hooks
+
+MegaQC has a number of [pre-commit](https://pre-commit.com/) hooks installed, which
+automatically format and check your code before you commit. To set it up, run:
+
+```bash
+pre-commit install
+```
+
+From now on, whenever you commit, each changed file will get processed by the pre-commit
+hooks. If a file is changed by this process (because your code style didn't match
+the configuration), you'll have to `git add` the files again, and then re-run
+`git commit`. If it lets you write a commit message then everything has succeeded.
+
+## Next Steps
+
 You should now have a fully functional MegaQC test server running,
 accessible on your localhost at http://127.0.0.1:5000
 
