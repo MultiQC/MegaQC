@@ -29,7 +29,8 @@ flapison documentation.
 Flask endpoints that return HTML (the non-API URLs) are defined in [`public/views.py`](/megaqc/public/views.py),
 and [`user/views.py`](/megaqc/user/views.py). All of these render a
 [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) template, which all the other
-frontend CSS and JavaScript is connected to. This is further explained below.
+frontend CSS and JavaScript is connected to. This is further explained in the
+[frontend](./frontend.md) docs.
 
 ## Tests
 Python tests are located in [`tests`](/tests) (note: there aren't currently any JavaScript tests).

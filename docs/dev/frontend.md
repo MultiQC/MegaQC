@@ -11,7 +11,7 @@ However, the newer React pages instead render a special template, called [`react
 which is a very simple page that acts as the entry point for the React code, which handles
 all layout and logic.
 
-The source code for this JavaScript can be found in the [`src`](/src) directory, which currently
+The source code for the React JavaScript can be found in the [`src`](/src) directory, which currently
 has one root-level `.js` file for each React page that then imports other components
 to use.
 
