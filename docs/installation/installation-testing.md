@@ -1,4 +1,4 @@
-# MegaQC installation: Testing and development
+# MegaQC installation: Testing
 
 By default, MegaQC installs with configuration to use the Flask development
 server and a SQLite database. This allows a very simple pure-Python installation
@@ -35,9 +35,9 @@ megaqc initdb
 ## 3. Load test data
 In order to develop new features you need some data to test it with:
 
-```
+```bash
 git clone https://github.com/TMiguelT/1000gFastqc
-for report in $(find . -name '*.json')
+for report in $(find 1000gFastqc -name '*.json')
     do megaqc upload $report
 done
 ```

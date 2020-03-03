@@ -55,7 +55,7 @@ You will have to run the rest of these commands **in another terminal window**, 
 ## 7. Load test data
 In order to develop new features you need some data to test it with:
 
-```
+```bash
 git clone https://github.com/TMiguelT/1000gFastqc
 for report in $(find 1000gFastqc -name '*.json')
     do megaqc upload $report
