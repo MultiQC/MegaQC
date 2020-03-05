@@ -42,14 +42,15 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
 
+      - name: Upload to existing release
+        uses: AButler/upload-release-assets@v2.0
+        with:
+          files: "dist/*"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
 
-      - name: Upload to existing release
-        uses: AButler/upload-release-assets@v2.0
-        with:
-          files: "dist/*"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
