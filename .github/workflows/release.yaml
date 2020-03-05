@@ -8,7 +8,12 @@ on:
 
 jobs:
   deploy:
+    env:
+      # Webpack uses around 2GB to build, which is more than the default heap size. We bump it to 4 GB here just in case
+      NODE_OPTIONS: "--max-old-space-size=4096"
+
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
 
