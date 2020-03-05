@@ -4,6 +4,8 @@ on: [push]
 
 jobs:
   build:
+    env:
+      NODE_OPTIONS: "--max-old-space-size=4096"
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 1
