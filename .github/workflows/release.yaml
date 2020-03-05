@@ -1,5 +1,7 @@
+# This is a separate workflow because we don't want a matrix build for the release (we only want one package)
 name: Publish Release
 
+# Whenever we publish a release
 on:
   release:
     types: [created]
@@ -44,9 +46,8 @@ jobs:
           user: __token__
           password: ${{ secrets.pypi_password }}
 
-      - name: GitHub Release
-        uses: softprops/action-gh-release@v1
+      - name: Upload to existing release
+        uses: AButler/upload-release-assets@v2.0
         with:
-          files: dist/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: "dist/*"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
