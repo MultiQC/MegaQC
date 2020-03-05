@@ -84,6 +84,7 @@ setup(
             "pep8-naming~=0.8",
             "pre-commit",
         ],
+        "deploy": ["wheel~=0.30"],
         "prod": ["psycopg2-binary~=2.6", "gunicorn~=19.7",],
     },
     classifiers=[
