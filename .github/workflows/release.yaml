@@ -1,0 +1,55 @@
+# This is a separate workflow because we don't want a matrix build for the release (we only want one package)
+name: Publish Release
+
+# Whenever we publish a release
+on:
+  release:
+    types: [created]
+
+jobs:
+  deploy:
+    env:
+      # Webpack uses around 2GB to build, which is more than the default heap size. We bump it to 4 GB here just in case
+      NODE_OPTIONS: "--max-old-space-size=4096"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.x"
+
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev,deploy]
+
+      - name: Install node dependencies
+        run: npm install
+
+      - name: Build JavaScript
+        run: npm run build --if-present
+
+      - name: Build python package
+        run: |
+          python setup.py sdist bdist_wheel
+
+      - name: Upload to existing release
+        uses: AButler/upload-release-assets@v2.0
+        with:
+          files: "dist/*"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}
