@@ -8,11 +8,13 @@ import {
   Card,
   CardBody,
   ListGroup,
-  ListGroupItem
+  ListGroupItem,
+  Alert
 } from "reactstrap";
 import groupBy from "lodash/groupBy";
 
 import NewFilter from "./newFilter";
+import { Icon } from "@material-ui/core";
 
 export function SampleFilter(props) {
   const { qcApi, onFilterChange } = props;
@@ -21,6 +23,7 @@ export function SampleFilter(props) {
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState("Global");
   const [modalOpen, setModalOpen] = useState(false);
+  const [editFilter, setEditFilter] = useState(null);
 
   function updateFilters() {
     qcApi.find("filters").then(filters => {
@@ -50,7 +53,12 @@ export function SampleFilter(props) {
 
   return (
     <Card>
-      <NewFilter qcApi={qcApi} isOpen={modalOpen} toggle={toggleModal} />
+      <NewFilter
+        qcApi={qcApi}
+        isOpen={modalOpen}
+        toggle={toggleModal}
+        resourceId={editFilter}
+      />
       <h4 className="card-header">
         Filter Samples
         <Button
@@ -114,19 +122,33 @@ export function SampleFilter(props) {
                   filterGroups[selectedGroup].map((filter, i) => {
                     return (
                       <ListGroupItem
+                        key={i}
+                        className={classnames({
+                          "list-group-item-action": true,
+                          "sample-filter-btn": true,
+                          active: filter._getUid() === selectedFilter
+                        })}
                         onClick={() => {
                           setSelectedFilter(filter._getUid());
                         }}
-                        key={i}
-                        tag={"button"}
-                        className={classnames({
-                          "sample-filter-btn": true,
-                          "list-group-item-action": true,
-                          active: filter._getUid() === selectedFilter
-                        })}
                         data-filterid={filter._getUid()}
                       >
                         {filter.get("name")}
+                        <Button
+                          onClick={() => {
+                            // Start editing this filter
+                            setEditFilter(filter._getUid());
+                            // Open the edit modal
+                            toggleModal();
+                          }}
+                          size={"sm"}
+                          color={"secondary"}
+                          outline={true}
+                          className="float-right"
+                        >
+                          <i className="fa fa-fw fa-edit" aria-hidden="true" />
+                          Edit
+                        </Button>
                       </ListGroupItem>
                     );
                   })}

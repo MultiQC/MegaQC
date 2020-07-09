@@ -2,15 +2,33 @@
  * One row of the newFilter dialogue
  **/
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Field, connect, getIn } from "formik";
-import { Button, FormGroup } from "reactstrap";
+import {
+  Button,
+  FormGroup,
+  Popover,
+  PopoverHeader,
+  PopoverBody
+} from "reactstrap";
 import BootstrapField from "./bootstrapField";
 import BootstrapDateField from "./bootstrapDateField";
-import Filter from "../util/filter";
 
 function FilterRow(props) {
-  const { sampleFields, reportFields, name, formik, innerArrayHelpers } = props;
+  const {
+    sampleFields,
+    reportFields,
+    name,
+    formik,
+    innerArrayHelpers,
+    index
+  } = props;
+
+  const rowError = getIn(formik.errors, name);
+  const errorMsg = rowError instanceof String ? rowError : "";
+
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const toggle = () => setPopoverOpen(!popoverOpen);
   const currentType = getIn(formik.values, name + ".type");
 
   useEffect(() => {
@@ -56,18 +74,34 @@ function FilterRow(props) {
 
   // Comparison operators for range types
   const rangeCmp = [
-    <option value="in">In</option>,
-    <option value="not in">Not In</option>
+    <option key="in" value="in">
+      In
+    </option>,
+    <option key="not in" value="not in">
+      Not In
+    </option>
   ];
 
   // Comparison operators for value types
   const valCmp = [
-    <option value="eq">=</option>,
-    <option value="neq">&ne;</option>,
-    <option value="le">&le;</option>,
-    <option value="lt">&le;</option>,
-    <option value="ge">&ge;</option>,
-    <option value="gt">&gt;</option>
+    <option key="eq" value="eq">
+      =
+    </option>,
+    <option key="neq" value="neq">
+      &ne;
+    </option>,
+    <option key="le" value="le">
+      &le;
+    </option>,
+    <option key="lt" value="lt">
+      &lt;
+    </option>,
+    <option key="ge" value="ge">
+      &ge;
+    </option>,
+    <option key="gt" value="gt">
+      &gt;
+    </option>
   ];
 
   // Generate the right fields for each column in the row
@@ -87,7 +121,7 @@ function FilterRow(props) {
             views={["year", "month", "date"]}
             openTo={"month"}
             format={"DD/MM/YYYY"}
-            name={`${name}.value.0`}
+            name={`${name}.value[0]`}
             outputFormat={"YYYY-MM-DD"}
             type={"date"}
           />
@@ -98,7 +132,7 @@ function FilterRow(props) {
             openTo={"month"}
             format={"DD/MM/YYYY"}
             outputFormat={"YYYY-MM-DD"}
-            name={`${name}.value.1`}
+            name={`${name}.value[1]`}
             type={"date"}
           />
         </>
@@ -115,7 +149,7 @@ function FilterRow(props) {
         <>
           <Field
             component={BootstrapField}
-            name={`${name}.value.0`}
+            name={`${name}.value[0]`}
             type={"number"}
           />
         </>
@@ -125,7 +159,11 @@ function FilterRow(props) {
       keyComponent = (
         <Field component={BootstrapField} name={`${name}.key`} type={"select"}>
           {sampleFields.map(field => {
-            return <option value={field}>{field}</option>;
+            return (
+              <option key={field} value={field}>
+                {field}
+              </option>
+            );
           })}
         </Field>
       );
@@ -136,7 +174,7 @@ function FilterRow(props) {
       );
       valueComponent = (
         <>
-          <Field component={BootstrapField} name={`${name}.value.0`} />
+          <Field component={BootstrapField} name={`${name}.value[0]`} />
         </>
       );
       break;
@@ -144,7 +182,11 @@ function FilterRow(props) {
       keyComponent = (
         <Field component={BootstrapField} name={`${name}.key`} type={"select"}>
           {reportFields.map(field => {
-            return <option value={field}>{field}</option>;
+            return (
+              <option key={field} value={field}>
+                {field}
+              </option>
+            );
           })}
         </Field>
       );
@@ -155,7 +197,7 @@ function FilterRow(props) {
       );
       valueComponent = (
         <>
-          <Field component={BootstrapField} name={`${name}.value.0`} />
+          <Field component={BootstrapField} name={`${name}.value[0]`} />
         </>
       );
       break;
@@ -189,15 +231,38 @@ function FilterRow(props) {
       <td>
         <Button
           onClick={() => {
-            innerArrayHelpers.push(new Filter());
+            innerArrayHelpers.remove(index);
           }}
           size={"sm"}
           color={"primary"}
         >
-          <i className="fa fa-fw fa-plus-square" aria-hidden="true" />
-          Add
+          <i className="fa fa-fw fa-trash" aria-hidden="true" />
+          Delete
         </Button>
+        {errorMsg && (
+          <Button
+            onClick={() => {
+              toggle();
+            }}
+            id="errorPopover"
+            size={"sm"}
+            color={"error"}
+          >
+            Errors
+          </Button>
+        )}
       </td>
+      {errorMsg && (
+        <Popover
+          placement="bottom"
+          isOpen={popoverOpen}
+          toggle={toggle}
+          target="errorPopover"
+        >
+          <PopoverHeader>Row Errors</PopoverHeader>
+          <PopoverBody>{errorMsg}</PopoverBody>
+        </Popover>
+      )}
     </>
   );
 }

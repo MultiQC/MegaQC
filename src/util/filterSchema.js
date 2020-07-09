@@ -13,32 +13,34 @@ const schema = Yup.object().shape({
     .label("Visibility")
     .required(),
   filters: Yup.array().of(
-    Yup.array().of(
-      Yup.object().shape({
-        type: Yup.string()
-          .oneOf(["timedelta", "daterange", "reportmeta", "samplemeta"])
-          .label("Type")
-          .required(),
-        key: Yup.string()
-          .label("Key")
-          .when("type", {
-            is: val => ["samplemeta", "reportmeta"].includes(val),
-            then: Yup.string().required(),
-            otherwise: Yup.mixed().notRequired()
-          }),
-        cmp: Yup.string()
-          .label("Comparison")
-          .required()
-          .when("type", {
-            is: val => ["samplemeta", "reportmeta"].includes(val),
-            then: Yup.string().oneOf(["eq", "ne", "le", "lt", "ge", "gt"]),
-            otherwise: Yup.string().oneOf(["in", "not in"])
-          }),
-        value: Yup.array()
-          .label("Value")
-          .required()
-      })
-    )
+    Yup.array()
+      .strict()
+      .of(
+        Yup.object().shape({
+          type: Yup.string()
+            .oneOf(["timedelta", "daterange", "reportmeta", "samplemeta"])
+            .label("Type")
+            .required(),
+          key: Yup.string()
+            .label("Key")
+            .when("type", {
+              is: val => ["samplemeta", "reportmeta"].includes(val),
+              then: Yup.string().required(),
+              otherwise: Yup.mixed().notRequired()
+            }),
+          cmp: Yup.string()
+            .label("Comparison")
+            .required()
+            .when("type", {
+              is: val => ["samplemeta", "reportmeta"].includes(val),
+              then: Yup.string().oneOf(["eq", "ne", "le", "lt", "ge", "gt"]),
+              otherwise: Yup.string().oneOf(["in", "not in"])
+            }),
+          value: Yup.array()
+            .label("Value")
+            .required()
+        })
+      )
   )
 });
 export default schema;
