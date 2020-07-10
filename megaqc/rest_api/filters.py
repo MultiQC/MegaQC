@@ -23,6 +23,10 @@ def add_operator(lhs, op, rhs):
         return lhs >= rhs
     elif op == "gt":
         return lhs > rhs
+    elif op == "like":
+        return lhs.ilike(rhs)
+    elif op == "contains":
+        return lhs.contains(rhs, autoescape=True)
     else:
         raise ValueError('"op" must have a valid value.')
 

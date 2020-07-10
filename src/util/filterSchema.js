@@ -33,7 +33,16 @@ const schema = Yup.object().shape({
             .required()
             .when("type", {
               is: val => ["samplemeta", "reportmeta"].includes(val),
-              then: Yup.string().oneOf(["eq", "ne", "le", "lt", "ge", "gt"]),
+              then: Yup.string().oneOf([
+                "eq",
+                "ne",
+                "le",
+                "lt",
+                "ge",
+                "gt",
+                "contains",
+                "like"
+              ]),
               otherwise: Yup.string().oneOf(["in", "not in"])
             }),
           value: Yup.array()
