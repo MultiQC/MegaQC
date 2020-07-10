@@ -15,7 +15,8 @@ import {
   ModalFooter,
   ModalHeader,
   Row,
-  Table
+  Table,
+  UncontrolledTooltip
 } from "reactstrap";
 import BootstrapField from "./bootstrapField";
 import filterSchema from "../util/filterSchema";
@@ -190,7 +191,27 @@ export default function EditFilter(props) {
                                 <tr>
                                   <th>Type</th>
                                   <th>Key</th>
-                                  <th>Comparison</th>
+                                  <th>
+                                    Comparison{" "}
+                                    <a
+                                      className="float-right"
+                                      href="#"
+                                      id="comparison_tooltip"
+                                    >
+                                      <i
+                                        className="fa fa-info-circle"
+                                        aria-hidden="true"
+                                      />
+                                    </a>
+                                    <UncontrolledTooltip
+                                      placement="right"
+                                      target="comparison_tooltip"
+                                    >
+                                      <code>matches</code> uses SQL{" "}
+                                      <code>LIKE</code> syntax. Use{" "}
+                                      <code>%</code> as a wildcard
+                                    </UncontrolledTooltip>
+                                  </th>
                                   <th>Value</th>
                                   <th>Actions</th>
                                 </tr>

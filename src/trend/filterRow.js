@@ -84,24 +84,14 @@ function FilterRow(props) {
 
   // Comparison operators for value types
   const valCmp = [
-    <option key="eq" value="eq">
-      =
-    </option>,
-    <option key="neq" value="neq">
-      &ne;
-    </option>,
-    <option key="le" value="le">
-      &le;
-    </option>,
-    <option key="lt" value="lt">
-      &lt;
-    </option>,
-    <option key="ge" value="ge">
-      &ge;
-    </option>,
-    <option key="gt" value="gt">
-      &gt;
-    </option>
+    <option value="eq">=</option>,
+    <option value="neq">&ne;</option>,
+    <option value="le">&le;</option>,
+    <option value="lt">&lt;</option>,
+    <option value="ge">&ge;</option>,
+    <option value="gt">&gt;</option>,
+    <option value="like">matches</option>,
+    <option value="contains">contains</option>
   ];
 
   // Generate the right fields for each column in the row
@@ -219,7 +209,7 @@ function FilterRow(props) {
           </Field>
         </FormGroup>
       </td>
-      <td>
+      <td style={{ width: "35%" }}>
         <FormGroup>{keyComponent}</FormGroup>
       </td>
       <td>
