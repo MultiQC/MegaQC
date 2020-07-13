@@ -295,6 +295,10 @@ def test_reportmeta_not_equals(filter_test_reports):
         ["like", "%", [0, 1, 2], 1],
         ["contains", "ardv", [0], 1],
         ["contains", "%ardv%", [], 1],
+        ["startswith", "aard", [0], 1],
+        ["startswith", "bad", [1], 1],
+        ["endswith", "vark", [0], 1],
+        ["endswith", "ger", [1], 1],
     ],
 )
 def test_samplemeta_operator(

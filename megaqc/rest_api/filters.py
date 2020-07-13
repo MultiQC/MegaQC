@@ -27,6 +27,10 @@ def add_operator(lhs, op, rhs):
         return lhs.ilike(rhs)
     elif op == "contains":
         return lhs.contains(rhs, autoescape=True)
+    elif op == "startswith":
+        return lhs.startswith(rhs, autoescape=True)
+    elif op == "endswith":
+        return lhs.endswith(rhs, autoescape=True)
     else:
         raise ValueError('"op" must have a valid value.')
 

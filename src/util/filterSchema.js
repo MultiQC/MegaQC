@@ -28,6 +28,7 @@ const schema = Yup.object().shape({
               then: Yup.string().required(),
               otherwise: Yup.mixed().notRequired()
             }),
+          not: Yup.bool().label("Not"),
           cmp: Yup.string()
             .label("Comparison")
             .required()
