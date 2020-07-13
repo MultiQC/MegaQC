@@ -72,7 +72,7 @@ export default function EditFilter(props) {
 
   // Fetch the report metadata fields
   useEffect(() => {
-    qcApi.find("report_meta").then(groups => {
+    qcApi.find("meta_types").then(groups => {
       setReportFields(groups.map(group => group._getUid()));
     });
   }, []);
@@ -191,6 +191,7 @@ export default function EditFilter(props) {
                                 <tr>
                                   <th>Type</th>
                                   <th>Key</th>
+                                  <th>Not</th>
                                   <th>
                                     Comparison{" "}
                                     <a

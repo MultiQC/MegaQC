@@ -9,7 +9,11 @@ import {
   FormGroup,
   Popover,
   PopoverHeader,
-  PopoverBody
+  PopoverBody,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Input
 } from "reactstrap";
 import BootstrapField from "./bootstrapField";
 import BootstrapDateField from "./bootstrapDateField";
@@ -91,7 +95,9 @@ function FilterRow(props) {
     <option value="ge">&ge;</option>,
     <option value="gt">&gt;</option>,
     <option value="like">matches</option>,
-    <option value="contains">contains</option>
+    <option value="contains">contains</option>,
+    <option value="startswith">starts with</option>,
+    <option value="endswith">ends with</option>
   ];
 
   // Generate the right fields for each column in the row
@@ -100,9 +106,24 @@ function FilterRow(props) {
     case "daterange":
       keyComponent = null;
       cmpComponent = (
-        <Field component={BootstrapField} name={`${name}.cmp`} type={"select"}>
-          {rangeCmp}
-        </Field>
+        <InputGroup>
+          <InputGroupAddon addonType="prepend">
+            <InputGroupText>
+              <Input
+                addon
+                type="checkbox"
+                aria-label="Checkbox for following text input"
+              />
+            </InputGroupText>
+          </InputGroupAddon>
+          <Field
+            component={BootstrapField}
+            name={`${name}.cmp`}
+            type={"select"}
+          >
+            {rangeCmp}
+          </Field>
+        </InputGroup>
       );
       valueComponent = (
         <>
@@ -212,9 +233,7 @@ function FilterRow(props) {
       <td style={{ width: "35%" }}>
         <FormGroup>{keyComponent}</FormGroup>
       </td>
-      <td>
-        <FormGroup>{cmpComponent}</FormGroup>
-      </td>
+      <td>{cmpComponent}</td>
       <td>
         <FormGroup>{valueComponent}</FormGroup>
       </td>
