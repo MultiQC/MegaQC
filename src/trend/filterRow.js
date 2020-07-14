@@ -2,7 +2,7 @@
  * One row of the newFilter dialogue
  **/
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Field, connect, getIn } from "formik";
 import {
   Button,
@@ -16,7 +16,9 @@ import {
   Input
 } from "reactstrap";
 import BootstrapField from "./bootstrapField";
-import BootstrapDateField from "./bootstrapDateField";
+import DateRangeField from "./DateRangeField";
+import { format, parse } from "date-fns";
+import { DATE_FORMAT } from "../util/filter";
 
 function FilterRow(props) {
   const {
@@ -31,9 +33,11 @@ function FilterRow(props) {
   const rowError = getIn(formik.errors, name);
   const errorMsg = rowError instanceof String ? rowError : "";
 
+  const prevType = useRef();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const toggle = () => setPopoverOpen(!popoverOpen);
   const currentType = getIn(formik.values, name + ".type");
+  prevType.current = currentType;
 
   useEffect(() => {
     let newFilter;
@@ -43,7 +47,7 @@ function FilterRow(props) {
           type: currentType,
           cmp: "in",
           key: null,
-          value: [new Date(), new Date()]
+          value: [new Date(), new Date()].map(d => format(d, DATE_FORMAT))
         };
         break;
       case "timedelta":
@@ -51,7 +55,7 @@ function FilterRow(props) {
           type: currentType,
           cmp: "in",
           key: null,
-          value: [new Date()]
+          value: [1]
         };
         break;
       case "samplemeta":
@@ -76,13 +80,27 @@ function FilterRow(props) {
     formik.setFieldValue(name, newFilter);
   }, [currentType]);
 
+  if (currentType !== prevType.current) {
+    // If the type has changed, rendering is going to be messy, so don't bother
+    return null;
+  }
+
   // Comparison operators for range types
-  const rangeCmp = [
+  const dateRangeCmp = [
     <option key="in" value="in">
-      In
+      inside range
     </option>,
     <option key="not in" value="not in">
-      Not In
+      outside range
+    </option>
+  ];
+
+  const dynamicDateCmp = [
+    <option key="in" value="in">
+      within
+    </option>,
+    <option key="not in" value="not in">
+      outside
     </option>
   ];
 
@@ -97,7 +115,11 @@ function FilterRow(props) {
     <option value="like">matches</option>,
     <option value="contains">contains</option>,
     <option value="startswith">starts with</option>,
-    <option value="endswith">ends with</option>
+    <option value="endswith">ends with</option>,
+    <option value="notlike">doesn't match</option>,
+    <option value="notcontains">doesn't contain</option>,
+    <option value="notstartswith">doesn't start with</option>,
+    <option value="notendswith">doesn't end with</option>
   ];
 
   // Generate the right fields for each column in the row
@@ -106,45 +128,20 @@ function FilterRow(props) {
     case "daterange":
       keyComponent = null;
       cmpComponent = (
-        <InputGroup>
-          <InputGroupAddon addonType="prepend">
-            <InputGroupText>
-              <Input
-                addon
-                type="checkbox"
-                aria-label="Checkbox for following text input"
-              />
-            </InputGroupText>
-          </InputGroupAddon>
-          <Field
-            component={BootstrapField}
-            name={`${name}.cmp`}
-            type={"select"}
-          >
-            {rangeCmp}
-          </Field>
-        </InputGroup>
+        <Field component={BootstrapField} name={`${name}.cmp`} type={"select"}>
+          {dateRangeCmp}
+        </Field>
       );
       valueComponent = (
         <>
           <Field
-            component={BootstrapDateField}
-            views={["year", "month", "date"]}
-            openTo={"month"}
-            format={"DD/MM/YYYY"}
-            name={`${name}.value[0]`}
-            outputFormat={"YYYY-MM-DD"}
-            type={"date"}
-          />
-          &nbsp;
-          <Field
-            component={BootstrapDateField}
-            views={["year", "month", "date"]}
-            openTo={"month"}
-            format={"DD/MM/YYYY"}
-            outputFormat={"YYYY-MM-DD"}
-            name={`${name}.value[1]`}
-            type={"date"}
+            component={DateRangeField}
+            // views={["year", "month", "date"]}
+            // openTo={"month"}
+            dateFormat={"dd/MM/yyyy"}
+            name={`${name}.value`}
+            // outputFormat={"YYYY-MM-DD"}
+            // type={"date"}
           />
         </>
       );
@@ -153,17 +150,20 @@ function FilterRow(props) {
       keyComponent = null;
       cmpComponent = (
         <Field component={BootstrapField} name={`${name}.cmp`} type={"select"}>
-          {rangeCmp}
+          {dynamicDateCmp}
         </Field>
       );
       valueComponent = (
-        <>
+        <InputGroup>
           <Field
             component={BootstrapField}
             name={`${name}.value[0]`}
             type={"number"}
           />
-        </>
+          <InputGroupAddon addonType="append">
+            <InputGroupText>days</InputGroupText>
+          </InputGroupAddon>
+        </InputGroup>
       );
       break;
     case "samplemeta":
@@ -230,10 +230,12 @@ function FilterRow(props) {
           </Field>
         </FormGroup>
       </td>
-      <td style={{ width: "35%" }}>
+      <td style={{ maxWidth: "35%" }}>
         <FormGroup>{keyComponent}</FormGroup>
       </td>
-      <td>{cmpComponent}</td>
+      <td>
+        <InputGroup>{cmpComponent}</InputGroup>
+      </td>
       <td>
         <FormGroup>{valueComponent}</FormGroup>
       </td>

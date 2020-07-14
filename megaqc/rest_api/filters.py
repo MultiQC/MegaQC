@@ -11,28 +11,39 @@ def add_operator(lhs, op, rhs):
     """
     Returns an SQLAlchemy expression comparing two values.
     """
+    if op[:3] == "not":
+        op = op[3:]
+        invert = True
+    else:
+        invert = False
+
     if op == "eq":
-        return lhs == rhs
+        ret = lhs == rhs
     elif op == "ne":
-        return lhs != rhs
+        ret = lhs != rhs
     elif op == "le":
-        return lhs <= rhs
+        ret = lhs <= rhs
     elif op == "lt":
-        return lhs < rhs
+        ret = lhs < rhs
     elif op == "ge":
-        return lhs >= rhs
+        ret = lhs >= rhs
     elif op == "gt":
-        return lhs > rhs
+        ret = lhs > rhs
     elif op == "like":
-        return lhs.ilike(rhs)
+        ret = lhs.ilike(rhs)
     elif op == "contains":
-        return lhs.contains(rhs, autoescape=True)
+        ret = lhs.contains(rhs, autoescape=True)
     elif op == "startswith":
-        return lhs.startswith(rhs, autoescape=True)
+        ret = lhs.startswith(rhs, autoescape=True)
     elif op == "endswith":
-        return lhs.endswith(rhs, autoescape=True)
+        ret = lhs.endswith(rhs, autoescape=True)
     else:
         raise ValueError('"op" must have a valid value.')
+
+    if invert:
+        return ~ret
+    else:
+        return ret
 
 
 def concat_clauses(clauses, operator):

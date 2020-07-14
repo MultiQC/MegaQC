@@ -299,6 +299,14 @@ def test_reportmeta_not_equals(filter_test_reports):
         ["startswith", "bad", [1], 1],
         ["endswith", "vark", [0], 1],
         ["endswith", "ger", [1], 1],
+        ["notlike", "%ardv%", [1, 2], 1],
+        ["notlike", "%", [], 1],
+        ["notcontains", "ardv", [1, 2], 1],
+        ["notcontains", "%ardv%", [0, 1, 2], 1],
+        ["notstartswith", "aard", [1, 2], 1],
+        ["notstartswith", "bad", [0, 2], 1],
+        ["notendswith", "vark", [1, 2], 1],
+        ["notendswith", "ger", [0, 2], 1],
     ],
 )
 def test_samplemeta_operator(

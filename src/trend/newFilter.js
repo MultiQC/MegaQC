@@ -133,7 +133,7 @@ export default function EditFilter(props) {
               </p>
 
               <Alert color={"light"}>
-                <i className="fa fa-info-circle" aria-hidden="true" />
+                <i className="fa fa-info-circle" aria-hidden="true" /> &nbsp;
                 Filters within a group are applied with <code>AND</code> logic.
                 Different filter groups have <code>OR</code> logic.
               </Alert>
@@ -191,7 +191,6 @@ export default function EditFilter(props) {
                                 <tr>
                                   <th>Type</th>
                                   <th>Key</th>
-                                  <th>Not</th>
                                   <th>
                                     Comparison{" "}
                                     <a

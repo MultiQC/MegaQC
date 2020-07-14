@@ -21,14 +21,13 @@ const schema = Yup.object().shape({
             .oneOf(["timedelta", "daterange", "reportmeta", "samplemeta"])
             .label("Type")
             .required(),
-          key: Yup.string()
+          key: Yup.mixed()
             .label("Key")
             .when("type", {
               is: val => ["samplemeta", "reportmeta"].includes(val),
               then: Yup.string().required(),
               otherwise: Yup.mixed().notRequired()
             }),
-          not: Yup.bool().label("Not"),
           cmp: Yup.string()
             .label("Comparison")
             .required()
@@ -42,7 +41,13 @@ const schema = Yup.object().shape({
                 "ge",
                 "gt",
                 "contains",
-                "like"
+                "like",
+                "startswith",
+                "endswith",
+                "notcontains",
+                "notlike",
+                "notstartswith",
+                "notendswith"
               ]),
               otherwise: Yup.string().oneOf(["in", "not in"])
             }),

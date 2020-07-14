@@ -3,7 +3,7 @@ export default class Filter {
     type = "samplemeta",
     key = "",
     comparison = "eq",
-    value = ""
+    value = []
   } = {}) {
     this.type = type;
     this.key = key;
@@ -11,3 +11,5 @@ export default class Filter {
     this.value = value;
   }
 }
+
+export const DATE_FORMAT = "yyyy-MM-dd";
