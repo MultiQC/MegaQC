@@ -27,7 +27,7 @@ import PropTypes from "prop-types";
 import { Field, FieldArray, Form, Formik } from "formik";
 
 export default function EditFilter(props) {
-  const { isOpen, toggle, qcApi, resourceId } = props;
+  const { isOpen, toggle, qcApi, resourceId, user } = props;
   const [sampleFields, setSampleFields] = useState([]);
   const [reportFields, setReportFields] = useState([]);
   const [filterGroups, setFilterGroups] = useState([]);
@@ -91,6 +91,7 @@ export default function EditFilter(props) {
           filterResource = apiResult.current;
         } else {
           filterResource = qcApi.create("filters");
+          filterResource.relationships("user").set(user);
         }
 
         filterResource.set("tag", values.filterGroup);

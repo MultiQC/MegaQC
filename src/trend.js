@@ -76,10 +76,14 @@ function Trend(props) {
     <>
       <h1>Data Trends</h1>
       <Row>
-        <Col sm={{ size: 4 }}>
-          <SampleFilter qcApi={client.current} onFilterChange={selectFilter} />
+        <Col lg={{ size: 4 }}>
+          <SampleFilter
+            qcApi={client.current}
+            onFilterChange={selectFilter}
+            user={currentUser}
+          />
         </Col>
-        <Col sm={{ size: 8 }}>
+        <Col lg={{ size: 8 }}>
           <TrendForm
             dataTypes={dataTypes}
             onSubmit={props => {
