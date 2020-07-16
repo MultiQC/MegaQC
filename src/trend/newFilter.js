@@ -24,19 +24,32 @@ import FilterRow from "./filterRow";
 import Filter from "../util/filter";
 import PropTypes from "prop-types";
 
+import cloneDeep from "lodash/cloneDeep";
+import merge from "lodash/merge";
+
 import { Field, FieldArray, Form, Formik } from "formik";
 
 export default function EditFilter(props) {
-  const { isOpen, toggle, qcApi, resourceId, user } = props;
+  const { isOpen, toggle, qcApi, resourceId, user, revision } = props;
   const [sampleFields, setSampleFields] = useState([]);
   const [reportFields, setReportFields] = useState([]);
   const [filterGroups, setFilterGroups] = useState([]);
-  const [initialData, setInitialData] = useState({
-    filters: [[new Filter()]],
+  const initial = {
+    filters: [
+      [
+        {
+          type: "samplemeta",
+          key: "",
+          cmp: "eq",
+          value: [""]
+        }
+      ]
+    ],
     filterName: "",
     filterGroup: "Global",
     visibility: "private"
-  });
+  };
+  const [initialData, setInitialData] = useState(initial);
 
   const apiResult = useRef(null);
 
@@ -52,9 +65,14 @@ export default function EditFilter(props) {
           filterGroup: resultJson.tag,
           visibility: resultJson.public ? "public" : "private"
         });
+      } else {
+        // If we *were* editing a filter but now we're creating a new one, reset the form
+        setInitialData(initial);
       }
     })();
-  }, [resourceId]);
+    // Re-load the API data whenever the box is re-opened or when the resource changes
+    // We have to do this whenever the box re-opens because the filter might have been edited in the meantime
+  }, [resourceId, revision]);
 
   // Fetch the filter groups
   useEffect(() => {
@@ -66,7 +84,7 @@ export default function EditFilter(props) {
   // Fetch the sample fields
   useEffect(() => {
     qcApi.find("data_types").then(groups => {
-      setSampleFields(groups.map(group => group.get("key")));
+      setSampleFields(groups.map(group => group.toJSON()));
     });
   }, []);
 
@@ -82,7 +100,8 @@ export default function EditFilter(props) {
       initialValues={initialData}
       validationSchema={filterSchema}
       enableReinitialize
-      onSubmit={(values, { setSubmitting }) => {
+      key={revision}
+      onSubmit={(values, { setSubmitting, resetForm }) => {
         // Note, this resource corresponds to SampleFilterSchema in the backend
 
         // Create or re-use the resource
@@ -106,6 +125,7 @@ export default function EditFilter(props) {
             toggle(true);
           })
           .finally(() => {
+            resetForm();
             setSubmitting(false);
           });
       }}
