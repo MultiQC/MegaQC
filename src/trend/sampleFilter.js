@@ -47,9 +47,10 @@ function FilterItem({ filter, active, setSelected, setEdit, onDelete }) {
       {filter.get("name")}
       <ButtonGroup className="float-right">
         <Button
-          onClick={() => {
+          onClick={e => {
             // Start editing this filter
             setEdit(filter._getUid());
+            e.stopPropagation();
           }}
           size={"sm"}
           color={"secondary"}
@@ -58,7 +59,15 @@ function FilterItem({ filter, active, setSelected, setEdit, onDelete }) {
           <i className="fa fa-fw fa-edit" aria-hidden="true" />
           Edit
         </Button>
-        <Button size={"sm"} color={"danger"} outline={true} id={id}>
+        <Button
+          size={"sm"}
+          color={"danger"}
+          outline={true}
+          id={id}
+          onClick={e => {
+            e.stopPropagation();
+          }}
+        >
           <i className="fa fa-fw fa-trash" aria-hidden="true" />
           Delete
         </Button>
@@ -107,6 +116,15 @@ export function SampleFilter(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editFilter, setEditFilter] = useState(null);
 
+  /**
+   * We need to keep a revision number so that, for example, if we edit a filter and then try to edit it again, it will
+   * re-initialize the form instead of using the old cached values
+   */
+  const [revision, setRevision] = useState(null);
+  function incrementRevision() {
+    setRevision(revision + 1);
+  }
+
   function updateFilters() {
     qcApi.find("filters").then(filters => {
       setSampleFilters(filters);
@@ -116,7 +134,9 @@ export function SampleFilter(props) {
   function toggleModal(filterCreated = false) {
     setModalOpen(!modalOpen);
 
-    if (filterCreated) updateFilters();
+    if (filterCreated) {
+      updateFilters();
+    }
   }
 
   // The first time this is run, request the filters
@@ -141,11 +161,17 @@ export function SampleFilter(props) {
         toggle={toggleModal}
         resourceId={editFilter}
         user={user}
+        revision={revision}
       />
       <h4 className="card-header">
         Filter Samples
         <Button
-          onClick={toggleModal}
+          onClick={() => {
+            // We have to tell the editor that we're creating a new component, not editing an existing one
+            setEditFilter(null);
+            incrementRevision();
+            setModalOpen(true);
+          }}
           size={"sm"}
           color={"primary"}
           outline={true}
@@ -213,6 +239,9 @@ export function SampleFilter(props) {
                           setEditFilter(filter._getUid());
                           // Open the edit modal
                           toggleModal();
+
+                          // We-initialize the form
+                          incrementRevision();
                         }}
                         setSelected={() => {
                           setSelectedFilter(filter._getUid());

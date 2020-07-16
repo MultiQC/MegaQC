@@ -62,7 +62,7 @@ function FilterRow(props) {
         newFilter = {
           type: currentType,
           cmp: "eq",
-          key: sampleFields[0],
+          key: sampleFields[0].key,
           value: [""]
         };
         break;
@@ -76,8 +76,11 @@ function FilterRow(props) {
         break;
     }
 
-    // Whenever the type changes, reset the select values
-    formik.setFieldValue(name, newFilter);
+    if (formik.dirty) {
+      // Whenever the type changes, reset the select values, but only if it was the user who changed the type
+      // (aka if the form is dirty)
+      formik.setFieldValue(name, newFilter);
+    }
   }, [currentType]);
 
   if (currentType !== prevType.current) {
@@ -171,8 +174,8 @@ function FilterRow(props) {
         <Field component={BootstrapField} name={`${name}.key`} type={"select"}>
           {sampleFields.map(field => {
             return (
-              <option key={field} value={field}>
-                {field}
+              <option key={field.key} value={field.key}>
+                {field.nice_name}
               </option>
             );
           })}
