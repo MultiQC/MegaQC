@@ -8,19 +8,122 @@ import {
   Card,
   CardBody,
   ListGroup,
-  ListGroupItem
+  ListGroupItem,
+  ButtonGroup,
+  PopoverHeader,
+  PopoverBody,
+  Popover
 } from "reactstrap";
 import groupBy from "lodash/groupBy";
 
+import uniqueId from "lodash/uniqueId";
 import NewFilter from "./newFilter";
 
+/**
+ * This renders a single item in the filter list, including edit and delete buttons
+ * @param filter API object for the filter to render
+ * @param active If this filter is currently selected
+ * @param setSelected Set the currently selected filter
+ * @param setEdit Set the current filter being edited
+ * @param onDelete Delete the provided filter
+ */
+function FilterItem({ filter, active, setSelected, setEdit, onDelete }) {
+  const [id] = useState(uniqueId("filter-item-"));
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
+  const toggle = () => setPopoverOpen(!popoverOpen);
+  return (
+    <ListGroupItem
+      className={classnames({
+        "list-group-item-action": true,
+        "sample-filter-btn": true,
+        active: active
+      })}
+      onClick={() => {
+        setSelected(filter._getUid());
+      }}
+      data-filterid={filter._getUid()}
+    >
+      {filter.get("name")}
+      <ButtonGroup className="float-right">
+        <Button
+          onClick={e => {
+            // Start editing this filter
+            setEdit(filter._getUid());
+            e.stopPropagation();
+          }}
+          size={"sm"}
+          color={"secondary"}
+          outline={true}
+        >
+          <i className="fa fa-fw fa-edit" aria-hidden="true" />
+          Edit
+        </Button>
+        <Button
+          size={"sm"}
+          color={"danger"}
+          outline={true}
+          id={id}
+          onClick={e => {
+            e.stopPropagation();
+          }}
+        >
+          <i className="fa fa-fw fa-trash" aria-hidden="true" />
+          Delete
+        </Button>
+      </ButtonGroup>
+      <Popover
+        placement="bottom"
+        target={id}
+        isOpen={popoverOpen}
+        toggle={toggle}
+      >
+        <PopoverHeader>Are you sure?</PopoverHeader>
+        <PopoverBody>
+          <ButtonGroup>
+            <Button
+              onClick={() => {
+                onDelete(filter);
+                setPopoverOpen(false);
+              }}
+              color="danger"
+            >
+              Yes
+            </Button>
+            <Button
+              outline
+              onClick={() => setPopoverOpen(false)}
+              color="secondary"
+            >
+              No
+            </Button>
+          </ButtonGroup>
+        </PopoverBody>
+      </Popover>
+    </ListGroupItem>
+  );
+}
+
+/**
+ * This is a reusable filter selection and editing box, that should be used whenever we need to apply sample filters
+ */
 export function SampleFilter(props) {
-  const { qcApi, onFilterChange } = props;
+  const { qcApi, onFilterChange, user } = props;
 
   const [sampleFilters, setSampleFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState("Global");
   const [modalOpen, setModalOpen] = useState(false);
+  const [editFilter, setEditFilter] = useState(null);
+
+  /**
+   * We need to keep a revision number so that, for example, if we edit a filter and then try to edit it again, it will
+   * re-initialize the form instead of using the old cached values
+   */
+  const [revision, setRevision] = useState(null);
+  function incrementRevision() {
+    setRevision(revision + 1);
+  }
 
   function updateFilters() {
     qcApi.find("filters").then(filters => {
@@ -31,7 +134,9 @@ export function SampleFilter(props) {
   function toggleModal(filterCreated = false) {
     setModalOpen(!modalOpen);
 
-    if (filterCreated) updateFilters();
+    if (filterCreated) {
+      updateFilters();
+    }
   }
 
   // The first time this is run, request the filters
@@ -50,11 +155,23 @@ export function SampleFilter(props) {
 
   return (
     <Card>
-      <NewFilter qcApi={qcApi} isOpen={modalOpen} toggle={toggleModal} />
+      <NewFilter
+        qcApi={qcApi}
+        isOpen={modalOpen}
+        toggle={toggleModal}
+        resourceId={editFilter}
+        user={user}
+        revision={revision}
+      />
       <h4 className="card-header">
         Filter Samples
         <Button
-          onClick={toggleModal}
+          onClick={() => {
+            // We have to tell the editor that we're creating a new component, not editing an existing one
+            setEditFilter(null);
+            incrementRevision();
+            setModalOpen(true);
+          }}
           size={"sm"}
           color={"primary"}
           outline={true}
@@ -93,8 +210,8 @@ export function SampleFilter(props) {
                 })}
             </nav>
           </Col>
-          <Col sm={8}>
-            <hr className="d-md-none" />
+          <Col sm={9}>
+            <hr className="d-sm-none" />
             <div id="sample-filter-groups">
               <ListGroup>
                 <ListGroupItem
@@ -112,22 +229,29 @@ export function SampleFilter(props) {
                 </ListGroupItem>
                 {selectedGroup in filterGroups &&
                   filterGroups[selectedGroup].map((filter, i) => {
+                    const active = filter._getUid() === selectedFilter;
                     return (
-                      <ListGroupItem
-                        onClick={() => {
+                      <FilterItem
+                        filter={filter}
+                        active={active}
+                        setEdit={() => {
+                          // Start editing this filter
+                          setEditFilter(filter._getUid());
+                          // Open the edit modal
+                          toggleModal();
+
+                          // We-initialize the form
+                          incrementRevision();
+                        }}
+                        setSelected={() => {
                           setSelectedFilter(filter._getUid());
                         }}
-                        key={i}
-                        tag={"button"}
-                        className={classnames({
-                          "sample-filter-btn": true,
-                          "list-group-item-action": true,
-                          active: filter._getUid() === selectedFilter
-                        })}
-                        data-filterid={filter._getUid()}
-                      >
-                        {filter.get("name")}
-                      </ListGroupItem>
+                        onDelete={filter => {
+                          filter.delete().then(() => {
+                            updateFilters();
+                          });
+                        }}
+                      />
                     );
                   })}
               </ListGroup>
