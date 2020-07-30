@@ -1,6 +1,7 @@
 # MegaQC Installation: Docker
 
 ## Pulling the docker image from dockerhub
+
 To run MegaQC with docker, simply use the following command:
 
 ```bash
@@ -30,6 +31,7 @@ docker pull ewels/megaqc
 ```
 
 ## Building your own docker image
+
 If you prefer, you can build your own docker image if you have pulled
 the MegaQC code from GitHub. Simply cd to the MegaQC root directory and run
 
@@ -44,6 +46,7 @@ docker run -p 80:80 ewels/megaqc
 ```
 
 ## Using persistent data
+
 The Dockerfile has been configured to automatically create persisent volumes
 for the data and log directories. This volume will be created without
 additional input by the user, but if you want to re-use those volumes with a
@@ -54,11 +57,13 @@ always specify the same volume for `/usr/local/lib/postgresql`. If a volume is
 found with that name it is used, otherwise it creates a new volume.
 
 To create or re-use a docker volume named `pg_data`:
+
 ```bash
 docker run -p 80:80 -v pg_data:/usr/local/lib/postgresql ewels/megaqc
 ```
 
 The same can be done for a log directory volume called `pg_logs`
+
 ```bash
 docker run -p 80:80 -v pg_data:/usr/local/lib/postgresql -v pg_logs:/var/log/postgresql ewels/megaqc
 ```
@@ -80,6 +85,7 @@ docker inspect --format '{{json .Mounts}}' example_container | python -m json.to
 ```
 
 Example output for the above, nicely formatted:
+
 ```json
 [
   {

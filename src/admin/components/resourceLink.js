@@ -1,7 +1,7 @@
-import {Button, Link} from "react-admin";
-import {useForm, useField} from 'react-final-form';
-import React from 'react';
-import {titleize} from 'inflection';
+import { Button, Link } from "react-admin";
+import { useForm, useField } from "react-final-form";
+import React from "react";
+import { titleize } from "inflection";
 
 /**
  *
@@ -10,22 +10,26 @@ import {titleize} from 'inflection';
  * destination resource
  * @param dest The relationship key on the destination resource
  */
-export default function ResourceLink({reference, source, dest, children}){
-    // const form = useForm();
-    // const localValue = form.getFieldState(source);
-    const localValue = useField(source);
-    const query = encodeURIComponent(JSON.stringify({
-        [dest]: localValue.input.value
-    }));
-    const title = titleize(reference);
-    return <Button
-        component={Link}
-        to={{
-            pathname: `/${reference}/create`,
-            search: `?defaults=${query}&source={}`
-        }}
-        label={`Add a ${title}`}
+export default function ResourceLink({ reference, source, dest, children }) {
+  // const form = useForm();
+  // const localValue = form.getFieldState(source);
+  const localValue = useField(source);
+  const query = encodeURIComponent(
+    JSON.stringify({
+      [dest]: localValue.input.value
+    })
+  );
+  const title = titleize(reference);
+  return (
+    <Button
+      component={Link}
+      to={{
+        pathname: `/${reference}/create`,
+        search: `?defaults=${query}&source={}`
+      }}
+      label={`Add a ${title}`}
     >
-        {children}
+      {children}
     </Button>
-};
+  );
+}
