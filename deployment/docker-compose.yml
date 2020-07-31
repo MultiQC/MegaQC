@@ -2,19 +2,24 @@ version: "3.7"
 
 services:
   megaqc:
-    image: ewels/megaqc
+    #image: ewels/megaqc
     build: ..
     volumes:
       # Share the static files via a volume
+      - ./prestart.sh:/app/prestart.sh
       - static_volume:/app/megaqc/static
     expose:
       - 8000
     depends_on:
       - db
+    environment:
+      DB_HOST: db
   db:
     image: postgres:latest
     volumes:
       - db_volume:/var/lib/postgresql/data/
+    environment:
+        POSTGRES_HOST_AUTH_METHOD: trust
   nginx:
     image: nginx:latest
     volumes:
@@ -25,7 +30,7 @@ services:
     ports:
       - 80:80
     depends_on:
-      - web
+      - megaqc
 
 volumes:
   static_volume:
