@@ -17,4 +17,4 @@ ENV MEGAQC_PRODUCTION=1 \
 
 COPY . /app
 
-RUN python /app/setup.py install
+RUN pip install /app[prod]

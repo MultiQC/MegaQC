@@ -114,43 +114,38 @@ class SurrogatePK(object):
         return None
 
 
-def postgres_create_user(username, conn, password=None):
+def postgres_create_user(username, conn, cur, password=None):
     """
     Create a postgres user, including a password if provided.
     """
-    from psycopg2.sql import Identifier, Placeholder
-    from psycopg2.errors import DuplicateObject
+    from psycopg2.sql import Identifier, Placeholder, SQL
+    from psycopg2.errors import DuplicateObject, ProgrammingError
 
     # Run the CREATE USER
-    if password:
-        conn.execute(
-            f"CREATE USER {Identifier(username)} WITH ENCRYPTED PASSWORD {Placeholder()}",
-            password,
-        )
-    else:
-        conn.execute(f"CREATE USER {Identifier(username)}")
-
-    # Execute the transaction, ignoring failures
     try:
-        conn.commit()
+        if password:
+            cur.execute(
+                SQL("CREATE USER {} WITH ENCRYPTED PASSWORD {}").format(Identifier(username), Placeholder()),
+                [password],
+            )
+        else:
+            cur.execute(SQL("CREATE USER {}").format(Identifier(username)))
+
         print(f"User {username} created successfully")
-    except ProgrammingError as user_err:
+    except DuplicateObject as e:
         # it's okay if user already exists
-        if not isinstance(user_err.__cause__, DuplicateObject):
-            raise user_err
         print(f"User {username} already exists")
-        conn.rollback()
 
 
-def postgres_create_database(conn, database, user):
+
+def postgres_create_database(conn, cur, database, user):
     """
     Create a Postgres database, with the given owner.
     """
-    from psycopg2.sql import Identifier
+    from psycopg2.sql import Identifier, SQL
 
     # create database
-    conn.execute(f"CREATE DATABASE {Identifier(database)} OWNER {Identifier(user)}")
-    conn.close()
+    cur.execute(SQL("CREATE DATABASE {} OWNER {}").format(Identifier(database), Identifier(user)))
     print("Database created successfully")
 
 
@@ -175,15 +170,20 @@ def init_db(url):
             postgres_url.password = None
 
             default_engine = create_engine(postgres_url)
-            conn = default_engine.connect()
+            conn = default_engine.raw_connection()
+            conn.autocommit = True
 
-            print("Initializing the postgres user and db")
-            postgres_create_user(
-                config_url.username, conn=conn, password=config_url.password
-            )
-            postgres_create_database(
-                conn, database=config_url.database, user=config_url.username
-            )
+            # We use separate transactions here so that a failure in one doesn't affect the other
+            with conn.cursor() as cur:
+                print("Initializing the postgres user")
+                postgres_create_user(
+                    config_url.username, conn=conn, cur=cur, password=config_url.password
+                )
+            with conn.cursor() as cur:
+                print("Initializing the postgres database")
+                postgres_create_database(
+                    conn=conn, cur=cur, database=config_url.database, user=config_url.username
+                )
 
             # Ue engine with newly created db / user, if it fails again something bigger wrong
             engine = create_engine(url)
