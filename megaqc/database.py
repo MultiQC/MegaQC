@@ -4,11 +4,12 @@ Database module, including the SQLAlchemy database object and DB-related
 utilities.
 """
 from builtins import object
+from copy import copy
 
 from past.builtins import basestring
 from sqlalchemy import create_engine, inspect
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.engine.url import make_url
+from sqlalchemy.exc import OperationalError, ProgrammingError
 
 from .compat import basestring
 from .extensions import db
@@ -112,23 +113,80 @@ class SurrogatePK(object):
         return None
 
 
+def postgres_create_user(username, conn, password=None):
+    """
+    Create a postgres user, including a password if provided.
+    """
+    from psycopg2.sql import Identifier, Placeholder
+    from psycopg2.errors import DuplicateObject
+
+    # Run the CREATE USER
+    if password:
+        conn.execute(
+            f"CREATE USER {Identifier(username)} WITH ENCRYPTED PASSWORD {Placeholder()}",
+            password,
+        )
+    else:
+        conn.execute(f"CREATE USER {Identifier(username)}")
+
+    # Execute the transaction, ignoring failures
+    try:
+        conn.commit()
+        print(f"User {username} created successfully")
+    except ProgrammingError as user_err:
+        # it's okay if user already exists
+        if not isinstance(user_err.__cause__, DuplicateObject):
+            raise user_err
+        print(f"User {username} already exists")
+        conn.rollback()
+
+
+def postgres_create_database(conn, database, user):
+    """
+    Create a Postgres database, with the given owner.
+    """
+    from psycopg2.sql import Identifier
+
+    # create database
+    conn.execute(f"CREATE DATABASE {Identifier(database)} OWNER {Identifier(user)}")
+    conn.close()
+    print("Database created successfully")
+
+
 def init_db(url):
     """
     Initialise a new database.
     """
     if "postgresql" in url:
         try:
-            create_engine(url).connect().close()
-        except:
+            # Attempt to connect to an existing database using provided credentials
+            engine = create_engine(url)
+            engine.connect().close()
+
+        except OperationalError as conn_err:
+            # Connection failed, so connect to default postgres DB and create new megaqc db and user
+            config_url = make_url(url)
+            postgres_url = copy(config_url)
+
+            # Default db settings
+            postgres_url.database = "postgres"
+            postgres_url.username = "postgres"
+            postgres_url.password = None
+
+            default_engine = create_engine(postgres_url)
+            conn = default_engine.connect()
+
             print("Initializing the postgres user and db")
-            engine = create_engine("postgres://postgres@localhost:5432/postgres")
-            conn = engine.connect()
-            conn.execute("commit")
-            conn.execute("CREATE USER megaqc_user;")
-            conn.execute("commit")
-            conn.execute("CREATE DATABASE megaqc OWNER megaqc_user;")
-            conn.execute("commit")
-            conn.close()
+            postgres_create_user(
+                config_url.username, conn=conn, password=config_url.password
+            )
+            postgres_create_database(
+                conn, database=config_url.database, user=config_url.username
+            )
+
+            # Ue engine with newly created db / user, if it fails again something bigger wrong
+            engine = create_engine(url)
+            engine.connect().close()
     else:
         engine = create_engine(url)
 
