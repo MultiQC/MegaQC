@@ -85,7 +85,7 @@ setup(
             "pre-commit",
         ],
         "deploy": ["wheel~=0.30"],
-        "prod": ["psycopg2-binary~=2.6", "gunicorn~=19.7",],
+        "prod": ["psycopg2~=2.6", "gunicorn~=19.7",],
     },
     classifiers=[
         "Development Status :: 4 - Beta",
