@@ -7,5 +7,6 @@ sleep 10
 megaqc initdb
 
 # Run migrations
-export FLASK_APP=megaqc/wsgi.py
+cd megaqc
+export FLASK_APP=wsgi.py
 flask db upgrade
