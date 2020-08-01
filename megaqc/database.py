@@ -168,9 +168,9 @@ def init_db(url):
             postgres_url.username = "postgres"
             postgres_url.password = None
 
-            default_engine = create_engine(postgres_url)
+            default_engine = create_engine(postgres_url, isolation_level="AUTOCOMMIT")
             conn = default_engine.raw_connection()
-            conn.autocommit = True
+            #conn.autocommit = True
 
             # We use separate transactions here so that a failure in one doesn't affect the other
             with conn.cursor() as cur:
