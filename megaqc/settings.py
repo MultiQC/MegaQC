@@ -60,6 +60,22 @@ class Config(object):
                 self.SQLALCHEMY_DBMS, self.DB_PATH
             )
             self.SQLALCHEMY_DATABASE_URI_SAN = self.SQLALCHEMY_DATABASE_URI
+        elif self.SQLALCHEMY_HOST.startswith("/"):
+            # If the host starts with a /, it's probably a unix socket, which has a different URL format
+            self.SQLALCHEMY_DATABASE_URI = "{}://{}:{}@/{}?host={}".format(
+                self.SQLALCHEMY_DBMS,
+                self.SQLALCHEMY_USER,
+                self.SQLALCHEMY_PASS,
+                self.SQLALCHEMY_DATABASE,
+                self.SQLALCHEMY_HOST,
+            )
+            self.SQLALCHEMY_DATABASE_URI_SAN = "{}://{}:{}@/{}?host={}".format(
+                self.SQLALCHEMY_DBMS,
+                self.SQLALCHEMY_USER,
+                "***" if self.SQLALCHEMY_PASS else "",
+                self.SQLALCHEMY_DATABASE,
+                self.SQLALCHEMY_HOST,
+            )
         else:
             self.SQLALCHEMY_DATABASE_URI = "{}://{}:{}@{}/{}".format(
                 self.SQLALCHEMY_DBMS,
@@ -85,9 +101,13 @@ class ProdConfig(Config):
     ENV = "prod"
     DEBUG = False
     SQLALCHEMY_DBMS = "postgresql"
-    SQLALCHEMY_HOST = "{}:{}".format(
-        os.environ.get("DB_HOST", "localhost"), os.environ.get("DB_PORT", "5432")
-    )
+    if "DB_UNIX_SOCKET" in os.environ:
+        # Unix sockets dont have a port
+        SQLALCHEMY_HOST = os.environ["DB_UNIX_SOCKET"]
+    else:
+        SQLALCHEMY_HOST = "{}:{}".format(
+            os.environ.get("DB_HOST", "localhost"), os.environ.get("DB_PORT", "5432")
+        )
     SQLALCHEMY_USER = os.environ.get("DB_USER", "megaqc")
     SQLALCHEMY_PASS = os.environ.get("DB_PASS", "megaqcpswd")
     SQLALCHEMY_DATABASE = os.environ.get("DB_NAME", "megaqc")

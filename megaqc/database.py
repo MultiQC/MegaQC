@@ -95,7 +95,7 @@ class SurrogatePK(object):
     any declarative-mapped class.
     """
 
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
 
     id = db.Column(db.Integer, primary_key=True)
 
@@ -118,8 +118,8 @@ def postgres_create_user(username, conn, cur, password=None):
     """
     Create a postgres user, including a password if provided.
     """
-    from psycopg2.sql import Identifier, Placeholder, SQL
     from psycopg2.errors import DuplicateObject, ProgrammingError
+    from psycopg2.sql import SQL, Identifier, Placeholder
 
     # Run the CREATE USER
     try:
@@ -143,7 +143,7 @@ def postgres_create_database(conn, cur, database, user):
     """
     Create a Postgres database, with the given owner.
     """
-    from psycopg2.sql import Identifier, SQL
+    from psycopg2.sql import SQL, Identifier
 
     # create database
     cur.execute(
@@ -205,4 +205,8 @@ def init_db(url):
     """Initializes the database."""
     db.metadata.bind = engine
     db.metadata.create_all()
-    print('Initialized the database.')
+
+    # Tell alembic that we're at the latest migration, since we just created everything from scratch
+    stamp()
+
+    print("Initialized the database.")
