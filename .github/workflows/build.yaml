@@ -65,7 +65,7 @@ jobs:
         name: Build the docker image
         with:
           push: false
-          tags: ewels/megaqc
+          repository: ewels/megaqc
 
       - name: Test the compose stack
         run: |
