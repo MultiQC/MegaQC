@@ -6,13 +6,14 @@ utilities.
 from builtins import object
 from copy import copy
 
+from flask_migrate import stamp
 from past.builtins import basestring
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import OperationalError, ProgrammingError
 
 from .compat import basestring
-from .extensions import db, migrate
+from .extensions import db
 
 # Alias common SQLAlchemy names
 Column = db.Column
@@ -195,6 +196,6 @@ def init_db(url):
     db.metadata.create_all()
 
     # Tell alembic that we're at the latest migration, since we just created everything from scratch
-    migrate.stamp()
+    stamp()
 
     print("Initialized the database.")
