@@ -9,4 +9,3 @@ megaqc initdb
 # Run migrations
 cd megaqc
 export FLASK_APP=wsgi.py
-flask db upgrade
