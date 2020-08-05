@@ -9,6 +9,7 @@ RUN npm run build
 FROM tiangolo/meinheld-gunicorn-flask:python3.7
 LABEL authors="phil.ewels@scilifelab.se,denis.moreno@scilifelab.se" \
     description="Docker image running MegaQC"
+
 # Tell MegaQC to use postgres / psycopg2
 ENV MEGAQC_PRODUCTION=1 \
     MEGAQC_SECRET="SuperSecretValueYouShouldReallyChange" \
