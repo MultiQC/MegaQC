@@ -53,7 +53,7 @@ setup(
         "pyyaml~=5.1",
         "SQLAlchemy~=1.1",
         "Werkzeug~=0.14",
-        "WTForms~=2.1",
+        "WTForms[email]~=2.1",
         "flask_restful~=0.3",
         "flask-marshmallow~=0.10",
         "marshmallow~=3.0",
@@ -85,7 +85,7 @@ setup(
             "pre-commit",
         ],
         "deploy": ["wheel~=0.30"],
-        "prod": ["psycopg2-binary~=2.6", "gunicorn~=19.7",],
+        "prod": ["psycopg2~=2.6", "gunicorn~=19.7",],
     },
     classifiers=[
         "Development Status :: 4 - Beta",

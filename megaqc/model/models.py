@@ -169,14 +169,14 @@ class SampleDataType(db.Model, CRUDMixin):
         """
         A more human-readable version of the "key" field.
         """
-        return self.data_key.replace("__", " ")
+        return self.data_key.replace("__", ": ").replace("_", " ")
 
     @nice_name.expression
     def nice_name(cls):
         # Technically string replacement isn't in the SQL standard, but it is
         # implemented by all the DBMSs:
         # https://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
-        return func.replace(cls.data_key, "__", " ")
+        return func.replace(func.replace(cls.data_key, "__", ": "), "_", " ")
 
     @classmethod
     def get_keys(cls, session):

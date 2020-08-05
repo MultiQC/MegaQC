@@ -76,13 +76,14 @@ def filter_test_reports(filter_test_types, session):
         ),
     ]
 
+    words = ["aardvark", "badger", "caboose", "dachshund", "eagle"]
     for i, report in enumerate(ret):
         report.samples[0].data = [
             factories.SampleDataFactory.build(
                 data_type=types[0], value=i + 1, report=report
             ),
             factories.SampleDataFactory.build(
-                data_type=types[1], value=i + 1, report=report
+                data_type=types[1], value=words[i], report=report
             ),
         ]
 
@@ -281,17 +282,36 @@ def test_reportmeta_not_equals(filter_test_reports):
 # Use the "cmp" operator to compare the value with the number 2, and then assert that the array of report IDs is
 # equal to the "correct" array
 @pytest.mark.parametrize(
-    ["cmp", "correct"],
+    ["cmp", "value", "correct", "data_type"],
     [
-        ["eq", [1]],
-        ["ne", [0, 2]],
-        ["le", [0, 1]],
-        ["lt", [0]],
-        ["ge", [1, 2]],
-        ["gt", [2]],
+        ["eq", 2, [1], 0],
+        ["ne", 2, [0, 2], 0],
+        ["le", 2, [0, 1], 0],
+        ["lt", 2, [0], 0],
+        ["ge", 2, [1, 2], 0],
+        ["gt", 2, [2], 0],
+        ["gt", 2, [2], 0],
+        ["like", "%ardv%", [0], 1],
+        ["like", "%", [0, 1, 2], 1],
+        ["contains", "ardv", [0], 1],
+        ["contains", "%ardv%", [], 1],
+        ["startswith", "aard", [0], 1],
+        ["startswith", "bad", [1], 1],
+        ["endswith", "vark", [0], 1],
+        ["endswith", "ger", [1], 1],
+        ["notlike", "%ardv%", [1, 2], 1],
+        ["notlike", "%", [], 1],
+        ["notcontains", "ardv", [1, 2], 1],
+        ["notcontains", "%ardv%", [0, 1, 2], 1],
+        ["notstartswith", "aard", [1, 2], 1],
+        ["notstartswith", "bad", [0, 2], 1],
+        ["notendswith", "vark", [1, 2], 1],
+        ["notendswith", "ger", [0, 2], 1],
     ],
 )
-def test_samplemeta_operator(filter_test_reports, filter_test_types, cmp, correct):
+def test_samplemeta_operator(
+    filter_test_reports, filter_test_types, cmp, value, correct, data_type
+):
     """
     Tests all comparison operators, and the samplemeta filter.
     """
@@ -301,8 +321,8 @@ def test_samplemeta_operator(filter_test_reports, filter_test_types, cmp, correc
             [
                 {
                     "type": "samplemeta",
-                    "key": filter_test_types[0].data_key,
-                    "value": [2],
+                    "key": filter_test_types[data_type].data_key,
+                    "value": [value],
                     "cmp": cmp,
                 }
             ]

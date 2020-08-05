@@ -2,16 +2,42 @@
  * One row of the newFilter dialogue
  **/
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Field, connect, getIn } from "formik";
-import { Button, FormGroup } from "reactstrap";
+import {
+  Button,
+  FormGroup,
+  Popover,
+  PopoverHeader,
+  PopoverBody,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Input
+} from "reactstrap";
 import BootstrapField from "./bootstrapField";
-import BootstrapDateField from "./bootstrapDateField";
-import Filter from "../util/filter";
+import DateRangeField from "./DateRangeField";
+import { format, parse } from "date-fns";
+import { DATE_FORMAT } from "../util/filter";
 
 function FilterRow(props) {
-  const { sampleFields, reportFields, name, formik, innerArrayHelpers } = props;
+  const {
+    sampleFields,
+    reportFields,
+    name,
+    formik,
+    innerArrayHelpers,
+    index
+  } = props;
+
+  const rowError = getIn(formik.errors, name);
+  const errorMsg = rowError instanceof String ? rowError : "";
+
+  const prevType = useRef();
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const toggle = () => setPopoverOpen(!popoverOpen);
   const currentType = getIn(formik.values, name + ".type");
+  prevType.current = currentType;
 
   useEffect(() => {
     let newFilter;
@@ -21,7 +47,7 @@ function FilterRow(props) {
           type: currentType,
           cmp: "in",
           key: null,
-          value: [new Date(), new Date()]
+          value: [new Date(), new Date()].map(d => format(d, DATE_FORMAT))
         };
         break;
       case "timedelta":
@@ -29,14 +55,14 @@ function FilterRow(props) {
           type: currentType,
           cmp: "in",
           key: null,
-          value: [new Date()]
+          value: [1]
         };
         break;
       case "samplemeta":
         newFilter = {
           type: currentType,
           cmp: "eq",
-          key: sampleFields[0],
+          key: sampleFields[0].key,
           value: [""]
         };
         break;
@@ -50,14 +76,35 @@ function FilterRow(props) {
         break;
     }
 
-    // Whenever the type changes, reset the select values
-    formik.setFieldValue(name, newFilter);
+    if (formik.dirty) {
+      // Whenever the type changes, reset the select values, but only if it was the user who changed the type
+      // (aka if the form is dirty)
+      formik.setFieldValue(name, newFilter);
+    }
   }, [currentType]);
 
+  if (currentType !== prevType.current) {
+    // If the type has changed, rendering is going to be messy, so don't bother
+    return null;
+  }
+
   // Comparison operators for range types
-  const rangeCmp = [
-    <option value="in">In</option>,
-    <option value="not in">Not In</option>
+  const dateRangeCmp = [
+    <option key="in" value="in">
+      inside range
+    </option>,
+    <option key="not in" value="not in">
+      outside range
+    </option>
+  ];
+
+  const dynamicDateCmp = [
+    <option key="in" value="in">
+      within
+    </option>,
+    <option key="not in" value="not in">
+      outside
+    </option>
   ];
 
   // Comparison operators for value types
@@ -65,9 +112,17 @@ function FilterRow(props) {
     <option value="eq">=</option>,
     <option value="neq">&ne;</option>,
     <option value="le">&le;</option>,
-    <option value="lt">&le;</option>,
+    <option value="lt">&lt;</option>,
     <option value="ge">&ge;</option>,
-    <option value="gt">&gt;</option>
+    <option value="gt">&gt;</option>,
+    <option value="like">matches</option>,
+    <option value="contains">contains</option>,
+    <option value="startswith">starts with</option>,
+    <option value="endswith">ends with</option>,
+    <option value="notlike">doesn't match</option>,
+    <option value="notcontains">doesn't contain</option>,
+    <option value="notstartswith">doesn't start with</option>,
+    <option value="notendswith">doesn't end with</option>
   ];
 
   // Generate the right fields for each column in the row
@@ -77,29 +132,19 @@ function FilterRow(props) {
       keyComponent = null;
       cmpComponent = (
         <Field component={BootstrapField} name={`${name}.cmp`} type={"select"}>
-          {rangeCmp}
+          {dateRangeCmp}
         </Field>
       );
       valueComponent = (
         <>
           <Field
-            component={BootstrapDateField}
-            views={["year", "month", "date"]}
-            openTo={"month"}
-            format={"DD/MM/YYYY"}
-            name={`${name}.value.0`}
-            outputFormat={"YYYY-MM-DD"}
-            type={"date"}
-          />
-          &nbsp;
-          <Field
-            component={BootstrapDateField}
-            views={["year", "month", "date"]}
-            openTo={"month"}
-            format={"DD/MM/YYYY"}
-            outputFormat={"YYYY-MM-DD"}
-            name={`${name}.value.1`}
-            type={"date"}
+            component={DateRangeField}
+            // views={["year", "month", "date"]}
+            // openTo={"month"}
+            dateFormat={"dd/MM/yyyy"}
+            name={`${name}.value`}
+            // outputFormat={"YYYY-MM-DD"}
+            // type={"date"}
           />
         </>
       );
@@ -108,24 +153,31 @@ function FilterRow(props) {
       keyComponent = null;
       cmpComponent = (
         <Field component={BootstrapField} name={`${name}.cmp`} type={"select"}>
-          {rangeCmp}
+          {dynamicDateCmp}
         </Field>
       );
       valueComponent = (
-        <>
+        <InputGroup>
           <Field
             component={BootstrapField}
-            name={`${name}.value.0`}
+            name={`${name}.value[0]`}
             type={"number"}
           />
-        </>
+          <InputGroupAddon addonType="append">
+            <InputGroupText>days</InputGroupText>
+          </InputGroupAddon>
+        </InputGroup>
       );
       break;
     case "samplemeta":
       keyComponent = (
         <Field component={BootstrapField} name={`${name}.key`} type={"select"}>
           {sampleFields.map(field => {
-            return <option value={field}>{field}</option>;
+            return (
+              <option key={field.key} value={field.key}>
+                {field.nice_name}
+              </option>
+            );
           })}
         </Field>
       );
@@ -136,7 +188,7 @@ function FilterRow(props) {
       );
       valueComponent = (
         <>
-          <Field component={BootstrapField} name={`${name}.value.0`} />
+          <Field component={BootstrapField} name={`${name}.value[0]`} />
         </>
       );
       break;
@@ -144,7 +196,11 @@ function FilterRow(props) {
       keyComponent = (
         <Field component={BootstrapField} name={`${name}.key`} type={"select"}>
           {reportFields.map(field => {
-            return <option value={field}>{field}</option>;
+            return (
+              <option key={field} value={field}>
+                {field}
+              </option>
+            );
           })}
         </Field>
       );
@@ -155,7 +211,7 @@ function FilterRow(props) {
       );
       valueComponent = (
         <>
-          <Field component={BootstrapField} name={`${name}.value.0`} />
+          <Field component={BootstrapField} name={`${name}.value[0]`} />
         </>
       );
       break;
@@ -177,11 +233,11 @@ function FilterRow(props) {
           </Field>
         </FormGroup>
       </td>
-      <td>
+      <td style={{ maxWidth: "35%" }}>
         <FormGroup>{keyComponent}</FormGroup>
       </td>
       <td>
-        <FormGroup>{cmpComponent}</FormGroup>
+        <InputGroup>{cmpComponent}</InputGroup>
       </td>
       <td>
         <FormGroup>{valueComponent}</FormGroup>
@@ -189,15 +245,38 @@ function FilterRow(props) {
       <td>
         <Button
           onClick={() => {
-            innerArrayHelpers.push(new Filter());
+            innerArrayHelpers.remove(index);
           }}
           size={"sm"}
           color={"primary"}
         >
-          <i className="fa fa-fw fa-plus-square" aria-hidden="true" />
-          Add
+          <i className="fa fa-fw fa-trash" aria-hidden="true" />
+          Delete
         </Button>
+        {errorMsg && (
+          <Button
+            onClick={() => {
+              toggle();
+            }}
+            id="errorPopover"
+            size={"sm"}
+            color={"error"}
+          >
+            Errors
+          </Button>
+        )}
       </td>
+      {errorMsg && (
+        <Popover
+          placement="bottom"
+          isOpen={popoverOpen}
+          toggle={toggle}
+          target="errorPopover"
+        >
+          <PopoverHeader>Row Errors</PopoverHeader>
+          <PopoverBody>{errorMsg}</PopoverBody>
+        </Popover>
+      )}
     </>
   );
 }
