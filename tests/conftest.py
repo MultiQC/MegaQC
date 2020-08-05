@@ -19,10 +19,10 @@ def app():
     An application for the tests.
     """
     config = TestConfig()
-    init_db(config.SQLALCHEMY_DATABASE_URI)
     _app = create_app(config)
     ctx = _app.test_request_context()
     ctx.push()
+    init_db(config.SQLALCHEMY_DATABASE_URI)
 
     yield _app
 
