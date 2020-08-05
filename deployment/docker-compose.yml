@@ -20,7 +20,7 @@ services:
     volumes:
       - db_volume:/var/lib/postgresql/data/
     environment:
-        POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_HOST_AUTH_METHOD: trust
   nginx:
     image: nginx:latest
     volumes:
