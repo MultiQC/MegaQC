@@ -22,7 +22,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     Table,
-    Unicode,
+    UnicodeText,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
@@ -51,7 +51,7 @@ class Role(db.Model, CRUDMixin):
 
     __tablename__ = "roles"
     role_id = Column(Integer, primary_key=True)
-    name = Column(Unicode, unique=True, nullable=False)
+    name = Column(UnicodeText, unique=True, nullable=False)
     user_id = Column(Integer, ForeignKey("users.user_id"))
 
     user = relationship("User", back_populates="roles")
@@ -70,16 +70,16 @@ class User(db.Model, CRUDMixin, UserMixin):
 
     __tablename__ = "users"
     user_id = Column(Integer, primary_key=True)
-    username = Column(Unicode, unique=True, nullable=False)
-    email = Column(Unicode, unique=True, nullable=False)
-    salt = Column(Unicode, nullable=True)
-    password = Column(Unicode, nullable=True)
+    username = Column(UnicodeText, unique=True, nullable=False)
+    email = Column(UnicodeText, unique=True, nullable=False)
+    salt = Column(UnicodeText, nullable=True)
+    password = Column(UnicodeText, nullable=True)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
-    first_name = Column(Unicode, nullable=True)
-    last_name = Column(Unicode, nullable=True)
+    first_name = Column(UnicodeText, nullable=True)
+    last_name = Column(UnicodeText, nullable=True)
     active = Column(Boolean(), default=False)
     is_admin = Column(Boolean(), default=False)
-    api_token = Column(Unicode, nullable=True)
+    api_token = Column(UnicodeText, nullable=True)
 
     reports = relationship("Report", back_populates="user")
     uploads = relationship("Upload", back_populates="user")

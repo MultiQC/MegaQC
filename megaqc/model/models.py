@@ -7,7 +7,7 @@ from megaqc.database import CRUDMixin
 from megaqc.extensions import db
 from sqlalchemy import Boolean, Column, DateTime
 from sqlalchemy import Enum as SqlEnum
-from sqlalchemy import ForeignKey, Integer, Unicode, func
+from sqlalchemy import ForeignKey, Integer, UnicodeText, func
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
 
@@ -39,7 +39,7 @@ class Report(db.Model, CRUDMixin):
     user_id = Column(
         Integer, ForeignKey("users.user_id", ondelete="SET NULL"), index=True
     )
-    report_hash = Column(Unicode, index=True, unique=True)
+    report_hash = Column(UnicodeText, index=True, unique=True)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     uploaded_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
@@ -54,8 +54,8 @@ class Report(db.Model, CRUDMixin):
 class ReportMeta(db.Model, CRUDMixin):
     __tablename__ = "report_meta"
     report_meta_id = Column(Integer, primary_key=True)
-    report_meta_key = Column(Unicode, nullable=False)
-    report_meta_value = Column(Unicode, nullable=False)
+    report_meta_key = Column(UnicodeText, nullable=False)
+    report_meta_value = Column(UnicodeText, nullable=False)
     # If the report is deleted, remove the report metadata
     report_id = Column(
         Integer,
@@ -84,10 +84,10 @@ class ReportMeta(db.Model, CRUDMixin):
 class PlotConfig(db.Model, CRUDMixin):
     __tablename__ = "plot_config"
     config_id = Column(Integer, primary_key=True)
-    config_type = Column(Unicode, nullable=False)
-    config_name = Column(Unicode, nullable=False)
-    config_dataset = Column(Unicode, nullable=True)
-    data = Column(Unicode, nullable=False)
+    config_type = Column(UnicodeText, nullable=False)
+    config_name = Column(UnicodeText, nullable=False)
+    config_dataset = Column(UnicodeText, nullable=True)
+    data = Column(UnicodeText, nullable=False)
 
     fav_users = db.relationship(
         "User", secondary=user_plotconfig_map, backref="favourite_plotconfigs"
@@ -101,7 +101,7 @@ class PlotData(db.Model, CRUDMixin):
     config_id = Column(Integer, ForeignKey("plot_config.config_id"))
     plot_category_id = Column(Integer(), ForeignKey("plot_category.plot_category_id"))
     sample_id = Column(Integer, ForeignKey("sample.sample_id"), index=True)
-    data = Column(Unicode, nullable=False)
+    data = Column(UnicodeText, nullable=False)
 
 
 class PlotCategory(db.Model, CRUDMixin):
@@ -109,18 +109,18 @@ class PlotCategory(db.Model, CRUDMixin):
     plot_category_id = Column(Integer, primary_key=True)
     report_id = Column(Integer, ForeignKey("report.report_id"))
     config_id = Column(Integer, ForeignKey("plot_config.config_id"))
-    category_name = Column(Unicode, nullable=True)
-    data = Column(Unicode, nullable=False)
+    category_name = Column(UnicodeText, nullable=True)
+    data = Column(UnicodeText, nullable=False)
 
 
 class PlotFavourite(db.Model, CRUDMixin):
     __tablename__ = "plot_favourite"
     plot_favourite_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), index=True)
-    title = Column(Unicode, nullable=False)
-    description = Column(Unicode, nullable=True)
-    plot_type = Column(Unicode, nullable=False)
-    data = Column(Unicode, nullable=False)
+    title = Column(UnicodeText, nullable=False)
+    description = Column(UnicodeText, nullable=True)
+    plot_type = Column(UnicodeText, nullable=False)
+    data = Column(UnicodeText, nullable=False)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
 
     user = relationship("User", back_populates="favourite_plots")
@@ -130,8 +130,8 @@ class Dashboard(db.Model, CRUDMixin):
     __tablename__ = "dashboard"
     dashboard_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), index=True)
-    title = Column(Unicode, nullable=False)
-    data = Column(Unicode, nullable=False)
+    title = Column(UnicodeText, nullable=False)
+    data = Column(UnicodeText, nullable=False)
     is_public = Column(Boolean, default=False, index=True)
     modified_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
@@ -142,11 +142,12 @@ class Dashboard(db.Model, CRUDMixin):
 class SampleDataType(db.Model, CRUDMixin):
     __tablename__ = "sample_data_type"
     sample_data_type_id = Column(Integer, primary_key=True)
-    data_id = Column(Unicode)
-    data_section = Column(Unicode)
-    data_key = Column(Unicode, nullable=False)
+    data_id = Column(UnicodeText)
+    data_section = Column(UnicodeText)
+    data_key = Column(UnicodeText, nullable=False)
     schema = Column(
-        Unicode, doc="A JSON Schema for validating and describing the data of this type"
+        UnicodeText,
+        doc="A JSON Schema for validating and describing the data of this type",
     )
 
     @property
@@ -202,7 +203,7 @@ class SampleData(db.Model, CRUDMixin):
         index=True,
         nullable=False,
     )
-    value = Column(Unicode)
+    value = Column(UnicodeText)
     sample = relationship("Sample", back_populates="data")
     report = relationship("Report", back_populates="sample_data")
     data_type = relationship("SampleDataType", back_populates="sample_data")
@@ -211,7 +212,7 @@ class SampleData(db.Model, CRUDMixin):
 class Sample(db.Model, CRUDMixin):
     __tablename__ = "sample"
     sample_id = Column(Integer, primary_key=True)
-    sample_name = Column(Unicode)
+    sample_name = Column(UnicodeText)
     report_id = Column(
         Integer,
         ForeignKey("report.report_id", ondelete="CASCADE"),
@@ -226,10 +227,10 @@ class Sample(db.Model, CRUDMixin):
 class SampleFilter(db.Model, CRUDMixin):
     __tablename__ = "sample_filter"
     sample_filter_id = Column(Integer, primary_key=True)
-    sample_filter_name = Column(Unicode)
-    sample_filter_tag = Column(Unicode)
+    sample_filter_name = Column(UnicodeText)
+    sample_filter_tag = Column(UnicodeText)
     is_public = Column(Boolean, index=True)
-    sample_filter_data = Column(Unicode, nullable=False)
+    sample_filter_data = Column(UnicodeText, nullable=False)
     user_id = Column(Integer, ForeignKey("users.user_id"), index=True)
 
     user = relationship("User", back_populates="filters")
@@ -242,9 +243,9 @@ class SampleFilter(db.Model, CRUDMixin):
 class Upload(db.Model, CRUDMixin):
     __tablename__ = "uploads"
     upload_id = Column(Integer, primary_key=True)
-    status = Column(Unicode, index=True)
-    path = Column(Unicode)
-    message = Column(Unicode)
+    status = Column(UnicodeText, index=True)
+    path = Column(UnicodeText)
+    message = Column(UnicodeText)
     created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     modified_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.user_id"))

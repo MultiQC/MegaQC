@@ -11,7 +11,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from .compat import basestring
-from .extensions import db
+from .extensions import db, migrate
 
 # Alias common SQLAlchemy names
 Column = db.Column
@@ -135,4 +135,8 @@ def init_db(url):
     """Initializes the database."""
     db.metadata.bind = engine
     db.metadata.create_all()
+
+    # Tell alembic that we're at the latest migration, since we just created everything from scratch
+    migrate.stamp()
+
     print("Initialized the database.")
