@@ -63,8 +63,9 @@ jobs:
 
       - uses: docker/build-push-action@v2
         name: Build the docker image
-        push: false
-        tags: ewels/megaqc
+        with:
+          push: false
+          tags: ewels/megaqc
 
       - name: Test the compose stack
         run: |
