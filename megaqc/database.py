@@ -124,7 +124,9 @@ def postgres_create_user(username, conn, cur, password=None):
     try:
         if password:
             cur.execute(
-                SQL("CREATE USER {} WITH ENCRYPTED PASSWORD {}").format(Identifier(username), Placeholder()),
+                SQL("CREATE USER {} WITH ENCRYPTED PASSWORD {}").format(
+                    Identifier(username), Placeholder()
+                ),
                 [password],
             )
         else:
@@ -136,7 +138,6 @@ def postgres_create_user(username, conn, cur, password=None):
         print(f"User {username} already exists")
 
 
-
 def postgres_create_database(conn, cur, database, user):
     """
     Create a Postgres database, with the given owner.
@@ -144,7 +145,11 @@ def postgres_create_database(conn, cur, database, user):
     from psycopg2.sql import Identifier, SQL
 
     # create database
-    cur.execute(SQL("CREATE DATABASE {} OWNER {}").format(Identifier(database), Identifier(user)))
+    cur.execute(
+        SQL("CREATE DATABASE {} OWNER {}").format(
+            Identifier(database), Identifier(user)
+        )
+    )
     print("Database created successfully")
 
 
@@ -170,18 +175,24 @@ def init_db(url):
 
             default_engine = create_engine(postgres_url, isolation_level="AUTOCOMMIT")
             conn = default_engine.raw_connection()
-            #conn.autocommit = True
+            # conn.autocommit = True
 
             # We use separate transactions here so that a failure in one doesn't affect the other
             with conn.cursor() as cur:
                 print("Initializing the postgres user")
                 postgres_create_user(
-                    config_url.username, conn=conn, cur=cur, password=config_url.password
+                    config_url.username,
+                    conn=conn,
+                    cur=cur,
+                    password=config_url.password,
                 )
             with conn.cursor() as cur:
                 print("Initializing the postgres database")
                 postgres_create_database(
-                    conn=conn, cur=cur, database=config_url.database, user=config_url.username
+                    conn=conn,
+                    cur=cur,
+                    database=config_url.database,
+                    user=config_url.username,
                 )
 
             # Ue engine with newly created db / user, if it fails again something bigger wrong
