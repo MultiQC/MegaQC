@@ -6,6 +6,7 @@ utilities.
 from builtins import object
 from copy import copy
 
+from flask_migrate import stamp
 from past.builtins import basestring
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine.url import make_url
@@ -204,4 +205,8 @@ def init_db(url):
     """Initializes the database."""
     db.metadata.bind = engine
     db.metadata.create_all()
+
+    # Tell alembic that we're at the latest migration, since we just created everything from scratch
+    stamp()
+
     print("Initialized the database.")

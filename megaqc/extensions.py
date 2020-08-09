@@ -4,6 +4,8 @@ Extensions module.
 
 Each extension is initialized in the app factory located in app.py.
 """
+from pathlib import Path
+
 from flask_caching import Cache
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager
@@ -21,5 +23,5 @@ ma = Marshmallow()
 cache = Cache()
 debug_toolbar = DebugToolbarExtension()
 restful = Api(prefix="/rest_api/v1")
-migrate = Migrate()
+migrate = Migrate(directory=str(Path(__file__).parent / "migrations"))
 json_api = JsonApi()
