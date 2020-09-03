@@ -3,8 +3,8 @@
 # Let the DB start
 sleep 10
 
-# Create the DB
-megaqc initdb
+# Create the DB, ignoring errors, such as if the database already exists
+megaqc initdb || true
 
 # Run migrations
 cd megaqc
