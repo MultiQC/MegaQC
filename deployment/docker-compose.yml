@@ -9,8 +9,6 @@ services:
       - ./prestart.sh:/app/prestart.sh
       # Share the static files via a volume
       - static_volume:/app/megaqc/static
-    expose:
-      - 8000
     depends_on:
       - db
     environment:
