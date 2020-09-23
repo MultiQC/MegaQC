@@ -31,7 +31,11 @@ setup(
     packages=["megaqc"],
     include_package_data=True,
     zip_safe=False,
-    entry_points={"console_scripts": ["megaqc = megaqc.cli:main",],},
+    entry_points={
+        "console_scripts": [
+            "megaqc = megaqc.cli:main",
+        ],
+    },
     install_requires=[
         "argon2-cffi~=16.3",
         "click~=5.0",
@@ -85,7 +89,10 @@ setup(
             "pre-commit",
         ],
         "deploy": ["wheel~=0.30"],
-        "prod": ["psycopg2~=2.6", "gunicorn~=19.7",],
+        "prod": [
+            "psycopg2~=2.6",
+            "gunicorn~=19.7",
+        ],
     },
     classifiers=[
         "Development Status :: 4 - Beta",

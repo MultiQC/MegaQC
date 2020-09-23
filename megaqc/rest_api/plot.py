@@ -40,7 +40,9 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
                 models.Report.created_at,
                 models.SampleData.value,
             )
-            .order_by(models.Report.created_at.asc(),)
+            .order_by(
+                models.Report.created_at.asc(),
+            )
             .filter(Sample.sample_id.in_(subquery))
             .distinct()
         )

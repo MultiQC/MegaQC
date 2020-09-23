@@ -353,7 +353,9 @@ json_api.route(DataType, "datatype", "/data_types/<int:id>")
 json_api.route(DataTypeList, "datatypelist", "/data_types")
 
 json_api.route(
-    Filter, "filter", "/filters/<int:id>",
+    Filter,
+    "filter",
+    "/filters/<int:id>",
 )
 json_api.route(FilterList, "filterlist", "/filters")
 json_api.route(FilterList, "user_filterlist", "/users/<int:id>/filters")
