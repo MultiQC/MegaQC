@@ -9,6 +9,8 @@ services:
       - ./prestart.sh:/app/prestart.sh
       # Share the static files via a volume
       - static_volume:/app/megaqc/static
+      # Add files for testing
+      - ./test:/opt/test:ro
     expose:
       - 8000
     depends_on:
@@ -33,11 +35,6 @@ services:
       - 80:80
     depends_on:
       - megaqc
-  multiqc:
-    image: ewels/multiqc
-    entrypoint: sleep infinity
-    volumes:
-      - ./test:/opt/test:ro
 
 volumes:
   static_volume:
