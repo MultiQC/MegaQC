@@ -74,4 +74,4 @@ jobs:
           sleep 30
           curl --fail -I localhost:80
           docker-compose exec -Tu postgres db psql megaqc -f /opt/test/test_user.sql
-          docker-compose exec -w /tmp -T multiqc /opt/test/test_upload.sh
+          docker-compose exec -w /tmp -T megaqc /opt/test/test_upload.sh
