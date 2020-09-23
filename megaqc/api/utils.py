@@ -625,7 +625,10 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
                     "y0": 0,
                     "x1": band["to"],
                     "y1": 1,
-                    "line": {"color": band["color"], "width": 1,},
+                    "line": {
+                        "color": band["color"],
+                        "width": 1,
+                    },
                     "fillcolor": band["color"],
                     "opacity": 0.5,
                 }
@@ -643,7 +646,10 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
                     "y0": band["from"],
                     "x1": 1,
                     "y1": band["to"],
-                    "line": {"color": band["color"], "width": 1,},
+                    "line": {
+                        "color": band["color"],
+                        "width": 1,
+                    },
                     "fillcolor": band["color"],
                     "opacity": 0.5,
                 }
