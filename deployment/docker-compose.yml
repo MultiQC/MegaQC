@@ -19,6 +19,7 @@ services:
     image: postgres:latest
     volumes:
       - db_volume:/var/lib/postgresql/data/
+      - ./test:/opt/test:ro
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
   nginx:
@@ -32,6 +33,11 @@ services:
       - 80:80
     depends_on:
       - megaqc
+  multiqc:
+    image: ewels/multiqc
+    entrypoint: sleep infinity
+    volumes:
+      - ./test:/opt/test:ro
 
 volumes:
   static_volume:
