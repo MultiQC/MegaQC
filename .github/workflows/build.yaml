@@ -66,12 +66,3 @@ jobs:
         with:
           push: false
           repository: ewels/megaqc
-
-      - name: Test the compose stack
-        run: |
-          cd deployment
-          docker-compose up -d
-          sleep 30
-          curl --fail -I localhost:80
-          docker-compose exec -Tu postgres db psql megaqc -f /opt/test/test_user.sql
-          docker-compose exec -w /tmp -T megaqc /opt/test/test_upload.sh
