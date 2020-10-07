@@ -1,19 +1,66 @@
 import subprocess
+import time
 from pathlib import Path
 
+import pytest
 import requests
 
 
-def test_compose(multiqc_data):
-    # Start the stack
+def raise_response(resp):
+    if not str(resp.status_code).startswith("2"):
+        raise Exception(
+            "Request failed with status {} and body{}".format(
+                resp.status_code, resp.text
+            )
+        )
+
+
+@pytest.fixture(scope="module")
+def compose_stack():
     deploy = (Path(__file__).parent.parent / "deployment").resolve()
-    subprocess.run(["docker-compose", "up"], cwd=deploy)
+    # Start the stack, and wait for it to start up
+    subprocess.run(["docker-compose", "up", "-d"], cwd=deploy)
+    time.sleep(15)
+    yield
+    # When we're done, stop the stack and cleanup the volumes
+    subprocess.run(["docker-compose", "down", "-v"], cwd=deploy)
+
+
+def test_compose(multiqc_data, compose_stack):
+    # Initially we should have no reports
+    result = requests.get(url="http://localhost/rest_api/v1/uploads")
+    raise_response(result)
+    assert len(result.json()["data"]) == 0
 
     # Create a user
-    requests.post("localhost/users", json={"username": "foo", "email": "foo@bar.com"})
+    user = requests.post(
+        "http://localhost/rest_api/v1/users",
+        json={
+            "data": {
+                "type": "users",
+                "attributes": {
+                    "username": "foo",
+                    "email": "foo@bar.com",
+                    "password": "bar",
+                },
+            }
+        },
+    )
+    raise_response(user)
+
+    user.raise_for_status()
+    token = user.json()["data"]["attributes"]["api_token"]
 
     # Upload the report
-    requests.post(url="localhost/uploads", files={"report": multiqc_data})
+    report = requests.post(
+        url="http://localhost/rest_api/v1/uploads",
+        files={"report": multiqc_data},
+        headers={"access_token": token},
+    )
+    raise_response(report)
+    report.raise_for_status()
 
-    # Request the report back
-    result = requests.get(url="localhost/uploads").json()
+    # Finally, we should have 1 report
+    result = requests.get(url="http://localhost/rest_api/v1/uploads")
+    raise_response(result)
+    assert len(result.json()["data"]) == 1
