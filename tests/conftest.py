@@ -20,7 +20,7 @@ from .factories import UserFactory
 def multiqc_data():
     here = Path(__file__).parent
     with (here / "multiqc_data.json").open() as fp:
-        return fp
+        return fp.read()
 
 
 @pytest.yield_fixture(scope="function")
