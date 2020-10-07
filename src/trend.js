@@ -12,13 +12,13 @@ import { SampleFilter } from "./trend/sampleFilter";
 
 function selectValue(select) {
   return Array.from(select.options)
-    .filter(o => o.selected)
-    .map(o => o.value);
+    .filter((o) => o.selected)
+    .map((o) => o.value);
 }
 
 const trendSchema = Yup.object().shape({
   field: Yup.string().label("Quality Field"),
-  outlier: Yup.string().oneOf(["z"])
+  outlier: Yup.string().oneOf(["z"]),
 });
 
 function Trend(props) {
@@ -32,7 +32,7 @@ function Trend(props) {
   // Start with an unauthenticated client, then request a token ASAP
   const client = useRef(getClient());
   useEffect(() => {
-    client.current.get("users", "current").then(user => {
+    client.current.get("users", "current").then((user) => {
       // Update the API token, and also store the current user
       const token = user.toJSON().api_token;
       client.current._transport._auth.header = { access_token: token };
@@ -44,10 +44,10 @@ function Trend(props) {
   useEffect(() => {
     client.current
       .find("data_types", {
-        "page[size]": 0
+        "page[size]": 0,
       })
-      .then(resources => {
-        setDataTypes(resources.map(resource => resource.toJSON()));
+      .then((resources) => {
+        setDataTypes(resources.map((resource) => resource.toJSON()));
       });
   }, []);
 
@@ -61,14 +61,14 @@ function Trend(props) {
         fields: JSON.stringify(plotSettings.fields),
         control_limits: {
           enabled: plotSettings.controlLimits,
-          sigma: plotSettings.stdDevs
+          sigma: plotSettings.stdDevs,
         },
-        center_line: plotSettings.centerLine
+        center_line: plotSettings.centerLine,
       })
-      .then(data => {
-        const newData = data.map(datum => datum.toJSON());
+      .then((data) => {
+        const newData = data.map((datum) => datum.toJSON());
         setPlotData(newData);
-        setRevision(rev => rev + 1);
+        setRevision((rev) => rev + 1);
       });
   }, [selectedFilter, plotSettings]);
 
@@ -86,7 +86,7 @@ function Trend(props) {
         <Col lg={{ size: 8 }}>
           <TrendForm
             dataTypes={dataTypes}
-            onSubmit={props => {
+            onSubmit={(props) => {
               setPlotSettings(props);
             }}
           />
@@ -94,7 +94,7 @@ function Trend(props) {
       </Row>
       <Row
         style={{
-          paddingTop: "20px"
+          paddingTop: "20px",
         }}
       >
         <Col sm={12}>

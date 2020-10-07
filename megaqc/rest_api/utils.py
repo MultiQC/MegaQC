@@ -5,6 +5,7 @@ from uuid import uuid4
 
 from flask import request
 from flask.globals import current_app
+
 from megaqc.user.models import User
 
 

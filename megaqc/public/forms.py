@@ -3,9 +3,10 @@
 Public forms.
 """
 from flask_wtf import Form
-from megaqc.user.models import User
 from wtforms import PasswordField, StringField
 from wtforms.validators import DataRequired
+
+from megaqc.user.models import User
 
 
 class LoginForm(Form):

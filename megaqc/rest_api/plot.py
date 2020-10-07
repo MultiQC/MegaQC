@@ -1,13 +1,14 @@
 import re
 
 import numpy
+from numpy import absolute, delete, take, zeros
+from plotly.colors import DEFAULT_PLOTLY_COLORS
+from scipy.stats import zscore
+
 from megaqc.extensions import db
 from megaqc.model import models
 from megaqc.model.models import *
 from megaqc.rest_api.filters import build_filter_query
-from numpy import absolute, delete, take, zeros
-from plotly.colors import DEFAULT_PLOTLY_COLORS
-from scipy.stats import zscore
 
 
 def rgb_to_rgba(rgb, alpha):
@@ -40,7 +41,9 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
                 models.Report.created_at,
                 models.SampleData.value,
             )
-            .order_by(models.Report.created_at.asc(),)
+            .order_by(
+                models.Report.created_at.asc(),
+            )
             .filter(Sample.sample_id.in_(subquery))
             .distinct()
         )

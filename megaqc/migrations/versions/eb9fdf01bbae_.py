@@ -70,7 +70,10 @@ def upgrade():
         sa.Column("is_public", sa.Boolean(), nullable=True),
         sa.Column("modified_at", sa.DateTime(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"],),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.user_id"],
+        ),
         sa.PrimaryKeyConstraint("dashboard_id"),
     )
     op.create_table(
@@ -82,7 +85,10 @@ def upgrade():
         sa.Column("plot_type", sa.String(length=128), nullable=False),
         sa.Column("data", sa.String(length=2048), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"],),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.user_id"],
+        ),
         sa.PrimaryKeyConstraint("plot_favourite_id"),
     )
     op.create_table(
@@ -92,7 +98,10 @@ def upgrade():
         sa.Column("report_hash", sa.String(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("uploaded_at", sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"],),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.user_id"],
+        ),
         sa.PrimaryKeyConstraint("report_id"),
     )
     op.create_table(
@@ -100,7 +109,10 @@ def upgrade():
         sa.Column("role_id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(length=80, _expect_unicode=True), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"],),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.user_id"],
+        ),
         sa.PrimaryKeyConstraint("role_id"),
         sa.UniqueConstraint("name"),
     )
@@ -112,7 +124,10 @@ def upgrade():
         sa.Column("is_public", sa.Boolean(), nullable=True),
         sa.Column("sample_filter_data", sa.String(length=2048), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"],),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.user_id"],
+        ),
         sa.PrimaryKeyConstraint("sample_filter_id"),
     )
     op.create_table(
@@ -124,24 +139,37 @@ def upgrade():
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("modified_at", sa.DateTime(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"],),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.user_id"],
+        ),
         sa.PrimaryKeyConstraint("upload_id"),
     )
     op.create_table(
         "user_plotconfig_map",
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("plot_config_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(["plot_config_id"], ["plot_config.config_id"],),
-        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"],),
+        sa.ForeignKeyConstraint(
+            ["plot_config_id"],
+            ["plot_config.config_id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.user_id"],
+        ),
     )
     op.create_table(
         "user_sampletype_map",
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("sample_data_type_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
-            ["sample_data_type_id"], ["sample_data_type.sample_data_type_id"],
+            ["sample_data_type_id"],
+            ["sample_data_type.sample_data_type_id"],
         ),
-        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"],),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.user_id"],
+        ),
     )
     op.create_table(
         "plot_category",
@@ -150,8 +178,14 @@ def upgrade():
         sa.Column("config_id", sa.Integer(), nullable=True),
         sa.Column("category_name", sa.String(length=128), nullable=True),
         sa.Column("data", sa.String(length=2048), nullable=False),
-        sa.ForeignKeyConstraint(["config_id"], ["plot_config.config_id"],),
-        sa.ForeignKeyConstraint(["report_id"], ["report.report_id"],),
+        sa.ForeignKeyConstraint(
+            ["config_id"],
+            ["plot_config.config_id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["report_id"],
+            ["report.report_id"],
+        ),
         sa.PrimaryKeyConstraint("plot_category_id"),
     )
     op.create_table(
@@ -160,7 +194,10 @@ def upgrade():
         sa.Column("report_meta_key", sa.String(length=80), nullable=False),
         sa.Column("report_meta_value", sa.String(length=80), nullable=False),
         sa.Column("report_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(["report_id"], ["report.report_id"],),
+        sa.ForeignKeyConstraint(
+            ["report_id"],
+            ["report.report_id"],
+        ),
         sa.PrimaryKeyConstraint("report_meta_id"),
     )
     op.create_table(
@@ -168,7 +205,10 @@ def upgrade():
         sa.Column("sample_id", sa.Integer(), nullable=False),
         sa.Column("sample_name", sa.String(length=80), nullable=True),
         sa.Column("report_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(["report_id"], ["report.report_id"],),
+        sa.ForeignKeyConstraint(
+            ["report_id"],
+            ["report.report_id"],
+        ),
         sa.PrimaryKeyConstraint("sample_id"),
     )
     op.create_table(
@@ -179,12 +219,22 @@ def upgrade():
         sa.Column("plot_category_id", sa.Integer(), nullable=True),
         sa.Column("sample_id", sa.Integer(), nullable=True),
         sa.Column("data", sa.String(), nullable=False),
-        sa.ForeignKeyConstraint(["config_id"], ["plot_config.config_id"],),
         sa.ForeignKeyConstraint(
-            ["plot_category_id"], ["plot_category.plot_category_id"],
+            ["config_id"],
+            ["plot_config.config_id"],
         ),
-        sa.ForeignKeyConstraint(["report_id"], ["report.report_id"],),
-        sa.ForeignKeyConstraint(["sample_id"], ["sample.sample_id"],),
+        sa.ForeignKeyConstraint(
+            ["plot_category_id"],
+            ["plot_category.plot_category_id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["report_id"],
+            ["report.report_id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["sample_id"],
+            ["sample.sample_id"],
+        ),
         sa.PrimaryKeyConstraint("plot_data_id"),
     )
     op.create_table(
@@ -194,11 +244,18 @@ def upgrade():
         sa.Column("sample_data_type_id", sa.Integer(), nullable=True),
         sa.Column("sample_id", sa.Integer(), nullable=True),
         sa.Column("value", sa.String(length=1024), nullable=True),
-        sa.ForeignKeyConstraint(["report_id"], ["report.report_id"],),
         sa.ForeignKeyConstraint(
-            ["sample_data_type_id"], ["sample_data_type.sample_data_type_id"],
+            ["report_id"],
+            ["report.report_id"],
         ),
-        sa.ForeignKeyConstraint(["sample_id"], ["sample.sample_id"],),
+        sa.ForeignKeyConstraint(
+            ["sample_data_type_id"],
+            ["sample_data_type.sample_data_type_id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["sample_id"],
+            ["sample.sample_id"],
+        ),
         sa.PrimaryKeyConstraint("sample_data_id"),
     )
     # ### end Alembic commands ###

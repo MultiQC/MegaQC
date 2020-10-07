@@ -3,7 +3,7 @@ export default class Filter {
     type = "samplemeta",
     key = "",
     comparison = "eq",
-    value = []
+    value = [],
   } = {}) {
     this.type = type;
     this.key = key;

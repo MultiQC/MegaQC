@@ -12,7 +12,7 @@ import {
   ButtonGroup,
   PopoverHeader,
   PopoverBody,
-  Popover
+  Popover,
 } from "reactstrap";
 import groupBy from "lodash/groupBy";
 
@@ -37,7 +37,7 @@ function FilterItem({ filter, active, setSelected, setEdit, onDelete }) {
       className={classnames({
         "list-group-item-action": true,
         "sample-filter-btn": true,
-        active: active
+        active: active,
       })}
       onClick={() => {
         setSelected(filter._getUid());
@@ -47,7 +47,7 @@ function FilterItem({ filter, active, setSelected, setEdit, onDelete }) {
       {filter.get("name")}
       <ButtonGroup className="float-right">
         <Button
-          onClick={e => {
+          onClick={(e) => {
             // Start editing this filter
             setEdit(filter._getUid());
             e.stopPropagation();
@@ -64,7 +64,7 @@ function FilterItem({ filter, active, setSelected, setEdit, onDelete }) {
           color={"danger"}
           outline={true}
           id={id}
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
           }}
         >
@@ -126,7 +126,7 @@ export function SampleFilter(props) {
   }
 
   function updateFilters() {
-    qcApi.find("filters").then(filters => {
+    qcApi.find("filters").then((filters) => {
       setSampleFilters(filters);
     });
   }
@@ -145,7 +145,7 @@ export function SampleFilter(props) {
   }, []);
 
   const filterGroups = useMemo(() => {
-    return groupBy(sampleFilters, filter => filter.get("tag"));
+    return groupBy(sampleFilters, (filter) => filter.get("tag"));
   }, [sampleFilters]);
 
   // Whenever the filter selection changes, report back to anything listening for this event
@@ -196,7 +196,7 @@ export function SampleFilter(props) {
                     <a
                       className={classnames({
                         "nav-link": true,
-                        active: filterGroup === selectedGroup
+                        active: filterGroup === selectedGroup,
                       })}
                       href={`#sample_filter_group_${i}`}
                       key={i}
@@ -222,7 +222,7 @@ export function SampleFilter(props) {
                   className={classnames({
                     "sample-filter-btn": true,
                     "list-group-item-action": true,
-                    active: null === selectedFilter
+                    active: null === selectedFilter,
                   })}
                 >
                   None
@@ -246,7 +246,7 @@ export function SampleFilter(props) {
                         setSelected={() => {
                           setSelectedFilter(filter._getUid());
                         }}
-                        onDelete={filter => {
+                        onDelete={(filter) => {
                           filter.delete().then(() => {
                             updateFilters();
                           });
@@ -269,5 +269,5 @@ SampleFilter.propTypes = {
   /**
    * Function to run when the user selects a filter. Calls the function with the
    */
-  onFilterChange: PropTypes.func
+  onFilterChange: PropTypes.func,
 };

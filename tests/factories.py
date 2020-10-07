@@ -14,6 +14,7 @@ from factory import (
 )
 from factory.alchemy import SQLAlchemyModelFactory
 from factory.fuzzy import FuzzyChoice
+
 from megaqc.database import db
 from megaqc.model import models
 from megaqc.user.models import User

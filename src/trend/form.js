@@ -20,20 +20,16 @@ export default function TrendForm({ dataTypes, onSubmit }) {
         // Whether or not to show control limits
         controlLimits: true,
         // Number of standard deviations to use as the control limit
-        stdDevs: 3
+        stdDevs: 3,
       }}
       validationSchema={Yup.object().shape({
-        fields: Yup.array()
-          .min(1)
-          .label("Data Types"),
+        fields: Yup.array().min(1).label("Data Types"),
         // Outlier has its own internal field validation
         centerLine: Yup.string()
           .oneOf(["mean", "median", "none"])
           .label("Center Line"),
         controlLimits: Yup.bool().label("Show Control Limits"),
-        stdDevs: Yup.number()
-          .min(0)
-          .label("Control Limits")
+        stdDevs: Yup.number().min(0).label("Control Limits"),
       })}
       onSubmit={onSubmit}
     >
@@ -55,11 +51,11 @@ export default function TrendForm({ dataTypes, onSubmit }) {
                     name={"fields"}
                     type={"select"}
                     multiple={true}
-                    onChange={e => {
+                    onChange={(e) => {
                       setFieldValue(
                         "fields",
                         Array.from(e.target.selectedOptions).map(
-                          opt => opt.value
+                          (opt) => opt.value
                         )
                       );
                     }}
@@ -114,5 +110,5 @@ export default function TrendForm({ dataTypes, onSubmit }) {
 
 TrendForm.propTypes = {
   dataTypes: PropTypes.array.isRequired,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
 };

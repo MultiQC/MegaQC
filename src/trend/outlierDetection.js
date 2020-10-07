@@ -12,7 +12,7 @@ import { Field, Formik, useField } from "formik";
  * @param yup
  */
 function yupToMessage(yup) {
-  return value => {
+  return (value) => {
     return yup
       .validate(value)
       .then(() => {
@@ -20,7 +20,7 @@ function yupToMessage(yup) {
         // error
         return undefined;
       })
-      .catch(err => {
+      .catch((err) => {
         // If the promise failed, then convert it into a message
         return err.join(",");
       });
@@ -35,18 +35,16 @@ export default function OutlierDetection(
   const [typeField, typeMeta, typeHelpers] = useField({
     name: outlierType,
     validate: yupToMessage(
-      Yup.string()
-        .oneOf(["z", "none"])
-        .label("Outlier Detection Method")
+      Yup.string().oneOf(["z", "none"]).label("Outlier Detection Method")
     ),
     type: "select",
-    label: "Outlier Detection Method"
+    label: "Outlier Detection Method",
   });
   const [thresholdField, thresholdMeta, thresholdHelpers] = useField({
     name: outlierThreshold,
     validate: yupToMessage(Yup.number().label("Outlier Detection Threshold")),
     type: "number",
-    label: "Outlier Detection Threshold"
+    label: "Outlier Detection Threshold",
   });
 
   switch (typeField.value) {
