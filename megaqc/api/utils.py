@@ -17,6 +17,12 @@ import plotly.figure_factory as ff
 import plotly.graph_objs as go
 import plotly.offline as py
 from flask import current_app
+from past.utils import old_div
+from sqlalchemy import Numeric, cast, distinct, func, or_
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql import and_, not_, or_
+
 from megaqc.api.constants import (
     comparators,
     type_to_tables_fields,
@@ -26,11 +32,6 @@ from megaqc.extensions import db
 from megaqc.model.models import *
 from megaqc.user.models import User
 from megaqc.utils import settings
-from past.utils import old_div
-from sqlalchemy import Numeric, cast, distinct, func, or_
-from sqlalchemy.exc import InvalidRequestError
-from sqlalchemy.orm import aliased
-from sqlalchemy.sql import and_, not_, or_
 
 if sys.version_info.major == 2:
     lc_string = string.lowercase

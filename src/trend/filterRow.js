@@ -13,7 +13,7 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-  Input
+  Input,
 } from "reactstrap";
 import BootstrapField from "./bootstrapField";
 import DateRangeField from "./DateRangeField";
@@ -27,7 +27,7 @@ function FilterRow(props) {
     name,
     formik,
     innerArrayHelpers,
-    index
+    index,
   } = props;
 
   const rowError = getIn(formik.errors, name);
@@ -47,7 +47,7 @@ function FilterRow(props) {
           type: currentType,
           cmp: "in",
           key: null,
-          value: [new Date(), new Date()].map(d => format(d, DATE_FORMAT))
+          value: [new Date(), new Date()].map((d) => format(d, DATE_FORMAT)),
         };
         break;
       case "timedelta":
@@ -55,7 +55,7 @@ function FilterRow(props) {
           type: currentType,
           cmp: "in",
           key: null,
-          value: [1]
+          value: [1],
         };
         break;
       case "samplemeta":
@@ -63,7 +63,7 @@ function FilterRow(props) {
           type: currentType,
           cmp: "eq",
           key: sampleFields[0].key,
-          value: [""]
+          value: [""],
         };
         break;
       case "reportmeta":
@@ -71,7 +71,7 @@ function FilterRow(props) {
           type: currentType,
           cmp: "eq",
           key: reportFields[0],
-          value: [""]
+          value: [""],
         };
         break;
     }
@@ -95,7 +95,7 @@ function FilterRow(props) {
     </option>,
     <option key="not in" value="not in">
       outside range
-    </option>
+    </option>,
   ];
 
   const dynamicDateCmp = [
@@ -104,7 +104,7 @@ function FilterRow(props) {
     </option>,
     <option key="not in" value="not in">
       outside
-    </option>
+    </option>,
   ];
 
   // Comparison operators for value types
@@ -122,7 +122,7 @@ function FilterRow(props) {
     <option value="notlike">doesn't match</option>,
     <option value="notcontains">doesn't contain</option>,
     <option value="notstartswith">doesn't start with</option>,
-    <option value="notendswith">doesn't end with</option>
+    <option value="notendswith">doesn't end with</option>,
   ];
 
   // Generate the right fields for each column in the row
@@ -172,7 +172,7 @@ function FilterRow(props) {
     case "samplemeta":
       keyComponent = (
         <Field component={BootstrapField} name={`${name}.key`} type={"select"}>
-          {sampleFields.map(field => {
+          {sampleFields.map((field) => {
             return (
               <option key={field.key} value={field.key}>
                 {field.nice_name}
@@ -195,7 +195,7 @@ function FilterRow(props) {
     case "reportmeta":
       keyComponent = (
         <Field component={BootstrapField} name={`${name}.key`} type={"select"}>
-          {reportFields.map(field => {
+          {reportFields.map((field) => {
             return (
               <option key={field} value={field}>
                 {field}

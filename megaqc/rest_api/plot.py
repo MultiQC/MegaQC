@@ -1,13 +1,14 @@
 import re
 
 import numpy
+from numpy import absolute, delete, take, zeros
+from plotly.colors import DEFAULT_PLOTLY_COLORS
+from scipy.stats import zscore
+
 from megaqc.extensions import db
 from megaqc.model import models
 from megaqc.model.models import *
 from megaqc.rest_api.filters import build_filter_query
-from numpy import absolute, delete, take, zeros
-from plotly.colors import DEFAULT_PLOTLY_COLORS
-from scipy.stats import zscore
 
 
 def rgb_to_rgba(rgb, alpha):

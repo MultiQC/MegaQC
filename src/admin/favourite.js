@@ -9,11 +9,11 @@ import {
   SimpleForm,
   SimpleShowLayout,
   TextField,
-  TextInput
+  TextInput,
 } from "react-admin";
 import { JsonInput, JsonField } from "./components/jsonField";
 
-export const FavouriteList = props => (
+export const FavouriteList = (props) => (
   <List {...props}>
     <Datagrid rowClick="show">
       <TextField source="id" />
@@ -25,7 +25,7 @@ export const FavouriteList = props => (
   </List>
 );
 
-export const FavouriteShow = props => (
+export const FavouriteShow = (props) => (
   <Show {...props}>
     <SimpleShowLayout>
       <TextField source="id" />
@@ -38,7 +38,7 @@ export const FavouriteShow = props => (
   </Show>
 );
 
-export const FavouriteEdit = props => (
+export const FavouriteEdit = (props) => (
   <Edit {...props}>
     <SimpleForm redirect="show">
       <TextInput source="id" />

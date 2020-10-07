@@ -13,11 +13,11 @@ import {
   SimpleForm,
   SimpleShowLayout,
   TextField,
-  TextInput
+  TextInput,
 } from "react-admin";
 import ResourceLink from "./components/resourceLink";
 
-export const ReportList = props => (
+export const ReportList = (props) => (
   <List {...props}>
     <Datagrid rowClick="show">
       <TextField source="id" />
@@ -38,7 +38,7 @@ export const ReportList = props => (
   </List>
 );
 
-export const ReportEdit = props => (
+export const ReportEdit = (props) => (
   <Edit {...props}>
     <SimpleForm redirect="show">
       <TextInput source="id" />
@@ -75,7 +75,7 @@ export const ReportEdit = props => (
   </Edit>
 );
 
-export const ReportShow = props => (
+export const ReportShow = (props) => (
   <Show {...props}>
     <SimpleShowLayout>
       <TextField source="id" />

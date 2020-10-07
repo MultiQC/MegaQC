@@ -9,10 +9,10 @@ import {
   SimpleForm,
   SimpleShowLayout,
   TextField,
-  TextInput
+  TextInput,
 } from "react-admin";
 
-export const UploadList = props => (
+export const UploadList = (props) => (
   <List {...props}>
     <Datagrid rowClick="show">
       <TextField source="id" />
@@ -25,7 +25,7 @@ export const UploadList = props => (
   </List>
 );
 
-export const UploadShow = props => (
+export const UploadShow = (props) => (
   <Show {...props}>
     <SimpleShowLayout>
       <TextField source="id" />
@@ -38,7 +38,7 @@ export const UploadShow = props => (
   </Show>
 );
 
-export const UploadEdit = props => (
+export const UploadEdit = (props) => (
   <Edit {...props}>
     <SimpleForm redirect="show">
       <TextField source="id" />

@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
-from megaqc.model.models import *
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import Query
+
+from megaqc.model.models import *
 
 DATE_FORMAT = "%Y-%m-%d"
 
