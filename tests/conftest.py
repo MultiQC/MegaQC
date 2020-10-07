@@ -3,6 +3,8 @@
 Defines fixtures available to all tests.
 """
 
+from pathlib import Path
+
 import pytest
 from webtest import TestApp
 
@@ -12,6 +14,13 @@ from megaqc.database import init_db
 from megaqc.settings import TestConfig
 
 from .factories import UserFactory
+
+
+@pytest.yield_fixture(scope="function")
+def multiqc_data():
+    here = Path(__file__).parent
+    with (here / "multiqc_data.json").open() as fp:
+        return fp
 
 
 @pytest.yield_fixture(scope="function")
