@@ -4,11 +4,12 @@ Defines fixtures available to all tests.
 """
 
 import pytest
+from webtest import TestApp
+
 from megaqc.app import create_app
 from megaqc.database import db as _db
 from megaqc.database import init_db
 from megaqc.settings import TestConfig
-from webtest import TestApp
 
 from .factories import UserFactory
 

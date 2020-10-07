@@ -2,8 +2,9 @@ import json
 
 from flask import url_for
 from marshmallow.utils import EXCLUDE
-from megaqc.rest_api.schemas import TrendSchema
 from plotly.offline import plot
+
+from megaqc.rest_api.schemas import TrendSchema
 from tests import factories
 
 

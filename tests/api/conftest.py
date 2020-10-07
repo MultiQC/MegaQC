@@ -1,5 +1,6 @@
 import pytest
 from flask import request
+
 from tests import factories
 
 

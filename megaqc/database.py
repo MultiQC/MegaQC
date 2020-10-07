@@ -118,8 +118,8 @@ def postgres_create_user(username, conn, cur, password=None):
     """
     Create a postgres user, including a password if provided.
     """
-    from psycopg2.sql import Identifier, Placeholder, SQL
     from psycopg2.errors import DuplicateObject, ProgrammingError
+    from psycopg2.sql import SQL, Identifier, Placeholder
 
     # Run the CREATE USER
     try:
@@ -143,7 +143,7 @@ def postgres_create_database(conn, cur, database, user):
     """
     Create a Postgres database, with the given owner.
     """
-    from psycopg2.sql import Identifier, SQL
+    from psycopg2.sql import SQL, Identifier
 
     # create database
     cur.execute(

@@ -16,7 +16,7 @@ import {
   ModalHeader,
   Row,
   Table,
-  UncontrolledTooltip
+  UncontrolledTooltip,
 } from "reactstrap";
 import BootstrapField from "./bootstrapField";
 import filterSchema from "../util/filterSchema";
@@ -41,13 +41,13 @@ export default function EditFilter(props) {
           type: "samplemeta",
           key: "",
           cmp: "eq",
-          value: [""]
-        }
-      ]
+          value: [""],
+        },
+      ],
     ],
     filterName: "",
     filterGroup: "Global",
-    visibility: "private"
+    visibility: "private",
   };
   const [initialData, setInitialData] = useState(initial);
 
@@ -63,7 +63,7 @@ export default function EditFilter(props) {
           filters: resultJson.data,
           filterName: resultJson.name,
           filterGroup: resultJson.tag,
-          visibility: resultJson.public ? "public" : "private"
+          visibility: resultJson.public ? "public" : "private",
         });
       } else {
         // If we *were* editing a filter but now we're creating a new one, reset the form
@@ -76,22 +76,22 @@ export default function EditFilter(props) {
 
   // Fetch the filter groups
   useEffect(() => {
-    qcApi.find("filter_groups").then(groups => {
-      setFilterGroups(groups.map(group => group._getUid()));
+    qcApi.find("filter_groups").then((groups) => {
+      setFilterGroups(groups.map((group) => group._getUid()));
     });
   }, []);
 
   // Fetch the sample fields
   useEffect(() => {
-    qcApi.find("data_types").then(groups => {
-      setSampleFields(groups.map(group => group.toJSON()));
+    qcApi.find("data_types").then((groups) => {
+      setSampleFields(groups.map((group) => group.toJSON()));
     });
   }, []);
 
   // Fetch the report metadata fields
   useEffect(() => {
-    qcApi.find("meta_types").then(groups => {
-      setReportFields(groups.map(group => group._getUid()));
+    qcApi.find("meta_types").then((groups) => {
+      setReportFields(groups.map((group) => group._getUid()));
     });
   }, []);
 
@@ -138,7 +138,7 @@ export default function EditFilter(props) {
             </ModalHeader>
             <ModalBody>
               <datalist id="filter_tags">
-                {filterGroups.map(group => {
+                {filterGroups.map((group) => {
                   return (
                     <option key={group} value={group}>
                       {group}
@@ -191,20 +191,20 @@ export default function EditFilter(props) {
               </Row>
               <FieldArray
                 name="filters"
-                render={outerArrayHelpers => (
+                render={(outerArrayHelpers) => (
                   <>
                     {values.filters.map((filterGroup, i) => {
                       return (
                         <Card
                           style={{
-                            marginBottom: "1em"
+                            marginBottom: "1em",
                           }}
                           key={i}
                         >
                           <CardHeader>Filter Group {i + 1}</CardHeader>
                           <CardBody
                             style={{
-                              padding: 0
+                              padding: 0,
                             }}
                           >
                             <Table responsive={true}>
@@ -240,7 +240,7 @@ export default function EditFilter(props) {
                               <tbody>
                                 <FieldArray
                                   name={`filters[${i}]`}
-                                  render={innerArrayHelpers => (
+                                  render={(innerArrayHelpers) => (
                                     <>
                                       {filterGroup.map((filter, j) => (
                                         <tr key={j}>
@@ -326,7 +326,7 @@ export default function EditFilter(props) {
                   <Col
                     md={{
                       size: 6,
-                      offset: 3
+                      offset: 3,
                     }}
                   >
                     <Button
@@ -356,5 +356,5 @@ EditFilter.propTypes = {
   // The MegaQC JsonApiClient from "@holidayextras/jsonapi-client"
   qcApi: PropTypes.object.isRequired,
   // ID of an existing filter to edit (if any)
-  resourceId: PropTypes.string
+  resourceId: PropTypes.string,
 };

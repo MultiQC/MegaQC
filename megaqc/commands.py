@@ -13,10 +13,11 @@ from subprocess import call, check_output
 import click
 from flask import current_app
 from flask.cli import with_appcontext
-from megaqc.database import init_db
-from megaqc.extensions import db
 from sqlalchemy import create_engine
 from werkzeug.exceptions import MethodNotAllowed, NotFound
+
+from megaqc.database import init_db
+from megaqc.extensions import db
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(HERE, os.pardir)
@@ -189,8 +190,8 @@ def upload(json_files, date):
     except ImportError:
         print("Error - This function requires MultiQC to be installed.")
     else:
-        import json
         import gzip
+        import json
 
         multiqc_log.init_log(multiqc_config.logger, loglevel="INFO")
         multiqc_config.mqc_load_userconfig()

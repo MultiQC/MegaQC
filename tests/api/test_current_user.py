@@ -1,7 +1,7 @@
-from pkg_resources import resource_stream
-
 import pytest
 from flask_login import login_user
+from pkg_resources import resource_stream
+
 from megaqc.model import models
 from megaqc.rest_api import schemas
 from tests import factories

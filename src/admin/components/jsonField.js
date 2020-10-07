@@ -8,14 +8,14 @@ import { useField } from "react-final-form";
 export function JsonInput({ source, record, resource, basePath, editorProps }) {
   const {
     input: { onChange, value },
-    meta: { touched, error }
+    meta: { touched, error },
   } = useField(source);
   const finalEditorProps = Object.assign(
     {
       search: false,
       mode: "code",
       statusBar: false,
-      allowedModes: ["tree", "code"]
+      allowedModes: ["tree", "code"],
     },
     editorProps
   );
@@ -38,13 +38,13 @@ export function JsonField({
   record,
   resource,
   basePath,
-  editorProps = {}
+  editorProps = {},
 }) {
   const finalEditorProps = Object.assign(
     {
       search: false,
       statusBar: false,
-      mode: "view"
+      mode: "view",
     },
     editorProps
   );

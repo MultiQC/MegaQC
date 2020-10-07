@@ -11,11 +11,11 @@ import {
   SimpleForm,
   SimpleShowLayout,
   TextField,
-  TextInput
+  TextInput,
 } from "react-admin";
 import { JsonInput, JsonField } from "./components/jsonField";
 
-export const DashboardList = props => (
+export const DashboardList = (props) => (
   <List {...props}>
     <Datagrid rowClick="show">
       <TextField source="id" />
@@ -27,7 +27,7 @@ export const DashboardList = props => (
   </List>
 );
 
-export const DashboardShow = props => (
+export const DashboardShow = (props) => (
   <Show {...props}>
     <SimpleShowLayout>
       <TextField source="id" />
@@ -40,7 +40,7 @@ export const DashboardShow = props => (
   </Show>
 );
 
-export const DashboardEdit = props => (
+export const DashboardEdit = (props) => (
   <Edit {...props}>
     <SimpleForm redirect="show">
       <TextInput source="id" />

@@ -8,7 +8,7 @@ module.exports = {
   entry: {
     // This allows for multiple React "apps", for different pages
     trend: "./src/trend.js",
-    admin: "./src/admin.js"
+    admin: "./src/admin.js",
   },
   module: {
     rules: [
@@ -21,38 +21,38 @@ module.exports = {
               presets: ["@babel/preset-env", "@babel/preset-react"],
               plugins: [
                 "@babel/plugin-proposal-object-rest-spread",
-                "@babel/plugin-transform-runtime"
-              ]
+                "@babel/plugin-transform-runtime",
+              ],
             },
-            loader: "babel-loader"
-          }
-        ]
+            loader: "babel-loader",
+          },
+        ],
       },
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"]
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.svg$/,
-        use: ["url-loader"]
-      }
-    ]
+        use: ["url-loader"],
+      },
+    ],
   },
   resolve: {
     alias: {
-      react: path.resolve("./node_modules/react")
+      react: path.resolve("./node_modules/react"),
     },
-    extensions: ["*", ".js", ".jsx"]
+    extensions: ["*", ".js", ".jsx"],
   },
   output: {
     path: __dirname + "/megaqc/static/js",
     publicPath: "/",
-    filename: "[name].js"
+    filename: "[name].js",
   },
   plugins: [],
   devServer: {
     contentBase: "./dist",
-    hot: true
+    hot: true,
   },
-  devtool: "source-map"
+  devtool: "source-map",
 };

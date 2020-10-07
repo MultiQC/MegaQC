@@ -9,20 +9,20 @@ import {
   ReportMetaList,
   ReportMetaShow,
   ReportMetaEdit,
-  ReportMetaCreate
+  ReportMetaCreate,
 } from "./admin/meta";
 import { FilterGroupList } from "./admin/filterGroup";
 import {
   DataTypeList,
   DataTypeEdit,
   DataTypeShow,
-  DataTypeCreate
+  DataTypeCreate,
 } from "./admin/dataType";
 import { FavouriteList, FavouriteEdit, FavouriteShow } from "./admin/favourite";
 import {
   DashboardList,
   DashboardEdit,
-  DashboardShow
+  DashboardShow,
 } from "./admin/dashboards";
 import { DataList, DataEdit, DataShow, DataCreate } from "./admin/sampleData";
 import { UserList, UserEdit, UserShow } from "./admin/user";
@@ -35,11 +35,11 @@ import { MegaQcLayout } from "./admin/components/layout";
  */
 function relationships(rels = []) {
   const ret = {
-    keyForAttribute: attr => attr
+    keyForAttribute: (attr) => attr,
   };
   for (let rel of rels) {
     ret[rel] = {
-      ref: (outer, inner) => inner.id
+      ref: (outer, inner) => inner.id,
     };
   }
   return ret;
@@ -63,30 +63,30 @@ function App() {
       favourites: relationships(["user"]),
       dashboards: relationships(["user"]),
       report_meta_types: relationships(),
-      users: relationships(["reports"])
+      users: relationships(["reports"]),
     },
     deserializerOpts: {
-      sample_data: { keyForAttribute: attr => attr },
-      samples: { keyForAttribute: attr => attr },
-      filters: { keyForAttribute: attr => attr },
-      filter_groups: { keyForAttribute: attr => attr },
-      reports: { keyForAttribute: attr => attr },
-      uploads: { keyForAttribute: attr => attr },
-      report_meta: { keyForAttribute: attr => attr },
-      favourites: { keyForAttribute: attr => attr },
-      dashboards: { keyForAttribute: attr => attr },
-      report_meta_types: { keyForAttribute: attr => attr },
-      users: { keyForAttribute: attr => attr }
+      sample_data: { keyForAttribute: (attr) => attr },
+      samples: { keyForAttribute: (attr) => attr },
+      filters: { keyForAttribute: (attr) => attr },
+      filter_groups: { keyForAttribute: (attr) => attr },
+      reports: { keyForAttribute: (attr) => attr },
+      uploads: { keyForAttribute: (attr) => attr },
+      report_meta: { keyForAttribute: (attr) => attr },
+      favourites: { keyForAttribute: (attr) => attr },
+      dashboards: { keyForAttribute: (attr) => attr },
+      report_meta_types: { keyForAttribute: (attr) => attr },
+      users: { keyForAttribute: (attr) => attr },
     },
     headers: {
       access_token: token,
-      Accept: "application/vnd.api+json"
-    }
+      Accept: "application/vnd.api+json",
+    },
   });
 
   useEffect(() => {
     const client = getClient();
-    getToken(client).then(token => {
+    getToken(client).then((token) => {
       setToken(token);
     });
   }, []);
