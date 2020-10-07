@@ -6,7 +6,7 @@ import requests
 
 def test_compose(multiqc_data):
     # Start the stack
-    deploy = (Path(__file__).parent.parent / "deploy").resolve()
+    deploy = (Path(__file__).parent.parent / "deployment").resolve()
     subprocess.run(["docker-compose", "up"], cwd=deploy)
 
     # Create a user
