@@ -2,6 +2,7 @@ import datetime
 import itertools
 
 import pytest
+
 from megaqc.model import models
 from megaqc.rest_api.filters import DATE_FORMAT, build_filter_query
 from tests import factories

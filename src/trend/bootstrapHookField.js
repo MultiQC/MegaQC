@@ -13,7 +13,7 @@ export default function BootstrapField({ input, meta, helper, ...rest }) {
     <>
       <Input valid={valid} invalid={invalid} {...rest} />
       <ErrorMessage name={input.name}>
-        {msg => <FormFeedback valid={!invalid}>{msg}</FormFeedback>}
+        {(msg) => <FormFeedback valid={!invalid}>{msg}</FormFeedback>}
       </ErrorMessage>
     </>
   );

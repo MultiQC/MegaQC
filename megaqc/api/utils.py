@@ -17,6 +17,12 @@ import plotly.figure_factory as ff
 import plotly.graph_objs as go
 import plotly.offline as py
 from flask import current_app
+from past.utils import old_div
+from sqlalchemy import Numeric, cast, distinct, func, or_
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql import and_, not_, or_
+
 from megaqc.api.constants import (
     comparators,
     type_to_tables_fields,
@@ -26,11 +32,6 @@ from megaqc.extensions import db
 from megaqc.model.models import *
 from megaqc.user.models import User
 from megaqc.utils import settings
-from past.utils import old_div
-from sqlalchemy import Numeric, cast, distinct, func, or_
-from sqlalchemy.exc import InvalidRequestError
-from sqlalchemy.orm import aliased
-from sqlalchemy.sql import and_, not_, or_
 
 if sys.version_info.major == 2:
     lc_string = string.lowercase
@@ -625,7 +626,10 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
                     "y0": 0,
                     "x1": band["to"],
                     "y1": 1,
-                    "line": {"color": band["color"], "width": 1,},
+                    "line": {
+                        "color": band["color"],
+                        "width": 1,
+                    },
                     "fillcolor": band["color"],
                     "opacity": 0.5,
                 }
@@ -643,7 +647,10 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
                     "y0": band["from"],
                     "x1": 1,
                     "y1": band["to"],
-                    "line": {"color": band["color"], "width": 1,},
+                    "line": {
+                        "color": band["color"],
+                        "width": 1,
+                    },
                     "fillcolor": band["color"],
                     "opacity": 0.5,
                 }

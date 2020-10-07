@@ -19,6 +19,8 @@ from flask import (
 )
 from flask_login import current_user, login_required, login_user, logout_user
 from future import standard_library
+from sqlalchemy.sql import distinct, func
+
 from megaqc.api.utils import (
     aggregate_new_parameters,
     get_dashboard_data,
@@ -37,7 +39,6 @@ from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from megaqc.user.models import User
 from megaqc.utils import flash_errors, settings
-from sqlalchemy.sql import distinct, func
 
 standard_library.install_aliases()
 

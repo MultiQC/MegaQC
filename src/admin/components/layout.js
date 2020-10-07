@@ -10,14 +10,14 @@ const useStyles = makeStyles({
     flex: 1,
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-    overflow: "hidden"
+    overflow: "hidden",
   },
   spacer: {
-    flex: 1
+    flex: 1,
   },
   icon: {
-    height: "1.2em"
-  }
+    height: "1.2em",
+  },
 });
 
 export function MegaQcAppBar(props) {

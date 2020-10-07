@@ -6,6 +6,8 @@ import json
 from functools import wraps
 
 from flask import Blueprint, abort, jsonify, request
+from sqlalchemy.sql import distinct, func
+
 from megaqc.api.utils import (
     aggregate_new_parameters,
     delete_report_data,
@@ -35,7 +37,6 @@ from megaqc.extensions import db
 from megaqc.model.models import Dashboard, PlotData, PlotFavourite, Report, SampleFilter
 from megaqc.user.forms import AdminForm
 from megaqc.user.models import User
-from sqlalchemy.sql import distinct, func
 
 api_blueprint = Blueprint("api", __name__, static_folder="../static")
 

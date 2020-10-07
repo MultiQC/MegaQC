@@ -4,6 +4,7 @@ User views.
 """
 from flask import Blueprint, abort, render_template
 from flask_login import current_user, login_required
+
 from megaqc.extensions import db
 from megaqc.user.forms import AdminForm, PasswordChangeForm
 from megaqc.user.models import User

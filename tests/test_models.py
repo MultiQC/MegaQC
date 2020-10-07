@@ -5,6 +5,7 @@ Model unit tests.
 import datetime as dt
 
 import pytest
+
 from megaqc.user.models import Role, User
 
 from .factories import UserFactory
