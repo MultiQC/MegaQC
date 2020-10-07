@@ -66,9 +66,3 @@ jobs:
         with:
           push: false
           repository: ewels/megaqc
-
-      - name: Test the compose stack
-        run: |
-          cd deployment
-          docker-compose up -d
-          curl localhost:80

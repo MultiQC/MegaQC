@@ -93,6 +93,7 @@ def register_blueprints(app):
     app.register_blueprint(api.views.api_blueprint)
     # restful.init_app(api.rest_api.api_bp)
     app.register_blueprint(rest_api.views.api_bp)
+    csrf_protect.exempt(rest_api.views.api_bp)
     return None
 
 
@@ -108,8 +109,9 @@ def register_errorhandlers(app):
         # If a HTTPException, pull the `code` attribute; default to 500
         error_code = getattr(error, "code", 500)
         err_msg = str(error)
+        app.logger.error(err_msg)
         # Return JSON if an API call
-        if request.path.startswith("/api/"):
+        if request.path.startswith("/api/") or request.path.startswith("/rest_api/"):
             response = jsonify(
                 {
                     "success": False,
