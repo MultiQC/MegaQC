@@ -15,7 +15,7 @@ export default function DateRangeField(props) {
   const valid = touched && !errors;
 
   // We're storing the date in the form in this format, so we have to parse it out first
-  const [startDate, endDate] = field.value.map(d => {
+  const [startDate, endDate] = field.value.map((d) => {
     const parsed = parse(d, DATE_FORMAT, new Date());
     if (isNaN(parsed)) return new Date();
     else return parsed;
@@ -31,12 +31,12 @@ export default function DateRangeField(props) {
     <div
       className="d-inline-flex"
       style={{
-        alignItems: "center"
+        alignItems: "center",
       }}
     >
       <DatePicker
         selected={startDate}
-        onChange={date =>
+        onChange={(date) =>
           form.setFieldValue(`${field.name}.0`, format(date, DATE_FORMAT), true)
         }
         selectsStart
@@ -48,7 +48,7 @@ export default function DateRangeField(props) {
       &nbsp;to&nbsp;
       <DatePicker
         selected={endDate}
-        onChange={date =>
+        onChange={(date) =>
           form.setFieldValue(`${field.name}.1`, format(date, DATE_FORMAT), true)
         }
         selectsEnd
@@ -77,7 +77,7 @@ export default function DateRangeField(props) {
       {/*  />*/}
       {/*</MuiPickersUtilsProvider>*/}
       <ErrorMessage name={field.name}>
-        {msg => <FormFeedback valid={!invalid}>{msg}</FormFeedback>}
+        {(msg) => <FormFeedback valid={!invalid}>{msg}</FormFeedback>}
       </ErrorMessage>
     </div>
   );

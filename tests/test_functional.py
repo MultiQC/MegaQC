@@ -6,6 +6,7 @@ See: http://webtest.readthedocs.org/
 """
 import pytest
 from flask import url_for
+
 from megaqc.user.models import User
 
 from .factories import UserFactory

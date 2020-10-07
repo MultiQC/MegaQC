@@ -16,7 +16,7 @@ export default function ResourceLink({ reference, source, dest, children }) {
   const localValue = useField(source);
   const query = encodeURIComponent(
     JSON.stringify({
-      [dest]: localValue.input.value
+      [dest]: localValue.input.value,
     })
   );
   const title = titleize(reference);
@@ -25,7 +25,7 @@ export default function ResourceLink({ reference, source, dest, children }) {
       component={Link}
       to={{
         pathname: `/${reference}/create`,
-        search: `?defaults=${query}&source={}`
+        search: `?defaults=${query}&source={}`,
       }}
       label={`Add a ${title}`}
     >

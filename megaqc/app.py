@@ -12,6 +12,7 @@ import markdown
 from flask import Flask, jsonify, render_template, request
 from flask_login import FlaskLoginClient
 from future import standard_library
+
 from megaqc import api, commands, public, rest_api, user, version
 from megaqc.api.views import api_blueprint
 from megaqc.extensions import (

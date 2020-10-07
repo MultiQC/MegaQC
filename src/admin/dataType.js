@@ -8,10 +8,10 @@ import {
   SimpleForm,
   SimpleShowLayout,
   TextField,
-  TextInput
+  TextInput,
 } from "react-admin";
 
-export const DataTypeList = props => (
+export const DataTypeList = (props) => (
   <List {...props}>
     <Datagrid rowClick="show">
       <TextField source="id" />
@@ -21,7 +21,7 @@ export const DataTypeList = props => (
   </List>
 );
 
-export const DataTypeEdit = props => (
+export const DataTypeEdit = (props) => (
   <Edit {...props}>
     <SimpleForm redirect="show">
       <TextInput source="id" />
@@ -31,7 +31,7 @@ export const DataTypeEdit = props => (
   </Edit>
 );
 
-export const DataTypeShow = props => (
+export const DataTypeShow = (props) => (
   <Show {...props}>
     <SimpleShowLayout>
       <TextField source="id" />
@@ -41,7 +41,7 @@ export const DataTypeShow = props => (
   </Show>
 );
 
-export const DataTypeCreate = props => (
+export const DataTypeCreate = (props) => (
   <Create {...props}>
     <SimpleForm redirect="show">
       <TextInput source="section" />

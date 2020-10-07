@@ -11,12 +11,12 @@ import {
   SimpleForm,
   SimpleShowLayout,
   TextField,
-  TextInput
+  TextInput,
 } from "react-admin";
 
 import DefaultForm from "./components/defaultForm";
 
-export const ReportMetaList = props => (
+export const ReportMetaList = (props) => (
   <List {...props}>
     <Datagrid rowClick="show">
       <TextField source="id" />
@@ -34,7 +34,7 @@ export const ReportMetaList = props => (
   </List>
 );
 
-export const ReportMetaShow = props => (
+export const ReportMetaShow = (props) => (
   <Show {...props}>
     <SimpleShowLayout>
       <TextField source="id" />
@@ -52,7 +52,7 @@ export const ReportMetaShow = props => (
   </Show>
 );
 
-export const ReportMetaEdit = props => (
+export const ReportMetaEdit = (props) => (
   <Edit {...props}>
     <SimpleForm redirect="show">
       <TextField source="id" />
@@ -70,7 +70,7 @@ export const ReportMetaEdit = props => (
   </Edit>
 );
 
-export const ReportMetaCreate = props => (
+export const ReportMetaCreate = (props) => (
   <Create {...props}>
     <DefaultForm location={props.location} redirect="show">
       <TextInput source="key" />

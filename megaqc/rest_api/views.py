@@ -6,12 +6,13 @@ Following the JSON API standard where relevant: https://jsonapi.org/format/
 from hashlib import sha1
 from http import HTTPStatus
 
-import megaqc.user.models as user_models
 from flapison import ResourceDetail, ResourceList, ResourceRelationship
 from flask import Blueprint, jsonify, make_response, request
 from flask_login import current_user
 from marshmallow.utils import EXCLUDE, INCLUDE
 from marshmallow_jsonapi.exceptions import IncorrectTypeError
+
+import megaqc.user.models as user_models
 from megaqc.api.views import check_user
 from megaqc.extensions import db, json_api, restful
 from megaqc.model import models

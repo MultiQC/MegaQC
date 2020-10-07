@@ -11,6 +11,7 @@ from builtins import str
 
 from flask import current_app
 from flask_apscheduler import APScheduler
+
 from megaqc.api.utils import handle_report_data
 from megaqc.extensions import db
 from megaqc.model.models import Upload

@@ -14,12 +14,12 @@ import {
   SimpleForm,
   SimpleShowLayout,
   TextField,
-  TextInput
+  TextInput,
 } from "react-admin";
 
 import ResourceLink from "./components/resourceLink";
 
-export const SampleList = props => (
+export const SampleList = (props) => (
   <List {...props}>
     <Datagrid rowClick="show">
       <TextField source="id" />
@@ -38,7 +38,7 @@ export const SampleList = props => (
   </List>
 );
 
-export const SampleShow = props => {
+export const SampleShow = (props) => {
   return (
     <Show {...props}>
       <SimpleShowLayout>
@@ -78,7 +78,7 @@ export const SampleShow = props => {
   );
 };
 
-export const SampleEdit = props => (
+export const SampleEdit = (props) => (
   <Edit {...props}>
     <SimpleForm redirect="show">
       <TextInput source="id" />

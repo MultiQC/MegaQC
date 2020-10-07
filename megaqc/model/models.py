@@ -3,13 +3,14 @@ import datetime as dt
 import json
 from enum import Enum
 
-from megaqc.database import CRUDMixin
-from megaqc.extensions import db
 from sqlalchemy import Boolean, Column, DateTime
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey, Integer, UnicodeText, func
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
+
+from megaqc.database import CRUDMixin
+from megaqc.extensions import db
 
 user_plotconfig_map = db.Table(
     "user_plotconfig_map",

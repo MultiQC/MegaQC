@@ -8,8 +8,6 @@ import sys
 from builtins import str
 
 from flask_login import UserMixin
-from megaqc.database import CRUDMixin
-from megaqc.extensions import db
 from passlib.hash import argon2
 from passlib.utils import getrandstr, rng
 from sqlalchemy import (
@@ -27,6 +25,9 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
+
+from megaqc.database import CRUDMixin
+from megaqc.extensions import db
 
 if sys.version_info.major == 2:
     letters = string.letters

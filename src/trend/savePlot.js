@@ -8,7 +8,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
-  Row
+  Row,
 } from "reactstrap";
 import BootstrapField from "./bootstrapField";
 import filterSchema from "../util/filterSchema";
@@ -23,16 +23,11 @@ export default function SavePlot(props) {
     <Formik
       initialValues={{
         title: "",
-        description: ""
+        description: "",
       }}
       validationSchema={Yup.object().shape({
-        title: Yup.string()
-          .min(3)
-          .label("Title")
-          .required(),
-        description: Yup.string()
-          .label("Description")
-          .required()
+        title: Yup.string().min(3).label("Title").required(),
+        description: Yup.string().label("Description").required(),
       })}
       onSubmit={(values, { setSubmitting }) => {
         // Note, this resource corresponds to SampleFilterSchema in the backend
@@ -102,5 +97,5 @@ SavePlot.propTypes = {
   qcApi: PropTypes.object.isRequired,
   plotData: PropTypes.object.isRequired,
   plotType: PropTypes.string.isRequired,
-  user: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired,
 };

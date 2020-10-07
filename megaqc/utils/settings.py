@@ -13,9 +13,9 @@ import os
 import subprocess
 
 import pkg_resources
+import yaml
 
 import megaqc
-import yaml
 
 logger = logging.getLogger(__name__)
 

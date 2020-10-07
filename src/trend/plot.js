@@ -9,7 +9,7 @@ export default function TrendPlot({
   client,
   plotData,
   plotSettings,
-  selectedFilter
+  selectedFilter,
 }) {
   const [saveBoxOpen, openSaveBox] = useState(false);
   return (
@@ -20,12 +20,12 @@ export default function TrendPlot({
         plotData={{
           // This is a bit of a hack to ensure the filters save in a format expected by the old parts of MegaQC
           filters_id: plotSettings.selectedFilter || -1,
-          ...plotSettings
+          ...plotSettings,
         }}
         plotType={"trend"}
         isOpen={saveBoxOpen}
         toggle={() => {
-          openSaveBox(open => !open);
+          openSaveBox((open) => !open);
         }}
       />
       <CardHeader className={"clearfix"}>
@@ -46,11 +46,11 @@ export default function TrendPlot({
           useResizeHandler={true}
           layout={{
             hovermode: "closest",
-            autosize: true
+            autosize: true,
           }}
           style={{
             width: "100%",
-            height: "100%"
+            height: "100%",
           }}
         />
       </CardBody>
@@ -66,5 +66,5 @@ TrendPlot.propTypes = {
 
   // The settings, used for saving the plot
   plotSettings: PropTypes.object.isRequired,
-  selectedFilter: PropTypes.object.isRequired
+  selectedFilter: PropTypes.object.isRequired,
 };

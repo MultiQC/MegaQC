@@ -10,6 +10,7 @@ import tempfile
 from builtins import object
 
 import yaml
+
 from megaqc.scheduler import upload_reports_job
 
 

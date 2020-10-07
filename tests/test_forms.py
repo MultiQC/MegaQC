@@ -3,6 +3,7 @@
 Test forms.
 """
 import pytest
+
 from megaqc.public.forms import LoginForm
 from megaqc.user.forms import RegisterForm
 from tests.factories import UserFactory

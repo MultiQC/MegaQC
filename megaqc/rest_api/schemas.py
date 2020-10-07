@@ -13,6 +13,7 @@ from marshmallow_jsonapi.flask import Schema as JsonApiSchema
 from marshmallow_jsonapi.utils import resolve_params
 from marshmallow_sqlalchemy.fields import Related
 from marshmallow_sqlalchemy.schema import ModelSchema, ModelSchemaMeta, ModelSchemaOpts
+
 from megaqc.extensions import db
 from megaqc.model import models
 from megaqc.rest_api import outlier

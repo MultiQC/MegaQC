@@ -7,6 +7,7 @@ from flask import url_for
 from marshmallow import EXCLUDE
 from sqlalchemy import inspect
 from sqlalchemy.orm import RelationshipProperty
+
 from tests import factories
 
 

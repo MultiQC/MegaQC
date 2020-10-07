@@ -10,8 +10,8 @@ export function getClient(token) {
   if (token) {
     options = {
       header: {
-        access_token: token
-      }
+        access_token: token,
+      },
     };
   }
 
@@ -27,7 +27,7 @@ export function getAuthenticatedClient(token) {
 
   // If we don't have a token, we need to obtain one
   if (!token) {
-    return getToken(client).then(token => {
+    return getToken(client).then((token) => {
       client._transport._auth.header = { access_token: token };
       return client;
     });
@@ -38,7 +38,7 @@ export function getAuthenticatedClient(token) {
  * Returns a promise that resolves to an API token
  */
 export function getToken(client) {
-  return client.get("users", "current").then(data => {
+  return client.get("users", "current").then((data) => {
     return data.toJSON().api_token;
   });
 }

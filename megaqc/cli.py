@@ -5,16 +5,16 @@
 
 import os
 
-import pkg_resources
-
 import click
+import pkg_resources
 from flask.cli import FlaskGroup
 
 
 def create_megaqc_app(info):
     import os
+
     from megaqc.app import create_app
-    from megaqc.settings import TestConfig, DevConfig, ProdConfig
+    from megaqc.settings import DevConfig, ProdConfig, TestConfig
 
     if os.environ.get("FLASK_DEBUG", False):
         CONFIG = DevConfig()

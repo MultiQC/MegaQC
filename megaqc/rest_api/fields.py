@@ -1,10 +1,11 @@
 import json
 
 from flask_restful import url_for
-from megaqc.extensions import db, ma
-from megaqc.model import models
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.collections import InstrumentedList
+
+from megaqc.extensions import db, ma
+from megaqc.model import models
 
 
 class JsonString(ma.Field):

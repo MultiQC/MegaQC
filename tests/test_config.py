@@ -3,6 +3,7 @@
 Test configs.
 """
 import pytest
+
 from megaqc.app import create_app
 from megaqc.settings import DevConfig, ProdConfig
 
