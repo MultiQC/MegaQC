@@ -19,11 +19,16 @@ def raise_response(resp):
 def compose_stack():
     deploy = (Path(__file__).parent.parent / "deployment").resolve()
     # Start the stack, and wait for it to start up
-    subprocess.run(["docker-compose", "up", "-d"], cwd=deploy)
+    subprocess.run(["docker-compose", "up", "-d"], cwd=deploy, check=True)
     time.sleep(15)
     yield
     # When we're done, stop the stack and cleanup the volumes
-    subprocess.run(["docker-compose", "down", "-v"], cwd=deploy)
+    subprocess.run(["docker-compose", "down", "-v"], cwd=deploy, check=True)
+
+
+def test_docker():
+    root = (Path(__file__).parent.parent).resolve()
+    subprocess.run(["docker", "build", str(root)], check=True)
 
 
 def test_compose(multiqc_data, compose_stack):
