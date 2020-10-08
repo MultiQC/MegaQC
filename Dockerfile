@@ -23,4 +23,6 @@ ENV MEGAQC_PRODUCTION=1 \
 COPY . /app
 # Copy the compiled JS in from the other node container
 COPY --from=0 /app/megaqc/static/ /app/megaqc/static/
+# Run migrations etc on startup
+RUN cp /app/megaqc/deployment/prestart.sh /app/prestart.sh
 RUN pip install /app[prod]
