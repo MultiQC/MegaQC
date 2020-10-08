@@ -5,8 +5,6 @@ services:
     #image: ewels/megaqc
     build: ..
     volumes:
-      # Mount in the startup script
-      - ./prestart.sh:/app/prestart.sh
       # Share the static files via a volume
       - static_volume:/app/megaqc/static
     expose:
