@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#! /usr/bin/env bash
 # This is used by the docker image. You can ignore this for regular use
 
 # Let the DB start
