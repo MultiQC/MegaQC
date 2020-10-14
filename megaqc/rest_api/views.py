@@ -7,7 +7,7 @@ from hashlib import sha1
 from http import HTTPStatus
 
 from flapison import ResourceDetail, ResourceList, ResourceRelationship
-from flask import Blueprint, jsonify, make_response, request
+from flask import Blueprint, current_app, jsonify, make_response, request
 from flask_login import current_user, login_required
 from marshmallow.utils import EXCLUDE, INCLUDE
 from marshmallow_jsonapi.exceptions import IncorrectTypeError
@@ -201,10 +201,19 @@ class UserRelationship(PermissionsMixin, ResourceRelationship):
     data_layer = dict(session=db.session, model=user_models.User)
 
 
-class UserList(PermissionsMixin, ResourceList):
+class UserList(ResourceList):
     view_kwargs = True
     schema = schemas.UserSchema
     data_layer = dict(session=db.session, model=user_models.User)
+
+    @api_perms(Permission.USER)
+    def get(self, **kwargs):
+        super().get(**kwargs)
+
+    # We allow this endpoint to be hit by a non user, to allow the first user to be created
+    @api_perms(Permission.NONUSER)
+    def post(self, **kwargs):
+        super().post(**kwargs)
 
     def get_schema_kwargs(self, args, kwargs):
         # Only show the filepath if they're an admin
@@ -214,10 +223,15 @@ class UserList(PermissionsMixin, ResourceList):
         return {}
 
     def create_object(self, data, kwargs):
+        user_count = db.session.query(user_models.User).count()
+
         # Creating a user requires generating a password
         new_user = super().create_object(data, kwargs)
         new_user.set_password(data["password"])
-        new_user.active = True
+        # The first user gets to be active. Subsequent users are not (unless they have disabled approval)
+        new_user.active = (
+            user_count == 0 or not current_app.config["USER_REGISTRATION_APPROVAL"]
+        )
         new_user.save()
         return new_user
 

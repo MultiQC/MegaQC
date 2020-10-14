@@ -3,6 +3,7 @@ from enum import IntEnum, auto
 from functools import wraps
 from uuid import uuid4
 
+from flapison.exceptions import JsonApiException
 from flask import abort, request
 from flask.globals import current_app
 
@@ -33,7 +34,8 @@ class Permission(IntEnum):
 
 def api_perms(min_level: Permission = Permission.NONUSER):
     """
-    Adds a "user" and "permission" kwarg to the view function.
+    Adds a "user" and "permission" kwarg to the view function. Also verifies a
+    minimum permissions level.
 
     :param min_level: If provided, this is the minimum permission level required by this endpoint
     """
@@ -54,11 +56,16 @@ def api_perms(min_level: Permission = Permission.NONUSER):
                     perms = Permission.NONUSER
                 elif user.is_admin:
                     perms = Permission.ADMIN
+                elif not user.is_active():
+                    perms = Permission.NONUSER
                 else:
                     perms = Permission.USER
 
             if perms < min_level:
-                abort(403)
+                raise JsonApiException(
+                    detail="Insufficient permissions to access this resource",
+                    status=403,
+                )
 
             kwargs["user"] = user
             kwargs["permission"] = perms
