@@ -63,6 +63,8 @@ def test_compose(multiqc_data, compose_stack):
     report.raise_for_status()
 
     # Finally, we should have 1 report
-    result = requests.get(url="http://localhost/rest_api/v1/uploads")
+    result = requests.get(
+        url="http://localhost/rest_api/v1/uploads", headers={"access_token": token}
+    )
     raise_response(result)
     assert len(result.json()["data"]) == 1
