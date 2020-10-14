@@ -9,6 +9,7 @@
   STRICT_REGISTRATION: false
   ```
   Then, whenever you run MegaQC, you need to `export MEGAQC_CONFIG /path/to/megaqc.conf.yaml
+- Much stricter REST API permissions. You now need an API token for almost all requests. One exception is creating a new account, which you can do without a token, but it will be deactivated by default, unless it is the first account created
 
 ### New Features
 
