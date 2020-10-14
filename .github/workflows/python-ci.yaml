@@ -1,5 +1,0 @@
-name: Python CI
-
-on: [push]
-
-jobs:
