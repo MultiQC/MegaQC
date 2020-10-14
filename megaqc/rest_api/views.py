@@ -208,12 +208,12 @@ class UserList(ResourceList):
 
     @api_perms(Permission.USER)
     def get(self, **kwargs):
-        super().get(**kwargs)
+        return super().get(**kwargs)
 
     # We allow this endpoint to be hit by a non user, to allow the first user to be created
     @api_perms(Permission.NONUSER)
     def post(self, **kwargs):
-        super().post(**kwargs)
+        return super().post(**kwargs)
 
     def get_schema_kwargs(self, args, kwargs):
         # Only show the filepath if they're an admin

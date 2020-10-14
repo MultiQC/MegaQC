@@ -438,7 +438,7 @@ def test_single_resource_permissions(
         headers={"access_token": token, "Content-Type": "application/json"},
     )
     # Since we only care about access, we don't check if the request succeeded or not, just if it didn't 403
-    assert (rv.status_code != 403) == success, rv.json
+    assert (rv.status_code != 403) == success
 
     # Check the request worked, given that we're now an admin
     rv = client.open(
@@ -446,27 +446,13 @@ def test_single_resource_permissions(
         method=method,
         headers={"access_token": admin_token, "Content-Type": "application/json"},
     )
-    assert rv.status_code != 403, rv.json
-    # Check the request had the expected status, given that we're acting as a regular user
-    rv = client.open(
-        url,
-        method=method,
-        headers={"access_token": token, "Content-Type": "application/json"},
-    )
-    # Since we only care about access, we don't check if the request succeeded or not, just if it didn't 403
-    assert (rv.status_code != 403) == success, rv.json
-
-    # Check the request worked, given that we're now an admin
-    rv = client.open(
-        url,
-        method=method,
-        headers={"access_token": admin_token, "Content-Type": "application/json"},
-    )
-    assert rv.status_code != 403, rv.json
+    assert rv.status_code != 403
 
 
 @pytest.mark.parametrize(
-    "endpoint", set(list_resource_endpoints) - {"rest_api.uploadlist"}
+    # These two have unusual permissions
+    "endpoint",
+    set(list_resource_endpoints) - {"rest_api.uploadlist", "rest_api.userlist"},
 )
 @pytest.mark.parametrize(
     "method,success",
@@ -492,7 +478,7 @@ def test_many_resources_permissions(
         headers={"access_token": token, "Content-Type": "application/json"},
     )
     # Since we only care about access, we don't check if the request succeeded or not, just if it didn't 403
-    assert (rv.status_code != 403) == success, rv.json
+    assert (rv.status_code != 403) == success
 
     # Check the request worked, given that we're now an admin
     rv = client.open(
@@ -500,4 +486,4 @@ def test_many_resources_permissions(
         method=method,
         headers={"access_token": admin_token, "Content-Type": "application/json"},
     )
-    assert rv.status_code != 403, rv.json
+    assert rv.status_code != 403
