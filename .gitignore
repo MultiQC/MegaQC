@@ -1,3 +1,9 @@
+.idea
+megaqc/static/js/admin*
+megaqc/static/js/trend*
+venv/
+*.db
+
 # Uploads
 uploads/*
 !uploads/README.md

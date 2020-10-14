@@ -12,7 +12,7 @@ from setuptools import setup
 
 setup(
     name="megaqc",
-    version="0.2.0",
+    version="0.3.0",
     author="Phil Ewels",
     author_email="phil.ewels@scilifelab.se",
     description="Collect and visualise data across multiple MultiQC runs",
