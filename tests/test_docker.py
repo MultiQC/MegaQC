@@ -19,7 +19,9 @@ def raise_response(resp):
 def compose_stack():
     deploy = (Path(__file__).parent.parent / "deployment").resolve()
     # Start the stack, and wait for it to start up
-    subprocess.run(["docker-compose", "up", "-d"], cwd=deploy, check=True)
+    subprocess.run(
+        ["docker-compose", "up", "--build", "--detach"], cwd=deploy, check=True
+    )
     time.sleep(15)
     yield
     # When we're done, stop the stack and cleanup the volumes
