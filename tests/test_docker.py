@@ -34,11 +34,6 @@ def test_docker():
 
 
 def test_compose(multiqc_data, compose_stack):
-    # Initially we should have no reports
-    result = requests.get(url="http://localhost/rest_api/v1/uploads")
-    raise_response(result)
-    assert len(result.json()["data"]) == 0
-
     # Create a user
     user = requests.post(
         "http://localhost/rest_api/v1/users",
