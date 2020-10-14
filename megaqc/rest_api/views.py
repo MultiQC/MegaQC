@@ -8,28 +8,55 @@ from http import HTTPStatus
 
 from flapison import ResourceDetail, ResourceList, ResourceRelationship
 from flask import Blueprint, jsonify, make_response, request
-from flask_login import current_user
+from flask_login import current_user, login_required
 from marshmallow.utils import EXCLUDE, INCLUDE
 from marshmallow_jsonapi.exceptions import IncorrectTypeError
 
 import megaqc.user.models as user_models
-from megaqc.api.views import check_user
 from megaqc.extensions import db, json_api, restful
 from megaqc.model import models
 from megaqc.rest_api import plot, schemas, utils
 from megaqc.rest_api.content import json_to_csv
+from megaqc.rest_api.utils import Permission, api_perms
 from megaqc.rest_api.webarg_parser import use_args, use_kwargs
 
 api_bp = Blueprint("rest_api", __name__, url_prefix="/rest_api/v1")
 json_api.blueprint = api_bp
 
 
-class Upload(ResourceDetail):
+class PermissionsMixin:
+    """
+    Adds shared config to all views.
+
+    Logged-out users shouldn't be able to access the API at all, logged
+    in users should be able to only GET, and only admins should be able
+    to POST, PATCH or DELETE. These decorators can be overriden by child
+    classes, however
+    """
+
+    @api_perms(Permission.USER)
+    def get(self, **kwargs):
+        return super().get(**kwargs)
+
+    @api_perms(Permission.ADMIN)
+    def post(self, **kwargs):
+        return super().post(**kwargs)
+
+    @api_perms(Permission.ADMIN)
+    def patch(self, **kwargs):
+        return super().patch(**kwargs)
+
+    @api_perms(Permission.ADMIN)
+    def delete(self, **kwargs):
+        return super().delete(**kwargs)
+
+
+class Upload(PermissionsMixin, ResourceDetail):
     schema = schemas.UploadSchema
     data_layer = dict(session=db.session, model=models.Upload)
 
 
-class UploadList(ResourceList):
+class UploadList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.UploadSchema
     data_layer = dict(session=db.session, model=models.Upload)
@@ -42,10 +69,13 @@ class UploadList(ResourceList):
 
         return {}
 
-    @check_user
+    @api_perms(Permission.USER)
     def post(self, **kwargs):
         """
         Upload a new report.
+
+        This is rare in that average users *can* do this, even though
+        they aren't allowed to edit arbitrary data
         """
         # This doesn't exactly follow the JSON API spec, since it doesn't exactly support file uploads:
         # https://github.com/json-api/json-api/issues/246
@@ -61,61 +91,61 @@ class UploadList(ResourceList):
         return schemas.UploadSchema(many=False).dump(upload_row), HTTPStatus.CREATED
 
 
-class UploadRelationship(ResourceRelationship):
+class UploadRelationship(PermissionsMixin, ResourceRelationship):
     schema = schemas.UploadSchema
     data_layer = dict(session=db.session, model=models.Upload)
 
 
-class ReportList(ResourceList):
+class ReportList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.ReportSchema
     data_layer = dict(session=db.session, model=models.Report)
 
 
-class Report(ResourceDetail):
+class Report(PermissionsMixin, ResourceDetail):
     schema = schemas.ReportSchema
     data_layer = dict(session=db.session, model=models.Report)
 
 
-class ReportRelationship(ResourceRelationship):
+class ReportRelationship(PermissionsMixin, ResourceRelationship):
     schema = schemas.ReportSchema
     data_layer = dict(session=db.session, model=models.Report)
 
 
-class ReportMeta(ResourceDetail):
+class ReportMeta(PermissionsMixin, ResourceDetail):
     view_kwargs = True
     schema = schemas.ReportMetaSchema
     data_layer = dict(session=db.session, model=models.ReportMeta)
 
 
-class ReportMetaList(ResourceList):
+class ReportMetaList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.ReportMetaSchema
     data_layer = dict(session=db.session, model=models.ReportMeta)
 
 
-class ReportMetaRelationship(ResourceRelationship):
+class ReportMetaRelationship(PermissionsMixin, ResourceRelationship):
     schema = schemas.ReportMetaSchema
     data_layer = dict(session=db.session, model=models.ReportMeta)
 
 
-class Sample(ResourceDetail):
+class Sample(PermissionsMixin, ResourceDetail):
     schema = schemas.SampleSchema
     data_layer = dict(session=db.session, model=models.Sample)
 
 
-class SampleList(ResourceList):
+class SampleList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.SampleSchema
     data_layer = dict(session=db.session, model=models.Sample)
 
 
-class SampleRelationship(ResourceRelationship):
+class SampleRelationship(PermissionsMixin, ResourceRelationship):
     schema = schemas.SampleSchema
     data_layer = dict(session=db.session, model=models.Sample)
 
 
-class ReportMetaTypeList(ResourceList):
+class ReportMetaTypeList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.ReportMetaTypeSchema
     data_layer = dict(session=db.session, model=models.ReportMeta)
@@ -133,45 +163,45 @@ class ReportMetaTypeList(ResourceList):
         return query.count(), query.all()
 
 
-class SampleData(ResourceDetail):
+class SampleData(PermissionsMixin, ResourceDetail):
     view_kwargs = True
     schema = schemas.SampleDataSchema
     data_layer = dict(session=db.session, model=models.SampleData)
 
 
-class SampleDataList(ResourceList):
+class SampleDataList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.SampleDataSchema
     data_layer = dict(session=db.session, model=models.SampleData)
 
 
-class SampleDataRelationship(ResourceRelationship):
+class SampleDataRelationship(PermissionsMixin, ResourceRelationship):
     schema = schemas.SampleDataSchema
     data_layer = dict(session=db.session, model=models.SampleData)
 
 
-class DataType(ResourceDetail):
+class DataType(PermissionsMixin, ResourceDetail):
     schema = schemas.SampleDataTypeSchema
     data_layer = dict(session=db.session, model=models.SampleDataType)
 
 
-class DataTypeList(ResourceList):
+class DataTypeList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.SampleDataTypeSchema
     data_layer = dict(session=db.session, model=models.SampleDataType)
 
 
-class User(ResourceDetail):
+class User(PermissionsMixin, ResourceDetail):
     schema = schemas.UserSchema
     data_layer = dict(session=db.session, model=user_models.User)
 
 
-class UserRelationship(ResourceRelationship):
+class UserRelationship(PermissionsMixin, ResourceRelationship):
     schema = schemas.UserSchema
     data_layer = dict(session=db.session, model=user_models.User)
 
 
-class UserList(ResourceList):
+class UserList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.UserSchema
     data_layer = dict(session=db.session, model=user_models.User)
@@ -192,11 +222,11 @@ class UserList(ResourceList):
         return new_user
 
 
-class CurrentUser(ResourceDetail):
+class CurrentUser(PermissionsMixin, ResourceDetail):
     schema = schemas.UserSchema
     data_layer = dict(session=db.session, model=user_models.User)
 
-    @utils.check_perms
+    @login_required
     def get(self, **kwargs):
         """
         Get details about the current user.
@@ -216,7 +246,7 @@ class CurrentUser(ResourceDetail):
             .first_or_404()
         )
 
-        if kwargs["permission"] >= utils.Permission.ADMIN:
+        if current_user.is_admin:
             # If an admin is making this request, give them everything
             schema_kwargs = {}
         else:
@@ -226,23 +256,23 @@ class CurrentUser(ResourceDetail):
         return schemas.UserSchema(many=False, **schema_kwargs).dump(user)
 
 
-class FilterList(ResourceList):
+class FilterList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.SampleFilterSchema
     data_layer = dict(session=db.session, model=models.SampleFilter)
 
 
-class Filter(ResourceDetail):
+class Filter(PermissionsMixin, ResourceDetail):
     schema = schemas.SampleFilterSchema
     data_layer = dict(session=db.session, model=models.SampleFilter)
 
 
-class FilterRelationship(ResourceRelationship):
+class FilterRelationship(PermissionsMixin, ResourceRelationship):
     schema = schemas.SampleFilterSchema
     data_layer = dict(session=db.session, model=models.SampleFilter)
 
 
-class FilterGroupList(ResourceList):
+class FilterGroupList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.FilterGroupSchema
     data_layer = dict(session=db.session, model=models.SampleFilter)
@@ -257,40 +287,40 @@ class FilterGroupList(ResourceList):
         return query.count(), query.all()
 
 
-class FavouritePlotList(ResourceList):
+class FavouritePlotList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.FavouritePlotSchema
     data_layer = dict(session=db.session, model=models.PlotFavourite)
 
 
-class FavouritePlot(ResourceDetail):
+class FavouritePlot(PermissionsMixin, ResourceDetail):
     schema = schemas.FavouritePlotSchema
     data_layer = dict(session=db.session, model=models.PlotFavourite)
 
 
-class FavouritePlotRelationship(ResourceRelationship):
+class FavouritePlotRelationship(PermissionsMixin, ResourceRelationship):
     schema = schemas.FavouritePlotSchema
     data_layer = dict(session=db.session, model=models.PlotFavourite)
 
 
-class DashboardList(ResourceList):
+class DashboardList(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.DashboardSchema
     data_layer = dict(session=db.session, model=models.Dashboard)
 
 
-class DashboardRelationship(ResourceList):
+class DashboardRelationship(PermissionsMixin, ResourceList):
     view_kwargs = True
     schema = schemas.DashboardSchema
     data_layer = dict(session=db.session, model=models.Dashboard)
 
 
-class Dashboard(ResourceDetail):
+class Dashboard(PermissionsMixin, ResourceDetail):
     schema = schemas.DashboardSchema
     data_layer = dict(session=db.session, model=models.Dashboard)
 
 
-class TrendSeries(ResourceList):
+class TrendSeries(PermissionsMixin, ResourceList):
     @use_args(schemas.TrendInputSchema(), locations=("querystring",))
     def get(self, args):
         # We need to give each resource a unique ID so the client doesn't try to cache

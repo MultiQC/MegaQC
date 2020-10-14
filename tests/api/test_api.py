@@ -10,6 +10,33 @@ from sqlalchemy.orm import RelationshipProperty
 
 from tests import factories
 
+single_resource_endpoints = [
+    "rest_api.upload",
+    "rest_api.sampledata",
+    "rest_api.report",
+    "rest_api.sample",
+    "rest_api.datatype",
+    "rest_api.user",
+    "rest_api.filter",
+    "rest_api.favouriteplot",
+    "rest_api.dashboard",
+]
+
+list_resource_endpoints = [
+    "rest_api.uploadlist",
+    "rest_api.sampledatalist",
+    "rest_api.reportlist",
+    "rest_api.reportmetalist",
+    "rest_api.samplelist",
+    "rest_api.metatypelist",
+    "rest_api.datatypelist",
+    "rest_api.userlist",
+    "rest_api.filterlist",
+    "rest_api.filtergrouplist",
+    "rest_api.favouriteplotlist",
+    "rest_api.dashboardlist",
+]
+
 
 def unset_dump_only(schema):
     """
@@ -144,23 +171,7 @@ def factory_clone(instance, factory):
     return factory(**rels)
 
 
-@pytest.mark.parametrize(
-    "endpoint",
-    [
-        "rest_api.uploadlist",
-        "rest_api.sampledatalist",
-        "rest_api.reportlist",
-        "rest_api.reportmetalist",
-        "rest_api.samplelist",
-        "rest_api.metatypelist",
-        "rest_api.datatypelist",
-        "rest_api.userlist",
-        "rest_api.filterlist",
-        "rest_api.filtergrouplist",
-        "rest_api.favouriteplotlist",
-        "rest_api.dashboardlist",
-    ],
-)
+@pytest.mark.parametrize("endpoint", list_resource_endpoints)
 def test_get_many_resources(endpoint, session, client, admin_token, app):
     """
     GET /resource.
@@ -258,20 +269,7 @@ def test_get_many_resources_associated(
     # assert dummy_instance not in data
 
 
-@pytest.mark.parametrize(
-    "endpoint",
-    [
-        "rest_api.upload",
-        "rest_api.sampledata",
-        "rest_api.report",
-        "rest_api.sample",
-        "rest_api.datatype",
-        "rest_api.user",
-        "rest_api.filter",
-        "rest_api.favouriteplot",
-        "rest_api.dashboard",
-    ],
-)
+@pytest.mark.parametrize("endpoint", single_resource_endpoints)
 def test_get_single_resource(endpoint, session, client, admin_token, app):
     """
     GET /resource/1.
@@ -401,3 +399,105 @@ def test_post_resource(endpoint, admin_token, session, client, app):
 
     # Validate the returned data
     data = resource.schema(many=False, unknown=EXCLUDE).load(ret)
+
+
+@pytest.mark.parametrize(
+    "endpoint", set(single_resource_endpoints) - {"rest_api.report"}
+)
+@pytest.mark.parametrize(
+    "method,success",
+    [
+        ["GET", True],
+        ["PATCH", False],
+        ["DELETE", False],
+    ],
+)
+def test_single_resource_permissions(
+    endpoint, method, success, token, admin_token, session, client, app
+):
+    """
+    Test that each endpoint can only be accessed by the appropriate permission
+    level.
+    """
+    resource = resource_from_endpoint(app, endpoint)
+    model = resource.data_layer["model"]
+    factory = find_factory(model)
+
+    # Construct an instance of the model
+    instance = factory()
+    session.commit()
+
+    # Do the request
+    pk = instance_pk(instance)[1]
+    url = url_for(endpoint, id=pk)
+
+    # Check the request had the expected status, given that we're acting as a regular user
+    rv = client.open(
+        url,
+        method=method,
+        headers={"access_token": token, "Content-Type": "application/json"},
+    )
+    # Since we only care about access, we don't check if the request succeeded or not, just if it didn't 403
+    assert (rv.status_code != 403) == success, rv.json
+
+    # Check the request worked, given that we're now an admin
+    rv = client.open(
+        url,
+        method=method,
+        headers={"access_token": admin_token, "Content-Type": "application/json"},
+    )
+    assert rv.status_code != 403, rv.json
+    # Check the request had the expected status, given that we're acting as a regular user
+    rv = client.open(
+        url,
+        method=method,
+        headers={"access_token": token, "Content-Type": "application/json"},
+    )
+    # Since we only care about access, we don't check if the request succeeded or not, just if it didn't 403
+    assert (rv.status_code != 403) == success, rv.json
+
+    # Check the request worked, given that we're now an admin
+    rv = client.open(
+        url,
+        method=method,
+        headers={"access_token": admin_token, "Content-Type": "application/json"},
+    )
+    assert rv.status_code != 403, rv.json
+
+
+@pytest.mark.parametrize(
+    "endpoint", set(list_resource_endpoints) - {"rest_api.uploadlist"}
+)
+@pytest.mark.parametrize(
+    "method,success",
+    [
+        ["GET", True],
+        ["POST", False],
+    ],
+)
+def test_many_resources_permissions(
+    endpoint, method, success, session, client, admin_token, token
+):
+    """
+    Test that each endpoint can only be accessed by the appropriate permission
+    level.
+    """
+    # Do the request
+    url = url_for(endpoint)
+
+    # Check the request had the expected status, given that we're acting as a regular user
+    rv = client.open(
+        url,
+        method=method,
+        headers={"access_token": token, "Content-Type": "application/json"},
+    )
+    # Since we only care about access, we don't check if the request succeeded or not, just if it didn't 403
+    assert (rv.status_code != 403) == success, rv.json
+
+    # Check the request worked, given that we're now an admin
+    rv = client.open(
+        url,
+        method=method,
+        headers={"access_token": admin_token, "Content-Type": "application/json"},
+    )
+    assert rv.status_code != 403, rv.json

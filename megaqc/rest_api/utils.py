@@ -3,7 +3,7 @@ from enum import IntEnum, auto
 from functools import wraps
 from uuid import uuid4
 
-from flask import request
+from flask import abort, request
 from flask.globals import current_app
 
 from megaqc.user.models import User
@@ -26,39 +26,44 @@ def get_unique_filename():
 
 
 class Permission(IntEnum):
-    VIEWER = auto()
+    NONUSER = auto()
     USER = auto()
     ADMIN = auto()
 
 
-def check_perms(function):
+def api_perms(min_level: Permission = Permission.NONUSER):
     """
     Adds a "user" and "permission" kwarg to the view function.
 
-    :param function:
-    :return:
+    :param min_level: If provided, this is the minimum permission level required by this endpoint
     """
 
-    @wraps(function)
-    def user_wrap_function(*args, **kwargs):
-        if not request.headers.has_key("access_token"):
-            perms = Permission.VIEWER
-            user = None
-        else:
-            user = User.query.filter_by(
-                api_token=request.headers.get("access_token")
-            ).first()
-            if not user:
-                perms = Permission.VIEWER
-            elif user.is_anonymous:
-                perms = Permission.VIEWER
-            elif user.is_admin:
-                perms = Permission.ADMIN
+    def wrapper(function):
+        @wraps(function)
+        def user_wrap_function(*args, **kwargs):
+            if not request.headers.has_key("access_token"):
+                perms = Permission.NONUSER
+                user = None
             else:
-                perms = Permission.USER
+                user = User.query.filter_by(
+                    api_token=request.headers.get("access_token")
+                ).first()
+                if not user:
+                    perms = Permission.NONUSER
+                elif user.is_anonymous:
+                    perms = Permission.NONUSER
+                elif user.is_admin:
+                    perms = Permission.ADMIN
+                else:
+                    perms = Permission.USER
 
-        kwargs["user"] = user
-        kwargs["permission"] = perms
-        return function(*args, **kwargs)
+            if perms < min_level:
+                abort(403)
 
-    return user_wrap_function
+            kwargs["user"] = user
+            kwargs["permission"] = perms
+            return function(*args, **kwargs)
+
+        return user_wrap_function
+
+    return wrapper
