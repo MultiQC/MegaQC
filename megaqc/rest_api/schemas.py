@@ -363,7 +363,7 @@ class UserSchema(Schema):
     email = f.String()
     salt = f.String()
     password = f.String()
-    created_at = f.DateTime()
+    created_at = f.DateTime(dump_only=True)
     first_name = f.String()
     last_name = f.String()
     active = f.Boolean()

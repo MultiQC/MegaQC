@@ -109,13 +109,15 @@ def register():
     """
     form = RegisterForm(request.form)
     if form.validate_on_submit():
-        u = User.create(
+        u = User(
             username=form.username.data,
             email=form.email.data,
             password=form.password.data,
             first_name=form.first_name.data,
             last_name=form.last_name.data,
         )
+        u.enforce_admin()
+        u.save()
         if u.active:
             flash("Thanks for registering! You're now logged in.", "success")
             login_user(u)
