@@ -100,7 +100,13 @@ class User(db.Model, CRUDMixin, UserMixin):
             self.password = None
 
     def enforce_admin(self):
-        # Enforce that the first user is an active admin
+        """
+        Enforce that the first user is an active admin.
+
+        This is included as a method that isn't automatically called,
+        because there are cases where we don't want this behaviour to
+        happen, such as during testing.
+        """
         if db.session.query(User).count() == 0:
             self.is_admin = True
             self.active = True
