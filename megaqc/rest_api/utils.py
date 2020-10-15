@@ -43,27 +43,33 @@ def api_perms(min_level: Permission = Permission.NONUSER):
     def wrapper(function):
         @wraps(function)
         def user_wrap_function(*args, **kwargs):
+            extra = None
             if not request.headers.has_key("access_token"):
                 perms = Permission.NONUSER
                 user = None
+                extra = "No access token provided. Please add a header with the name 'access_token'."
             else:
                 user = User.query.filter_by(
                     api_token=request.headers.get("access_token")
                 ).first()
                 if not user:
                     perms = Permission.NONUSER
+                    extra = "The provided access token was invalid."
                 elif user.is_anonymous:
                     perms = Permission.NONUSER
                 elif user.is_admin:
                     perms = Permission.ADMIN
                 elif not user.is_active():
                     perms = Permission.NONUSER
+                    extra = "User is not active."
                 else:
                     perms = Permission.USER
 
             if perms < min_level:
+                title = "Insufficient permissions to access this resource"
                 raise JsonApiException(
-                    detail="Insufficient permissions to access this resource",
+                    title=title,
+                    detail=extra,
                     status=403,
                 )
 
