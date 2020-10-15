@@ -22,6 +22,7 @@ from sqlalchemy import (
     Integer,
     Table,
     UnicodeText,
+    event,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
@@ -84,12 +85,8 @@ class User(db.Model, CRUDMixin, UserMixin):
         """
         db.Model.__init__(self, **kwargs)
 
-        user_count = db.session.query(User).count()
-        # The first user gets to be active. Subsequent users are not (unless they have disabled approval)
-        if user_count == 0:
-            self.active = True
-            self.is_admin = True
-        else:
+        # Config adjusts the default active status
+        if "active" not in kwargs:
             self.active = not current_app.config["USER_REGISTRATION_APPROVAL"]
 
         self.salt = getrandstr(rng, digits + letters, 80)
@@ -98,6 +95,13 @@ class User(db.Model, CRUDMixin, UserMixin):
             self.set_password(password)
         else:
             self.password = None
+
+    def save(self, commit=True):
+        count = db.session.query(User).count()
+        if count == 0:
+            self.active = True
+            self.is_admin = True
+        return super().save(commit)
 
     @hybrid_property
     def full_name(self):

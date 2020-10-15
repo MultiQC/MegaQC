@@ -71,3 +71,9 @@ def user(db):
     user = UserFactory(password="myprecious")
     db.session.commit()
     return user
+
+
+@pytest.fixture()
+def session(db):
+    sess = db.session
+    return sess
