@@ -223,15 +223,9 @@ class UserList(ResourceList):
         return {}
 
     def create_object(self, data, kwargs):
-        user_count = db.session.query(user_models.User).count()
-
         # Creating a user requires generating a password
         new_user = super().create_object(data, kwargs)
         new_user.set_password(data["password"])
-        # The first user gets to be active. Subsequent users are not (unless they have disabled approval)
-        new_user.active = (
-            user_count == 0 or not current_app.config["USER_REGISTRATION_APPROVAL"]
-        )
         new_user.save()
         return new_user
 

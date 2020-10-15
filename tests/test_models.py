@@ -72,3 +72,21 @@ class TestUser:
         user.roles.append(role)
         user.save()
         assert role in user.roles
+
+    def test_active_inactive(self):
+        """
+        The first user to register should be an activated admin, and subsequent
+        users should be inactive and regular users.
+        """
+        first = User.create(
+            username="foo", email="foo@foo.com", password="foobarbaz123"
+        )
+        second = User.create(
+            username="bar", email="bar@bar.com", password="foobarbaz123"
+        )
+
+        assert first.active
+        assert first.is_admin
+
+        assert not second.active
+        assert not second.is_admin
