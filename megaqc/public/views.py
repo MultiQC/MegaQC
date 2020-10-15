@@ -109,19 +109,14 @@ def register():
     """
     form = RegisterForm(request.form)
     if form.validate_on_submit():
-        user_cnt = db.session.query(User).count()
-        # If we have strict registration active, new users beyond the first are not active by default
-        active = user_cnt == 0 or not current_app.config["USER_REGISTRATION_APPROVAL"]
         u = User.create(
             username=form.username.data,
             email=form.email.data,
             password=form.password.data,
             first_name=form.first_name.data,
             last_name=form.last_name.data,
-            active=active,
-            is_admin=True if user_cnt == 0 else False,
         )
-        if active:
+        if u.active:
             flash("Thanks for registering! You're now logged in.", "success")
             login_user(u)
         else:

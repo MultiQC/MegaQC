@@ -7,6 +7,7 @@ import string
 import sys
 from builtins import str
 
+from flask import current_app
 from flask_login import UserMixin
 from passlib.hash import argon2
 from passlib.utils import getrandstr, rng
@@ -29,20 +30,8 @@ from sqlalchemy.orm import relationship
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
 
-if sys.version_info.major == 2:
-    letters = string.letters
-    digits = string.digits
-elif sys.version_info.major == 3:
-    letters = string.ascii_letters
-    digits = string.digits
-else:
-    raise (
-        Exception(
-            "Unsupport python version: v{}.{}".format(
-                sys.version_info.major, sys.version_info.minor
-            )
-        )
-    )
+letters = string.ascii_letters
+digits = string.digits
 
 
 class Role(db.Model, CRUDMixin):
@@ -94,15 +83,21 @@ class User(db.Model, CRUDMixin, UserMixin):
         Create instance.
         """
         db.Model.__init__(self, **kwargs)
+
+        user_count = db.session.query(User).count()
+        # The first user gets to be active. Subsequent users are not (unless they have disabled approval)
+        if user_count == 0:
+            self.active = True
+            self.is_admin = True
+        else:
+            self.active = not current_app.config["USER_REGISTRATION_APPROVAL"]
+
         self.salt = getrandstr(rng, digits + letters, 80)
         self.api_token = getrandstr(rng, digits + letters, 80)
         if password:
             self.set_password(password)
         else:
             self.password = None
-
-        if self.user_id == 1:
-            self.is_admin = True
 
     @hybrid_property
     def full_name(self):
