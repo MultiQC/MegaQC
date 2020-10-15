@@ -215,6 +215,13 @@ class UserList(ResourceList):
     def post(self, **kwargs):
         return super().post(**kwargs)
 
+    def post_schema_kwargs(self, args, kwargs):
+        # None of these fields should be set directly by a user
+        if kwargs["permission"] < utils.Permission.ADMIN:
+            return {"dump_only": ["admin", "active", "salt", "api_token"]}
+        else:
+            return {}
+
     def get_schema_kwargs(self, args, kwargs):
         # Only show the filepath if they're an admin
         if "user" in kwargs and kwargs["permission"] <= utils.Permission.ADMIN:
@@ -225,6 +232,7 @@ class UserList(ResourceList):
     def create_object(self, data, kwargs):
         # Creating a user requires generating a password
         new_user = super().create_object(data, kwargs)
+        new_user.enforce_admin()
         new_user.set_password(data["password"])
         new_user.save()
         return new_user

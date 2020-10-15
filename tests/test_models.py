@@ -82,8 +82,11 @@ def test_active_inactive(session, strict, app):
     """
     app.config["USER_REGISTRATION_APPROVAL"] = strict
 
-    first = User.create(username="foo", email="foo@foo.com", password="foobarbaz123")
-    second = User.create(username="bar", email="bar@bar.com", password="foobarbaz123")
+    first = User(username="foo", email="foo@foo.com", password="foobarbaz123")
+    second = User(username="bar", email="bar@bar.com", password="foobarbaz123")
+    session.add_all([first, second])
+
+    session.commit()
 
     # The first user should always be an active admin
     assert first.active

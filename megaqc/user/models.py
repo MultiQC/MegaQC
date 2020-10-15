@@ -23,6 +23,9 @@ from sqlalchemy import (
     Table,
     UnicodeText,
     event,
+    func,
+    select,
+    update,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
@@ -96,12 +99,15 @@ class User(db.Model, CRUDMixin, UserMixin):
         else:
             self.password = None
 
-    def save(self, commit=True):
-        count = db.session.query(User).count()
-        if count == 0:
-            self.active = True
+    def enforce_admin(self):
+        # Enforce that the first user is an active admin
+        if db.session.query(User).count() == 0:
             self.is_admin = True
-        return super().save(commit)
+            self.active = True
+
+    # users = User.__table__
+    #     if target.user_id == 1:
+    #         connection.execute(users.update().where(users.c.user_id == 1).values(is_admin=True, active=True))
 
     @hybrid_property
     def full_name(self):
@@ -139,3 +145,11 @@ class User(db.Model, CRUDMixin, UserMixin):
         Represent instance as a unique string.
         """
         return "<User({username!r})>".format(username=self.username)
+
+
+# @event.listens_for(User, 'after_insert')
+# def receive_after_insert(mapper, connection, target):
+#     # Here we enforce the business rule that the first user should be an active admin
+#     users = User.__table__
+#     if target.user_id == 1:
+#         connection.execute(users.update().where(users.c.user_id == 1).values(is_admin=True, active=True))
