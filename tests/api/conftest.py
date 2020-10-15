@@ -24,9 +24,3 @@ def admin_token(db):
     db.session.add(user)
     db.session.commit()
     return user.api_token
-
-
-@pytest.fixture()
-def session(db):
-    sess = db.session
-    return sess

@@ -73,20 +73,22 @@ class TestUser:
         user.save()
         assert role in user.roles
 
-    def test_active_inactive(self):
-        """
-        The first user to register should be an activated admin, and subsequent
-        users should be inactive and regular users.
-        """
-        first = User.create(
-            username="foo", email="foo@foo.com", password="foobarbaz123"
-        )
-        second = User.create(
-            username="bar", email="bar@bar.com", password="foobarbaz123"
-        )
 
-        assert first.active
-        assert first.is_admin
+@pytest.mark.parametrize("strict", [True, False])
+def test_active_inactive(session, strict, app):
+    """
+    The first user to register should be an activated admin, and subsequent
+    users should be inactive and regular users.
+    """
+    app.config["USER_REGISTRATION_APPROVAL"] = strict
 
-        assert not second.active
-        assert not second.is_admin
+    first = User.create(username="foo", email="foo@foo.com", password="foobarbaz123")
+    second = User.create(username="bar", email="bar@bar.com", password="foobarbaz123")
+
+    # The first user should always be an active admin
+    assert first.active
+    assert first.is_admin
+
+    # The second and subsequent users should be active only if it's not in strict mode
+    assert second.active != strict
+    assert not second.is_admin
