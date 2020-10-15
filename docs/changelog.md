@@ -14,8 +14,12 @@
 ### New Features
 
 - [[#140]](https://github.com/ewels/MegaQC/issues/140) Added a changelog. It's here! You're reading it!
-- Tests for the REST API permissions
 
 ### Bug Fixes
 
 - [[#139]](https://github.com/ewels/MegaQC/issues/139) Fixed the user management page (`/users/admin/users`), which lost its JavaScript
+
+### Internal Changes
+
+- Tests for the REST API permissions
+- Enforce inactive users (by default) in the model layer
