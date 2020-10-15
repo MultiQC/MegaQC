@@ -9,7 +9,7 @@ import requests
 def raise_response(resp):
     if not str(resp.status_code).startswith("2"):
         raise Exception(
-            "Request failed with status {} and body{}".format(
+            "Request failed with status {} and body {}".format(
                 resp.status_code, resp.text
             )
         )
