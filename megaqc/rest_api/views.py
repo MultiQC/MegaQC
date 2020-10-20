@@ -7,6 +7,7 @@ from hashlib import sha1
 from http import HTTPStatus
 
 from flapison import ResourceDetail, ResourceList, ResourceRelationship
+from flapison.schema import get_nested_fields, get_relationships
 from flask import Blueprint, current_app, jsonify, make_response, request
 from flask_login import current_user, login_required
 from marshmallow.utils import EXCLUDE, INCLUDE
@@ -230,8 +231,16 @@ class UserList(ResourceList):
         return {}
 
     def create_object(self, data, kwargs):
+        # This is mostly copied from flapison.data_layers.alchemy
+        relationship_fields = get_relationships(self.schema, model_field=True)
+        nested_fields = get_nested_fields(self.schema, model_field=True)
+        join_fields = relationship_fields + nested_fields
+        new_user = self.data_layer["model"](
+            **{key: value for (key, value) in data.items() if key not in join_fields}
+        )
+        self._data_layer.apply_relationships(data, new_user)
+        self._data_layer.apply_nested_fields(data, new_user)
         # Creating a user requires generating a password
-        new_user = super().create_object(data, kwargs)
         new_user.enforce_admin()
         new_user.set_password(data["password"])
         new_user.save()

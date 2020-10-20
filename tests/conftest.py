@@ -6,6 +6,7 @@ Defines fixtures available to all tests.
 from pathlib import Path
 
 import pytest
+from sqlalchemy.orm.session import Session
 from webtest import TestApp
 
 from megaqc.app import create_app
@@ -16,14 +17,14 @@ from megaqc.settings import TestConfig
 from .factories import UserFactory
 
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def multiqc_data():
     here = Path(__file__).parent
     with (here / "multiqc_data.json").open() as fp:
         return fp.read()
 
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def app():
     """
     An application for the tests.
@@ -47,7 +48,7 @@ def testapp(app):
     return TestApp(app)
 
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def db(app):
     """
     A database for the tests.
@@ -75,5 +76,5 @@ def user(db):
 
 @pytest.fixture()
 def session(db):
-    sess = db.session
+    sess: Session = db.session
     return sess
