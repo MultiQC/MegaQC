@@ -7,6 +7,7 @@ import string
 import sys
 from builtins import str
 
+from flask import current_app
 from flask_login import UserMixin
 from passlib.hash import argon2
 from passlib.utils import getrandstr, rng
@@ -21,6 +22,10 @@ from sqlalchemy import (
     Integer,
     Table,
     UnicodeText,
+    event,
+    func,
+    select,
+    update,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
@@ -29,20 +34,8 @@ from sqlalchemy.orm import relationship
 from megaqc.database import CRUDMixin
 from megaqc.extensions import db
 
-if sys.version_info.major == 2:
-    letters = string.letters
-    digits = string.digits
-elif sys.version_info.major == 3:
-    letters = string.ascii_letters
-    digits = string.digits
-else:
-    raise (
-        Exception(
-            "Unsupport python version: v{}.{}".format(
-                sys.version_info.major, sys.version_info.minor
-            )
-        )
-    )
+letters = string.ascii_letters
+digits = string.digits
 
 
 class Role(db.Model, CRUDMixin):
@@ -94,6 +87,11 @@ class User(db.Model, CRUDMixin, UserMixin):
         Create instance.
         """
         db.Model.__init__(self, **kwargs)
+
+        # Config adjusts the default active status
+        if "active" not in kwargs:
+            self.active = not current_app.config["USER_REGISTRATION_APPROVAL"]
+
         self.salt = getrandstr(rng, digits + letters, 80)
         self.api_token = getrandstr(rng, digits + letters, 80)
         if password:
@@ -101,8 +99,21 @@ class User(db.Model, CRUDMixin, UserMixin):
         else:
             self.password = None
 
-        if self.user_id == 1:
+    def enforce_admin(self):
+        """
+        Enforce that the first user is an active admin.
+
+        This is included as a method that isn't automatically called,
+        because there are cases where we don't want this behaviour to
+        happen, such as during testing.
+        """
+        if db.session.query(User).count() == 0:
             self.is_admin = True
+            self.active = True
+
+    # users = User.__table__
+    #     if target.user_id == 1:
+    #         connection.execute(users.update().where(users.c.user_id == 1).values(is_admin=True, active=True))
 
     @hybrid_property
     def full_name(self):
@@ -140,3 +151,11 @@ class User(db.Model, CRUDMixin, UserMixin):
         Represent instance as a unique string.
         """
         return "<User({username!r})>".format(username=self.username)
+
+
+# @event.listens_for(User, 'after_insert')
+# def receive_after_insert(mapper, connection, target):
+#     # Here we enforce the business rule that the first user should be an active admin
+#     users = User.__table__
+#     if target.user_id == 1:
+#         connection.execute(users.update().where(users.c.user_id == 1).values(is_admin=True, active=True))

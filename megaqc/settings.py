@@ -40,6 +40,8 @@ class Config(object):
     SQLALCHEMY_USER = "megaqc_user"
     SQLALCHEMY_PASS = ""
     SQLALCHEMY_DATABASE = "megaqc"
+    # If this is true, every user after the first has to be approved before it becomes active
+    USER_REGISTRATION_APPROVAL = True
 
     def __init__(self):
         if self.EXTRA_CONFIG:

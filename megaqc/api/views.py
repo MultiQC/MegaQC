@@ -186,6 +186,7 @@ def admin_add_users(user, *args, **kwargs):
     except:
         abort(400)
     new_user = User(**data)
+    new_user.enforce_admin()
     password = new_user.reset_password()
     new_user.active = True
     new_user.save()

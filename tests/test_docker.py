@@ -7,9 +7,12 @@ import requests
 
 
 def raise_response(resp):
+    """
+    :param resp: Requests response object
+    """
     if not str(resp.status_code).startswith("2"):
         raise Exception(
-            "Request failed with status {} and body{}".format(
+            "Request failed with status {} and body {}".format(
                 resp.status_code, resp.text
             )
         )
@@ -19,7 +22,9 @@ def raise_response(resp):
 def compose_stack():
     deploy = (Path(__file__).parent.parent / "deployment").resolve()
     # Start the stack, and wait for it to start up
-    subprocess.run(["docker-compose", "up", "-d"], cwd=deploy, check=True)
+    subprocess.run(
+        ["docker-compose", "up", "--build", "--detach"], cwd=deploy, check=True
+    )
     time.sleep(15)
     yield
     # When we're done, stop the stack and cleanup the volumes
@@ -32,11 +37,6 @@ def test_docker():
 
 
 def test_compose(multiqc_data, compose_stack):
-    # Initially we should have no reports
-    result = requests.get(url="http://localhost/rest_api/v1/uploads")
-    raise_response(result)
-    assert len(result.json()["data"]) == 0
-
     # Create a user
     user = requests.post(
         "http://localhost/rest_api/v1/users",
@@ -66,6 +66,8 @@ def test_compose(multiqc_data, compose_stack):
     report.raise_for_status()
 
     # Finally, we should have 1 report
-    result = requests.get(url="http://localhost/rest_api/v1/uploads")
+    result = requests.get(
+        url="http://localhost/rest_api/v1/uploads", headers={"access_token": token}
+    )
     raise_response(result)
     assert len(result.json()["data"]) == 1

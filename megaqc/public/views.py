@@ -10,6 +10,7 @@ from flask import (
     Blueprint,
     Request,
     abort,
+    current_app,
     flash,
     json,
     redirect,
@@ -108,18 +109,23 @@ def register():
     """
     form = RegisterForm(request.form)
     if form.validate_on_submit():
-        user_cnt = db.session.query(User).count()
-        u = User.create(
+        u = User(
             username=form.username.data,
             email=form.email.data,
             password=form.password.data,
             first_name=form.first_name.data,
             last_name=form.last_name.data,
-            active=True,
-            is_admin=True if user_cnt == 0 else False,
         )
-        flash("Thanks for registering! You're now logged in.", "success")
-        login_user(u)
+        u.enforce_admin()
+        u.save()
+        if u.active:
+            flash("Thanks for registering! You're now logged in.", "success")
+            login_user(u)
+        else:
+            flash(
+                "Thanks for registering! You will now need to wait for your admin to approve this account.",
+                "success",
+            )
         return redirect(url_for("public.home"))
     else:
         flash_errors(form)

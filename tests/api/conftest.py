@@ -1,12 +1,14 @@
 import pytest
 from flask import request
+from flask.testing import FlaskClient
 
 from tests import factories
 
 
-@pytest.yield_fixture("function")
+@pytest.fixture("function")
 def client(app):
     with app.test_client() as c:
+        c: FlaskClient
         yield c
 
 
@@ -24,9 +26,3 @@ def admin_token(db):
     db.session.add(user)
     db.session.commit()
     return user.api_token
-
-
-@pytest.fixture()
-def session(db):
-    sess = db.session
-    return sess
