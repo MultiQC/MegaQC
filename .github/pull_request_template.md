@@ -4,11 +4,11 @@
 
 <!-- Please fill in the appropriate checklist below (delete whatever is not relevant). These are the most common things requested on pull requests (PRs). -->
 
- - [ ] This comment contains a description of changes (with reason)
- - [ ] Referenced issue is linked
- - [ ] If you've fixed a bug or added code that should be tested, add tests!
- - [ ] Documentation in `docs` is updated
- - [ ] `changelog.md` is updated
+- [ ] This comment contains a description of changes (with reason)
+- [ ] Referenced issue is linked
+- [ ] If you've fixed a bug or added code that should be tested, add tests!
+- [ ] Documentation in `docs` is updated
+- [ ] `docs/changelog.md` is updated
 
 **Description of changes**
 
