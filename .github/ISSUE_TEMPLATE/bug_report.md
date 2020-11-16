@@ -22,8 +22,8 @@ Steps to reproduce the behavior:
 
 <!-- A clear and concise description of what you expected to happen. -->
 
-<!-- If required to reproduce
-**System [please complete the following information]:**
+<!--
+**System [please complete the following information, if relevant to the issue]:**
 
 - OS: e.g. [Ubuntu 20.04]
 - Python: [e.g. 3.9]
