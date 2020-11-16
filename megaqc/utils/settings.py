@@ -44,7 +44,7 @@ MEGAQC_DIR = os.path.dirname(os.path.realpath(inspect.getfile(megaqc)))
 # Default MegaQC config
 searchp_fn = os.path.join(MEGAQC_DIR, "utils", "config_defaults.yaml")
 with io.open(searchp_fn) as f:
-    configs = yaml.load(f)
+    configs = yaml.load(f, Loader=yaml.FullLoader)
     for c, v in list(configs.items()):
         globals()[c] = v
 
