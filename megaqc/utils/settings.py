@@ -80,7 +80,7 @@ def mqc_load_config(yaml_config):
     if os.path.isfile(yaml_config):
         try:
             with io.open(yaml_config) as f:
-                new_config = yaml.load(f)
+                new_config = yaml.load(f, Loader=yaml.FullLoader)
                 logger.debug("Loading config settings from: {}".format(yaml_config))
                 mqc_add_config(new_config, yaml_config)
         except (IOError, AttributeError) as e:
@@ -94,11 +94,11 @@ def mqc_load_config(yaml_config):
 def mqc_cl_config(cl_config):
     for clc_str in cl_config:
         try:
-            parsed_clc = yaml.load(clc_str)
+            parsed_clc = yaml.load(clc_str, Loader=yaml.FullLoader)
             # something:var fails as it needs a space. Fix this (a common mistake)
             if isinstance(parsed_clc, str) and ":" in clc_str:
                 clc_str = ": ".join(clc_str.split(":"))
-                parsed_clc = yaml.load(clc_str)
+                parsed_clc = yaml.load(clc_str, Loader=yaml.FullLoader)
             assert isinstance(parsed_clc, dict)
         except yaml.scanner.ScannerError as e:
             logger.error(
