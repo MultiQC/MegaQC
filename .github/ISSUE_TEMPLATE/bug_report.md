@@ -22,6 +22,7 @@ Steps to reproduce the behavior:
 
 <!-- A clear and concise description of what you expected to happen. -->
 
+<!-- If required to reproduce
 **System [please complete the following information]:**
 
 - OS: e.g. [Ubuntu 20.04]
@@ -29,6 +30,8 @@ Steps to reproduce the behavior:
 - Node: [e.g. 12]
 - SQL database: [e.g. Postgres]
 - MegaQC: [e.g. 1.0.0]
+
+-->
 
 **Additional context**
 
