@@ -1,0 +1,20 @@
+site_name: MegaQC Documentation
+docs: index.md
+  installation/installation_dev.md
+  installation/installation_docker.md
+  installation/installation_prod.md
+  installation/installation_testing.md
+  dev/backend.md
+  dev/dev.md
+  dev/frontend.md
+  dev/migrations.md
+  dev/troubleshooting.md
+  usage/usage_setup.md
+  changelog.md
+theme: windmill-dark
+extra:
+  version: 0.3.0
+  logo: img/MegaQC_logo.png
+markdown_extensions:
+  - markdown_include.include:
+      base_path: docs

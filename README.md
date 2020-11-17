@@ -98,7 +98,7 @@ all data will be lost if the docker container is stopped by default).
 
 Please see the [docs](docs/) for full instructions for each method.
 
-## Contributions & Support
+## Contributions and Support
 
 Contributions and suggestions for new features are welcome, as are bug reports!
 Please create a new [issue](https://github.com/ewels/MegaQC/issues) for any
