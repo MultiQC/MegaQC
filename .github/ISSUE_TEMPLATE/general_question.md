@@ -1,8 +1,8 @@
 ---
 name: General question
 about: Ask a question about anything MegaQC
-title: 'Question about MegaQC
-labels: 'question'
+title: Question about MegaQC
+labels: question
 assignees: ''
 
 ---

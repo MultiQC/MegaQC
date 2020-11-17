@@ -1,8 +1,8 @@
 ---
 name: Bug report
 about: Report a bug in MegaQC
-title: "Bug report"
-labels: "bug"
+title: Bug report
+labels: bug
 assignees: ""
 ---
 
