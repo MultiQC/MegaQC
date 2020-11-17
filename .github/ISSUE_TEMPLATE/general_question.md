@@ -4,7 +4,6 @@ about: Ask a question about anything MegaQC
 title: Question about MegaQC
 labels: question
 assignees: ""
-
 ---
 
 **Question**
