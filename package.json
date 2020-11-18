@@ -29,7 +29,7 @@
     "jsoneditor": "^7.0.4",
     "jsoneditor-react": "^1.0.1",
     "just-debounce-it": "^1.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "plotly.js": "^1.51.3",
     "prop-types": "^15.7.2",
