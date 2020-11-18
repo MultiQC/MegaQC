@@ -142,7 +142,7 @@ export function SampleFilter(props) {
   // The first time this is run, request the filters
   useEffect(() => {
     updateFilters();
-  }, []);
+  }, [user]);
 
   const filterGroups = useMemo(() => {
     return groupBy(sampleFilters, (filter) => filter.get("tag"));
