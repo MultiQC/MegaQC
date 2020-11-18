@@ -118,10 +118,11 @@ def init_db(url):
     """
     if "postgresql" in url:
         try:
-            create_engine(url).connect().close()
+            engine = create_engine(url)
+            engine.connect().close()
         except:
             print("Initializing the postgres user and db")
-            engine = create_engine("postgres://postgres@localhost:5432/postgres")
+            engine = create_engine(url)
             conn = engine.connect()
             conn.execute("commit")
             conn.execute("CREATE USER megaqc_user;")
