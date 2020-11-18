@@ -37,8 +37,8 @@ setup(
         ],
     },
     install_requires=[
-        "argon2-cffi~=16.3",
-        "click~=5.0",
+        "argon2-cffi~=20.1",
+        "click~=7.0",
         "Flask-APScheduler~=1.7",
         "Flask-Caching~=1.0",
         "Flask-DebugToolbar~=0.10",
@@ -90,7 +90,7 @@ setup(
         ],
         "deploy": ["wheel~=0.30"],
         "prod": [
-            "psycopg2~=2.6",
+            "psycopg2-binary~=2.8",
             "gunicorn~=19.7",
         ],
     },
