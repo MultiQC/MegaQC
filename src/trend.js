@@ -49,7 +49,7 @@ function Trend(props) {
       .then((resources) => {
         setDataTypes(resources.map((resource) => resource.toJSON()));
       });
-  }, []);
+  }, [currentUser]);
 
   // Whenever the form data changes, redraw the plot
   useEffect(() => {
