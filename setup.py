@@ -53,7 +53,7 @@ setup(
         "multiqc~=1.9",
         "numpy~=1.14",
         "passlib~=1.7",
-        "plotly~=2.0",
+        "plotly>=2,<5",
         "pyyaml~=5.1",
         "SQLAlchemy~=1.1",
         "Werkzeug~=0.14",
