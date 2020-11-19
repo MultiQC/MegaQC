@@ -84,7 +84,7 @@ setup(
             "flake8-blind-except~=0.1",
             "flake8-debugger~=3.1",
             "flake8-docstrings~=1.3",
-            "isort[pyproject]~=4.3",
+            "isort[pyproject]>=4.3,<6.0",
             "pep8-naming~=0.8",
             "pre-commit",
         ],
