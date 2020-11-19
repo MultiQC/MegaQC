@@ -91,7 +91,7 @@ setup(
         "deploy": ["wheel~=0.30"],
         "prod": [
             "psycopg2~=2.6",
-            "gunicorn~=19.7",
+            "gunicorn>=19.7,<21.0",
         ],
     },
     classifiers=[
