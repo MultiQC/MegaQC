@@ -5,5 +5,3 @@ MegaQC
    :maxdepth: 4
 
    megaqc
-   setup
-   tests

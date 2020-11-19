@@ -10,7 +10,7 @@ help:
 .PHONY: help Makefile
 
 api-docs:
-	sphinx-apidoc -o "$(SOURCEDIR)" .. ../*setup*
+	sphinx-apidoc -o "$(SOURCEDIR)" .. ../*setup* ../*tests*
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).

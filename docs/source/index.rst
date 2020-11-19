@@ -21,8 +21,9 @@ Welcome to MegaQC's documentation!
    usage/usage-admin
    usage/usage-setup
    changelog
+   click
    modules
-
+   
 
 Indices and tables
 ==================

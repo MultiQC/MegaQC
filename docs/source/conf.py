@@ -21,13 +21,13 @@ release = "megaqc.__version__"
 # -- General configuration ---------------------------------------------------
 
 extensions = [
-    "recommonmark",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
     "sphinx.ext.mathjax",
     "sphinx.ext.linkcode",  # link to github, see linkcode_resolve() below
     "sphinxcontrib.napoleon",
+    "sphinx_click"
 ]
 
 templates_path = ["_templates"]
