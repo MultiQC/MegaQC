@@ -28,6 +28,8 @@ extensions = [
     "sphinx.ext.linkcode",  # link to github, see linkcode_resolve() below
     "sphinxcontrib.napoleon",
     "sphinx_click",
+    "sphinxcontrib.autohttp.flask",
+    "sphinxcontrib.autohttp.flaskqref",
 ]
 
 templates_path = ["_templates"]
