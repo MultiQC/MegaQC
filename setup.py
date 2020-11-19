@@ -77,7 +77,7 @@ setup(
             # Testing
             "pytest~=3.0",
             "WebTest~=2.0",
-            "factory-boy~=2.12",
+            "factory-boy>=2.12,<4.0",
             "livereload~=2.5",
             # Lint and code style
             "flake8~=3.7",
