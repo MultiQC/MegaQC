@@ -75,7 +75,7 @@ setup(
     extras_require={
         "dev": [
             # Testing
-            "pytest~=3.0",
+            "pytest>=3,<7",
             "WebTest~=2.0",
             "factory-boy>=2.12,<4.0",
             "livereload~=2.5",
