@@ -1,7 +1,3 @@
-========
-MegaQC
-========
-
 |MegaQC|
 
 A web application to collect and visualise data from multiple MultiQC reports.
