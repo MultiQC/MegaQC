@@ -27,7 +27,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.linkcode",  # link to github, see linkcode_resolve() below
     "sphinxcontrib.napoleon",
-    "sphinx_click"
+    "sphinx_click",
 ]
 
 templates_path = ["_templates"]
