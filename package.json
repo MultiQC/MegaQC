@@ -27,7 +27,7 @@
     "formik": "https://pkg.csb.dev/jaredpalmer/formik/commit/157603ab/formik",
     "formik-effect": "^1.2.0",
     "jsoneditor": "^7.5.0",
-    "jsoneditor-react": "^1.0.1",
+    "jsoneditor-react": "^3.0.1",
     "just-debounce-it": "^1.1.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
