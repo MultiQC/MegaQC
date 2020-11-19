@@ -2,10 +2,11 @@
 
 /*Color main components with a dark theme*/
 div,
-span,
-code {
+span {
   background-color: #181a1b !important;
 }
+
+/* TODO the code element also needs some love*/
 
 .wy-side-nav-search {
   background-color: #005fff !important;

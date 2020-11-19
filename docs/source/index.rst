@@ -8,20 +8,10 @@ Welcome to MegaQC's documentation!
    :caption: Contents:
 
    readme
-   dev/backend
-   dev/dev
-   dev/frontend
-   dev/migrations
-   dev/troubleshooting
-   installation/installation-dev
-   installation/installation-docker
-   installation/installation-prod
-   installation/installation-testing
-   installation/migrations
-   usage/usage-admin
-   usage/usage-setup
+   installation/installation
+   usage/usage
+   dev/development
    changelog
-   cli
    api_reference
    modules
 

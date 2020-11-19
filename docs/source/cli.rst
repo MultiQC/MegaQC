@@ -1,5 +1,7 @@
-MegaQC commandline documentation
-=====================================
+.. _cli_doc:
+
+MegaQC Commandline Interface
+================================
 
 .. click:: megaqc.cli:cli
    :prog: megaqc-click

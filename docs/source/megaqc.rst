@@ -1,3 +1,5 @@
+.. _megaqc_module:
+
 megaqc package
 ==============
 

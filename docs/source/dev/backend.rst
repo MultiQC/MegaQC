@@ -1,5 +1,5 @@
-Python Backend
-==============
+Backend
+=======
 
 The Python backend is written in `flask`_, which determines the
 structure of the project.

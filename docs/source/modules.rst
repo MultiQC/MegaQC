@@ -1,5 +1,5 @@
-MegaQC
-======
+MegaQC Modules Overview
+==========================
 
 .. toctree::
    :maxdepth: 4

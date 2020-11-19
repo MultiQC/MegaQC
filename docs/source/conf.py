@@ -13,9 +13,9 @@ project = "MegaQC"
 copyright = "2020, MegaQC Team"
 author = "MegaQC Team"
 
-version = "megaqc.__version__"
+version = megaqc.version
 
-release = "megaqc.__version__"
+release = megaqc.version
 
 
 # -- General configuration ---------------------------------------------------

@@ -1,3 +1,5 @@
+.. _installation_dev:
+
 MegaQC installation: Development
 ================================
 
