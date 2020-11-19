@@ -40,11 +40,14 @@ html_theme = "sphinx_rtd_theme"
 
 html_static_path = ["_static"]
 
+html_css_files = [
+    'megaqc_style.css',
+]
+
 # Resolve function for the linkcode extension.
 def linkcode_resolve(domain, info):
     def find_source():
-        # try to find the file and line number, based on code from numpy:
-        # https://github.com/numpy/numpy/blob/master/doc/source/conf.py#L286
+        # try to find the file and line number:
         obj = sys.modules[info["module"]]
         for part in info["fullname"].split("."):
             obj = getattr(obj, part)
@@ -63,6 +66,6 @@ def linkcode_resolve(domain, info):
     except Exception:
         filename = info["module"].replace(".", "/") + ".py"
     tag = "master"
-    # tag = 'master' if 'dev' in release else ('v' + release)
+    # TODO use this after the first release: tag = 'master' if 'dev' in release else ('v' + release)
 
     return "https://github.com/ewels/megaqc/blob/%s/%s" % (tag, filename)
