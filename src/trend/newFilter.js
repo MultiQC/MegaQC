@@ -74,26 +74,20 @@ export default function EditFilter(props) {
     // We have to do this whenever the box re-opens because the filter might have been edited in the meantime
   }, [resourceId, revision]);
 
-  // Fetch the filter groups
   useEffect(() => {
+    // Fetch the filter groups
     qcApi.find("filter_groups").then((groups) => {
       setFilterGroups(groups.map((group) => group._getUid()));
     });
-  }, []);
-
-  // Fetch the sample fields
-  useEffect(() => {
+    // Fetch the sample fields
     qcApi.find("data_types").then((groups) => {
       setSampleFields(groups.map((group) => group.toJSON()));
     });
-  }, []);
-
-  // Fetch the report metadata fields
-  useEffect(() => {
+    // Fetch the report metadata fields
     qcApi.find("meta_types").then((groups) => {
       setReportFields(groups.map((group) => group._getUid()));
     });
-  }, []);
+  }, [user]);
 
   return (
     <Formik
