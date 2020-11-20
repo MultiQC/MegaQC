@@ -1,0 +1,455 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HTTP Routing Table &mdash; MegaQC 0.3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/megaqc_style.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+ 
+
+    <script>
+      DOCUMENTATION_OPTIONS.COLLAPSE_INDEX = true;
+    </script>
+
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> MegaQC
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">MegaQC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">MegaQC API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MegaQC</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>HTTP Routing Table</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+
+   <h1>HTTP Routing Table</h1>
+
+   <div class="modindex-jumpbox">
+   <a href="#cap-/"><strong>/</strong></a> | 
+   <a href="#cap-/about"><strong>/about</strong></a> | 
+   <a href="#cap-/dashboard"><strong>/dashboard</strong></a> | 
+   <a href="#cap-/dashboards"><strong>/dashboards</strong></a> | 
+   <a href="#cap-/edit_filters"><strong>/edit_filters</strong></a> | 
+   <a href="#cap-/login"><strong>/login</strong></a> | 
+   <a href="#cap-/logout"><strong>/logout</strong></a> | 
+   <a href="#cap-/plot_favourite"><strong>/plot_favourite</strong></a> | 
+   <a href="#cap-/plot_favourites"><strong>/plot_favourites</strong></a> | 
+   <a href="#cap-/plot_type"><strong>/plot_type</strong></a> | 
+   <a href="#cap-/register"><strong>/register</strong></a> | 
+   <a href="#cap-/rest_api"><strong>/rest_api</strong></a> | 
+   <a href="#cap-/scheduler"><strong>/scheduler</strong></a> | 
+   <a href="#cap-/static"><strong>/static</strong></a> | 
+   <a href="#cap-/users"><strong>/users</strong></a>
+   </div>
+
+   <table class="indextable modindextable">
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/"><td></td><td>
+       <strong>/</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--"><code class="xref">GET /</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#post--"><code class="xref">POST /</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/about"><td></td><td>
+       <strong>/about</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--about-"><code class="xref">GET /about/</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/dashboard"><td></td><td>
+       <strong>/dashboard</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--dashboard-create-"><code class="xref">GET /dashboard/create/</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--dashboard-edit-(dashboard_id)"><code class="xref">GET /dashboard/edit/(dashboard_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--dashboard-view-(dashboard_id)"><code class="xref">GET /dashboard/view/(dashboard_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--dashboard-view-(dashboard_id)-raw"><code class="xref">GET /dashboard/view/(dashboard_id)/raw</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/dashboards"><td></td><td>
+       <strong>/dashboards</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--dashboards-"><code class="xref">GET /dashboards/</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/edit_filters"><td></td><td>
+       <strong>/edit_filters</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--edit_filters-"><code class="xref">GET /edit_filters/</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/login"><td></td><td>
+       <strong>/login</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--login-"><code class="xref">GET /login/</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#post--login-"><code class="xref">POST /login/</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/logout"><td></td><td>
+       <strong>/logout</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--logout-"><code class="xref">GET /logout/</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/plot_favourite"><td></td><td>
+       <strong>/plot_favourite</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--plot_favourite-(fav_id)"><code class="xref">GET /plot_favourite/(fav_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--plot_favourite-(fav_id)-raw"><code class="xref">GET /plot_favourite/(fav_id)/raw</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/plot_favourites"><td></td><td>
+       <strong>/plot_favourites</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--plot_favourites-"><code class="xref">GET /plot_favourites/</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/plot_type"><td></td><td>
+       <strong>/plot_type</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--plot_type-"><code class="xref">GET /plot_type/</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/register"><td></td><td>
+       <strong>/register</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--register-"><code class="xref">GET /register/</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#post--register-"><code class="xref">POST /register/</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/rest_api"><td></td><td>
+       <strong>/rest_api</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--rest_api-v1-users-current"><code class="xref">GET /rest_api/v1/users/current</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#post--rest_api-v1-uploads"><code class="xref">POST /rest_api/v1/uploads</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#post--rest_api-v1-users-(int-id)-uploads"><code class="xref">POST /rest_api/v1/users/(int:id)/uploads</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/scheduler"><td></td><td>
+       <strong>/scheduler</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--scheduler"><code class="xref">GET /scheduler</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--scheduler-jobs"><code class="xref">GET /scheduler/jobs</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--scheduler-jobs-(job_id)"><code class="xref">GET /scheduler/jobs/(job_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#post--scheduler-jobs"><code class="xref">POST /scheduler/jobs</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#post--scheduler-jobs-(job_id)-pause"><code class="xref">POST /scheduler/jobs/(job_id)/pause</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#post--scheduler-jobs-(job_id)-resume"><code class="xref">POST /scheduler/jobs/(job_id)/resume</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#post--scheduler-jobs-(job_id)-run"><code class="xref">POST /scheduler/jobs/(job_id)/run</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#delete--scheduler-jobs-(job_id)"><code class="xref">DELETE /scheduler/jobs/(job_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#patch--scheduler-jobs-(job_id)"><code class="xref">PATCH /scheduler/jobs/(job_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/static"><td></td><td>
+       <strong>/static</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--static-(path-filename)"><code class="xref">GET /static/(path:filename)</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/users"><td></td><td>
+       <strong>/users</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--users-"><code class="xref">GET /users/</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--users-multiqc_config"><code class="xref">GET /users/multiqc_config</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--users-password"><code class="xref">GET /users/password</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="api_reference.html#get--users-static-(path-filename)"><code class="xref">GET /users/static/(path:filename)</code></a></td><td>
+       <em></em></td></tr>
+   </table>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, MegaQC Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MegaQC &mdash; MegaQC 0.3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/megaqc_style.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation/installation.html" />
+    <link rel="prev" title="Welcome to MegaQC’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> MegaQC
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MegaQC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#current-status-pretty-unstable">Current Status: <em>“Pretty unstable”</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-megaqc">Testing MegaQC</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">MegaQC API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MegaQC</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>MegaQC</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/readme.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="megaqc">
+<h1>MegaQC<a class="headerlink" href="#megaqc" title="Permalink to this headline">¶</a></h1>
+<p><img alt="MegaQC" src="https://raw.githubusercontent.com/ewels/MegaQC/master/megaqc/static/img/MegaQC_logo.png" /></p>
+<p>A web application to collect and visualise data from multiple MultiQC reports.</p>
+<p><a class="reference external" href="https://hub.docker.com/r/ewels/megaqc/"><img alt="Docker" src="https://img.shields.io/docker/automated/ewels/megaqc.svg?style=flat-square" /></a> <a class="reference external" href="https://travis-ci.org/ewels/MegaQC"><img alt="Build Status" src="https://travis-ci.org/ewels/MegaQC.svg?branch=master" /></a> <a class="reference external" href="https://gitter.im/ewels/MegaQC"><img alt="Gitter" src="https://img.shields.io/badge/gitter-%20join%20chat%20%E2%86%92-4fb99a.svg?style=flat-square" /></a></p>
+<div class="section" id="current-status-pretty-unstable">
+<h2>Current Status: <em>“Pretty unstable”</em><a class="headerlink" href="#current-status-pretty-unstable" title="Permalink to this headline">¶</a></h2>
+<p>As of mid-October 2017, MegaQC has all basic functionality. We’ve made
+the repo public, but please bear in mind that it is still under heavy
+development and changes are being made on a daily basis. It’s safe to
+assume that the database structure is still at risk and that you
+shouldn’t yet trust it to be stable. However, we’d love your help in
+testing, bug finding and development!</p>
+<hr class="docutils" />
+<p>MegaQC is a web application that you can install and run on your own
+network. It collects and visualises data parsed by MultiQC across
+multiple runs.</p>
+<p>Once MegaQC is installed and running, simply configure MultiQC to
+automatically save data to the website every time it runs (find
+instructions in the running MegaQC website). Users of your group or
+facility can then replicate MultiQC plots and explore different data
+fields. Data distributions, timelines and comparisons can all be
+explored.</p>
+<p>The MegaQC homepage looks something like this:</p>
+<div class="figure align-default" id="id1">
+<img alt="MegaQC homepage" src="https://raw.githubusercontent.com/ewels/MegaQC/master/docs/images/megaqc_homepage.png" />
+<p class="caption"><span class="caption-text">MegaQC homepage</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>If you’re not sure what MultiQC is yet, check out the main <a class="reference external" href="http://multiqc.info">MultiQC
+website</a> and <a class="reference external" href="https://github.com/ewels/MultiQC">GitHub repo</a> first.</p>
+</div>
+<div class="section" id="testing-megaqc">
+<h2>Testing MegaQC<a class="headerlink" href="#testing-megaqc" title="Permalink to this headline">¶</a></h2>
+<p>By default, MegaQC installs with configuration to use the Flask
+development server and a SQLite database. This allows a very simple
+pure-Python installation where you can get up and running almost
+immediately.</p>
+<p><strong>MegaQC is much slower in this testing mode than with a proper
+production installation, so don’t be too quick to judge it as being
+slow!</strong></p>
+<!--
+You can install MultiQC from [PyPI](https://pypi.python.org/pypi/megaqc/)
+using `pip` as follows:
+```bash
+pip install megaqc
+```
+
+Alternatively, you can install using [Conda](http://anaconda.org/)
+from the [bioconda channel](https://bioconda.github.io/):
+```bash
+conda install -c bioconda megaqc
+```
+--><p>If you would like the development version instead, the command is:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade --force-reinstall git+https://github.com/ewels/MegaQC.git
+</pre></div>
+</div>
+<p>Once installed, run the server with the following command:</p>
+<p>`<code class="docutils literal notranslate"><span class="pre">megaqc</span> <span class="pre">run</span></code></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation/installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to MegaQC’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, MegaQC Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

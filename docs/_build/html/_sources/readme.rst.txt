@@ -1,0 +1,4 @@
+MegaQC
+========
+
+.. include:: ../../README.rst

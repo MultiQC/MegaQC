@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MegaQC Installation: Production &mdash; MegaQC 0.3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/megaqc_style.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> MegaQC
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">MegaQC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html">MegaQC API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MegaQC</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>MegaQC Installation: Production</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/installation/installation_prod.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="megaqc-installation-production">
+<h1>MegaQC Installation: Production<a class="headerlink" href="#megaqc-installation-production" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="install-the-megaqc-package">
+<h2>1. Install the MegaQC package<a class="headerlink" href="#install-the-megaqc-package" title="Permalink to this headline">¶</a></h2>
+<p>MegaQC is available on both the Python Package Index (PyPI) and conda
+(bioconda channel). To install using PyPI, run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install megaqc<span class="o">[</span>prod<span class="o">]</span>
+</pre></div>
+</div>
+<p>To install with conda:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install -c bioconda megaqc
+</pre></div>
+</div>
+</div>
+<div class="section" id="export-environment-variables">
+<h2>2. Export environment variables<a class="headerlink" href="#export-environment-variables" title="Permalink to this headline">¶</a></h2>
+<p>By default, MegaQC runs in development mode with a sqlite flat file
+database (this is to make it as simple as possible to get up and running
+for a quick test / demo). To tell MegaQC to use a production server, you
+need to set the <code class="docutils literal notranslate"><span class="pre">MEGAQC_PRODUCTION</span></code> environment variable to true.</p>
+<p>If you are running MegaQC behind a custom domain name (recommended, it’s
+nicer than just having a difficult to remember IP address), then you
+need to set <code class="docutils literal notranslate"><span class="pre">SERVER_NAME</span></code> to the URL of the website.</p>
+<p>Add the following lines to your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">MEGAQC_PRODUCTION</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span> <span class="nv">SERVER_NAME</span><span class="o">=</span><span class="s1">&#39;http://megaqc.yourdomain.com&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-up-the-database">
+<h2>3. Set up the database<a class="headerlink" href="#set-up-the-database" title="Permalink to this headline">¶</a></h2>
+<p>MegaQC uses the Flask SQLAlchemy plugin, meaning that it can be used
+with any SQL database (PostgreSQL, MySQL, SQLite and others).</p>
+<p>MegaQC has been developed with PostgreSQL, see below. For instructions.
+If you use MegaQC with any other database tools and could contribute to
+the documentation, that would be great!</p>
+<div class="section" id="using-a-postgresql-database">
+<h3>3.1 Using a PostgreSQL database<a class="headerlink" href="#using-a-postgresql-database" title="Permalink to this headline">¶</a></h3>
+<p>First, install PostgreSQL:
+<a class="reference external" href="https://wiki.postgresql.org/wiki/Detailed_installation_guides">https://wiki.postgresql.org/wiki/Detailed_installation_guides</a></p>
+<p>Then, install the Python package that handles requests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install psycopg2
+</pre></div>
+</div>
+<p>(<code class="docutils literal notranslate"><span class="pre">psycopq2-binary</span></code> for psycopq v2.8 and above)</p>
+<p>MegaQC can assess whether the database to use is <code class="docutils literal notranslate"><span class="pre">postgresql</span></code>. If it
+is, it will try to connect as <code class="docutils literal notranslate"><span class="pre">megaqc_user</span></code> to the database <code class="docutils literal notranslate"><span class="pre">megaqc</span></code>
+on <code class="docutils literal notranslate"><span class="pre">localhost:5432</span></code>. On failure, MegaQC will attempt to create the
+user and the database, and will then export the schema.</p>
+<p>In order to make this happen, run :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>megaqc initdb
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-a-mysql-database">
+<h3>3.2 Using a MySQL database<a class="headerlink" href="#using-a-mysql-database" title="Permalink to this headline">¶</a></h3>
+<p>Although PostgreSQL is highly recommended, MegaQC should work with other
+SQL database back ends, such as MySQL.</p>
+<blockquote>
+<div><p>Please note that MySQL support is currently untested and unsupported.
+If you use MegaQC with MySQL we’d love to hear about your
+experiences!</p>
+</div></blockquote>
+<p>First, install MySQL:
+<a class="reference external" href="https://dev.mysql.com/doc/refman/5.7/en/installing.html">https://dev.mysql.com/doc/refman/5.7/en/installing.html</a></p>
+<p>Then install the <a class="reference external" href="https://dev.mysql.com/downloads/connector/python/2.1.html">Python MySQL connector</a> (alternatively with the <a class="reference external" href="https://pypi.python.org/pypi/mysql-connector-python/2.0.4">PyPI package</a>).</p>
+<p>Now, create a custom MegaQC configuration file somewhere and set the
+environment variable <code class="docutils literal notranslate"><span class="pre">MEGAQC_CONFIG</span></code> to point to it. For example, in
+<code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">MEGAQC_CONFIG</span><span class="o">=</span><span class="s2">&quot;/path/to/megaqc_config.yaml&quot;</span>
+</pre></div>
+</div>
+<p>Then in this file, set the following configuration key pair:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">SQLALCHEMY_DBMS</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql</span>
+</pre></div>
+</div>
+<p>This should, hopefully, make everything work. If you have problems,
+please <a class="reference external" href="https://github.com/ewels/MegaQC/issues/new">create an issue</a> and we’ll do our best to help.</p>
+</div>
+</div>
+<div class="section" id="optional-but-recommended-create-an-apache-proxy">
+<h2>4. (Optional, but recommended) Create an apache proxy<a class="headerlink" href="#optional-but-recommended-create-an-apache-proxy" title="Permalink to this headline">¶</a></h2>
+<p><strong>Note:</strong><em>You can skip this step if you wish to use gunicorn as your
+primary web server, but it’s not recommended.</em></p>
+<p><strong>Note:</strong><em>This is an example configuration that will map all http
+requests to the current server to MegaQC. It will also not filter
+anything. Please consider your server security!</em></p>
+<p>Update your apache configuration
+(<code class="docutils literal notranslate"><span class="pre">/usr/local/apache2/conf/httpd.conf</span></code>, <code class="docutils literal notranslate"><span class="pre">/etc/apache2/apache2.conf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">/etc/httpd/conf/httpd.conf</span></code>…) to include, for example (Apache 2.2):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">VirtualHost</span> <span class="o">*</span><span class="p">:</span><span class="mi">80</span><span class="o">&gt;</span>
+<span class="n">SetEnv</span> <span class="n">proxy</span><span class="o">-</span><span class="n">sendcl</span> <span class="mi">1</span>
+<span class="n">ProxyPass</span> <span class="o">/</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span>
+<span class="n">ProxyPassReverse</span> <span class="o">/</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span>
+<span class="o">&lt;</span><span class="n">Proxy</span> <span class="o">*&gt;</span>
+   <span class="n">Order</span> <span class="n">Allow</span><span class="p">,</span><span class="n">Deny</span>
+   <span class="n">Allow</span> <span class="kn">from</span> <span class="nn">all</span>
+<span class="o">&lt;/</span><span class="n">Proxy</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">VirtualHost</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>You also need to ensure that apache mod_proxy is activated :</p>
+<p><code class="docutils literal notranslate"><span class="pre">`a2enmod</span> <span class="pre">proxy</span> <span class="pre">a2enmod</span> <span class="pre">proxy_http`</span></code></p>
+</div>
+<div class="section" id="restart-apache">
+<h2>5. Restart apache<a class="headerlink" href="#restart-apache" title="Permalink to this headline">¶</a></h2>
+<p>In order for these changes to be applied, you need to restart apache
+with the following command (or equivalent on your system):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>service restart httpd
+</pre></div>
+</div>
+</div>
+<div class="section" id="start-the-web-server">
+<h2>6. Start the web server<a class="headerlink" href="#start-the-web-server" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gunicorn --log-file megaqc.log --timeout <span class="m">300</span> megaqc.wsgi:app
+</pre></div>
+</div>
+<p><strong>Note:</strong><em>We recommend using a long timeout as the data upload from
+MultiQC can take several minutes for large reports</em></p>
+<p>At this point, MegaQC should be running on the default gunicorn port
+(<code class="docutils literal notranslate"><span class="pre">8000</span></code>)</p>
+<p>You should now have a fully functional MegaQC server running! 🎉</p>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<p>The password encryption relies on the <code class="docutils literal notranslate"><span class="pre">libffi-devel</span></code> package to work.
+If you run an older OS, ensure that the package is installed.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, MegaQC Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

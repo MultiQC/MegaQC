@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MegaQC Installation: Docker &mdash; MegaQC 0.3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/megaqc_style.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> MegaQC
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">MegaQC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html">MegaQC API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MegaQC</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>MegaQC Installation: Docker</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/installation/installation_docker.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="megaqc-installation-docker">
+<h1>MegaQC Installation: Docker<a class="headerlink" href="#megaqc-installation-docker" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="pulling-the-docker-image-from-dockerhub">
+<h2>Pulling the docker image from dockerhub<a class="headerlink" href="#pulling-the-docker-image-from-dockerhub" title="Permalink to this headline">¶</a></h2>
+<p>To run MegaQC with docker, simply use the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc
+</pre></div>
+</div>
+<p>This will pull the latest image from <a class="reference external" href="https://hub.docker.com/r/ewels/megaqc/">dockerhub</a> and run MegaQC on port
+80.</p>
+<p>Note that you will need to publish the port in order to access it from
+the host, or other machines. For more information, read
+<a class="reference external" href="https://docs.docker.com/engine/reference/run/">https://docs.docker.com/engine/reference/run/</a></p>
+<p>Note that the default latest tag will typically be a development version
+and may not be very stable. You can specify a tagged version to run a
+release instead:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc:v0.1
+</pre></div>
+</div>
+<p>Also note that docker will use a local version of the image if it
+exists. To pull the latest version of MegaQC use the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull ewels/megaqc
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-your-own-docker-image">
+<h2>Building your own docker image<a class="headerlink" href="#building-your-own-docker-image" title="Permalink to this headline">¶</a></h2>
+<p>If you prefer, you can build your own docker image if you have pulled
+the MegaQC code from GitHub. Simply cd to the MegaQC root directory and
+run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker build . -t ewels/megaqc
+</pre></div>
+</div>
+<p>You can then run MegaQC as described above:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-persistent-data">
+<h2>Using persistent data<a class="headerlink" href="#using-persistent-data" title="Permalink to this headline">¶</a></h2>
+<p>The Dockerfile has been configured to automatically create persisent
+volumes for the data and log directories. This volume will be created
+without additional input by the user, but if you want to re-use those
+volumes with a new container you must specify them when running the
+docker image.</p>
+<p>The easiest way to ensure the database persists between container states
+is to always specify the same volume for <code class="docutils literal notranslate"><span class="pre">/usr/local/lib/postgresql</span></code>.
+If a volume is found with that name it is used, otherwise it creates a
+new volume.</p>
+<p>To create or re-use a docker volume named <code class="docutils literal notranslate"><span class="pre">pg_data</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 -v pg_data:/usr/local/lib/postgresql ewels/megaqc
+</pre></div>
+</div>
+<p>The same can be done for a log directory volume called <code class="docutils literal notranslate"><span class="pre">pg_logs</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 -v pg_data:/usr/local/lib/postgresql -v pg_logs:/var/log/postgresql ewels/megaqc
+</pre></div>
+</div>
+<p>If you did not specify a volume name, docker will have given it a long
+hex string as a unique name. If you do not use volumes frequently, you
+can check the output from <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">volume</span> <span class="pre">ls</span></code> and
+<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">volume</span> <span class="pre">inspect</span> <span class="pre">$VOLUME_NAME</span></code>. However, the easiest way is to
+inspect the docker container.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># ugly default docker output</span>
+docker inspect --format <span class="s1">&#39;{{json .Mounts}}&#39;</span> example_container
+
+<span class="c1"># use jq for pretty formatting</span>
+docker inspect --format <span class="s1">&#39;{{json .Mounts}}&#39;</span> example_container <span class="p">|</span> jq
+
+<span class="c1"># or use python for pretty formatting</span>
+docker inspect --format <span class="s1">&#39;{{json .Mounts}}&#39;</span> example_container <span class="p">|</span> python -m json.tool
+</pre></div>
+</div>
+<p>Example output for the above, nicely formatted:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="p">{</span>
+   <span class="nt">&quot;Type&quot;</span><span class="p">:</span> <span class="s2">&quot;volume&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Source&quot;</span><span class="p">:</span> <span class="s2">&quot;/var/lib/docker/volumes/7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804/_data&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Destination&quot;</span><span class="p">:</span> <span class="s2">&quot;/usr/local/lib/postgresql&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Driver&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Mode&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;RW&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+   <span class="nt">&quot;Propagation&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+<span class="p">},</span>
+<span class="p">{</span>
+   <span class="nt">&quot;Type&quot;</span><span class="p">:</span> <span class="s2">&quot;volume&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Source&quot;</span><span class="p">:</span> <span class="s2">&quot;/var/lib/docker/volumes/6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428/_data&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Destination&quot;</span><span class="p">:</span> <span class="s2">&quot;/var/log/postgresql&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Driver&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;Mode&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;RW&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+   <span class="nt">&quot;Propagation&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+<span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, MegaQC Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,615 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MegaQC API Reference &mdash; MegaQC 0.3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/megaqc_style.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Changelog" href="changelog.html" />
+    <link rel="prev" title="megaqc.utils package" href="megaqc.utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> MegaQC
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">MegaQC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/development.html">Development</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MegaQC API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#flask-api-reference">Flask API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flask-quick-api-reference">Flask Quick API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MegaQC</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>MegaQC API Reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api_reference.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="megaqc-api-reference">
+<span id="id1"></span><h1>MegaQC API Reference<a class="headerlink" href="#megaqc-api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="flask-api-reference">
+<h2>Flask API Reference<a class="headerlink" href="#flask-api-reference" title="Permalink to this headline">¶</a></h2>
+<dl class="http get">
+<dt id="get--rest_api-v1-users-current">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/rest_api/v1/users/current</code><a class="headerlink" href="#get--rest_api-v1-users-current" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="http get">
+<dt id="get--rest_api-v1-users-current">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/rest_api/v1/users/current</code><a class="headerlink" href="#get--rest_api-v1-users-current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get details about the current user.</p>
+<p>This is also how the frontend can get an access token. For that
+reason, this endpoint is authenticated using the session, NOT
+the access token</p>
+</dd></dl>
+
+<dl class="http post">
+<dt id="post--rest_api-v1-uploads">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/rest_api/v1/uploads</code><a class="headerlink" href="#post--rest_api-v1-uploads" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="http post">
+<dt id="post--rest_api-v1-uploads">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/rest_api/v1/uploads</code><a class="headerlink" href="#post--rest_api-v1-uploads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload a new report.</p>
+<p>This is rare in that average users <em>can</em> do this, even though
+they aren’t allowed to edit arbitrary data</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--dashboard-edit-(dashboard_id)">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/dashboard/edit/</code><span class="sig-paren">(</span><em class="sig-param">dashboard_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--dashboard-edit-(dashboard_id)" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="http get">
+<dt id="get--dashboard-create-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/dashboard/create/</code><a class="headerlink" href="#get--dashboard-create-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new dashboard.</p>
+</dd></dl>
+
+<dl class="http post">
+<dt id="post--scheduler-jobs">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/scheduler/jobs</code><a class="headerlink" href="#post--scheduler-jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new job.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--scheduler-jobs">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/scheduler/jobs</code><a class="headerlink" href="#get--scheduler-jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all scheduled jobs.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--users-multiqc_config">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/users/multiqc_config</code><a class="headerlink" href="#get--users-multiqc_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instructions for MultiQC configuration.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--users-password">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/users/password</code><a class="headerlink" href="#get--users-password" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change user password.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--plot_favourites-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/plot_favourites/</code><a class="headerlink" href="#get--plot_favourites-" title="Permalink to this definition">¶</a></dt>
+<dd><p>View and edit saved plots.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--edit_filters-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/edit_filters/</code><a class="headerlink" href="#get--edit_filters-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit saved filters.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--dashboards-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/dashboards/</code><a class="headerlink" href="#get--dashboards-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new dashboard.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--plot_type-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/plot_type/</code><a class="headerlink" href="#get--plot_type-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Choose plot type.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--scheduler">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/scheduler</code><a class="headerlink" href="#get--scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the scheduler info.</p>
+</dd></dl>
+
+<dl class="http post">
+<dt id="post--register-">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/register/</code><a class="headerlink" href="#post--register-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register new user.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--register-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/register/</code><a class="headerlink" href="#get--register-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register new user.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--logout-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/logout/</code><a class="headerlink" href="#get--logout-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logout.</p>
+</dd></dl>
+
+<dl class="http post">
+<dt id="post--login-">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/login/</code><a class="headerlink" href="#post--login-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log in.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--login-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/login/</code><a class="headerlink" href="#get--login-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log in.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--about-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/about/</code><a class="headerlink" href="#get--about-" title="Permalink to this definition">¶</a></dt>
+<dd><p>About page.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--users-">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/users/</code><a class="headerlink" href="#get--users-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show user profile.</p>
+</dd></dl>
+
+<dl class="http post">
+<dt id="post--">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/</code><a class="headerlink" href="#post--" title="Permalink to this definition">¶</a></dt>
+<dd><p>Home page.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/</code><a class="headerlink" href="#get--" title="Permalink to this definition">¶</a></dt>
+<dd><p>Home page.</p>
+</dd></dl>
+
+<dl class="http post">
+<dt id="post--rest_api-v1-users-(int-id)-uploads">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/rest_api/v1/users/</code><span class="sig-paren">(</span><em class="property">int: </em><em class="sig-param">id</em><span class="sig-paren">)</span><code class="sig-name descname">/uploads</code><a class="headerlink" href="#post--rest_api-v1-users-(int-id)-uploads" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="http post">
+<dt id="post--rest_api-v1-users-(int-id)-uploads">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/rest_api/v1/users/</code><span class="sig-paren">(</span><em class="property">int: </em><em class="sig-param">id</em><span class="sig-paren">)</span><code class="sig-name descname">/uploads</code><a class="headerlink" href="#post--rest_api-v1-users-(int-id)-uploads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload a new report.</p>
+<p>This is rare in that average users <em>can</em> do this, even though
+they aren’t allowed to edit arbitrary data</p>
+</dd></dl>
+
+<dl class="http post">
+<dt id="post--scheduler-jobs-(job_id)-resume">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/scheduler/jobs/</code><span class="sig-paren">(</span><em class="sig-param">job_id</em><span class="sig-paren">)</span><code class="sig-name descname">/resume</code><a class="headerlink" href="#post--scheduler-jobs-(job_id)-resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resumes a job.</p>
+</dd></dl>
+
+<dl class="http post">
+<dt id="post--scheduler-jobs-(job_id)-pause">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/scheduler/jobs/</code><span class="sig-paren">(</span><em class="sig-param">job_id</em><span class="sig-paren">)</span><code class="sig-name descname">/pause</code><a class="headerlink" href="#post--scheduler-jobs-(job_id)-pause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pauses a job.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--dashboard-view-(dashboard_id)-raw">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/dashboard/view/</code><span class="sig-paren">(</span><em class="sig-param">dashboard_id</em><span class="sig-paren">)</span><code class="sig-name descname">/raw</code><a class="headerlink" href="#get--dashboard-view-(dashboard_id)-raw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="http get">
+<dt id="get--dashboard-view-(dashboard_id)">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/dashboard/view/</code><span class="sig-paren">(</span><em class="sig-param">dashboard_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--dashboard-view-(dashboard_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new dashboard.</p>
+</dd></dl>
+
+<dl class="http post">
+<dt id="post--scheduler-jobs-(job_id)-run">
+<code class="sig-name descname">POST </code><code class="sig-name descname">/scheduler/jobs/</code><span class="sig-paren">(</span><em class="sig-param">job_id</em><span class="sig-paren">)</span><code class="sig-name descname">/run</code><a class="headerlink" href="#post--scheduler-jobs-(job_id)-run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a job.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--plot_favourite-(fav_id)-raw">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/plot_favourite/</code><span class="sig-paren">(</span><em class="sig-param">fav_id</em><span class="sig-paren">)</span><code class="sig-name descname">/raw</code><a class="headerlink" href="#get--plot_favourite-(fav_id)-raw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="http get">
+<dt id="get--plot_favourite-(fav_id)">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/plot_favourite/</code><span class="sig-paren">(</span><em class="sig-param">fav_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--plot_favourite-(fav_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>View and edit saved plots.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--scheduler-jobs-(job_id)">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/scheduler/jobs/</code><span class="sig-paren">(</span><em class="sig-param">job_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--scheduler-jobs-(job_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a job.</p>
+</dd></dl>
+
+<dl class="http delete">
+<dt id="delete--scheduler-jobs-(job_id)">
+<code class="sig-name descname">DELETE </code><code class="sig-name descname">/scheduler/jobs/</code><span class="sig-paren">(</span><em class="sig-param">job_id</em><span class="sig-paren">)</span><a class="headerlink" href="#delete--scheduler-jobs-(job_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a job.</p>
+</dd></dl>
+
+<dl class="http patch">
+<dt id="patch--scheduler-jobs-(job_id)">
+<code class="sig-name descname">PATCH </code><code class="sig-name descname">/scheduler/jobs/</code><span class="sig-paren">(</span><em class="sig-param">job_id</em><span class="sig-paren">)</span><a class="headerlink" href="#patch--scheduler-jobs-(job_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a job.</p>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--users-static-(path-filename)">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/users/static/</code><span class="sig-paren">(</span><em class="property">path: </em><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#get--users-static-(path-filename)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function used internally to send static files from the static
+folder to the browser.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.5.</span></p>
+</div>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--static-(path-filename)">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/static/</code><span class="sig-paren">(</span><em class="property">path: </em><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#get--static-(path-filename)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function used internally to send static files from the static
+folder to the browser.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.5.</span></p>
+</div>
+</dd></dl>
+
+<dl class="http get">
+<dt id="get--static-(path-filename)">
+<code class="sig-name descname">GET </code><code class="sig-name descname">/static/</code><span class="sig-paren">(</span><em class="property">path: </em><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#get--static-(path-filename)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function used internally to send static files from the static
+folder to the browser.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.5.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="flask-quick-api-reference">
+<h2>Flask Quick API Reference<a class="headerlink" href="#flask-quick-api-reference" title="Permalink to this headline">¶</a></h2>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 45%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Resource</p></th>
+<th class="head"><p>Operation</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--rest_api-v1-users-current">GET /rest_api/v1/users/current</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--rest_api-v1-users-current">GET /rest_api/v1/users/current</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#post--rest_api-v1-uploads">POST /rest_api/v1/uploads</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#post--rest_api-v1-uploads">POST /rest_api/v1/uploads</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--dashboard-edit-(dashboard_id)">GET /dashboard/edit/(dashboard_id)</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--dashboard-create-">GET /dashboard/create/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--users-multiqc_config">GET /users/multiqc_config</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--users-password">GET /users/password</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--plot_favourites-">GET /plot_favourites/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--edit_filters-">GET /edit_filters/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--dashboards-">GET /dashboards/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--plot_type-">GET /plot_type/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#post--register-">POST /register/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--register-">GET /register/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--logout-">GET /logout/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#post--login-">POST /login/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--login-">GET /login/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--about-">GET /about/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--users-">GET /users/</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#post--">POST /</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--">GET /</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#post--rest_api-v1-users-(int-id)-uploads">POST /rest_api/v1/users/(int:id)/uploads</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#post--rest_api-v1-users-(int-id)-uploads">POST /rest_api/v1/users/(int:id)/uploads</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--dashboard-view-(dashboard_id)-raw">GET /dashboard/view/(dashboard_id)/raw</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--dashboard-view-(dashboard_id)">GET /dashboard/view/(dashboard_id)</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--plot_favourite-(fav_id)-raw">GET /plot_favourite/(fav_id)/raw</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--plot_favourite-(fav_id)">GET /plot_favourite/(fav_id)</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--users-static-(path-filename)">GET /users/static/(path:filename)</a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="#get--static-(path-filename)">GET /static/(path:filename)</a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="#get--static-(path-filename)">GET /static/(path:filename)</a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="megaqc.utils.html" class="btn btn-neutral float-left" title="megaqc.utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, MegaQC Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

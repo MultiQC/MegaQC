@@ -1,0 +1,36 @@
+Metadata-Version: 2.1
+Name: megaqc
+Version: 0.3.0
+Summary: Collect and visualise data across multiple MultiQC runs
+Home-page: https://megaqc.info/
+Author: Phil Ewels
+Author-email: phil.ewels@scilifelab.se
+License: GPLv3
+Download-URL: https://github.com/ewels/MegaQC/releases
+Description: 
+        MegaQC is a web application that collects results from multiple runs of MultiQC
+        and allows bulk visualisation.
+        
+        See the MultiQC website for installation instructions and documentation: https://megaqc.info/
+        
+        MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at SciLifeLab Sweden (http://www.scilifelab.se)
+        
+Keywords: bioinformatics,biology,sequencing,NGS,next generation sequencing,quality control
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Natural Language :: English
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: Unix
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: JavaScript
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
+Classifier: Topic :: Scientific/Engineering :: Visualization
+Provides-Extra: dev
+Provides-Extra: deploy
+Provides-Extra: prod
