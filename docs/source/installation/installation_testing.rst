@@ -7,7 +7,6 @@ pure-Python installation where you can get up and running almost
 immediately.
 
    .. rubric:: WARNING!
-      :name: warning
 
    *The flask server is single-threaded, meaning that only one person
    can load a page or a plot at a time. The SQLite database works using
