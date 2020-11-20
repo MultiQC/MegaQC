@@ -45,7 +45,8 @@ jobs:
         run: |
           mkdir -p ../generated_doc
           cp -r docs/_build/html/* ../generated_doc
-          git checkout --orphan gh-pages 
+          git checkout --orphan gh-pages || git checkout gh-pages
+          git rm -rf .
           cp -r ../generated_doc gh-pages/
           cd gh-pages
           git config --local user.email "action@github.com"
