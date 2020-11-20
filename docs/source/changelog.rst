@@ -1,25 +1,6 @@
 Changelog
 =========
 
-0.4.0
------
-
-Breaking Changes
-~~~~~~~~~~~~~~~~
-
-New Features
-~~~~~~~~~~~~
-
--  Sphinx based documentation on Github Pages
-
-Bug Fixes
-~~~~~~~~~
-
-Internal Changes
-~~~~~~~~~~~~~~~~
-
--  Many and more dependency updates
-
 .. _section-1:
 
 0.3.0
@@ -41,8 +22,8 @@ Breaking Changes
 
       STRICT_REGISTRATION: false
 
-   Then, whenever you run MegaQC, you need to \`export MEGAQC_CONFIG
-   /path/to/megaqc.conf.yaml
+   Then, whenever you run MegaQC, you need to ``export MEGAQC_CONFIG
+   /path/to/megaqc.conf.yaml``
 
 -  Much stricter REST API permissions. You now need an API token for
    almost all requests. One exception is creating a new account, which
@@ -55,6 +36,8 @@ New Features
 ~~~~~~~~~~~~
 
 -  `[#140]`_ Added a changelog. It’s here! You’re reading it!
+-  Sphinx based documentation on Github Pages
+
 
 .. _bug-fixes-1:
 
@@ -71,6 +54,8 @@ Internal Changes
 
 -  Tests for the REST API permissions
 -  Enforce inactive users (by default) in the model layer
+-  Many and more dependency updates
+
 
 .. _[#138]: https://github.com/ewels/MegaQC/issues/138
 .. _[#140]: https://github.com/ewels/MegaQC/issues/140
