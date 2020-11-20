@@ -84,8 +84,7 @@ SQL database back ends, such as MySQL.
 First, install MySQL:
 https://dev.mysql.com/doc/refman/5.7/en/installing.html
 
-Then install the `Python MySQL connector`_ (alternatively with the `PyPI
-package`_).
+Then install the `Python MySQL connector`_ (alternatively with the `PyPI package`_).
 
 Now, create a custom MegaQC configuration file somewhere and set the
 environment variable ``MEGAQC_CONFIG`` to point to it. For example, in
@@ -118,16 +117,16 @@ Update your apache configuration
 (``/usr/local/apache2/conf/httpd.conf``, ``/etc/apache2/apache2.conf``,
 ``/etc/httpd/conf/httpd.conf``\ …) to include, for example (Apache 2.2):
 
-.. code:: xml
+.. code::
 
    <VirtualHost *:80>
-     SetEnv proxy-sendcl 1
-     ProxyPass / http://127.0.0.1:8000/
-     ProxyPassReverse / http://127.0.0.1:8000/
-     <Proxy *>
-       Order Allow,Deny
-       Allow from all
-     </Proxy>
+   SetEnv proxy-sendcl 1
+   ProxyPass / http://127.0.0.1:8000/
+   ProxyPassReverse / http://127.0.0.1:8000/
+   <Proxy *>
+      Order Allow,Deny
+      Allow from all
+   </Proxy>
    </VirtualHost>
 
 You also need to ensure that apache mod_proxy is activated :
