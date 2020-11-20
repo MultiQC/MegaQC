@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches:    
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
+
+    steps:
+    - uses: actions/checkout@v2
+      name: Check out source-code repository
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install pip
+      run: python -m pip install --upgrade pip
+
+    # Required to automatically extract Click CLI and Flask API documentation
+    - name: Install MegaQC
+      run: pip install -e .[dev]
+
+    - name: Install documentation dependencies
+      run: pip install -r docs/requirements.txt
+
+    - name: Create API documentation
+      run: |
+          cd docs
+          make api-docs
+    
+    - name: Build documentation
+      run: |
+          cd docs
+          make html
+
+    # TODO: We could also build latex & PDF documentation and upload them as artifacts
+
+    - name: Commit documentation changes
+      run: |
+        cp -r docs/_build/html/* ../generated_doc
+        git checkout gh-pages || git checkout -b gh-pages
+        cp -r ../generated_doc gh-pages/
+        cd gh-pages
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        # No Changes present? git commit fails and we just ignore it.
+        git commit -m "Update documentation" -a || true 
+        
+    - name: Push documentation
+      uses: ad-m/github-push-action@master
+      with:
+        branch: gh-pages
+        directory: gh-pages
+        github_token: ${{ secrets.GITHUB_TOKEN }}
