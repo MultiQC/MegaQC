@@ -1,7 +1,6 @@
 |MegaQC|
 
 A web application to collect and visualise data from multiple MultiQC reports.
--------------------------------------------------------------------------------
 
 |Docker| |Build Status| |Gitter|
 
@@ -37,14 +36,6 @@ The MegaQC homepage looks something like this:
 
 If you’re not sure what MultiQC is yet, check out the main `MultiQC
 website`_ and `GitHub repo`_ first.
-
-Installation
-------------
-
-MegaQC has been written in Python using the `Flask`_ web framework.
-MegaQC is designed to be very simple to get up and running for basic
-testing and evaluation, yet super easy to configure for a high
-performance production installation.
 
 Testing MegaQC
 ~~~~~~~~~~~~~~
@@ -86,7 +77,6 @@ Once installed, run the server with the following command:
 
 .. _MultiQC website: http://multiqc.info
 .. _GitHub repo: https://github.com/ewels/MultiQC
-.. _Flask: http://flask.pocoo.org
 
 .. |MegaQC| image:: https://raw.githubusercontent.com/ewels/MegaQC/master/megaqc/static/img/MegaQC_logo.png
 .. |Docker| image:: https://img.shields.io/docker/automated/ewels/megaqc.svg?style=flat-square
