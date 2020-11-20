@@ -11,8 +11,8 @@ Welcome to MegaQC's documentation!
    installation/installation
    usage/usage
    dev/development
-   changelog
    api_reference
+   changelog
 
 
 Indices and tables
