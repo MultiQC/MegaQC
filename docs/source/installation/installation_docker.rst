@@ -94,9 +94,29 @@ inspect the docker container.
 
 Example output for the above, nicely formatted:
 
-\```json [ { “Type”: “volume”, “Name”:
-“7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804”,
-“Source”:
-"/var/lib/docker/volumes/7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804/_data“,”Destination“:”/usr/local/lib/postgresql“,”Driver“:”loca
+\```json
+[
+  {
+    "Type": "volume",
+    "Name": "7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804",
+    "Source": "/var/lib/docker/volumes/7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804/_data",
+    "Destination": "/usr/local/lib/postgresql",
+    "Driver": "local",
+    "Mode": "",
+    "RW": true,
+    "Propagation": ""
+  },
+  {
+    "Type": "volume",
+    "Name": "6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428",
+    "Source": "/var/lib/docker/volumes/6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428/_data",
+    "Destination": "/var/log/postgresql",
+    "Driver": "local",
+    "Mode": "",
+    "RW": true,
+    "Propagation": ""
+  }
+]
+```
 
 .. _dockerhub: https://hub.docker.com/r/ewels/megaqc/

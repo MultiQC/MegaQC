@@ -104,8 +104,67 @@ Then in this file, set the following configuration key pair:
 This should, hopefully, make everything work. If you have problems,
 please `create an issue`_ and we’ll do our best to help.
 
-4. (Optional, but recommended) Creat
-------------------------------------
+4. (Optional, but recommended) Create an apache proxy
+-----------------------------------------------------
+
+**Note:**\ *You can skip this step if you wish to use gunicorn as your
+primary web server, but it’s not recommended.*
+
+**Note:**\ *This is an example configuration that will map all http
+requests to the current server to MegaQC. It will also not filter
+anything. Please consider your server security!*
+
+Update your apache configuration
+(``/usr/local/apache2/conf/httpd.conf``, ``/etc/apache2/apache2.conf``,
+``/etc/httpd/conf/httpd.conf``\ …) to include, for example (Apache 2.2):
+
+.. code:: xml
+
+   <VirtualHost *:80>
+     SetEnv proxy-sendcl 1
+     ProxyPass / http://127.0.0.1:8000/
+     ProxyPassReverse / http://127.0.0.1:8000/
+     <Proxy *>
+       Order Allow,Deny
+       Allow from all
+     </Proxy>
+   </VirtualHost>
+
+You also need to ensure that apache mod_proxy is activated :
+
+```a2enmod proxy a2enmod proxy_http```
+
+5. Restart apache
+-----------------
+
+In order for these changes to be applied, you need to restart apache
+with the following command (or equivalent on your system):
+
+.. code:: bash
+
+   service restart httpd
+
+6. Start the web server
+-----------------------
+
+.. code:: bash
+
+   gunicorn --log-file megaqc.log --timeout 300 megaqc.wsgi:app
+
+**Note:**\ *We recommend using a long timeout as the data upload from
+MultiQC can take several minutes for large reports*
+
+At this point, MegaQC should be running on the default gunicorn port
+(``8000``)
+
+You should now have a fully functional MegaQC server running! 🎉
+
+Troubleshooting
+---------------
+
+The password encryption relies on the ``libffi-devel`` package to work.
+If you run an older OS, ensure that the package is installed.
+
 
 .. _Python MySQL connector: https://dev.mysql.com/downloads/connector/python/2.1.html
 .. _PyPI package: https://pypi.python.org/pypi/mysql-connector-python/2.0.4
