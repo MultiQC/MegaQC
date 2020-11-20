@@ -28,9 +28,9 @@ def create_megaqc_app(info):
 @click.group(cls=FlaskGroup, create_app=create_megaqc_app)
 def cli():
     """
-    Welcome to the MegaQC command line interface!\n
+    Welcome to the MegaQC command line interface.
 
-    See below for the available commands - for example,
+    \nSee below for the available commands - for example,
     to start the MegaQC server, use the command: megaqc run
     """
 
