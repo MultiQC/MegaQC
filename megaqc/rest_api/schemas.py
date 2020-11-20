@@ -416,9 +416,9 @@ class FilterObjectSchema(BaseSchema):
     """
     A single filter object, e.g.
     {
-        'type': 'daterange',
-        'value': [],
-        'cmp': 'in'
+    'type': 'daterange',
+    'value': [],
+    'cmp': 'in'
     }
     """
 

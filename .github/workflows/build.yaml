@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Python tests and Node.js build
 
 on: [push, pull_request]
 
