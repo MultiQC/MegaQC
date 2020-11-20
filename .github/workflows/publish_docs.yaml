@@ -48,6 +48,8 @@ jobs:
           git checkout --orphan gh-pages || git checkout gh-pages
           git rm -rf .
           cp -r ../generated_doc/* .
+          # add a nojekyll to bypass jekyll rendering
+          touch .nojekyll
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
