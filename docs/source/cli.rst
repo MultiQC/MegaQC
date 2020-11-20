@@ -1,5 +1,3 @@
-.. _cli_doc:
-
 MegaQC Commandline Interface
 ================================
 
