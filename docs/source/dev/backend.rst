@@ -17,13 +17,13 @@ API
 ---
 
 MegaQC actually has two APIs. The first, older API is accessed at
-```/api```, and the code for this API is located in `megaqc/api`_.
+``/api``, and the code for this API is located in `megaqc/api`_.
 This API is implemented using regular flask views.
 
 However, all future development should be done on the newer REST API.
-This is accessed at ```/rest_api/v1```, and the code for it is located in
+This is accessed at ``/rest_api/v1``, and the code for it is located in
 `megaqc/rest_api`_. This API is composed of views, located in
-```views.py```. These view classes, which rely on `flapison`_, each
+``views.py``. These view classes, which rely on `flapison`_, each
 define an SQLAlchemy model that defines how to access the data, and a
 Marshmallow schema, which defines how to serialize and deserialize the
 data to JSON. The Marshmallow schemas themselves are defined in
@@ -43,7 +43,7 @@ Tests
 
 Python tests are located in the `python_tests`_ folder. Please note that
 there are currently no Javascript tests. To run the Python tests, use
-```pytest test```. Every new URL should be tested, although since new
+``pytest test``. Every new URL should be tested, although since new
 pages are likely to rely on React and the REST API, testing can mostly
 be done inside `test_api.py`_, which tests all REST API endpoints.
 
