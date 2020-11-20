@@ -14,3 +14,5 @@ Next, some technical details regarding the front and backend are explained.
 .. include:: backend.rst
 .. include:: frontend.rst
 .. include:: troubleshooting.rst
+.. include:: migrations.rst
+.. include:: ../modules.rst

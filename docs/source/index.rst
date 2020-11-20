@@ -13,7 +13,6 @@ Welcome to MegaQC's documentation!
    dev/development
    changelog
    api_reference
-   modules
 
 
 Indices and tables
