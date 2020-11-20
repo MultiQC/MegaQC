@@ -47,8 +47,7 @@ jobs:
           cp -r docs/_build/html/* ../generated_doc
           git checkout --orphan gh-pages || git checkout gh-pages
           git rm -rf .
-          cp -r ../generated_doc gh-pages/
-          cd gh-pages
+          cp -r ../generated_doc/* .
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
@@ -59,5 +58,4 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           branch: gh-pages
-          directory: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
