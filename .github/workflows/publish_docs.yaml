@@ -41,23 +41,8 @@ jobs:
 
       # TODO: We could also build latex & PDF documentation and upload them as artifacts
 
-      - name: Commit documentation changes
-        run: |
-          mkdir -p ../generated_doc
-          cp -r docs/_build/html/* ../generated_doc
-          git checkout --orphan gh-pages || git checkout gh-pages
-          git rm -rf .
-          cp -r ../generated_doc/* .
-          # add a nojekyll to bypass jekyll rendering
-          touch .nojekyll
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          # No Changes present? git commit fails and we just ignore it.
-          git commit -m "Update documentation" -a || true
-
-      - name: Push documentation
-        uses: ad-m/github-push-action@master
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_build/html
