@@ -29,7 +29,7 @@ explored.
 
 The MegaQC homepage looks something like this:
 
-.. figure:: https://raw.githubusercontent.com/ewels/MegaQC/master/docs/images/megaqc_homepage.png
+.. figure:: https://raw.githubusercontent.com/ewels/MegaQC/master/docs/source/images/megaqc_homepage.png
    :alt: MegaQC homepage
 
    MegaQC homepage
