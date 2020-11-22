@@ -32,6 +32,10 @@ extensions = [
     "sphinxcontrib.autohttp.flaskqref",
 ]
 
+# Replace the usual index.rst with a custom index.html file
+master_doc = 'docs/contents'
+html_additional_pages = {'index': 'index.html'}
+
 templates_path = ["_templates"]
 
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
@@ -39,7 +43,6 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "sphinx_rtd_theme"
 
 html_static_path = ["_static"]
-
 html_css_files = [
     "megaqc_style.css",
 ]

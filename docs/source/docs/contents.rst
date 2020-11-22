@@ -11,7 +11,7 @@ Welcome to MegaQC's documentation!
    installation/installation
    usage/usage
    dev/development
-   api_reference
+   ../api_reference
    changelog
 
 
