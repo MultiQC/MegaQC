@@ -1,0 +1,15 @@
+{% set title = _('Welcome!') %}
+{% block body %}
+  <h1>{{ _('Welcome') }}</h1>
+
+  <p style="background-color:tomato;">This is the test project for creating a custom landing page.
+
+  <img class="biglogo" src="https://cdn.pixabay.com/photo/2017/04/29/18/02/bubbles-2271209_960_720.jpg">
+
+  <h2 style="margin-bottom: 10 px">{%trans%}Start Here{%endtrans%}</h2>
+
+  <p>See the <a href="{{ pathto("docs/contents") }}">{%trans%}table of contents{%endtrans%}</a>.</p>
+
+{% endblock %}
+
+<!-- To get a CSS file src="{{ pathto('_static/fancy.css') }} -->
