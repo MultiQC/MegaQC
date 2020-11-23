@@ -6,9 +6,9 @@ RUN npm install
 RUN npm run build
 
 # Setup the final container that will we run
-FROM tiangolo/meinheld-gunicorn-flask:python3.7
+FROM tiangolo/meinheld-gunicorn-flask:python3.8
 LABEL authors="phil.ewels@scilifelab.se,denis.moreno@scilifelab.se" \
-    description="Docker image running MegaQC"
+    description="Docker image running MegaQC with Gunicorn"
 
 # Tell MegaQC to use postgres / psycopg2
 ENV MEGAQC_PRODUCTION=1 \
