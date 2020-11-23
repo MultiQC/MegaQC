@@ -10,16 +10,37 @@ To run MegaQC with docker, simply use the following command:
 
    docker run -p 80:80 ewels/megaqc
 
-This will pull the latest image from `dockerhub`_ and run MegaQC on port
-80.
+This will pull the latest image from `dockerhub`_ and run MegaQC on port 80.
 
 Note that you will need to publish the port in order to access it from
 the host, or other machines. For more information, read
-https://docs.docker.com/engine/reference/run/
+https://docs.docker.com/engine/reference/run/ .
 
-Note that the default latest tag will typically be a development version
-and may not be very stable. You can specify a tagged version to run a
-release instead:
+By default, the MegaQC related environment variables are set to:
+
+.. code-block::
+
+    MEGAQC_PRODUCTION=1
+    MEGAQC_SECRET="SuperSecretValueYouShouldReallyChange"
+    MEGAQC_CONFIG=""
+    APP_MODULE=megaqc.wsgi:app
+    DB_HOST="127.0.0.1"
+    DB_PORT="5432"
+    DB_NAME="megaqc"
+    DB_USER="megaqc"
+    DB_PASS="megaqcpswd"
+
+To run MegaQC with custom environment variables use the ``-e key=value`` run options.
+For more information, please read
+`Docker - setting environment variables <https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file>`_.
+Running MegaQC for example with a custom database password works as follows:
+
+.. code-block:: bash
+
+    docker run -e DB_PASS=someotherpassword ewels/megaqc
+
+Furthermore, be aware that the default latest tag will typically be a development version
+and may not be very stable. You can specify a tagged version to run a release instead:
 
 .. code:: bash
 
@@ -35,9 +56,8 @@ exists. To pull the latest version of MegaQC use the following command:
 Building your own docker image
 ------------------------------
 
-If you prefer, you can build your own docker image if you have pulled
-the MegaQC code from GitHub. Simply cd to the MegaQC root directory and
-run
+If you prefer, you can build your own docker image if you have pulled the
+MegaQC code from GitHub. Simply cd to the MegaQC root directory and run
 
 .. code:: bash
 
@@ -52,7 +72,7 @@ You can then run MegaQC as described above:
 Using persistent data
 ---------------------
 
-The Dockerfile has been configured to automatically create persisent
+The Dockerfile has been configured to automatically create persistent
 volumes for the data and log directories. This volume will be created
 without additional input by the user, but if you want to re-use those
 volumes with a new container you must specify them when running the
@@ -94,7 +114,6 @@ inspect the docker container.
 
 Example output for the above, nicely formatted:
 
-
 .. code:: json
 
    [
@@ -119,5 +138,21 @@ Example output for the above, nicely formatted:
       "Propagation": ""
    }
    ]
+
+Running MegaQC with a local Postgres database
+--------------------------------------------------
+
+To access a Postgres database running on a localhost you need to use
+the host's networking. For more information, read
+https://docs.docker.com/network/host/ .
+
+An example command to run MegaQC with a Postgres database which is accessible
+on ``localhost:5432``, looks as follows:
+
+.. code:: bash
+
+    docker run --network="host" -p 5432 ewels/megaqc
+
+Note that by default ``localhost=127.0.0.1``.
 
 .. _dockerhub: https://hub.docker.com/r/ewels/megaqc/

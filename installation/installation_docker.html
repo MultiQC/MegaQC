@@ -166,14 +166,31 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc
 </pre></div>
 </div>
-<p>This will pull the latest image from <a class="reference external" href="https://hub.docker.com/r/ewels/megaqc/">dockerhub</a> and run MegaQC on port
-80.</p>
+<p>This will pull the latest image from <a class="reference external" href="https://hub.docker.com/r/ewels/megaqc/">dockerhub</a> and run MegaQC on port 80.</p>
 <p>Note that you will need to publish the port in order to access it from
 the host, or other machines. For more information, read
-<a class="reference external" href="https://docs.docker.com/engine/reference/run/">https://docs.docker.com/engine/reference/run/</a></p>
-<p>Note that the default latest tag will typically be a development version
-and may not be very stable. You can specify a tagged version to run a
-release instead:</p>
+<a class="reference external" href="https://docs.docker.com/engine/reference/run/">https://docs.docker.com/engine/reference/run/</a> .</p>
+<p>By default, the MegaQC related environment variables are set to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MEGAQC_PRODUCTION</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">MEGAQC_SECRET</span><span class="o">=</span><span class="s2">&quot;SuperSecretValueYouShouldReallyChange&quot;</span>
+<span class="n">MEGAQC_CONFIG</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="n">APP_MODULE</span><span class="o">=</span><span class="n">megaqc</span><span class="o">.</span><span class="n">wsgi</span><span class="p">:</span><span class="n">app</span>
+<span class="n">DB_HOST</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span>
+<span class="n">DB_PORT</span><span class="o">=</span><span class="s2">&quot;5432&quot;</span>
+<span class="n">DB_NAME</span><span class="o">=</span><span class="s2">&quot;megaqc&quot;</span>
+<span class="n">DB_USER</span><span class="o">=</span><span class="s2">&quot;megaqc&quot;</span>
+<span class="n">DB_PASS</span><span class="o">=</span><span class="s2">&quot;megaqcpswd&quot;</span>
+</pre></div>
+</div>
+<p>To run MegaQC with custom environment variables use the <code class="docutils literal notranslate"><span class="pre">-e</span> <span class="pre">key=value</span></code> run options.
+For more information, please read
+<a class="reference external" href="https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file">Docker - setting environment variables</a>.
+Running MegaQC for example with a custom database password works as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -e <span class="nv">DB_PASS</span><span class="o">=</span>someotherpassword ewels/megaqc
+</pre></div>
+</div>
+<p>Furthermore, be aware that the default latest tag will typically be a development version
+and may not be very stable. You can specify a tagged version to run a release instead:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc:v0.1
 </pre></div>
 </div>
@@ -185,9 +202,8 @@ exists. To pull the latest version of MegaQC use the following command:</p>
 </div>
 <div class="section" id="building-your-own-docker-image">
 <h2>Building your own docker image<a class="headerlink" href="#building-your-own-docker-image" title="Permalink to this headline">¶</a></h2>
-<p>If you prefer, you can build your own docker image if you have pulled
-the MegaQC code from GitHub. Simply cd to the MegaQC root directory and
-run</p>
+<p>If you prefer, you can build your own docker image if you have pulled the
+MegaQC code from GitHub. Simply cd to the MegaQC root directory and run</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker build . -t ewels/megaqc
 </pre></div>
 </div>
@@ -198,7 +214,7 @@ run</p>
 </div>
 <div class="section" id="using-persistent-data">
 <h2>Using persistent data<a class="headerlink" href="#using-persistent-data" title="Permalink to this headline">¶</a></h2>
-<p>The Dockerfile has been configured to automatically create persisent
+<p>The Dockerfile has been configured to automatically create persistent
 volumes for the data and log directories. This volume will be created
 without additional input by the user, but if you want to re-use those
 volumes with a new container you must specify them when running the
@@ -255,6 +271,18 @@ docker inspect --format <span class="s1">&#39;{{json .Mounts}}&#39;</span> examp
 <span class="p">]</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="running-megaqc-with-a-local-postgres-database">
+<h2>Running MegaQC with a local Postgres database<a class="headerlink" href="#running-megaqc-with-a-local-postgres-database" title="Permalink to this headline">¶</a></h2>
+<p>To access a Postgres database running on a localhost you need to use
+the host’s networking. For more information, read
+<a class="reference external" href="https://docs.docker.com/network/host/">https://docs.docker.com/network/host/</a> .</p>
+<p>An example command to run MegaQC with a Postgres database which is accessible
+on <code class="docutils literal notranslate"><span class="pre">localhost:5432</span></code>, looks as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run --network<span class="o">=</span><span class="s2">&quot;host&quot;</span> -p <span class="m">5432</span> ewels/megaqc
+</pre></div>
+</div>
+<p>Note that by default <code class="docutils literal notranslate"><span class="pre">localhost=127.0.0.1</span></code>.</p>
 </div>
 </div>
 
