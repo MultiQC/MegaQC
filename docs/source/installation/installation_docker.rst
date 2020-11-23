@@ -10,27 +10,13 @@ To run MegaQC with docker, simply use the following command:
 
    docker run -p 80:80 ewels/megaqc
 
-This will pull the latest image from `dockerhub`_ and run MegaQC on port
-80.
+This will pull the latest image from `dockerhub`_ and run MegaQC on port 80.
 
 Note that you will need to publish the port in order to access it from
 the host, or other machines. For more information, read
-https://docs.docker.com/engine/reference/run/
+https://docs.docker.com/engine/reference/run/ .
 
-To access a Postgres database running on a localhost you need to use
-the host's networking. For more information, read
-https://docs.docker.com/network/host/
-
-An example command to run MegaQC with a Postgres database, which is accessible
-on ``localhost:5432``, looks as follows:
-
-.. code:: bash
-
-    docker run --network="host" -p 5432 ewels/megaqc
-
-Note that by default ``localhost=127.0.0.1``.
-
-By default, the MegaQC related environment variables are set to
+By default, the MegaQC related environment variables are set to:
 
 .. code-block::
 
@@ -46,9 +32,8 @@ By default, the MegaQC related environment variables are set to
 
 To run MegaQC with custom environment variables use the ``-e key=value`` run options.
 For more information, please read
-`Docker - setting environment variables <https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file>`_
-
-To run MegaQC for example with a custom database password use:
+`Docker - setting environment variables <https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file>`_.
+Running MegaQC for example with a custom database password works as follows:
 
 .. code-block:: bash
 
@@ -153,5 +138,21 @@ Example output for the above, nicely formatted:
       "Propagation": ""
    }
    ]
+
+Running MegaQC with a local Postgres database
+--------------------------------------------------
+
+To access a Postgres database running on a localhost you need to use
+the host's networking. For more information, read
+https://docs.docker.com/network/host/ .
+
+An example command to run MegaQC with a Postgres database which is accessible
+on ``localhost:5432``, looks as follows:
+
+.. code:: bash
+
+    docker run --network="host" -p 5432 ewels/megaqc
+
+Note that by default ``localhost=127.0.0.1``.
 
 .. _dockerhub: https://hub.docker.com/r/ewels/megaqc/

@@ -73,7 +73,9 @@ If you would like the development version instead, the command is:
 
 Once installed, run the server with the following command:
 
- ``megaqc run``
+.. code:: bash
+
+    megaqc run
 
 .. _MultiQC website: http://multiqc.info
 .. _GitHub repo: https://github.com/ewels/MultiQC

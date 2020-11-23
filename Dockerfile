@@ -8,7 +8,7 @@ RUN npm run build
 # Setup the final container that will we run
 FROM tiangolo/meinheld-gunicorn-flask:python3.8
 LABEL authors="phil.ewels@scilifelab.se,denis.moreno@scilifelab.se" \
-    description="Docker image running MegaQC with Gunciorn"
+    description="Docker image running MegaQC with Gunicorn"
 
 # Tell MegaQC to use postgres / psycopg2
 ENV MEGAQC_PRODUCTION=1 \
@@ -23,4 +23,5 @@ ENV MEGAQC_PRODUCTION=1 \
 COPY . /app
 # Copy the compiled JS in from the other node container
 COPY --from=0 /app/megaqc/static/ /app/megaqc/static/
+
 RUN pip install /app[prod]
