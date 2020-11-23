@@ -18,7 +18,7 @@ the host, or other machines. For more information, read
 https://docs.docker.com/engine/reference/run/
 
 To access a Postgres database running on a localhost you need to use
-host's networking. For more information, read
+the host's networking. For more information, read
 https://docs.docker.com/network/host/
 
 An example command to run MegaQC with a Postgres database, which is accessible
