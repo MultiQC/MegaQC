@@ -14,13 +14,9 @@ jobs:
 
       - uses: jakejarvis/wait-action@master
         with:
-          time: '90'
+          time: "60"
       - name: Check running containers
         run: docker ps -a
 
-      - name: Check logs
-        run: docker logs backend
-
-      - name: Run MegaQC Help 
+      - name: Run MegaQC Help
         run: docker exec deployment_megaqc_1 megaqc --help
-        
