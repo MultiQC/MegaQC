@@ -1,6 +1,6 @@
 name: Run precommit
 
-on: push
+on: [push, pull_request]
 
 jobs:
   test:
@@ -11,7 +11,7 @@ jobs:
         with:
           python-version: '3.9'
 
-      - Name: Install pre-commit
+      - name: Install pre-commit
         run: pip install pre-commit
 
       - name: Lint using pre-commit
