@@ -1,0 +1,26 @@
+name: Docker Compose Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the stack
+        run: |
+          cd deployment
+          docker-compose up -d
+
+      - uses: jakejarvis/wait-action@master
+        with:
+          time: '90'
+      - name: Check running containers
+        run: docker ps -a
+
+      - name: Check logs
+        run: docker logs backend
+
+      - name: Run MegaQC Help 
+        run: docker exec deployment_megaqc_1 megaqc --help
+        
