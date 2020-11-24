@@ -39,3 +39,4 @@ services:
 volumes:
   static_volume:
   db_volume:
+    
