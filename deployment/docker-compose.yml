@@ -2,17 +2,22 @@ version: "3.7"
 
 services:
   megaqc:
-    #image: ewels/megaqc
+    image: ewels/megaqc
     build: ..
     volumes:
       # Share the static files via a volume
       - static_volume:/app/megaqc/static
-    expose:
-      - 8000
     depends_on:
       - db
     environment:
-      DB_HOST: db
+      - MEGAQC_PRODUCTION=${MEGAQC_PRODUCTION}
+      - MEGAQC_SECRET=${MEGAQC_SECRET}
+      - APP_MODULE=${APP_MODULE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
   db:
     image: postgres:latest
     volumes:
