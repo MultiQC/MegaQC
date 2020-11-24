@@ -30,4 +30,4 @@ repos:
     rev: v2.1.2
     hooks:
       - id: prettier
-        exclude: (megaqc/templates|megaqc/static)
+        exclude: (megaqc/templates|megaqc/static|docs/source/_templates)
