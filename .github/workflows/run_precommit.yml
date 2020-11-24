@@ -1,0 +1,14 @@
+name: Run precommit
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Lint using pre-commit
+        run: |
+          pre-commit run --all-files
+          
