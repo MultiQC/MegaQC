@@ -1,6 +1,10 @@
 MegaQC Installation: Production
 ===============================
 
+This section explains how to set up a production environment without
+the usage of container technologies. If you want to run MegaQC in a 
+containerized environment please refer to :ref:`docker_installation`. 
+
 1. Install the MegaQC package
 -----------------------------
 
