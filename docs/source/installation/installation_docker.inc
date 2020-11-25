@@ -16,9 +16,9 @@ Overview
 
 The MegaQC container is based on the `Node container <https://hub.docker.com/_/node>`_ 
 to compile all Javascript scripts and the `Gunicorn Flask container <https://hub.docker.com/r/tiangolo/meinheld-gunicorn-flask/dockerfile>`_
-providing Gunicorn, Flask and MegaQC configured for production.
+providing Gunicorn, Flask and MegaQC preconfigured for production deployments.
 The `Gunicorn Flask <https://hub.docker.com/r/tiangolo/meinheld-gunicorn-flask/dockerfile>`_ container 
-is also the one that finally spins up the final server.
+is also the one spinning up the final server.
 
 Pulling the docker image from dockerhub
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
