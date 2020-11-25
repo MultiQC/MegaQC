@@ -99,16 +99,25 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#megaqc-installation-docker">MegaQC Installation: Docker</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#pulling-the-docker-image-from-dockerhub">Pulling the docker image from dockerhub</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#building-your-own-docker-image">Building your own docker image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#using-persistent-data">Using persistent data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#running-megaqc-with-a-local-postgres-database">Running MegaQC with a local Postgres database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-megaqc-docker-container">The MegaQC Docker container</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pulling-the-docker-image-from-dockerhub">Pulling the docker image from dockerhub</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-your-own-docker-image">Building your own docker image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-megaqc-docker-compose-stack">The MegaQC Docker Compose stack</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Configuration</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#megaqc-installation-production">MegaQC Installation: Production</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">1. Install the MegaQC package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">1. Install the MegaQC package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#export-environment-variables">2. Export environment variables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">3. Set up the database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">3. Set up the database</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#using-a-postgresql-database">3.1 Using a PostgreSQL database</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#using-a-mysql-database">3.2 Using a MySQL database</a></li>
 </ul>
@@ -124,10 +133,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#clone-the-repo">1. Clone the repo</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#install-the-python-into-a-virtual-environment">2. Install the Python into a virtual environment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enable-development-mode">3. Enable development mode:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">4. Set up the database</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">5. Start megaqc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">4. Set up the database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">5. Start megaqc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#setup-your-access-key">6. Setup your access key</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id5">7. Load test data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">7. Load test data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#install-the-javascript-and-start-compiling">8. Install the JavaScript and start compiling</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#install-the-pre-commit-hooks">9. Install the pre-commit hooks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a></li>
@@ -272,17 +281,53 @@ accessible on your localhost at <a class="reference external" href="http://127.0
 </div>
 </div>
 <div class="section" id="megaqc-installation-docker">
-<h2>MegaQC Installation: Docker<a class="headerlink" href="#megaqc-installation-docker" title="Permalink to this headline">¶</a></h2>
+<span id="docker-installation"></span><h2>MegaQC Installation: Docker<a class="headerlink" href="#megaqc-installation-docker" title="Permalink to this headline">¶</a></h2>
+<p>MegaQC offers two ways of getting a containerized setup running:</p>
+<ol class="arabic simple">
+<li><p>A single Docker container containing MegaQC with a Gunicorn WSGI HTTP server</p></li>
+<li><p>A Docker Compose stack containing the MegaQC container, a Postgres container and a NGINX container</p></li>
+</ol>
+<div class="section" id="the-megaqc-docker-container">
+<span id="megaqc-docker-container"></span><h3>The MegaQC Docker container<a class="headerlink" href="#the-megaqc-docker-container" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="overview">
+<h4>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h4>
+<p>The MegaQC container is based on the <a class="reference external" href="https://hub.docker.com/_/node">Node container</a>
+to compile all Javascript scripts and the <a class="reference external" href="https://hub.docker.com/r/tiangolo/meinheld-gunicorn-flask/dockerfile">Gunicorn Flask container</a>
+providing Gunicorn, Flask and MegaQC preconfigured for production deployments.
+The <a class="reference external" href="https://hub.docker.com/r/tiangolo/meinheld-gunicorn-flask/dockerfile">Gunicorn Flask</a> container
+is also the one spinning up the final server.</p>
+</div>
 <div class="section" id="pulling-the-docker-image-from-dockerhub">
-<h3>Pulling the docker image from dockerhub<a class="headerlink" href="#pulling-the-docker-image-from-dockerhub" title="Permalink to this headline">¶</a></h3>
+<h4>Pulling the docker image from dockerhub<a class="headerlink" href="#pulling-the-docker-image-from-dockerhub" title="Permalink to this headline">¶</a></h4>
 <p>To run MegaQC with docker, simply use the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc
 </pre></div>
 </div>
 <p>This will pull the latest image from <a class="reference external" href="https://hub.docker.com/r/ewels/megaqc/">dockerhub</a> and run MegaQC on port 80.</p>
 <p>Note that you will need to publish the port in order to access it from
-the host, or other machines. For more information, read
-<a class="reference external" href="https://docs.docker.com/engine/reference/run/">https://docs.docker.com/engine/reference/run/</a> .</p>
+the host, or other machines. For more information, read <a class="reference external" href="https://docs.docker.com/engine/reference/run/">https://docs.docker.com/engine/reference/run/</a> .</p>
+</div>
+<div class="section" id="building-your-own-docker-image">
+<h4>Building your own docker image<a class="headerlink" href="#building-your-own-docker-image" title="Permalink to this headline">¶</a></h4>
+<p>If you prefer, you can build your own docker image if you have pulled the
+MegaQC code from GitHub. Simply cd to the MegaQC root directory and run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker build . -t ewels/megaqc
+</pre></div>
+</div>
+<p>You can then run MegaQC as described above:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h4>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h4>
+<p>Besides the sections below it is also recommended to read the
+<a class="reference external" href="https://github.com/tiangolo/meinheld-gunicorn-flask-docker">Gunicorn Flask container documentation</a>,
+which explains how to customize the <code class="docutils literal notranslate"><span class="pre">host</span></code> IP where Gunicorn listens
+to requests, the <code class="docutils literal notranslate"><span class="pre">port</span></code> the container should listen on and <code class="docutils literal notranslate"><span class="pre">bind</span></code>, the actual
+host and port passed to gunicorn, let alone custom Gunicorn configuration files.</p>
+<div class="section" id="environment-variables">
+<h5>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h5>
 <p>By default, the MegaQC related environment variables are set to:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MEGAQC_PRODUCTION</span><span class="o">=</span><span class="mi">1</span>
 <span class="n">MEGAQC_SECRET</span><span class="o">=</span><span class="s2">&quot;SuperSecretValueYouShouldReallyChange&quot;</span>
@@ -313,20 +358,8 @@ exists. To pull the latest version of MegaQC use the following command:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="building-your-own-docker-image">
-<h3>Building your own docker image<a class="headerlink" href="#building-your-own-docker-image" title="Permalink to this headline">¶</a></h3>
-<p>If you prefer, you can build your own docker image if you have pulled the
-MegaQC code from GitHub. Simply cd to the MegaQC root directory and run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker build . -t ewels/megaqc
-</pre></div>
-</div>
-<p>You can then run MegaQC as described above:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc
-</pre></div>
-</div>
-</div>
 <div class="section" id="using-persistent-data">
-<h3>Using persistent data<a class="headerlink" href="#using-persistent-data" title="Permalink to this headline">¶</a></h3>
+<h5>Using persistent data<a class="headerlink" href="#using-persistent-data" title="Permalink to this headline">¶</a></h5>
 <p>The Dockerfile has been configured to automatically create persistent
 volumes for the data and log directories. This volume will be created
 without additional input by the user, but if you want to re-use those
@@ -386,7 +419,7 @@ docker inspect --format <span class="s1">&#39;{{json .Mounts}}&#39;</span> examp
 </div>
 </div>
 <div class="section" id="running-megaqc-with-a-local-postgres-database">
-<h3>Running MegaQC with a local Postgres database<a class="headerlink" href="#running-megaqc-with-a-local-postgres-database" title="Permalink to this headline">¶</a></h3>
+<h5>Running MegaQC with a local Postgres database<a class="headerlink" href="#running-megaqc-with-a-local-postgres-database" title="Permalink to this headline">¶</a></h5>
 <p>To access a Postgres database running on a localhost you need to use
 the host’s networking. For more information, read
 <a class="reference external" href="https://docs.docker.com/network/host/">https://docs.docker.com/network/host/</a> .</p>
@@ -398,10 +431,59 @@ on <code class="docutils literal notranslate"><span class="pre">localhost:5432</
 <p>Note that by default <code class="docutils literal notranslate"><span class="pre">localhost=127.0.0.1</span></code>.</p>
 </div>
 </div>
+</div>
+<div class="section" id="the-megaqc-docker-compose-stack">
+<h3>The MegaQC Docker Compose stack<a class="headerlink" href="#the-megaqc-docker-compose-stack" title="Permalink to this headline">¶</a></h3>
+<p>Since a fully working and performant MegaQC instance depends on a SQL database
+and a reverse proxy, MegaQC offers a docker-compose stack, which sets up three
+containers for a zero configuration setup.</p>
+<div class="section" id="id1">
+<h4>Overview<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>The <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment/docker-compose.yml">docker-compose</a> configuration can be accessed in the <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment">deployment folder</a>.
+The docker-compose configuration provides the <a class="reference internal" href="#megaqc-docker-container"><span class="std std-ref">The MegaQC Docker container</span></a>,
+a <a class="reference external" href="https://hub.docker.com/_/postgres">postgres container</a> for the SQL database
+and a <a class="reference external" href="https://hub.docker.com/_/nginx">nginx container</a> for the reverse proxy setup.</p>
+</div>
+<div class="section" id="usage">
+<h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h4>
+<p>Inside the <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment">deployment folder</a> the <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment/docker-compose.yml">docker-compose</a> configuration
+together with the associated <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment/.env">.env</a> file
+are found. To spin up all containers simply run from inside the <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment">deployment folder</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose up
+</pre></div>
+</div>
+<p>All containers should now spin up and the MegaQC server should be accessible on <code class="docutils literal notranslate"><span class="pre">0.0.0.0:80</span></code>.
+Alternatively, you can spin up the containers in the background:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose up -d
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">-d</span></code> option detaches from the containers, but will keep them running.</p>
+</div>
+<div class="section" id="id2">
+<h4>Configuration<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id3">
+<h5>Environment variables<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h5>
+<p>The default environment variables for MegaQC used when starting the <a class="reference internal" href="#megaqc-docker-container"><span class="std std-ref">The MegaQC Docker container</span></a>
+are defined inside the <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment/.env">.env</a> file.
+Simply edit the file and the new environment variables will be passed to the <a class="reference internal" href="#megaqc-docker-container"><span class="std std-ref">The MegaQC Docker container</span></a>.</p>
+</div>
+<div class="section" id="further-runtime-arguments">
+<h5>Further runtime arguments<a class="headerlink" href="#further-runtime-arguments" title="Permalink to this headline">¶</a></h5>
+<p>Further runtime arguments can be added to a
+<a class="reference external" href="https://docs.docker.com/compose/compose-file/#command">command section</a>
+inside the <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment/docker-compose.yml">docker-compose</a> configuration file.</p>
+<p>Alternatively, you can provide additional arguments</p>
+</div>
+</div>
+</div>
+</div>
 <div class="section" id="megaqc-installation-production">
 <h2>MegaQC Installation: Production<a class="headerlink" href="#megaqc-installation-production" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id1">
-<h3>1. Install the MegaQC package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>This section explains how to set up a production environment without
+the usage of container technologies. If you want to run MegaQC in a
+containerized environment please refer to <a class="reference internal" href="#docker-installation"><span class="std std-ref">MegaQC Installation: Docker</span></a>.</p>
+<div class="section" id="id6">
+<h3>1. Install the MegaQC package<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <p>MegaQC is available on both the Python Package Index (PyPI) and conda
 (bioconda channel). To install using PyPI, run the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install megaqc<span class="o">[</span>prod<span class="o">]</span>
@@ -427,8 +509,8 @@ need to set <code class="docutils literal notranslate"><span class="pre">SERVER_
 </pre></div>
 </div>
 </div>
-<div class="section" id="id2">
-<h3>3. Set up the database<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>3. Set up the database<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>MegaQC uses the Flask SQLAlchemy plugin, meaning that it can be used
 with any SQL database (PostgreSQL, MySQL, SQLite and others).</p>
 <p>MegaQC has been developed with PostgreSQL, see below. For instructions.
@@ -565,16 +647,16 @@ performance testing.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id3">
-<h3>4. Set up the database<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>4. Set up the database<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p>Running this command creates an empty SQLite MegaQC database file in the
 installation directory called <code class="docutils literal notranslate"><span class="pre">megaqc.db</span></code></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>megaqc initdb
 </pre></div>
 </div>
 </div>
-<div class="section" id="id4">
-<h3>5. Start megaqc<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>5. Start megaqc<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <p>Start MegaQC:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>megaqc run
 </pre></div>
@@ -597,8 +679,8 @@ current (MegaQC) directory. However, you will then have to run
 <code class="docutils literal notranslate"><span class="pre">megaqc</span> <span class="pre">upload</span></code> from that directory each time</p></li>
 </ul>
 </div>
-<div class="section" id="id5">
-<h3>7. Load test data<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h3>7. Load test data<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <p>In order to develop new features you need some data to test it with:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/TMiguelT/1000gFastqc
 <span class="k">for</span> report in <span class="k">$(</span>find 1000gFastqc -name <span class="s1">&#39;*.json&#39;</span><span class="k">)</span>
