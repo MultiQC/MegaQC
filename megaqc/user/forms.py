@@ -18,7 +18,7 @@ class AdminForm(Form):
     first_name = StringField("First Name", validators=[Length(min=1, max=80)])
     last_name = StringField("Last Name", validators=[Length(min=1, max=80)])
     email = StringField(
-        "Email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
+        "Email", validators=[DataRequired(), Email(), Length(min=6, max=80)]
     )
     active = BooleanField("Active")
     is_admin = BooleanField("Admin")
