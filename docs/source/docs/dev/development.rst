@@ -11,8 +11,8 @@ Please follow the :ref:`installation_dev` guidelines to install a development re
 You should also be aware of the detailed :ref:`megaqc_module` and :ref:`megaqc_api_reference`.
 Next, some technical details regarding the front and backend are explained.
 
-.. include:: backend.rst
-.. include:: frontend.rst
-.. include:: troubleshooting.rst
-.. include:: migrations.rst
-.. include:: ../../modules.rst
+.. include:: backend.inc
+.. include:: frontend.inc
+.. include:: troubleshooting.inc
+.. include:: migrations.inc
+.. include:: ../modules.rst

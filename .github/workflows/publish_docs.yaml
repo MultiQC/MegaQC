@@ -2,8 +2,6 @@ name: Publish documentation
 
 on:
   push:
-    branches:
-      - master
 
 jobs:
   build:
@@ -15,7 +13,7 @@ jobs:
         name: Check out source-code repository
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v2.1.4
         with:
           python-version: 3.9
 
@@ -42,6 +40,7 @@ jobs:
       # TODO: We could also build latex & PDF documentation and upload them as artifacts
 
       - name: Deploy
+        if: ${{ github.ref == 'refs/heads/master' }}
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
