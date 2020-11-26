@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Usage &mdash; MegaQC 0.3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/megaqc_style.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Development" href="../dev/development.html" />
+    <link rel="prev" title="Installation" href="../installation/installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../contents.html" class="icon icon-home" alt="Documentation Home"> MegaQC
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">MegaQC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#megaqc-usage-setup">MegaQC Usage: Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submitting-data">Submitting data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#multiqc-configuration">MultiQC configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-multiqc">Running MultiQC</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#megaqc-usage-administration">MegaQC Usage: Administration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#initial-setup">Initial setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-administration">User administration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference.html">MegaQC API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">MegaQC</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Usage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/docs/usage/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>In the following sections general details regarding the usage
+and administation of MegaQC are provided.</p>
+<div class="section" id="megaqc-usage-setup">
+<h2>MegaQC Usage: Setup<a class="headerlink" href="#megaqc-usage-setup" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="submitting-data">
+<h3>Submitting data<a class="headerlink" href="#submitting-data" title="Permalink to this headline">¶</a></h3>
+<p>Before you can do anything useful in MegaQC, you need to submit some
+data to the database. You do this by configuring and then running
+MultiQC.</p>
+<div class="section" id="multiqc-configuration">
+<h4>MultiQC configuration<a class="headerlink" href="#multiqc-configuration" title="Permalink to this headline">¶</a></h4>
+<p>MultiQC needs a couple of configuration variables to know how to send
+data to MegaQC. To find these, log into MegaQC and use the navigation
+dropdown to get to the <em>MultiQC Configuration</em> page. Copy the specified
+text into <code class="docutils literal notranslate"><span class="pre">~/.multiqc_config.yaml</span></code>.</p>
+<p>Note that this <code class="docutils literal notranslate"><span class="pre">megaqc_access_token</span></code> is specific to your MegaQC user,
+so shouldn’t be shared (it’s effectively a password). All data uploaded
+using that token will be attributed to your user.</p>
+</div>
+<div class="section" id="running-multiqc">
+<h4>Running MultiQC<a class="headerlink" href="#running-multiqc" title="Permalink to this headline">¶</a></h4>
+<p>Once configured, run MultiQC as you would normally. You should see a
+couple of additional log messages under the <code class="docutils literal notranslate"><span class="pre">megaqc</span></code> namespace as
+follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ multiqc .
+
+[INFO   ]         multiqc : This is MultiQC v1.3
+[INFO   ]         multiqc : Template    : default
+[INFO   ]         multiqc : Searching &#39;./&#39;
+Searching 63 files..  [####################################]  100%
+[INFO   ]  feature_counts : Found 6 reports
+[INFO   ]            star : Found 6 reports
+[INFO   ]        cutadapt : Found 6 reports
+[INFO   ]    fastq_screen : Found 6 reports
+[INFO   ]          fastqc : Found 6 reports
+[INFO   ]         multiqc : Compressing plot data
+[INFO   ]          megaqc : Sending data to MegaQC
+[INFO   ]          megaqc : Data upload successful
+[INFO   ]         multiqc : Report      : multiqc_report.html
+[INFO   ]         multiqc : Data        : multiqc_data
+[INFO   ]         multiqc : MultiQC complete
+</pre></div>
+</div>
+<p><strong>NB: You need MultiQC v1.3 or later for MegaQC integration to work.</strong></p>
+</div>
+</div>
+</div>
+<div class="section" id="megaqc-usage-administration">
+<h2>MegaQC Usage: Administration<a class="headerlink" href="#megaqc-usage-administration" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="initial-setup">
+<h3>Initial setup<a class="headerlink" href="#initial-setup" title="Permalink to this headline">¶</a></h3>
+<p>Once you have your MegaQC server up and running, load up the address in
+your web browser. The MegaQC installation creates an empty database
+without any registered users. The first user to register will
+automatically be an administrator, so make sure that you immediately
+register!</p>
+</div>
+<div class="section" id="user-administration">
+<h3>User administration<a class="headerlink" href="#user-administration" title="Permalink to this headline">¶</a></h3>
+<p>Admins have access to a page in the navigation called <em>Administration
+Panel</em> where you can create, delete and reset passwords for other MegaQC
+users.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../dev/development.html" class="btn btn-neutral float-right" title="Development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../installation/installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, MegaQC Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
