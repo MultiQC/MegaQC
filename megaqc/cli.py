@@ -7,6 +7,7 @@ import os
 
 import click
 import pkg_resources
+from environs import Env
 from flask.cli import FlaskGroup
 
 
@@ -16,9 +17,12 @@ def create_megaqc_app(info):
     from megaqc.app import create_app
     from megaqc.settings import DevConfig, ProdConfig, TestConfig
 
-    if os.environ.get("FLASK_DEBUG", False):
+    env = Env()
+    env.read_env()
+
+    if env.bool("FLASK_DEBUG", False):
         CONFIG = DevConfig()
-    elif os.environ.get("MEGAQC_PRODUCTION", False):
+    elif env.bool("MEGAQC_PRODUCTION", False):
         CONFIG = ProdConfig()
     else:
         CONFIG = TestConfig()
