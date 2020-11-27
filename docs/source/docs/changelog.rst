@@ -44,8 +44,9 @@ New Features
 Bug Fixes
 ~~~~~~~~~
 
--  `[#139]`_ Fixed the user management page (``/users/admin/users``),
+- `[#139]`_ Fixed the user management page (``/users/admin/users``),
    which lost its JavaScript
+- `[#194]`_ Forward more headers through nginx when using Docker Compose. This should avoid bad HTTP redirects.
 
 .. _internal-changes-1:
 
@@ -60,3 +61,4 @@ Internal Changes
 .. _[#138]: https://github.com/ewels/MegaQC/issues/138
 .. _[#140]: https://github.com/ewels/MegaQC/issues/140
 .. _[#139]: https://github.com/ewels/MegaQC/issues/139
+.. _[#194]: https://github.com/ewels/MegaQC/issues/194
