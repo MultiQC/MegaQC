@@ -44,8 +44,7 @@ New Features
 Bug Fixes
 ~~~~~~~~~
 
-- `[#139]`_ Fixed the user management page (``/users/admin/users``),
-   which lost its JavaScript
+- `[#139]`_ Fixed the user management page (``/users/admin/users``), which lost its JavaScript
 - `[#194]`_ Forward more headers through nginx when using Docker Compose. This should avoid bad HTTP redirects.
 
 .. _internal-changes-1:
