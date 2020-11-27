@@ -50,6 +50,7 @@ def test_compose(multiqc_data, compose_stack):
                 },
             }
         },
+        verify=False,
     )
     raise_response(user)
 
@@ -61,13 +62,16 @@ def test_compose(multiqc_data, compose_stack):
         url="https://localhost/rest_api/v1/uploads",
         files={"report": multiqc_data},
         headers={"access_token": token},
+        verify=False,
     )
     raise_response(report)
     report.raise_for_status()
 
     # Finally, we should have 1 report
     result = requests.get(
-        url="https://localhost/rest_api/v1/uploads", headers={"access_token": token}
+        url="https://localhost/rest_api/v1/uploads",
+        headers={"access_token": token},
+        verify=False,
     )
     raise_response(result)
     assert len(result.json()["data"]) == 1
@@ -78,7 +82,7 @@ def test_https_redirects(compose_stack):
     Test that all redirects use https.
     """
     # This redirects even if you aren't logged in
-    result = requests.get(url="https://localhost/logout/")
+    result = requests.get(url="https://localhost/logout/", verify=False)
 
     # If the url we ended up at is an https URL then it's redirected correctly
     assert result.url.startswith("https://")
