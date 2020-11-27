@@ -71,3 +71,12 @@ def test_compose(multiqc_data, compose_stack):
     )
     raise_response(result)
     assert len(result.json()["data"]) == 1
+
+
+def test_https_redirects(compose_stack):
+    """
+    Test that all redirects use https.
+    """
+    # This redirects even if you aren't logged in
+    result = requests.get(url="http://localhost/logout/")
+    assert result.url.startswith("https://")
