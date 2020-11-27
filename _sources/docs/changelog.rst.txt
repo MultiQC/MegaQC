@@ -30,6 +30,8 @@ Breaking Changes
    you can do without a token, but it will be deactivated by default,
    unless it is the first account created
 
+-  Dropped support for Node 8
+
 .. _new-features-1:
 
 New Features
