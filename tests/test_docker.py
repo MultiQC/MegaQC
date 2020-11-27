@@ -39,7 +39,7 @@ def test_docker():
 def test_compose(multiqc_data, compose_stack):
     # Create a user
     user = requests.post(
-        "http://localhost/rest_api/v1/users",
+        "https://localhost/rest_api/v1/users",
         json={
             "data": {
                 "type": "users",
@@ -58,7 +58,7 @@ def test_compose(multiqc_data, compose_stack):
 
     # Upload the report
     report = requests.post(
-        url="http://localhost/rest_api/v1/uploads",
+        url="https://localhost/rest_api/v1/uploads",
         files={"report": multiqc_data},
         headers={"access_token": token},
     )
@@ -67,7 +67,7 @@ def test_compose(multiqc_data, compose_stack):
 
     # Finally, we should have 1 report
     result = requests.get(
-        url="http://localhost/rest_api/v1/uploads", headers={"access_token": token}
+        url="https://localhost/rest_api/v1/uploads", headers={"access_token": token}
     )
     raise_response(result)
     assert len(result.json()["data"]) == 1
