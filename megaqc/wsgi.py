@@ -1,8 +1,9 @@
 import os
 
+from environs import Env
+
 from megaqc.app import create_app
 from megaqc.settings import DevConfig, ProdConfig, TestConfig
-from environs import Env
 
 env = Env()
 env.read_env()

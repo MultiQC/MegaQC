@@ -14,10 +14,9 @@ import subprocess
 
 import pkg_resources
 import yaml
+from environs import Env
 
 import megaqc
-
-from environs import Env
 
 logger = logging.getLogger(__name__)
 env = Env()

@@ -10,11 +10,12 @@ import tempfile
 from builtins import object
 
 import yaml
-
-from megaqc.scheduler import upload_reports_job
 from environs import Env
 
+from megaqc.scheduler import upload_reports_job
+
 env = Env()
+
 
 class Config(object):
     """
