@@ -24,8 +24,7 @@ jobs:
           pip install -e .[dev]
 
       - name: Test with pytest
-        run: |
-          pytest
+        run: pytest
 
   build-node:
     env:
@@ -36,7 +35,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [10.x, 12.x, 14.x, 15.x]
 
     steps:
       - uses: actions/checkout@v2
