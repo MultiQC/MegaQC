@@ -42,10 +42,14 @@ def cli():
 def main():
     version = pkg_resources.get_distribution("megaqc").version
     print("This is MegaQC v{}\n".format(version))
-    if os.environ.get("FLASK_DEBUG", False):
+    
+    env = Env()
+    env.read_env()
+    
+    if env.bool("FLASK_DEBUG", False):
         print(" * Environment variable FLASK_DEBUG is true - running in dev mode")
         os.environ["FLASK_ENV"] = "dev"
-    elif not os.environ.get("MEGAQC_PRODUCTION", False):
+    elif env.bool("MEGAQC_PRODUCTION", False):
         os.environ["FLASK_ENV"] = "test"
     cli()
 
