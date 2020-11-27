@@ -22,5 +22,5 @@ Usage
 
 -  TypeError: '<' not supported between instances of 'NoneType' and 'float' when trying to compare data
 
-  - This is a known issue: https://github.com/ewels/MegaQC/issues/156
-  - Please ensure that your reports do not have missing fields
+   - This is a known issue: https://github.com/ewels/MegaQC/issues/156
+   - Please ensure that your reports do not have missing fields
