@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.
+MegaQC is a web application that collects results from multiple runs of MultiQC
+and allows bulk visualisation.
 
 See the MegaQC website for installation instructions and documentation: https://ewels.github.io/MegaQC/
 
