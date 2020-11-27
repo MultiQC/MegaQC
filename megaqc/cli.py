@@ -49,7 +49,7 @@ def main():
     if env.bool("FLASK_DEBUG", False):
         print(" * Environment variable FLASK_DEBUG is true - running in dev mode")
         os.environ["FLASK_ENV"] = "dev"
-    elif env.bool("MEGAQC_PRODUCTION", False):
+    elif not env.bool("MEGAQC_PRODUCTION", False):
         os.environ["FLASK_ENV"] = "test"
     cli()
 
