@@ -239,8 +239,6 @@ Further runtime arguments can be added to a
 `command section <https://docs.docker.com/compose/compose-file/#command>`_
 inside the `docker-compose`_ configuration file.
 
-Alternatively, you can provide additional arguments 
-
 .. _deployment_folder: https://github.com/ewels/MegaQC/blob/master/deployment
 .. _docker-compose: https://github.com/ewels/MegaQC/blob/master/deployment/docker-compose.yml
 .. _dockerhub: https://hub.docker.com/r/ewels/megaqc/

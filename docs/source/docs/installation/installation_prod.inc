@@ -103,13 +103,10 @@ please `create an issue`_ and we’ll do our best to help.
 4. Install the JavaScript and start compiling
 ---------------------------------------------
 
-This command will run until you cancel it, but will ensure that any
-changes to the JavaScript are compiled instantly:
-
 .. code:: bash
 
    npm install
-   npm run watch
+   npm run build
 
 5. (Optional, but recommended) Create a reverse proxy
 -----------------------------------------------------
