@@ -78,5 +78,7 @@ def test_https_redirects(compose_stack):
     Test that all redirects use https.
     """
     # This redirects even if you aren't logged in
-    result = requests.get(url="http://localhost/logout/")
+    result = requests.get(url="https://localhost/logout/")
+
+    # If the url we ended up at is an https URL then it's redirected correctly
     assert result.url.startswith("https://")
