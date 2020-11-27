@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 """
-MegaQC is a web application that collects results from multiple runs of MultiQC
-and allows bulk visualisation.
+MegaQC is a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.
 
-See the MultiQC website for installation instructions and documentation: https://megaqc.info/
+See the MegaQC website for installation instructions and documentation: https://ewels.github.io/MegaQC/
 
 MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at SciLifeLab Sweden (http://www.scilifelab.se)
+and extended by Michael Milton, Tor Solli-Nowlan and Lukas Heumos.
 """
 
 from setuptools import setup

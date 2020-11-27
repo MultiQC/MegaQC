@@ -12,6 +12,7 @@ Welcome to MegaQC's documentation!
    usage/usage
    dev/development
    ../api_reference
+   troubleshooting
    changelog
 
 

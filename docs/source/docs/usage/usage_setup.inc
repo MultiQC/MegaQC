@@ -5,8 +5,7 @@ Submitting data
 ---------------
 
 Before you can do anything useful in MegaQC, you need to submit some
-data to the database. You do this by configuring and then running
-MultiQC.
+data to the database. You do this by configuring and then running MultiQC.
 
 MultiQC configuration
 ~~~~~~~~~~~~~~~~~~~~~
