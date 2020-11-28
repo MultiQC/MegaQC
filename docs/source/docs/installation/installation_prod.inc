@@ -22,7 +22,8 @@ To install using PyPI, run the following command:
 By default, MegaQC runs in development mode with a sqlite flat file
 database (this is to make it as simple as possible to get up and running
 for a quick test / demo). To tell MegaQC to use a production server, you
-need to set the ``MEGAQC_PRODUCTION`` environment variable to true (=1).
+need to set the ``MEGAQC_PRODUCTION`` environment variable to true
+(``export MEGAQC_PRODUCTION=1``).
 
 If you are running MegaQC behind a custom domain name (recommended, it’s
 nicer than just having a difficult to remember IP address), then you
@@ -100,15 +101,7 @@ Then in this file, set the following configuration key pair:
 This should, hopefully, make everything work. If you have problems,
 please `create an issue`_ and we’ll do our best to help.
 
-4. Install the JavaScript and start compiling
----------------------------------------------
-
-.. code:: bash
-
-   npm install
-   npm run build
-
-5. (Optional, but recommended) Create a reverse proxy
+4. (Optional, but recommended) Create a reverse proxy
 -----------------------------------------------------
 
 Apache
@@ -155,7 +148,7 @@ An example NGINX configuration is provided in the `deployment folder`_.
 Please note that it is designed to work with the Docker Compose stack.
 For more details please refer to :ref:`docker_compose_stack`.
 
-7. Start the web server
+5. Start the web server
 -----------------------
 
 .. code:: bash
