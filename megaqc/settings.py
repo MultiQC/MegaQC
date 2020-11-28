@@ -112,7 +112,7 @@ class ProdConfig(Config):
         SQLALCHEMY_HOST = os.environ["DB_UNIX_SOCKET"]
     else:
         SQLALCHEMY_HOST = "{}:{}".format(
-            env.str("DB_HOST", "localhost"), env.str("DB_PORT", "5432")
+            env.str("DB_HOST", "localhost"), env.int("DB_PORT", "5432")
         )
     SQLALCHEMY_USER = env.str("DB_USER", "megaqc")
     SQLALCHEMY_PASS = env.str("DB_PASS", "megaqcpswd")
