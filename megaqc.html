@@ -281,12 +281,12 @@ This file contains the app module, with the app factory function.</p>
 <p>MegaQC: a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.</p>
 <dl class="py function">
 <dt id="megaqc.cli.create_megaqc_app">
-<code class="sig-prename descclassname">megaqc.cli.</code><code class="sig-name descname">create_megaqc_app</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">info</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/cli.py#L13-L25"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.cli.create_megaqc_app" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.cli.</code><code class="sig-name descname">create_megaqc_app</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">info</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/cli.py#L16-L28"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.cli.create_megaqc_app" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="megaqc.cli.main">
-<code class="sig-prename descclassname">megaqc.cli.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/cli.py#L38-L46"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.cli.main" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.cli.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/cli.py#L41-L50"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.cli.main" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -427,7 +427,7 @@ any declarative-mapped class.</p>
 <p>Application configuration.</p>
 <dl class="py class">
 <dt id="megaqc.settings.Config">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">Config</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L17-L96"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">Config</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L20-L99"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base configuration.</p>
 <dl class="py attribute">
@@ -532,14 +532,14 @@ any declarative-mapped class.</p>
 
 <dl class="py method">
 <dt id="megaqc.settings.Config.update_db_uri">
-<code class="sig-name descname">update_db_uri</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L60-L96"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.Config.update_db_uri" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update_db_uri</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L63-L99"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.Config.update_db_uri" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt id="megaqc.settings.DevConfig">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">DevConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L128-L151"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.DevConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">DevConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L131-L154"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.DevConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megaqc.settings.Config" title="megaqc.settings.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">megaqc.settings.Config</span></code></a></p>
 <p>Development configuration.</p>
 <dl class="py attribute">
@@ -596,7 +596,7 @@ any declarative-mapped class.</p>
 
 <dl class="py class">
 <dt id="megaqc.settings.ProdConfig">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">ProdConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L99-L125"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.ProdConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">ProdConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L102-L128"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.ProdConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megaqc.settings.Config" title="megaqc.settings.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">megaqc.settings.Config</span></code></a></p>
 <p>Production configuration.</p>
 <dl class="py attribute">
@@ -643,7 +643,7 @@ any declarative-mapped class.</p>
 
 <dl class="py class">
 <dt id="megaqc.settings.TestConfig">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">TestConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L154-L174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.TestConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">TestConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L157-L177"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.TestConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megaqc.settings.Config" title="megaqc.settings.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">megaqc.settings.Config</span></code></a></p>
 <p>Test configuration.</p>
 <dl class="py attribute">
@@ -653,7 +653,7 @@ any declarative-mapped class.</p>
 
 <dl class="py attribute">
 <dt id="megaqc.settings.TestConfig.DB_PATH">
-<code class="sig-name descname">DB_PATH</code><em class="property"> = '/tmp/tmp7h9rlxhr/megaqc.db'</em><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.TestConfig.DB_PATH" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">DB_PATH</code><em class="property"> = '/tmp/tmp5c_rslv3/megaqc.db'</em><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.TestConfig.DB_PATH" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
