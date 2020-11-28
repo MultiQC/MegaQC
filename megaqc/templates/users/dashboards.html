@@ -26,8 +26,8 @@
                 <td>{{ dash['created_at'].strftime('%Y-%m-%d %H:%M') }}</td>
                 <td>
                     <a class="btn btn-sm btn-outline-success" href="/dashboard/view/{{ dash['dashboard_id'] }}"><i class="fa fa-search" aria-hidden="true"></i> View</a>
-                    <button class="btn btn-sm btn-outline-info edit-dashboard-btn" data-favouriteid="{{ dash['dashboard_id'] }}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</button>
-                    <button class="btn btn-sm btn-outline-danger delete-dashboard-btn" data-favouriteid="{{ dash['dashboard_id'] }}"><i class="fa fa-trash" aria-hidden="true"></i>  Delete</button>
+                    <a class="btn btn-sm btn-outline-info edit-dashboard-btn" href="{{ url_for('public.not_implemented') }}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                    <a class="btn btn-sm btn-outline-danger delete-dashboard-btn" href="{{ url_for('public.not_implemented') }}"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
                 </td>
             </tr>
         {% endfor %}
