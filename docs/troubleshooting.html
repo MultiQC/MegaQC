@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MegaQC &mdash; MegaQC 0.3.0 documentation</title>
+  <title>Troubleshooting &mdash; MegaQC 0.3.0 documentation</title>
   
 
   
@@ -37,8 +37,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Installation" href="installation/installation.html" />
-    <link rel="prev" title="Welcome to MegaQC’s documentation!" href="contents.html" /> 
+    <link rel="next" title="Changelog" href="changelog.html" />
+    <link rel="prev" title="MegaQC API Reference" href="../api_reference.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,15 +89,16 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">MegaQC</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#current-status-pretty-unstable">Current Status: <em>“Pretty unstable”</em></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">MegaQC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev/development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html">MegaQC API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-setup">Installation/setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
 
@@ -145,13 +146,13 @@
     
       <li><a href="contents.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>MegaQC</li>
+      <li>Troubleshooting</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/docs/readme.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/docs/troubleshooting.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -164,34 +165,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="megaqc">
-<h1>MegaQC<a class="headerlink" href="#megaqc" title="Permalink to this headline">¶</a></h1>
-<p><img alt="MegaQC" src="https://raw.githubusercontent.com/ewels/MegaQC/master/megaqc/static/img/MegaQC_logo.png" /></p>
-<p>A web application to collect and visualise data from multiple MultiQC reports.</p>
-<p><a class="reference external" href="https://hub.docker.com/r/ewels/megaqc/"><img alt="Docker" src="https://img.shields.io/docker/automated/ewels/megaqc.svg?style=flat-square" /></a> <a class="reference external" href="https://travis-ci.org/ewels/MegaQC"><img alt="Build Status" src="https://travis-ci.org/ewels/MegaQC.svg?branch=master" /></a> <a class="reference external" href="https://gitter.im/ewels/MegaQC"><img alt="Gitter" src="https://img.shields.io/badge/gitter-%20join%20chat%20%E2%86%92-4fb99a.svg?style=flat-square" /></a> <a class="reference external" href="https://ewels.github.io/MegaQC/docs/contents.html"><img alt="Documentation" src="https://img.shields.io/badge/Documentation-passing-passing" /></a> <a class="reference external" href="https://pypi.org/project/megaqc/"><img alt="PyPI" src="https://img.shields.io/pypi/v/megaqc?color=passing" /></a></p>
-<div class="section" id="current-status-pretty-unstable">
-<h2>Current Status: <em>“Pretty unstable”</em><a class="headerlink" href="#current-status-pretty-unstable" title="Permalink to this headline">¶</a></h2>
-<p>As of mid-October 2017, MegaQC has all basic functionality. We’ve made
-the repository public, but please bear in mind that it is still under heavy
-development and changes are being made on a daily basis. It’s safe to
-assume that the database structure is still at risk and that you
-shouldn’t yet trust it to be stable. However, we’d love your help in
-testing, bug finding and development!</p>
-<hr class="docutils" />
-<p>MegaQC is a web application that you can install and run on your own
-network. It collects and visualises data parsed by MultiQC across multiple runs.
-The MegaQC home page looks something like this:</p>
-<div class="figure align-default" id="id1">
-<img alt="MegaQC homepage" src="https://raw.githubusercontent.com/ewels/MegaQC/master/docs/source/images/megaqc_homepage.png" />
-<p class="caption"><span class="caption-text">Screenshot of the MegaQC home page.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+  <div class="section" id="troubleshooting">
+<h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation-setup">
+<h2>Installation/setup<a class="headerlink" href="#installation-setup" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>I’m getting a blank page when I open the <code class="docutils literal notranslate"><span class="pre">/trends</span></code> or <code class="docutils literal notranslate"><span class="pre">/admin</span></code> pages</p>
+<ul>
+<li><p>Make sure you’ve compiled the JavaScript correctly.</p></li>
+<li><p>Ensure you’ve run <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span></code> and then <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">build</span></code> or <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">watch</span></code>.</p></li>
+</ul>
+</li>
+<li><p>I am getting <code class="docutils literal notranslate"><span class="pre">sqlalchemy.exc.OperationalError:</span> <span class="pre">(psycopg2.OperationalError)</span> <span class="pre">could</span> <span class="pre">not</span> <span class="pre">connect</span> <span class="pre">to</span> <span class="pre">server:</span> <span class="pre">Connection</span> <span class="pre">refused</span> <span class="pre">Is</span> <span class="pre">the</span> <span class="pre">server</span> <span class="pre">running</span> <span class="pre">on</span> <span class="pre">host</span> <span class="pre">&quot;127.0.0.1&quot;</span> <span class="pre">and</span> <span class="pre">accepting</span> <span class="pre">TCP/IP</span> <span class="pre">connections</span> <span class="pre">on</span> <span class="pre">port</span> <span class="pre">5432?</span></code></p>
+<ul>
+<li><p>Please ensure that you have a Postgres database accessible at “127.0.0.1:5432”.</p></li>
+</ul>
+</li>
+</ul>
 </div>
-<p>If you are not sure what MultiQC is yet, check out the main <a class="reference external" href="http://multiqc.info">MultiQC
-website</a> and <a class="reference external" href="https://github.com/ewels/MultiQC">GitHub repository</a> first. Once MegaQC is installed and running,
-simply configure MultiQC to automatically save data to the website every time it runs.
-Users of your group or facility can then replicate MultiQC plots and explore different data
-fields. Data distributions, timelines and comparisons can all be explored.</p>
-<p>Please read the <a class="reference external" href="https://ewels.github.io/MegaQC/docs/contents.html">MegaQC Documentation</a>
-to learn how to install, deploy and use MegaQC.</p>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>When creating a violin plot I get an error.</p>
+<ul>
+<li><p>This is a known issue: <a class="reference external" href="https://github.com/ewels/MegaQC/issues/31">https://github.com/ewels/MegaQC/issues/31</a></p></li>
+</ul>
+</li>
+<li><p>TypeError: ‘&lt;’ not supported between instances of ‘NoneType’ and ‘float’ when trying to compare data</p>
+<ul>
+<li><p>This is a known issue: <a class="reference external" href="https://github.com/ewels/MegaQC/issues/156">https://github.com/ewels/MegaQC/issues/156</a></p></li>
+<li><p>Please ensure that your reports do not have missing fields</p></li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 
@@ -203,10 +209,10 @@ to learn how to install, deploy and use MegaQC.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="installation/installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="contents.html" class="btn btn-neutral float-left" title="Welcome to MegaQC’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../api_reference.html" class="btn btn-neutral float-left" title="MegaQC API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

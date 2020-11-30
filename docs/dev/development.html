@@ -94,15 +94,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../usage/usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Development</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#backend">Backend</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#database">Database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#database">Database</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#database-schema-migrations">Database schema migrations</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#api">API</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#views">Views</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tests">Tests</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">Frontend</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#migrations-for-developers">Migrations (for developers)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#megaqc-modules-overview">MegaQC Modules Overview</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../megaqc.html">megaqc package</a></li>
 </ul>
@@ -110,6 +111,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference.html">MegaQC API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
 </ul>
 
@@ -179,7 +181,7 @@
   <div class="section" id="development">
 <h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
 <p>The following sections are aimed at developers trying to contribute to MegaQC.</p>
-<p>Please follow the <a class="reference internal" href="../installation/installation.html#installation-dev"><span class="std std-ref">MegaQC installation: Development</span></a> guidelines to install a development ready version of MegaQC.
+<p>Please follow the <a class="reference internal" href="../installation/installation.html#installation-dev"><span class="std std-ref">Development</span></a> guidelines to install a development ready version of MegaQC.
 You should also be aware of the detailed <a class="reference internal" href="../../megaqc.html#megaqc-module"><span class="std std-ref">megaqc package</span></a> and <a class="reference internal" href="../../api_reference.html#megaqc-api-reference"><span class="std std-ref">MegaQC API Reference</span></a>.
 Next, some technical details regarding the front and backend are explained.</p>
 <div class="section" id="backend">
@@ -192,6 +194,17 @@ structure of the project.</p>
 integrate with any SQL database that it supports. For development this
 will likely be SQLite.</p>
 <p>Database models are located in <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/megaqc/model/models.py">model/models.py</a> and <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/megaqc/user/models.py">user/models.py</a>.</p>
+<div class="section" id="database-schema-migrations">
+<h4>Database schema migrations<a class="headerlink" href="#database-schema-migrations" title="Permalink to this headline">¶</a></h4>
+<p>You need to generate a new migration whenever the database schema (ie
+any models class) changes. To generate a migration:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> megaqc
+<span class="nb">export</span> <span class="nv">FLASK_APP</span><span class="o">=</span>wsgi.py
+flask db upgrade <span class="c1"># Update to the latest migration</span>
+flask db migrate
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="api">
 <h3>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h3>
@@ -205,8 +218,7 @@ This is accessed at <code class="docutils literal notranslate"><span class="pre"
 define an SQLAlchemy model that defines how to access the data, and a
 Marshmallow schema, which defines how to serialize and deserialize the
 data to JSON. The Marshmallow schemas themselves are defined in
-<a class="reference external" href="https://github.com/ewels/MegaQC/tree/master/megaqc/rest_api/schemas.py">schemas.py</a>. For more information, refer to the flapison
-documentation.</p>
+<a class="reference external" href="https://github.com/ewels/MegaQC/tree/master/megaqc/rest_api/schemas.py">schemas.py</a>. For more information, refer to the flapison documentation.</p>
 </div>
 <div class="section" id="views">
 <h3>Views<a class="headerlink" href="#views" title="Permalink to this headline">¶</a></h3>
@@ -237,34 +249,10 @@ JavaScript and CSS located in the <a class="reference external" href="https://gi
 <a class="reference external" href="https://github.com/ewels/MegaQC/tree/master/megaqc/templates/public/react.html">react.html</a>, which is a very simple page that acts as the entry
 point for the React code, which handles all layout and logic.</p>
 <p>The source code for the React JavaScript can be found in the <a class="reference external" href="https://github.com/ewels/MegaQC/tree/master/src">src</a>
-directory, which currently has one root-level <code class="docutils literal notranslate"><span class="pre">`.js`</span></code> file for each
+directory, which currently has one root-level <code class="docutils literal notranslate"><span class="pre">.js</span></code> file for each
 React page that then imports other components to use.</p>
 <p>Note that all new pages going forward should be written using React, to
 improve the maintainability of the frontend.</p>
-</div>
-<div class="section" id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>I’m getting a blank page when I open the <code class="docutils literal notranslate"><span class="pre">/trends</span></code> or <code class="docutils literal notranslate"><span class="pre">/admin</span></code>
-pages</p>
-<ul>
-<li><p>Make sure you’ve compiled the JavaScript correctly.</p></li>
-<li><p>Ensure you’ve run <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span></code> and then <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">build</span></code> or
-<code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">watch</span></code>.</p></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section" id="migrations-for-developers">
-<h2>Migrations (for developers)<a class="headerlink" href="#migrations-for-developers" title="Permalink to this headline">¶</a></h2>
-<p>You need to generate a new migration whenever the database schema (ie
-any models class) changes. To generate a migration:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> megaqc
-<span class="nb">export</span> <span class="nv">FLASK_APP</span><span class="o">=</span>wsgi.py
-flask db upgrade <span class="c1"># Update to the latest migration</span>
-flask db migrate
-</pre></div>
-</div>
 </div>
 <div class="section" id="megaqc-modules-overview">
 <h2>MegaQC Modules Overview<a class="headerlink" href="#megaqc-modules-overview" title="Permalink to this headline">¶</a></h2>
