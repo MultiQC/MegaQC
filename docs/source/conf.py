@@ -38,6 +38,9 @@ html_additional_pages = {"index": "index.html"}
 
 templates_path = ["_templates"]
 
+# To prevent duplicate label warnings every *.rst file with multiple labels
+# needs to be added to the exclude patterns.
+# Reference: https://stackoverflow.com/questions/16262163/sphinxs-include-directive-and-duplicate-label-warnings
 exclude_patterns = ["_build",
                     "Thumbs.db",
                     ".DS_Store",
