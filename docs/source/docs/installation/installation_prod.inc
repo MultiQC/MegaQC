@@ -58,8 +58,6 @@ Then, install the Python package that handles requests:
 
    pip install psycopg2
 
-(``psycopq2-binary`` for psycopq v2.8 and above)
-
 MegaQC can assess whether the database to use is ``postgresql``. If it
 is, it will try to connect as ``megaqc_user`` to the database ``megaqc``
 on ``localhost:5432``. On failure, MegaQC will attempt to create the
