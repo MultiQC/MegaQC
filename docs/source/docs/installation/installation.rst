@@ -8,12 +8,11 @@ testing and evaluation, yet super easy to configure for a high
 performance production installation. The various ways of getting a runnable 
 MegaQC instance are explained in the following sections.
 
-.. include:: installation_testing.inc
+.. include:: installation_prod.rst
 .. _docker_installation:
-.. include:: installation_docker.inc
-.. include:: installation_prod.inc
+.. include:: installation_docker.rst
 .. _installation_dev:
-.. include:: installation_dev.inc
-.. include:: migrations.inc
+.. include:: installation_dev.rst
+.. include:: migrations.rst
 
 .. _Flask: http://flask.pocoo.org

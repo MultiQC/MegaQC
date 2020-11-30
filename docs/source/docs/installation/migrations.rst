@@ -30,23 +30,21 @@ To migrate, run the following commands:
 Note: when you run these migrations, you **must** have the same
 environment as you use to run MegaQC normally, which means the same
 value of ``FLASK_DEBUG`` and ``MEGAQC_PRODUCTION`` environment
-variables. Otherwise it will migrate the wrong database (or a
-non-existing one).
+variables. Otherwise it will migrate the wrong database
+(or a non-existing one).
 
 Stamping your database
 ----------------------
 
 The complete migration history has only recently been added. This means
 that, if you were using MegaQC in the past when migrations were not
-included in the repo, your database won’t know what version you’re
-currently at.
+included in the repo, your database won’t know what version you’re currently at.
 
 To fix this, first you need to work out which migration your database is
 up to. Browse through the files in ``megaqc/migrations/versions``,
 starting from the oldest date (at the top of each file), until you find
 a change that wasn’t present in your database. At this point, note the
-``revision`` value at the top of the file,
-(e.g. ``revision = "007c354223ec"``).
+``revision`` value at the top of the file, (e.g. ``revision = "007c354223ec"``).
 
 Next, run the following command, replacing ``<revision ID>`` with the
 revision you noted above:
