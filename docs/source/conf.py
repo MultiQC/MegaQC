@@ -38,7 +38,17 @@ html_additional_pages = {"index": "index.html"}
 
 templates_path = ["_templates"]
 
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build",
+                    "Thumbs.db",
+                    ".DS_Store",
+                    "docs/dev/backend.rst",
+                    "docs/dev/frontend.rst",
+                    "docs/installation/installation_dev.rst",
+                    "docs/installation/installation_docker.rst",
+                    "docs/installation/installation_prod.rst",
+                    "docs/installation/migrations.rst",
+                    "docs/usage/usage_admin.rst",
+                    "docs/usage/usage_setup.rst"]
 
 html_theme = "sphinx_rtd_theme"
 
