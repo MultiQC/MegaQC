@@ -49,6 +49,7 @@ Bug Fixes
 -  `[#139]`_ Fixed the user management page (``/users/admin/users``),
    which lost its JavaScript
 -  `[#170]`_ Improved handling of environment variables with environs
+-  `[#156]`_ Fixed comparison plot running into comparisons with None values
 
 .. _internal-changes-1:
 
@@ -62,5 +63,6 @@ Internal Changes
 
 .. _[#138]: https://github.com/ewels/MegaQC/issues/138
 .. _[#139]: https://github.com/ewels/MegaQC/issues/139
+.. _[#156]: https://github.com/ewels/MegaQC/issues/156
 .. _[#140]: https://github.com/ewels/MegaQC/issues/140
 .. _[#170]: https://github.com/ewels/MegaQC/issues/170
