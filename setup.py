@@ -3,9 +3,10 @@
 MegaQC is a web application that collects results from multiple runs of MultiQC
 and allows bulk visualisation.
 
-See the MultiQC website for installation instructions and documentation: https://megaqc.info/
+See the MegaQC website for installation instructions and documentation: https://ewels.github.io/MegaQC/
 
 MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at SciLifeLab Sweden (http://www.scilifelab.se)
+and extended by Michael Milton, Tor Solli-Nowlan and Lukas Heumos.
 """
 
 from setuptools import setup
@@ -71,6 +72,7 @@ setup(
         "flatten_json~=0.1",
         "flapison~=0.30",
         "Flask-Migrate~=2.5",
+        "environs~=9.2.0",
     ],
     extras_require={
         "dev": [
@@ -82,7 +84,7 @@ setup(
             # Lint and code style
             "flake8~=3.7",
             "flake8-blind-except~=0.1",
-            "flake8-debugger~=3.1",
+            "flake8-debugger>=3.1,<5.0",
             "flake8-docstrings~=1.3",
             "isort[pyproject]>=4.3,<6.0",
             "pep8-naming~=0.8",
