@@ -1370,8 +1370,25 @@ def generate_comparison_plot(
     plot_z = []
     plot_col = []
     plot_size = []
-    plot_names = plot_data.keys()
     annotations = go.Annotations([])
+
+    # Remove any missing values from the plot data recursively
+    number_data_including_none = len(plot_data)
+
+    def clean_empty(d):
+        if not isinstance(d, (dict, list)):
+            return d
+        if isinstance(d, list):
+            return [v for v in (clean_empty(v) for v in d) if v]
+        return {k: v for k, v in ((k, clean_empty(v)) for k, v in d.items()) if v}
+
+    plot_data = clean_empty(plot_data)
+    plot_names = plot_data.keys()
+    number_removed_data = number_data_including_none - len(plot_data)
+    current_app.logger.warn(
+        "Removed {} missing data points".format(number_removed_data)
+    )
+
     # Sort the data by the x, y variables (needed when joining dots with lines)
     plot_names = sorted(
         plot_names,
