@@ -1375,18 +1375,31 @@ def generate_comparison_plot(
     # Remove any missing values from the plot data recursively
     number_data_including_none = len(plot_data)
 
-    def clean_empty(d):
-        if not isinstance(d, (dict, list)):
-            return d
-        if isinstance(d, list):
-            return [v for v in (clean_empty(v) for v in d) if v]
-        return {k: v for k, v in ((k, clean_empty(v)) for k, v in d.items()) if v}
+    def remove_none_vals_from_dict(dictionary):
+        if not isinstance(dictionary, (dict, list)):
+            return dictionary
+        if isinstance(dictionary, list):
+            return [
+                val
+                for val in (remove_none_vals_from_dict(val) for val in dictionary)
+                if val
+            ]
+        return {
+            key: val
+            for key, val in (
+                (key, remove_none_vals_from_dict(val))
+                for key, val in dictionary.items()
+            )
+            if val
+        }
 
-    plot_data = clean_empty(plot_data)
+    plot_data = remove_none_vals_from_dict(plot_data)
     plot_names = plot_data.keys()
     number_removed_data = number_data_including_none - len(plot_data)
     current_app.logger.warn(
-        "Removed {} missing data points".format(number_removed_data)
+        "Removed {} missing data points for comparisons plot".format(
+            number_removed_data
+        )
     )
 
     # Sort the data by the x, y variables (needed when joining dots with lines)
