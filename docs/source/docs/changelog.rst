@@ -46,6 +46,8 @@ Bug Fixes
 
 -  `[#139]`_ Fixed the user management page (``/users/admin/users``),
    which lost its JavaScript
+-  `[#148]`_ Explicitly disable pagination for ``find()`` calls, ensuring we get more than 30 results in certain places
+
 
 .. _internal-changes-1:
 
@@ -60,3 +62,4 @@ Internal Changes
 .. _[#138]: https://github.com/ewels/MegaQC/issues/138
 .. _[#140]: https://github.com/ewels/MegaQC/issues/140
 .. _[#139]: https://github.com/ewels/MegaQC/issues/139
+.. _[#148]: https://github.com/ewels/MegaQC/issues/148
