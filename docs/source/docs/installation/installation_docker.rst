@@ -242,3 +242,18 @@ inside the `docker-compose`_ configuration file.
 .. _deployment_folder: https://github.com/ewels/MegaQC/blob/master/deployment
 .. _docker-compose: https://github.com/ewels/MegaQC/blob/master/deployment/docker-compose.yml
 .. _dockerhub: https://hub.docker.com/r/ewels/megaqc/
+
+HTTPS
+~~~~~
+By default, the MegaQC stack ships with a self-signed SSL certificate for testing purposes.
+For this reason we recommend that you use HTTP to access the stack.
+However, if you want to enable HTTPS, perhaps because you are making MegaQC available on the public internet, then it should be simple to install your own certificates.
+To do so, go to the ``deployment`` directory and edit the ``.env`` file.
+Then, edit these lines to the full filepath of the respective ``.crt`` and ``.key`` files:
+
+.. code::
+
+    CRT_PATH=./nginx-selfsigned.crt
+    KEY_PATH=./nginx-selfsigned.key
+
+After this, run the stack as described above, and then you should be able to access MegaQC on ``https://your_hostname``.
