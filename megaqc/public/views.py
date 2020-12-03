@@ -356,3 +356,9 @@ def edit_reports():
         report_meta_fields=get_report_metadata_fields(),
         api_token=current_user.api_token,
     )
+
+
+@blueprint.route("/not_implemented")
+def not_implemented():
+    flash("Sorry, this feature is not yet implemented!", "danger")
+    return redirect(request.referrer)

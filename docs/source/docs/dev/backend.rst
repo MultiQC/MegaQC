@@ -13,6 +13,19 @@ will likely be SQLite.
 
 Database models are located in `model/models.py`_ and `user/models.py`_.
 
+Database schema migrations 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You need to generate a new migration whenever the database schema (ie
+any models class) changes. To generate a migration:
+
+.. code:: bash
+
+   cd megaqc
+   export FLASK_APP=wsgi.py
+   flask db upgrade # Update to the latest migration
+   flask db migrate
+
 API
 ---
 
@@ -27,8 +40,7 @@ This is accessed at ``/rest_api/v1``, and the code for it is located in
 define an SQLAlchemy model that defines how to access the data, and a
 Marshmallow schema, which defines how to serialize and deserialize the
 data to JSON. The Marshmallow schemas themselves are defined in
-`schemas.py`_. For more information, refer to the flapison
-documentation.
+`schemas.py`_. For more information, refer to the flapison documentation.
 
 Views
 -----

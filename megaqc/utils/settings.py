@@ -14,10 +14,12 @@ import subprocess
 
 import pkg_resources
 import yaml
+from environs import Env
 
 import megaqc
 
 logger = logging.getLogger(__name__)
+env = Env()
 
 # Get the MegaQC version
 version = pkg_resources.get_distribution("megaqc").version
@@ -62,8 +64,8 @@ def mqc_load_userconfig(paths=()):
     mqc_load_config(os.path.expanduser("~/.megaqc_config.yaml"))
 
     # Load and parse a config file path set in an ENV variable if we find it
-    if os.environ.get("MEGAQC_CONFIG_PATH") is not None:
-        mqc_load_config(os.environ.get("MEGAQC_CONFIG_PATH"))
+    if env.str("MEGAQC_CONFIG_PATH") is not None:
+        mqc_load_config(env.str("MEGAQC_CONFIG_PATH"))
 
     # Load and parse a config file in this working directory if we find it
     mqc_load_config("megaqc_config.yaml")

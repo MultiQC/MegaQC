@@ -10,8 +10,11 @@ import tempfile
 from builtins import object
 
 import yaml
+from environs import Env
 
 from megaqc.scheduler import upload_reports_job
+
+env = Env()
 
 
 class Config(object):
@@ -19,7 +22,7 @@ class Config(object):
     Base configuration.
     """
 
-    SECRET_KEY = os.environ.get("MEGAQC_SECRET", "secret-key")  # TODO: Change me
+    SECRET_KEY = env.str("MEGAQC_SECRET", "secret-key")  # TODO: Change me
     APP_DIR = os.path.abspath(os.path.dirname(__file__))  # This directory
     PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
     UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, "uploads")
@@ -31,7 +34,7 @@ class Config(object):
         {"id": "job1", "func": upload_reports_job, "trigger": "interval", "seconds": 30}
     ]
     SCHEDULER_API_ENABLED = True
-    EXTRA_CONFIG = os.environ.get("MEGAQC_CONFIG", None)
+    EXTRA_CONFIG = env("MEGAQC_CONFIG", None)
     SERVER_NAME = None
     DB_PATH = None
     LOG_LEVEL = logging.INFO
@@ -109,11 +112,11 @@ class ProdConfig(Config):
         SQLALCHEMY_HOST = os.environ["DB_UNIX_SOCKET"]
     else:
         SQLALCHEMY_HOST = "{}:{}".format(
-            os.environ.get("DB_HOST", "localhost"), os.environ.get("DB_PORT", "5432")
+            env.str("DB_HOST", "localhost"), env.int("DB_PORT", "5432")
         )
-    SQLALCHEMY_USER = os.environ.get("DB_USER", "megaqc")
-    SQLALCHEMY_PASS = os.environ.get("DB_PASS", "megaqcpswd")
-    SQLALCHEMY_DATABASE = os.environ.get("DB_NAME", "megaqc")
+    SQLALCHEMY_USER = env.str("DB_USER", "megaqc")
+    SQLALCHEMY_PASS = env.str("DB_PASS", "megaqcpswd")
+    SQLALCHEMY_DATABASE = env.str("DB_NAME", "megaqc")
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
     def __init__(self):

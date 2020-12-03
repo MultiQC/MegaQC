@@ -15,7 +15,7 @@ However, the newer React pages instead render a special template, called
 point for the React code, which handles all layout and logic.
 
 The source code for the React JavaScript can be found in the `src`_
-directory, which currently has one root-level ```.js``` file for each
+directory, which currently has one root-level ``.js`` file for each
 React page that then imports other components to use.
 
 Note that all new pages going forward should be written using React, to

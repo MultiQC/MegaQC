@@ -30,6 +30,8 @@ Breaking Changes
    you can do without a token, but it will be deactivated by default,
    unless it is the first account created
 
+-  Dropped support for Node 8
+
 .. _new-features-1:
 
 New Features
@@ -45,6 +47,8 @@ Bug Fixes
 ~~~~~~~~~
 
 - `[#139]`_ Fixed the user management page (``/users/admin/users``), which lost its JavaScript
+- `[#156]`_ Fixed comparison plot running into comparisons with None values
+- `[#170]`_ Improved handling of environment variables with environs
 - `[#194]`_ Forward more headers through nginx when using Docker Compose. This should avoid bad HTTP redirects.
 
 .. _internal-changes-1:
@@ -58,6 +62,8 @@ Internal Changes
 
 
 .. _[#138]: https://github.com/ewels/MegaQC/issues/138
-.. _[#140]: https://github.com/ewels/MegaQC/issues/140
 .. _[#139]: https://github.com/ewels/MegaQC/issues/139
+.. _[#140]: https://github.com/ewels/MegaQC/issues/140
+.. _[#156]: https://github.com/ewels/MegaQC/issues/156
+.. _[#170]: https://github.com/ewels/MegaQC/issues/170
 .. _[#194]: https://github.com/ewels/MegaQC/issues/194
