@@ -126,9 +126,14 @@ export function SampleFilter(props) {
   }
 
   function updateFilters() {
-    qcApi.find("filters").then((filters) => {
-      setSampleFilters(filters);
-    });
+    qcApi
+      .find("filters", {
+        "page[size]": 0,
+        sort: "name",
+      })
+      .then((filters) => {
+        setSampleFilters(filters);
+      });
   }
 
   function toggleModal(filterCreated = false) {

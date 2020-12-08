@@ -24,9 +24,6 @@ import FilterRow from "./filterRow";
 import Filter from "../util/filter";
 import PropTypes from "prop-types";
 
-import cloneDeep from "lodash/cloneDeep";
-import merge from "lodash/merge";
-
 import { Field, FieldArray, Form, Formik } from "formik";
 
 export default function EditFilter(props) {
@@ -76,17 +73,32 @@ export default function EditFilter(props) {
 
   useEffect(() => {
     // Fetch the filter groups
-    qcApi.find("filter_groups").then((groups) => {
-      setFilterGroups(groups.map((group) => group._getUid()));
-    });
+    qcApi
+      .find("filter_groups", {
+        "page[size]": 0,
+        sort: "id",
+      })
+      .then((groups) => {
+        setFilterGroups(groups.map((group) => group._getUid()));
+      });
     // Fetch the sample fields
-    qcApi.find("data_types").then((groups) => {
-      setSampleFields(groups.map((group) => group.toJSON()));
-    });
+    qcApi
+      .find("data_types", {
+        "page[size]": 0,
+        sort: "key",
+      })
+      .then((groups) => {
+        setSampleFields(groups.map((group) => group.toJSON()));
+      });
     // Fetch the report metadata fields
-    qcApi.find("meta_types").then((groups) => {
-      setReportFields(groups.map((group) => group._getUid()));
-    });
+    qcApi
+      .find("meta_types", {
+        "page[size]": 0,
+        sort: "id",
+      })
+      .then((groups) => {
+        setReportFields(groups.map((group) => group._getUid()));
+      });
   }, [user]);
 
   return (
