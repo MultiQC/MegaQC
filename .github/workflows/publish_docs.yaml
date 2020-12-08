@@ -36,6 +36,7 @@ jobs:
         run: |
           cd docs
           make html
+          echo "megaqc.info" > _build/html/CNAME
 
       # TODO: We could also build latex & PDF documentation and upload them as artifacts
 
