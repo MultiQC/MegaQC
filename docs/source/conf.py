@@ -33,7 +33,7 @@ extensions = [
 ]
 
 # Replace the usual index.rst with a custom index.html file
-master_doc = "docs/contents"
+master_doc = "docs/index"
 html_additional_pages = {"index": "index.html"}
 
 templates_path = ["_templates"]
