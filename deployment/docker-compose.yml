@@ -29,10 +29,14 @@ services:
     volumes:
       # Mount the nginx conf
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # Mount the self-signed certs
+      - ${CRT_PATH}:/etc/nginx/megaqc.crt:ro
+      - ${KEY_PATH}:/etc/nginx/megaqc.key:ro
       # Mount the static files from MegaQC so we can serve them efficiently
       - static_volume:/home/app/web/project/static
     ports:
       - 80:80
+      - 443:443
     depends_on:
       - megaqc
 

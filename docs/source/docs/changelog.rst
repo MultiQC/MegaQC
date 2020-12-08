@@ -30,6 +30,8 @@ Breaking Changes
    you can do without a token, but it will be deactivated by default,
    unless it is the first account created
 
+-  Dropped support for Node 8
+
 .. _new-features-1:
 
 New Features
@@ -44,10 +46,11 @@ New Features
 Bug Fixes
 ~~~~~~~~~
 
--  `[#139]`_ Fixed the user management page (``/users/admin/users``),
-   which lost its JavaScript
--  `[#148]`_ Explicitly disable pagination for ``find()`` calls, ensuring we get more than 30 results in certain places
-
+- `[#139]`_ Fixed the user management page (``/users/admin/users``), which lost its JavaScript
+- `[#148]`_ Explicitly disable pagination for ``find()`` calls, ensuring we get more than 30 results in certain places
+- `[#156]`_ Fixed comparison plot running into comparisons with None values
+- `[#170]`_ Improved handling of environment variables with environs
+- `[#194]`_ Forward more headers through nginx when using Docker Compose. This should avoid bad HTTP redirects.
 
 .. _internal-changes-1:
 
@@ -60,6 +63,9 @@ Internal Changes
 
 
 .. _[#138]: https://github.com/ewels/MegaQC/issues/138
-.. _[#140]: https://github.com/ewels/MegaQC/issues/140
 .. _[#139]: https://github.com/ewels/MegaQC/issues/139
+.. _[#140]: https://github.com/ewels/MegaQC/issues/140
 .. _[#148]: https://github.com/ewels/MegaQC/issues/148
+.. _[#156]: https://github.com/ewels/MegaQC/issues/156
+.. _[#170]: https://github.com/ewels/MegaQC/issues/170
+.. _[#194]: https://github.com/ewels/MegaQC/issues/194

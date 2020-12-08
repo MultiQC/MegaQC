@@ -1,5 +1,5 @@
-MegaQC installation: Development
-================================
+Development
+===========
 
 Prerequisites
 -------------
@@ -16,7 +16,7 @@ If you’re doing development work, you need access to the source code
 
 .. code:: bash
 
-   git clone git@github.com:ewels/MegaQC.git
+   git clone https://github.com/ewels/MegaQC
 
 2. Install the Python into a virtual environment
 ------------------------------------------------
@@ -106,8 +106,8 @@ changes to the JavaScript are compiled instantly:
 -------------------------------
 
 MegaQC has a number of `pre-commit`_ hooks installed, which
-automatically format and check your code before you commit. To set it
-up, run:
+automatically format and check your code before you commit.
+To set it up, run:
 
 .. code:: bash
 
@@ -116,16 +116,14 @@ up, run:
 From now on, whenever you commit, each changed file will get processed
 by the pre-commit hooks. If a file is changed by this process (because
 your code style didn’t match the configuration), you’ll have to
-``git add`` the files again, and then re-run ``git commit``. If it lets
-you write a commit message then everything has succeeded.
+``git add`` the files again, and then re-run ``git commit``.
+If it lets you write a commit message then everything has succeeded.
 
 Next Steps
 ----------
 
 You should now have a fully functional MegaQC test server running,
 accessible on your localhost at http://127.0.0.1:5000
-
-Now, head over to
 
 .. _node: https://nodejs.org/en/download/
 .. _Python 3: https://www.python.org/downloads/

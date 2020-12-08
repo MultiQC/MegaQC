@@ -1,5 +1,5 @@
-MegaQC Installation: Production
-===============================
+Production
+=============
 
 This section explains how to set up a production environment without
 the usage of container technologies. If you want to run MegaQC in a 
@@ -8,18 +8,13 @@ containerized environment please refer to :ref:`docker_installation`.
 1. Install the MegaQC package
 -----------------------------
 
-MegaQC is available on both the Python Package Index (PyPI) and conda
-(bioconda channel). To install using PyPI, run the following command:
+MegaQC is available on both the Python Package Index (PyPI).
+We are planning to add MegaQC to Conda soon.
+To install using PyPI, run the following command:
 
 .. code:: bash
 
    pip install megaqc[prod]
-
-To install with conda:
-
-.. code:: bash
-
-   conda install -c bioconda megaqc
 
 2. Export environment variables
 -------------------------------
@@ -27,7 +22,8 @@ To install with conda:
 By default, MegaQC runs in development mode with a sqlite flat file
 database (this is to make it as simple as possible to get up and running
 for a quick test / demo). To tell MegaQC to use a production server, you
-need to set the ``MEGAQC_PRODUCTION`` environment variable to true.
+need to set the ``MEGAQC_PRODUCTION`` environment variable to true
+(``export MEGAQC_PRODUCTION=1``).
 
 If you are running MegaQC behind a custom domain name (recommended, it’s
 nicer than just having a difficult to remember IP address), then you
@@ -62,8 +58,6 @@ Then, install the Python package that handles requests:
 
    pip install psycopg2
 
-(``psycopq2-binary`` for psycopq v2.8 and above)
-
 MegaQC can assess whether the database to use is ``postgresql``. If it
 is, it will try to connect as ``megaqc_user`` to the database ``megaqc``
 on ``localhost:5432``. On failure, MegaQC will attempt to create the
@@ -82,8 +76,7 @@ Although PostgreSQL is highly recommended, MegaQC should work with other
 SQL database back ends, such as MySQL.
 
    Please note that MySQL support is currently untested and unsupported.
-   If you use MegaQC with MySQL we’d love to hear about your
-   experiences!
+   If you use MegaQC with MySQL we’d love to hear about your experiences!
 
 First, install MySQL:
 https://dev.mysql.com/doc/refman/5.7/en/installing.html
@@ -91,8 +84,7 @@ https://dev.mysql.com/doc/refman/5.7/en/installing.html
 Then install the `Python MySQL connector`_ (alternatively with the `PyPI package`_).
 
 Now, create a custom MegaQC configuration file somewhere and set the
-environment variable ``MEGAQC_CONFIG`` to point to it. For example, in
-``~/.bashrc``:
+environment variable ``MEGAQC_CONFIG`` to point to it. For example, in ``~/.bashrc``:
 
 .. code:: bash
 
@@ -107,8 +99,11 @@ Then in this file, set the following configuration key pair:
 This should, hopefully, make everything work. If you have problems,
 please `create an issue`_ and we’ll do our best to help.
 
-4. (Optional, but recommended) Create an apache proxy
+4. (Optional, but recommended) Create a reverse proxy
 -----------------------------------------------------
+
+Apache
+~~~~~~~~~
 
 **Note:**\ *You can skip this step if you wish to use gunicorn as your
 primary web server, but it’s not recommended.*
@@ -137,9 +132,6 @@ You also need to ensure that apache mod_proxy is activated :
 
 ```a2enmod proxy a2enmod proxy_http```
 
-5. Restart apache
------------------
-
 In order for these changes to be applied, you need to restart apache
 with the following command (or equivalent on your system):
 
@@ -147,7 +139,14 @@ with the following command (or equivalent on your system):
 
    service restart httpd
 
-6. Start the web server
+NGINX
+~~~~~~~~
+
+An example NGINX configuration is provided in the `deployment folder`_.
+Please note that it is designed to work with the Docker Compose stack.
+For more details please refer to :ref:`docker_compose_stack`.
+
+5. Start the web server
 -----------------------
 
 .. code:: bash
@@ -157,8 +156,7 @@ with the following command (or equivalent on your system):
 **Note:**\ *We recommend using a long timeout as the data upload from
 MultiQC can take several minutes for large reports*
 
-At this point, MegaQC should be running on the default gunicorn port
-(``8000``)
+At this point, MegaQC should be running on the default gunicorn port (``8000``)
 
 You should now have a fully functional MegaQC server running! 🎉
 
@@ -172,3 +170,4 @@ If you run an older OS, ensure that the package is installed.
 .. _Python MySQL connector: https://dev.mysql.com/downloads/connector/python/2.1.html
 .. _PyPI package: https://pypi.python.org/pypi/mysql-connector-python/2.0.4
 .. _create an issue: https://github.com/ewels/MegaQC/issues/new
+.. _deployment_folder: https://github.com/ewels/MegaQC/blob/master/deployment
