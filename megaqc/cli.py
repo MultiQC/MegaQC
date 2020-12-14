@@ -58,7 +58,7 @@ def cli(ctx):
     \nSee below for the available commands - for example,
     to start the MegaQC server, use the command: megaqc run
     """
-    # Attempt to connect to the database exists to check that it exists
+    # If the invoked command is not initdb we need to check whether a database already exists
     if ctx.invoked_subcommand != "initdb":
         settings.run_db_check = True
 
