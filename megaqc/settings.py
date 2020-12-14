@@ -15,6 +15,7 @@ from environs import Env
 from megaqc.scheduler import upload_reports_job
 
 env = Env()
+run_db_check = False
 
 
 class Config(object):
