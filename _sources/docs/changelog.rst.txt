@@ -39,6 +39,7 @@ New Features
 
 -  `[#140]`_ Added a changelog. It’s here! You’re reading it!
 -  Sphinx based documentation on Github Pages
+-  `[#69]`_ Added a check to verify that a database exists and exit nicely if not
 
 
 .. _bug-fixes-1:
@@ -62,6 +63,7 @@ Internal Changes
 -  Many and more dependency updates
 
 
+.. _[#69]:  https://github.com/ewels/MegaQC/issues/69
 .. _[#138]: https://github.com/ewels/MegaQC/issues/138
 .. _[#139]: https://github.com/ewels/MegaQC/issues/139
 .. _[#140]: https://github.com/ewels/MegaQC/issues/140
