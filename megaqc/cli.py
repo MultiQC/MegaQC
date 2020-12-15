@@ -4,18 +4,20 @@
 """
 
 import os
+import sys
 
 import click
 import pkg_resources
+import sqlalchemy
 from environs import Env
 from flask.cli import FlaskGroup
+
+from megaqc import settings
 
 env = Env()
 
 
-def create_megaqc_app(info):
-    import os
-
+def create_megaqc_app():
     from megaqc.app import create_app
     from megaqc.settings import DevConfig, ProdConfig, TestConfig
 
@@ -25,17 +27,40 @@ def create_megaqc_app(info):
         CONFIG = ProdConfig()
     else:
         CONFIG = TestConfig()
+
+    if settings.run_db_check:
+        # Attempt to connect to the database exists to check that it exists
+        try:
+            dbengine = sqlalchemy.create_engine(
+                CONFIG.SQLALCHEMY_DATABASE_URI
+            ).connect()
+            metadata = sqlalchemy.MetaData(dbengine, reflect=True)
+            assert "sample_data" in metadata.tables
+        except:
+            print("\n##### ERROR! Could not find table 'sample_data' in database!")
+            print(
+                "Has the database been initialised? If not, please run 'megaqc initdb' first"
+            )
+            print("Exiting...\n")
+            sys.exit(1)
+        else:
+            dbengine.close()
+
     return create_app(CONFIG)
 
 
 @click.group(cls=FlaskGroup, create_app=create_megaqc_app)
-def cli():
+@click.pass_context
+def cli(ctx):
     """
     Welcome to the MegaQC command line interface.
 
     \nSee below for the available commands - for example,
     to start the MegaQC server, use the command: megaqc run
     """
+    # If the invoked command is not initdb we need to check whether a database already exists
+    if ctx.invoked_subcommand != "initdb":
+        settings.run_db_check = True
 
 
 def main():
