@@ -13,7 +13,7 @@ The MegaQC documentation requires
 2. All dependencies specified in the `docs requirements.txt <https://github.com/ewels/MegaQC/blob/master/docs/requirements.txt>`_.
    Install them by invoking: ``pip install -r docs/requirements.txt``. 
 
-After having installed all requirements run ``make html`` in the ``docs`` directory.
+After having installed all requirements run ``make api-docs && make html`` in the ``docs`` directory.
 The generated ``html`` files are found in the ``docs/_build/html`` subfolder.
 Simply open a generated ``html`` file in your favorite browser to read the documentation.
 
