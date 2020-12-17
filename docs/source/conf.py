@@ -62,6 +62,17 @@ html_css_files = [
     "megaqc_style.css",
 ]
 
+html_context = {
+    # Enable the "Edit in GitHub link within the header of each page.
+    "display_github": True,
+    # Set the following variables to generate the resulting github URL for each page.
+    # Format Template: https://{{ github_host|default("github.com") }}/{{ github_user }}/{{ github_repo }}/blob/{{ github_version }}{{ conf_py_path }}{{ pagename }}{{ suffix }}
+    "github_user": "ewels",
+    "github_repo": "MegaQC",
+    "github_version": "master/docs",
+    "conf_py_path": "/source/",
+}
+
 # Resolve function for the linkcode extension.
 def linkcode_resolve(domain, info):
     def find_source():
