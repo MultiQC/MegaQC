@@ -13,6 +13,7 @@ Welcome to MegaQC's documentation!
    ../api_reference
    troubleshooting
    changelog
+   code_of_conduct
 
 
 Indices and tables
