@@ -20,7 +20,7 @@ Simply open a generated ``html`` file in your favorite browser to read the docum
 Publishing the documentation
 ---------------------------------
 
-On pushes to the ``master`` branch the documentation is automatically built and pushed
+On pushes to the ``master`` branch, the documentation is automatically built and pushed
 to the ``gh-pages`` branch. The static html files on this branch are then deployed
 to Github Pages and displayed to the outside world.
 All of this is done with the `Publish Docs Github Actions workflow <https://github.com/ewels/MegaQC/blob/master/.github/workflows/publish_docs.yaml>`.
