@@ -31,7 +31,7 @@ simply configure MultiQC to automatically save data to the website every time it
 Users of your group or facility can then replicate MultiQC plots and explore different data
 fields. Data distributions, timelines and comparisons can all be explored.
 
-Please read the `MegaQC Documentation <https://ewels.github.io/MegaQC/docs/contents.html>`_
+Please read the `MegaQC Documentation <https://megaqc.info/docs/index.html>`_
 to learn how to install, deploy and use MegaQC.
 
 .. _MultiQC website: http://multiqc.info
