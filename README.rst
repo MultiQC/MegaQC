@@ -45,6 +45,6 @@ to learn how to install, deploy and use MegaQC.
 .. |Gitter| image:: https://img.shields.io/badge/gitter-%20join%20chat%20%E2%86%92-4fb99a.svg?style=flat-square
    :target: https://gitter.im/ewels/MegaQC
 .. |Documentation| image:: https://img.shields.io/badge/Documentation-passing-passing
-   :target: https://ewels.github.io/MegaQC/docs/contents.html
+   :target: https://megaqc.info/docs/index.html
 .. |PyPI| image:: https://img.shields.io/pypi/v/megaqc?color=passing
    :target: https://pypi.org/project/megaqc/
