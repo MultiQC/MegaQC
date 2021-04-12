@@ -66,7 +66,7 @@ setup(
         "flask-uploads~=0.2",
         "marshmallow-jsonapi~=0.23",
         "outlier-utils~=0.0.3",
-        "webargs~=5.5",  # do not upgrade, since it breaks parsing
+        "webargs>=5.5,<9.0",  # do not upgrade, since it breaks parsing
         "querystring-parser~=1.2",
         "scipy~=1.5",
         "flatten_json~=0.1",
