@@ -48,7 +48,7 @@ setup(
         "Flask-WTF~=0.14",
         "Flask~=1.1",
         "future~=0.18",
-        "itsdangerous~=1.1",
+        "itsdangerous>=1.1,<3.0",
         "Jinja2~=2.11",
         "markdown~=3.3",
         "multiqc~=1.9",
