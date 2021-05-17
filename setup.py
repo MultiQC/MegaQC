@@ -39,7 +39,7 @@ setup(
     },
     install_requires=[
         "argon2-cffi~=20.1",
-        "click~=7.0",
+        "click>=7,<9",
         "Flask-APScheduler~=1.11",
         "Flask-Caching~=1.9",
         "Flask-DebugToolbar~=0.11",
