@@ -24,7 +24,6 @@ from logger import get_logger
 LOG = get_logger("main_log")
 
 
-
 def dx_login():
 
     """
@@ -192,8 +191,12 @@ def main():
     else:
         # no log file, likely first time running
         # create new one and set to empty list => download everything
-        os.mknod(os.environ['MEGAQC_UPLOAD_LOG'])
+        Path(os.environ['MEGAQC_UPLOAD_LOG']).mkdir(parents=True, exist_ok=True)
+        open(os.environ['MEGAQC_UPLOAD_LOG'], 'a').close()
         log_file = []
+
+    # check if download dir exists, if not create it
+    Path(os.environ['DOWNLOAD_DIR']).mkdir(parents=True, exist_ok=True)
 
     # find multiqc_data.jsons in 002 projects
     projects = find_002_projects()
