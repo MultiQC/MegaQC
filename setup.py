@@ -74,19 +74,20 @@ setup(
         "Flask-Migrate~=2.5",
         "environs~=9.2.0",
         # below required for dxpy
-        "certifi-2021.10.8",
-        "cffi-1.15.0",
-        "charset-normalizer-2.0.9",
-        "cryptography-35.0.0",
-        "dxpy-0.316.0",
-        "idna-3.3",
-        "psutil-5.8.0",
-        "pycparser-2.21",
-        "python-dateutil-2.8.2",
-        "requests-2.26.0",
-        "six-1.16.0",
-        "urllib3-1.26.7",
-        "websocket-client-0.57.0"
+        "argcomplete~=1.12.3",
+        "certifi~=2021.10.8",
+        "cffi~=1.15.0",
+        "charset-normalizer~=2.0.9",
+        "cryptography~=35.0.0",
+        "dxpy~=0.316.0",
+        "idna~=3.3",
+        "psutil~=5.8.0",
+        "pycparser~=2.21",
+        "python-dateutil~=2.8.2",
+        "requests~=2.26.0",
+        "six~=1.16.0",
+        "urllib3~=1.26.7",
+        "websocket-client~=0.57.0"
     ],
     extras_require={
         "dev": [
