@@ -1,5 +1,5 @@
 # Compile the JS in an isolated container
-FROM node:latest
+FROM node:16.13.0
 COPY . /app
 WORKDIR /app
 RUN npm install
@@ -23,4 +23,9 @@ ENV MEGAQC_PRODUCTION=1 \
 COPY . /app
 # Copy the compiled JS in from the other node container
 COPY --from=0 /app/megaqc/static/ /app/megaqc/static/
+RUN pip install --upgrade pip
+RUN pip install sqlalchemy==1.3.24
+RUN pip install flask-sqlalchemy
+RUN pip install marshmallow-sqlalchemy==0.25
+RUN pip install mysqlclient
 RUN pip install /app[prod]

@@ -74,7 +74,6 @@ setup(
         "Flask-Migrate~=2.5",
         "environs~=9.2.0",
         # below required for dxpy
-        "argcomplete-1.12.3",
         "certifi-2021.10.8",
         "cffi-1.15.0",
         "charset-normalizer-2.0.9",
