@@ -86,6 +86,7 @@ setup(
         "python-dateutil~=2.8.2",
         "requests~=2.26.0",
         "six~=1.16.0",
+        "tzlocal==2.1",
         "urllib3~=1.26.7",
         "websocket-client~=0.57.0"
     ],
