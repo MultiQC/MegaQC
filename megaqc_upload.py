@@ -19,7 +19,7 @@ import sys
 
 import dxpy as dx
 
-from logger import LOG_FILE, get_logger
+from logger import get_logger
 
 
 def dx_login():
