@@ -214,19 +214,21 @@ def main():
     else:
         # no log file, likely first time running
         # create new one and set to empty list => download everything
+        print("Creating new megaqc upload log")
         Path(os.environ['MEGAQC_UPLOAD_LOG']).parent.mkdir(parents=True, exist_ok=True)
         open(os.environ['MEGAQC_UPLOAD_LOG'], 'a').close()
         log_file = []
 
     if not os.path.isfile(os.environ['MEGAQC_FULL_LOG']):
         # log file hasn't been create, make one
+        print("Creating new megaqc full log")
         Path(os.environ['MEGAQC_FULL_LOG']).parent.mkdir(parents=True, exist_ok=True)
         open(os.environ['MEGAQC_FULL_LOG'], 'a').close()
 
     global LOG
     LOG = get_logger("main_log")
 
-    # check if download dir exists, if not create it
+    # create download dir if doesn't exist already
     Path(os.environ['DOWNLOAD_DIR']).mkdir(parents=True, exist_ok=True)
 
     # authenticate with DNAnexus
@@ -249,7 +251,7 @@ def main():
 
     for json_file, run in filtered_jsons.items():
         count+=1
-        if run not in log_file and run not in downloaded:
+        if run not in log_file or run not in downloaded:
             # run name not logged or just downloaded => download
             get_json(json_file, run)
             downloaded.append(run)
