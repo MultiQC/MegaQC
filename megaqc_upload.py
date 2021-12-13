@@ -19,9 +19,7 @@ import sys
 
 import dxpy as dx
 
-from logger import get_logger
-
-LOG = get_logger("main_log")
+from logger import LOG_FILE, get_logger
 
 
 def dx_login():
@@ -64,6 +62,33 @@ def dx_login():
             f"megaqc upload: Error DNAnexus token appears to be invalid:\n{e}",
             "egg-alerts"
         )
+
+
+def create_multiqc_cfg():
+    """
+    Checks for presence of multiqc_config.yaml file, this contains the upload
+    URL and token required for uploading data. We create it dynamically from
+    env varibales if not already present to only need to pass one config file
+    to docker image
+    """
+    if not os.path.isfile("/app/megaqc/multiqc_config.yaml"):
+        if os.environ.get("MEGAQC_URL") and os.environ.get("MEGAQC_ACCESS_TOKEN"):
+            with open("/app/megaqc/multiqc_config.yaml", "w") as fh:
+                # no config file present but env variables set => create one
+                fh.write(f"megaqc_url: {os.environ.get('MEGAQC_URL')}\n")
+                fh.write(f"megaqc_access_token: {os.environ.get('MEGAQC_ACCESS_TOKEN')}")
+                print("Created multiqc config yaml file")
+                LOG.info(
+                    "Created required multiqc config file in "
+                    "/app/megaqc/multiqc_config.yaml"
+                )
+        else:
+            # config file doesn't exist and env variables not set => exit
+            LOG.error(
+                f"No multiqc yaml config file present in megaqc dir and "
+                "required env variables not set. This should contain the "
+                "upload URL and access token. Exiting now."
+            )
 
 
 def find_002_projects():
@@ -118,7 +143,7 @@ def get_json(file_id, run_name):
 
     Returns: None
     """
-    dxpy.bindings.dxfile_functions.download_dxfile(
+    dx.bindings.dxfile_functions.download_dxfile(
         file_id, f"{os.environ['DOWNLOAD_DIR']}/{run_name}-multiqc_data.json"
     )
 
@@ -181,22 +206,34 @@ def slack_notify(message, channel):
 
 
 def main():
-    os.environ['MEGAQC_UPLOAD_LOG'] = "/home/jethro/Projects/megaQC_uploads/megaqc_uploads.log"
-    os.environ['DOWNLOAD_DIR'] = "/home/jethro/Projects/megaQC_uploads/json_download/"
 
     if os.path.isfile(os.environ['MEGAQC_UPLOAD_LOG']):
         with open(os.environ['MEGAQC_UPLOAD_LOG']) as fh:
-            # read in log file, used to check if a run json has been prev. uploaded
+            # read in log file, used to check if a run has been prev uploaded
             log_file = fh.read().splitlines()
     else:
         # no log file, likely first time running
         # create new one and set to empty list => download everything
-        Path(os.environ['MEGAQC_UPLOAD_LOG']).mkdir(parents=True, exist_ok=True)
+        Path(os.environ['MEGAQC_UPLOAD_LOG']).parent.mkdir(parents=True, exist_ok=True)
         open(os.environ['MEGAQC_UPLOAD_LOG'], 'a').close()
         log_file = []
 
+    if not os.path.isfile(os.environ['MEGAQC_FULL_LOG']):
+        # log file hasn't been create, make one
+        Path(os.environ['MEGAQC_FULL_LOG']).parent.mkdir(parents=True, exist_ok=True)
+        open(os.environ['MEGAQC_FULL_LOG'], 'a').close()
+
+    global LOG
+    LOG = get_logger("main_log")
+
     # check if download dir exists, if not create it
     Path(os.environ['DOWNLOAD_DIR']).mkdir(parents=True, exist_ok=True)
+
+    # authenticate with DNAnexus
+    dx_login()
+
+    # check for multiqc config, create if doesn't exist
+    create_multiqc_cfg()
 
     # find multiqc_data.jsons in 002 projects
     projects = find_002_projects()
@@ -208,14 +245,21 @@ def main():
     # generate list of downloaded JSONs to add to log file
     downloaded = []
 
+    count = 0
+
     for json_file, run in filtered_jsons.items():
-        if run not in log_file:
-            # run name not logged => download
+        count+=1
+        if run not in log_file and run not in downloaded:
+            # run name not logged or just downloaded => download
             get_json(json_file, run)
             downloaded.append(run)
-            print(f"Downloaded {json_file}")
+            print(f"Downloaded {json_file} ({run})")
+            LOG.info(f"Downloaded {json_file} ({run})")
+            if count == 5:
+                break
         else:
             print(f"Run {run} already imported, skipping...")
+            LOG.info(f"Run {run} already imported, skipping...")
 
     LOG.info(f"Downloaded {len(downloaded)} JSONs to import")
 
@@ -229,8 +273,6 @@ def main():
             upload_json(file)
             fh.write(f'{file}\n')
             LOG.info(f"{file} imported to database")
-            os.remove(file)
-
 
 if __name__ == "__main__":
     main()
