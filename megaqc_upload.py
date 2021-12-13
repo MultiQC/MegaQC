@@ -159,21 +159,23 @@ def upload_json(file):
     proc = subprocess.run(
         f"megaqc upload {file}", shell=True, stderr=subprocess.PIPE
     )
+    if proc.stdout:
+        LOG.info(proc.stdout.decode())
+    if proc.stderr:
+        LOG.error(proc.stderr.decode())
 
     if proc.returncode != 0:
         # error running megaqc upload, stop and notify via slack
         message = (
             f"Error running megaqc upload.\n Error code: {proc.returncode}"
-            f"\nError: {proc.stderr}"
+            f"\nError: {proc.stderr.decode()}"
         )
         LOG.error(message)
-        slack_notify(message, 'egg-alerts')
+        slack_notify(f"{message}", 'egg-alerts')
         sys.exit()
     else:
-        # successfully uploaded, log and delete
+        # successfully uploaded
         LOG.info(f"Successfully uploaded {file} to megaqc database")
-        os.remove(file)
-        LOG.info(f"Deleted file: {file}")
 
 
 def slack_notify(message, channel):
@@ -220,7 +222,7 @@ def main():
         log_file = []
 
     if not os.path.isfile(os.environ['MEGAQC_FULL_LOG']):
-        # log file hasn't been create, make one
+        # log file hasn't been created, make one
         print("Creating new megaqc full log")
         Path(os.environ['MEGAQC_FULL_LOG']).parent.mkdir(parents=True, exist_ok=True)
         open(os.environ['MEGAQC_FULL_LOG'], 'a').close()
@@ -247,18 +249,13 @@ def main():
     # generate list of downloaded JSONs to add to log file
     downloaded = []
 
-    count = 0
-
     for json_file, run in filtered_jsons.items():
-        count+=1
-        if run not in log_file or run not in downloaded:
+        if run not in " ".join(log_file) and run not in downloaded:
             # run name not logged or just downloaded => download
             get_json(json_file, run)
             downloaded.append(run)
             print(f"Downloaded {json_file} ({run})")
             LOG.info(f"Downloaded {json_file} ({run})")
-            if count == 5:
-                break
         else:
             print(f"Run {run} already imported, skipping...")
             LOG.info(f"Run {run} already imported, skipping...")
@@ -272,9 +269,23 @@ def main():
     # write each run file imported to log
     with open(os.environ['MEGAQC_UPLOAD_LOG'], 'a') as fh:
         for file in Path(os.environ['DOWNLOAD_DIR']).glob('*.json'):
-            upload_json(file)
-            fh.write(f'{file}\n')
-            LOG.info(f"{file} imported to database")
+            if os.path.getsize(file):
+                upload_json(file)
+                fh.write(f'{file}\n')
+                LOG.info(f"{file} imported to database")
+            else:
+                # file appears to be empty, notify and log
+                message = (
+                    f"megaqc upload error: {Path(file).name} appears to be an "
+                    f"empty file and can't be imported\nCheck logs for details"
+                )
+                slack_notify(message, channel='egg-alerts')
+                LOG.error(message)
+                fh.write(f'{file}\n')  # adding to upload log to not pick it up again
+
+        os.remove(file)
+        LOG.info(f"Deleted file: {file}")
+
 
 if __name__ == "__main__":
     main()
