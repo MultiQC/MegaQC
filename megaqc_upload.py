@@ -78,7 +78,9 @@ def gather_mega_tokens():
     """
     Multiple auth tokens are stored in the config prefixed with MEGA_TOKEN_,
     gather all these into a dict to know which sequencer 'user' to attribute
-    to upload to for filtering later by the key being in the run name
+    to upload to for filtering later by the key being in the run name.
+
+    Store in return dict as A01295: {A01295token}, A01303: {A01303token} etc...
 
     Returns: tokens (dict): dict of all sequencers to tokens
     """
