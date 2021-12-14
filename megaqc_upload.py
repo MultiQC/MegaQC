@@ -64,31 +64,30 @@ def dx_login():
         )
 
 
-def create_multiqc_cfg():
+def create_multiqc_cfg(token):
     """
-    Checks for presence of multiqc_config.yaml file, this contains the upload
-    URL and token required for uploading data. We create it dynamically from
-    env varibales if not already present to only need to pass one config file
-    to docker image
+    Creates required multiqc_config.yaml file with given token, required to
+    run megaqc upload command.
     """
-    if not os.path.isfile("/app/megaqc/multiqc_config.yaml"):
-        if os.environ.get("MEGAQC_URL") and os.environ.get("MEGAQC_ACCESS_TOKEN"):
-            with open("/app/megaqc/multiqc_config.yaml", "w") as fh:
-                # no config file present but env variables set => create one
-                fh.write(f"megaqc_url: {os.environ.get('MEGAQC_URL')}\n")
-                fh.write(f"megaqc_access_token: {os.environ.get('MEGAQC_ACCESS_TOKEN')}")
-                print("Created multiqc config yaml file")
-                LOG.info(
-                    "Created required multiqc config file in "
-                    "/app/megaqc/multiqc_config.yaml"
-                )
-        else:
-            # config file doesn't exist and env variables not set => exit
-            LOG.error(
-                f"No multiqc yaml config file present in megaqc dir and "
-                "required env variables not set. This should contain the "
-                "upload URL and access token. Exiting now."
-            )
+    with open("/app/megaqc/multiqc_config.yaml") as fh:
+        fh.write(f"megaqc_url: {os.environ.get('MEGAQC_URL')}\n")
+        fh.write(f"megaqc_access_token: {token}")
+
+
+def gather_mega_tokens():
+    """
+    Multiple auth tokens are stored in the config prefixed with MEGA_TOKEN_,
+    gather all these into a dict to know which sequencer 'user' to attribute
+    to upload to for filtering later by the key being in the run name
+
+    Returns: tokens (dict): dict of all sequencers to tokens
+    """
+    tokens = {}
+    for key, val in os.environ.items():
+        if key.startswith("MEGAQC_TOKEN_"):
+            tokens[key.replace("MEGAQC_TOKEN_", "")] = val
+
+    return tokens
 
 
 def find_002_projects():
@@ -236,8 +235,9 @@ def main():
     # authenticate with DNAnexus
     dx_login()
 
-    # check for multiqc config, create if doesn't exist
-    create_multiqc_cfg()
+    # get all megaqc auth tokens from environment to attribute upload to
+    # correct sequencer
+    tokens = gather_mega_tokens()
 
     # find multiqc_data.jsons in 002 projects
     projects = find_002_projects()
@@ -270,7 +270,23 @@ def main():
     with open(os.environ['MEGAQC_UPLOAD_LOG'], 'a') as fh:
         for file in Path(os.environ['DOWNLOAD_DIR']).glob('*.json'):
             if os.path.getsize(file):
+                # select token to the sequencer and upload, if no token for
+                # sequencer drop back to admin token
+                try:
+                    # Illumina sequencers put ID as 2nd field, plus our 002 prefix
+                    sequencer = file.split("_")[2]
+                    seq_token = tokens[sequencer]
+                except KeyError:
+                    LOG.error(
+                        f"Couldn't find auth token from config for sequencer "
+                        f"{sequencer} from run {file}. Will use admin token."
+                    )
+                    seq_token = tokens["ADMIN"]
+
+                # write multiqc config with correct token and upload
+                create_multiqc_cfg(tokenn=seq_token)
                 upload_json(file)
+
                 fh.write(f'{file}\n')
                 LOG.info(f"{file} imported to database")
             else:
