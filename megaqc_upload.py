@@ -7,7 +7,7 @@ Writes runs downloaded to log file to ensure they aren't downloaded twice
 Required env variables:
 - DOWNLOAD_DIR: dir to download jsons to
 - SLACK_TOKEN: slack api token to send notifications
-- AUTH_TOKEN: DNAnexus authorisation token
+- DX_AUTH_TOKEN: DNAnexus authorisation token
 - MEGAQC_FULL_LOG: verbose log file to write all running messages to
 - MEGAQC_UPLOAD_LOG: file to write imported runs to, used to record whats uploaded
 """
@@ -34,11 +34,11 @@ def dx_login():
 
     # try to get auth token from env (i.e. run in docker)
     try:
-        AUTH_TOKEN = os.environ["AUTH_TOKEN"]
+        AUTH_TOKEN = os.environ["DX_AUTH_TOKEN"]
     except Exception as e:
         LOG.error('No dnanexus auth token detected')
         slack_notify(
-            "megaqc upload: Error: no dx auth token found", "egg-alerts"
+            "megaqc upload error: no DNAnexus auth token found", "egg-alerts"
         )
         LOG.info('----- Stopping script -----')
         sys.exit()
@@ -69,7 +69,7 @@ def create_multiqc_cfg(token):
     Creates required multiqc_config.yaml file with given token, required to
     run megaqc upload command.
     """
-    with open("/app/megaqc/multiqc_config.yaml") as fh:
+    with open("/app/megaqc/multiqc_config.yaml", "w") as fh:
         fh.write(f"megaqc_url: {os.environ.get('MEGAQC_URL')}\n")
         fh.write(f"megaqc_access_token: {token}")
 
@@ -240,9 +240,14 @@ def main():
     tokens = gather_mega_tokens()
 
     # find multiqc_data.jsons in 002 projects
-    projects = find_002_projects()
-    jsons = find_jsons()
-    filtered_jsons = filter_jsons(projects, jsons)
+    try:
+        projects = find_002_projects()
+        jsons = find_jsons()
+        filtered_jsons = filter_jsons(projects, jsons)
+    except Exception as e:
+        # catch everything that might go wrong doing dx queries
+        LOG.error(f"Error in dx queries: {e}")
+        slack_notify(f"megaqc upload error: {e}", "egg-alerts")
 
     LOG.info(f"{len(filtered_jsons)} total JSON files in 002 projects")
 
@@ -251,7 +256,7 @@ def main():
 
     for json_file, run in filtered_jsons.items():
         if run not in " ".join(log_file) and run not in downloaded:
-            # run name not logged or just downloaded => download
+            # run name not logged or downloaded in current session => download
             get_json(json_file, run)
             downloaded.append(run)
             print(f"Downloaded {json_file} ({run})")
@@ -274,7 +279,7 @@ def main():
                 # sequencer drop back to admin token
                 try:
                     # Illumina sequencers put ID as 2nd field, plus our 002 prefix
-                    sequencer = file.split("_")[2]
+                    sequencer = Path(file).name.split("_")[2]
                     seq_token = tokens[sequencer]
                 except KeyError:
                     LOG.error(
