@@ -5,11 +5,19 @@ runs megaqc upload to import into megaqc database
 Writes runs downloaded to log file to ensure they aren't downloaded twice
 
 Required env variables:
-- DOWNLOAD_DIR: dir to download jsons to
+- DOWNLOAD_DIR: dir to download jsons to, this will be in the docker container
 - SLACK_TOKEN: slack api token to send notifications
 - DX_AUTH_TOKEN: DNAnexus authorisation token
-- MEGAQC_FULL_LOG: verbose log file to write all running messages to
-- MEGAQC_UPLOAD_LOG: file to write imported runs to, used to record whats uploaded
+- MEGAQC_FULL_LOG: verbose log file to write all running messages to, this will
+    be a path in the docker container and can be bound to local file system
+- MEGAQC_UPLOAD_LOG: file to write imported runs to, used to record whats,
+    uploaded, this will be a path in the docker container and can be bound to
+    local file system
+- MEGAQC_TOKEN_ADMIN: token of admin user for megaqc, used to upload any data
+    not being attributed to a sequencer
+- MEGAQC_TOKEN_{SEQUENCER}: token of megaqc user to attribute upload of data
+    to, this should be the sequencer ID of what the sample was run on
+    (i.e megaqc user name A01303, MEGAQC_TOKEN_A01303={api_token})
 """
 import os
 from pathlib import Path
@@ -78,7 +86,7 @@ def gather_mega_tokens():
     """
     Multiple auth tokens are stored in the config prefixed with MEGA_TOKEN_,
     gather all these into a dict to know which sequencer 'user' to attribute
-    to upload to for filtering later by the key being in the run name.
+    the upload to for filtering later by the key being in the run name.
 
     Store in return dict as A01295: {A01295token}, A01303: {A01303token} etc...
 
@@ -291,7 +299,7 @@ def main():
                     seq_token = tokens["ADMIN"]
 
                 # write multiqc config with correct token and upload
-                create_multiqc_cfg(tokenn=seq_token)
+                create_multiqc_cfg(token=seq_token)
                 upload_json(file)
 
                 fh.write(f'{file}\n')

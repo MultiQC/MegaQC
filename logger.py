@@ -6,7 +6,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 FORMATTER = logging.Formatter(
     "%(asctime)s:%(name)s:%(module)s:%(levelname)s:%(message)s"
-    )
+)
 LOG_FILE = os.environ["MEGAQC_FULL_LOG"]
 
 
