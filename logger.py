@@ -17,7 +17,9 @@ def get_console_handler():
 
 
 def get_file_handler():
-    file_handler = TimedRotatingFileHandler(LOG_FILE, when='midnight')
+    file_handler = TimedRotatingFileHandler(
+        LOG_FILE, when='W0', backupCount=1
+    )
     file_handler.setFormatter(FORMATTER)
     return file_handler
 
