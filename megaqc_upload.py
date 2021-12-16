@@ -269,15 +269,19 @@ def main():
     downloaded = []
 
     for json_file, run in filtered_jsons.items():
-        if run not in " ".join(log_file) and run not in downloaded:
+        if run not in " ".join(log_file) \
+            and run not in downloaded \
+                and not os.path.isfile(
+                    f"{os.environ['DOWNLOAD_DIR']}/{run}-multiqc_data.json"
+        ):
             # run name not logged or downloaded in current session => download
             get_json(json_file, run)
             downloaded.append(run)
             print(f"Downloaded {json_file} ({run})")
             LOG.info(f"Downloaded {json_file} ({run})")
         else:
-            print(f"Run {run} already imported, skipping...")
-            LOG.info(f"Run {run} already imported, skipping...")
+            print(f"Run {run} already imported or downloaded, skipping...")
+            LOG.info(f"Run {run} already imported or downloaded, skipping...")
 
     LOG.info(f"Downloaded {len(downloaded)} JSONs to import")
 
