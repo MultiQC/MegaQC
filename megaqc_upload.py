@@ -24,6 +24,7 @@ from pathlib import Path
 import requests
 import subprocess
 import sys
+from time import sleep
 
 import dxpy as dx
 
@@ -316,6 +317,8 @@ def main():
 
         os.remove(file)
         LOG.info(f"Deleted file: {file}")
+        LOG.info("Sleeping after upload for 30s")
+        sleep(30)
 
 
 if __name__ == "__main__":
