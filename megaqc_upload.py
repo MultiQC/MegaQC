@@ -287,7 +287,8 @@ def main():
     # import each file into database using megaqc upload, then delete files
     # write each run file imported to log
     with open(os.environ['MEGAQC_UPLOAD_LOG'], 'a') as fh:
-        for file in Path(os.environ['DOWNLOAD_DIR']).glob('*.json'):
+        for file_num, file in enumerate(Path(os.environ['DOWNLOAD_DIR']).glob('*.json')):
+            LOG.info(f"Processing file {file_num}/{len(downloaded)}")
             if os.path.getsize(file):
                 # select token to the sequencer and upload, if no token for
                 # sequencer drop back to admin token
