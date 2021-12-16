@@ -19,11 +19,10 @@ ENV MEGAQC_PRODUCTION=1 \
     DB_PORT="5432" \
     DB_NAME="megaqc" \
     DB_USER="megaqc" \
-    DB_PASS="megaqcpswd" \
-    # proxy required for connecting to DNAnexus
-    HTTPS_PROXY=http://proxy.net.addenbrookes.nhs.uk:8080/
+    DB_PASS="megaqcpswd"
 
 COPY . /app
 # Copy the compiled JS in from the other node container
 COPY --from=0 /app/megaqc/static/ /app/megaqc/static/
+
 RUN pip install /app[prod]

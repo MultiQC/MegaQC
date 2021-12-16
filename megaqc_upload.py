@@ -13,6 +13,9 @@ Required env variables:
 - MEGAQC_UPLOAD_LOG: file to write imported runs to, used to record whats,
     uploaded, this will be a path in the docker container and can be bound to
     local file system
+- MEGAQC_URL: URL endpoint to upload to {domain}/api/upload_data
+- MEGAQC_PRODUCTION: boolean to set to development or production mode
+- HTTPS_PROXY: required if running behind firewall req. proxy to access internet
 - MEGAQC_TOKEN_ADMIN: token of admin user for megaqc, used to upload any data
     not being attributed to a sequencer
 - MEGAQC_TOKEN_{SEQUENCER}: token of megaqc user to attribute upload of data
