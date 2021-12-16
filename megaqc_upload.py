@@ -318,10 +318,10 @@ def main():
                 LOG.error(message)
                 fh.write(f'{file}\n')  # adding to upload log to not pick it up again
 
-        os.remove(file)
-        LOG.info(f"Deleted file: {file}")
-        LOG.info("Sleeping after upload for 30s")
-        sleep(30)
+            os.remove(file)
+            LOG.info(f"Deleted file: {file}")
+            LOG.info("Sleeping after upload for 30s")
+            sleep(30)  # adds delay between uploads to stop it crashing
 
 
 if __name__ == "__main__":
