@@ -25,4 +25,9 @@ COPY . /app
 # Copy the compiled JS in from the other node container
 COPY --from=0 /app/megaqc/static/ /app/megaqc/static/
 
+RUN pip install --upgrade pip
+RUN pip install sqlalchemy==1.3.24
+RUN pip install flask-sqlalchemy
+RUN pip install marshmallow-sqlalchemy==0.25
+
 RUN pip install /app[prod]
