@@ -1,5 +1,5 @@
 # Compile the JS in an isolated container
-FROM node:latest
+FROM node:16.13.0
 COPY . /app
 WORKDIR /app
 RUN npm install
@@ -20,7 +20,9 @@ ENV MEGAQC_PRODUCTION=1 \
     DB_NAME="megaqc" \
     DB_USER="megaqc" \
     DB_PASS="megaqcpswd"
+
 COPY . /app
 # Copy the compiled JS in from the other node container
 COPY --from=0 /app/megaqc/static/ /app/megaqc/static/
+
 RUN pip install /app[prod]
