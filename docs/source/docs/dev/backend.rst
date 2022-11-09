@@ -68,7 +68,7 @@ be done inside `test_api.py`_, which tests all REST API endpoints.
 .. _views.py: https://github.com/ewels/MegaQC/blob/master/megaqc/rest_api/views.py
 .. _flapison: https://github.com/TMiguelT/flapison
 .. _schemas.py: https://github.com/ewels/MegaQC/tree/master/megaqc/rest_api/schemas.py
-.. _public/views.py: https://github.com/ewels/MegaQC/tree/master/megaqc/public/view.py
+.. _public/views.py: https://github.com/ewels/MegaQC/tree/master/megaqc/public/views.py
 .. _user/views.py: https://github.com/ewels/MegaQC/tree/master/megaqc/user/views.py
 .. _Jinja2: https://jinja.palletsprojects.com/en/2.11.x/
 .. _frontend: ./frontend.md
