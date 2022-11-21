@@ -13,7 +13,6 @@ from passlib.hash import argon2
 from passlib.utils import getrandstr, rng
 from sqlalchemy import (
     TIMESTAMP,
-    Binary,
     Boolean,
     Column,
     DateTime,
