@@ -49,7 +49,7 @@ setup(
         "Flask~=1.1",
         "future~=0.18",
         "itsdangerous~=1.1",
-        "Jinja2~=2.11",
+        "Jinja2~=2.11,<3.1.0",
         "markdown~=3.3",
         "multiqc~=1.9",
         "numpy~=1.14",
