@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Installation &mdash; MegaQC 0.3.0 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -52,7 +55,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> MegaQC
+            <a href="../index.html" class="icon icon-home"> MegaQC
           
 
           
@@ -193,6 +196,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -204,7 +209,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             
               <a href="https://github.com/ewels/MegaQC/blob/master/docs/source/docs/installation/installation.rst" class="fa fa-github"> Edit on GitHub</a>
             
@@ -298,7 +303,7 @@ environment variable <code class="docutils literal notranslate"><span class="pre
 </pre></div>
 </div>
 <p>Then in this file, set the following configuration key pair:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">SQLALCHEMY_DBMS</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">SQLALCHEMY_DBMS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"></span>
 </pre></div>
 </div>
 <p>This should, hopefully, make everything work. If you have problems,
@@ -319,8 +324,8 @@ anything. Please consider your server security!</em></p>
 <code class="docutils literal notranslate"><span class="pre">/etc/httpd/conf/httpd.conf</span></code>…) to include, for example (Apache 2.2):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">VirtualHost</span> <span class="o">*</span><span class="p">:</span><span class="mi">80</span><span class="o">&gt;</span>
 <span class="n">SetEnv</span> <span class="n">proxy</span><span class="o">-</span><span class="n">sendcl</span> <span class="mi">1</span>
-<span class="n">ProxyPass</span> <span class="o">/</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span>
-<span class="n">ProxyPassReverse</span> <span class="o">/</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span>
+<span class="n">ProxyPass</span> <span class="o">/</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span>
+<span class="n">ProxyPassReverse</span> <span class="o">/</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span>
 <span class="o">&lt;</span><span class="n">Proxy</span> <span class="o">*&gt;</span>
    <span class="n">Order</span> <span class="n">Allow</span><span class="p">,</span><span class="n">Deny</span>
    <span class="n">Allow</span> <span class="kn">from</span> <span class="nn">all</span>
@@ -472,28 +477,28 @@ docker inspect --format <span class="s1">&#39;{{json .Mounts}}&#39;</span> examp
 </pre></div>
 </div>
 <p>Example output for the above, nicely formatted:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-<span class="p">{</span>
-   <span class="nt">&quot;Type&quot;</span><span class="p">:</span> <span class="s2">&quot;volume&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Source&quot;</span><span class="p">:</span> <span class="s2">&quot;/var/lib/docker/volumes/7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804/_data&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Destination&quot;</span><span class="p">:</span> <span class="s2">&quot;/usr/local/lib/postgresql&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Driver&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Mode&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;RW&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-   <span class="nt">&quot;Propagation&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
-<span class="p">},</span>
-<span class="p">{</span>
-   <span class="nt">&quot;Type&quot;</span><span class="p">:</span> <span class="s2">&quot;volume&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Source&quot;</span><span class="p">:</span> <span class="s2">&quot;/var/lib/docker/volumes/6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428/_data&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Destination&quot;</span><span class="p">:</span> <span class="s2">&quot;/var/log/postgresql&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Driver&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;Mode&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;RW&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-   <span class="nt">&quot;Propagation&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
-<span class="p">}</span>
-<span class="p">]</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;volume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/lib/docker/volumes/7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804/_data&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/usr/local/lib/postgresql&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;RW&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Propagation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
+<span class="p">},</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;volume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/lib/docker/volumes/6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428/_data&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/log/postgresql&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;RW&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;Propagation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="p">]</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -642,7 +647,7 @@ current (MegaQC) directory. However, you will then have to run
 <h3>7. Load test data<a class="headerlink" href="#load-test-data" title="Permalink to this headline">¶</a></h3>
 <p>In order to develop new features you need some data to test it with:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/TMiguelT/1000gFastqc
-<span class="k">for</span> report in <span class="k">$(</span>find 1000gFastqc -name <span class="s1">&#39;*.json&#39;</span><span class="k">)</span>
+<span class="k">for</span> report <span class="k">in</span> <span class="k">$(</span>find 1000gFastqc -name <span class="s1">&#39;*.json&#39;</span><span class="k">)</span>
     <span class="k">do</span> megaqc upload <span class="nv">$report</span>
 <span class="k">done</span>
 </pre></div>
@@ -730,37 +735,29 @@ revision you noted above:</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../usage/usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to MegaQC’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="../usage/usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to MegaQC’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, MegaQC Team
+        &#169; Copyright 2020, MegaQC Team.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
