@@ -72,7 +72,7 @@ setup(
         "flatten_json~=0.1",
         "flapison~=0.30",
         "Flask-Migrate~=2.5",
-        "environs~=9.2.0",
+        "environs>=9.2,<9.6",
         "MarkupSafe<2.1.0",
     ],
     extras_require={
