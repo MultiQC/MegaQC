@@ -62,7 +62,7 @@ setup(
         "flask_restful~=0.3",
         "flask-marshmallow~=0.10",
         "marshmallow~=3.0",
-        "marshmallow-sqlalchemy~=0.17",
+        "marshmallow-sqlalchemy>=0.17,<0.26",
         "flask-uploads~=0.2",
         "marshmallow-jsonapi~=0.23",
         "outlier-utils~=0.0.3",
@@ -73,6 +73,7 @@ setup(
         "flapison~=0.30",
         "Flask-Migrate~=2.5",
         "environs~=9.2.0",
+        "MarkupSafe<2.1.0",
     ],
     extras_require={
         "dev": [
