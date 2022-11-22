@@ -30,13 +30,10 @@ def create_megaqc_app():
 
     if settings.run_db_check:
         # Attempt to connect to the database exists to check that it exists
-        try:
-            dbengine = sqlalchemy.create_engine(
-                CONFIG.SQLALCHEMY_DATABASE_URI
-            ).connect()
-            metadata = sqlalchemy.MetaData(dbengine, reflect=True)
-            assert "sample_data" in metadata.tables
-        except:
+        dbengine = sqlalchemy.create_engine(CONFIG.SQLALCHEMY_DATABASE_URI).connect()
+        metadata = sqlalchemy.MetaData(dbengine)
+        metadata.reflect(dbengine)
+        if "sample_data" not in metadata.tables:
             print("\n##### ERROR! Could not find table 'sample_data' in database!")
             print(
                 "Has the database been initialised? If not, please run 'megaqc initdb' first"
