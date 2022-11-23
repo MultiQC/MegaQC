@@ -1,0 +1,129 @@
+[tool.poetry]
+name = "megaqc"
+version = "0.3.0"
+description = "Collect and visualise data across multiple MultiQC runs"
+authors = ["Phil Ewels"]
+license = "GPLv3"
+readme = "README.rst"
+keywords = [
+        "bioinformatics",
+        "biology",
+        "sequencing",
+        "NGS",
+        "next generation sequencing",
+        "quality control",
+]
+homepage = "https://megaqc.info/"
+repository = "https://github.com/ewels/MegaQC/"
+documentation = "https://megaqc.info/docs/index.html"
+classifiers=[
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Environment :: Web Environment",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Natural Language :: English",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX",
+        "Operating System :: Unix",
+        "Programming Language :: Python",
+        "Programming Language :: JavaScript",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
+        "Topic :: Scientific/Engineering :: Visualization",
+    ]
+ packages=[
+    { include = "megaqc" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+        argon2-cffi="20.1"
+        click="^7.0"
+        Flask-APScheduler="^1.11"
+        Flask-Caching="^1.9"
+        Flask-DebugToolbar="^0.11"
+        Flask-Login="^0.5"
+        Flask-SQLAlchemy="^2.4"
+        Flask-WTF="^0.14"
+        Flask="^1.1"
+        future="^0.18"
+        itsdangerous="^1.1"
+        Jinja2="^2.11"
+        markdown="^3.3"
+        multiqc="^1.9"
+        numpy="^1.14"
+        passlib="^1.7"
+        plotly=">2,<5"
+        pyyaml="^5.1"
+        SQLAlchemy="^1.1"
+        Werkzeug=">0.14,<2.0"
+        
+        WTForms = { version = "^2.1", extras = ["email"] }
+        flask_restful="^0.3"
+        flask-marshmallow="^0.10"
+        marshmallow="^3.0"
+        marshmallow-sqlalchemy=">0.17,<0.26"
+        flask-uploads="^0.2"
+        marshmallow-jsonapi="^0.23.2"
+        outlier-utils="^0.0.3"
+        webargs="^5.5" # do not upgrade, since it breaks parsing
+        querystring-parser="^1.2"
+        scipy="^1.5"
+        flatten_json="^0.1"
+        flapison="^0.30"
+        Flask-Migrate="^2.5"
+        environs="^9.2.0"
+        MarkupSafe="<2.1.0"
+
+
+            # Testing
+            
+            pytest={version = "^3.0", optional = true }
+            WebTest={version = "^2.0", optional = true }
+            factory-boy={version = ">2.12,<4.0", optional = true }
+            livereload={version = "^2.5", optional = true }
+            # Lint and code style
+            flake8={version = "^3.7", optional = true }
+            flake8-blind-except={version = "^0.1", optional = true }
+            flake8-debugger={version = ">3.1,<5.0", optional = true }
+            flake8-docstrings={version = "^1.3", optional = true }
+            isort = { version = ">4.3,<6.0", extras = ["pyproject"], optional = true }
+
+            pep8-naming={version = "^0.8", optional = true }
+            pre-commit={version = "*", optional = true }
+       
+        
+            wheel={version = "^0.30", optional = true }
+            
+       
+            psycopg2={version = "^2.6", optional = true }
+            gunicorn={version = ">19.7,<21.0", optional = true }
+      
+[tool.poetry.extras]
+ dev = ["pytest",
+            "WebTest",
+            "factory-boy",
+            "livereload",
+            # Lint and code style
+            "flake8",
+            "flake8-blind-except",
+            "flake8-debugger",
+            "flake8-docstrings",
+            "isort[pyproject]",
+            "pep8-naming",
+            "pre-commit",
+        ]
+deploy = ["wheel"]
+prod = [ "psycopg2",
+         "gunicorn",
+        ]
+
+[tool.poetry.scripts]
+megaqc = "megaqc.cli:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
