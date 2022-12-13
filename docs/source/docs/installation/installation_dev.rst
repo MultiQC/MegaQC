@@ -19,7 +19,7 @@ If you’re doing development work, you need access to the source code
 
    git clone https://github.com/ewels/MegaQC
 
-2. Set up the Poetry
+2. Set up Poetry
 ------------------------------------------------
 
 You should install the poetry. You also need to install MegaQC and all its dependencies there:
@@ -126,3 +126,4 @@ accessible on your localhost at http://127.0.0.1:5000
 .. _node: https://nodejs.org/en/download/
 .. _Python 3: https://www.python.org/downloads/
 .. _pre-commit: https://pre-commit.com/
+.. _Poetry: https://github.com/evanna00/MegaQC/tree/poetrybranch
