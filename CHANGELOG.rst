@@ -3,7 +3,7 @@ Changelog
 
 .. _section-1:
 
-0.3.1
+0.3.0
 -----
 
 .. _breaking-changes-1:
@@ -31,15 +31,6 @@ Breaking Changes
    unless it is the first account created
 
 -  Dropped support for Node 8
-
-.. _development-1:
-
-Development
-~~~~~~~~~~~~~~~~
-
--  `[#440]`_ Set up poetry to manage the dependencies, which might keep 
-   the dependencies from breaking down, and reduce the chances of the 
-   happening of issues such as `[#430]`
 
 .. _new-features-1:
 
@@ -80,3 +71,17 @@ Internal Changes
 .. _[#156]: https://github.com/ewels/MegaQC/issues/156
 .. _[#170]: https://github.com/ewels/MegaQC/issues/170
 .. _[#194]: https://github.com/ewels/MegaQC/issues/194
+
+.. _section-2:
+
+0.3.1
+-----
+
+.. _development-1:
+
+Development
+~~~~~~~~~~~~~~~~
+
+-  `[#440]`_ Set up poetry to manage the dependencies, which might keep 
+   the dependencies from breaking down, and reduce the chances of the 
+   happening of issues such as `[#430]`
