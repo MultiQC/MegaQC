@@ -8,6 +8,7 @@ You will need:
 
 -  `node`_
 -  `Python 3`_
+-  `Poetry`_
 
 1. Clone the repo
 -----------------
@@ -18,18 +19,15 @@ If you’re doing development work, you need access to the source code
 
    git clone https://github.com/ewels/MegaQC
 
-2. Install the Python into a virtual environment
+2. Set up the Poetry
 ------------------------------------------------
 
-You should do your development in a virtual environment. You also need
-to install MegaQC and all its dependencies there:
+You should install the poetry. You also need to install MegaQC and all its dependencies there:
 
 .. code:: bash
 
    cd MegaQC
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -e .[dev]
+   poetry install
 
 3. Enable development mode:
 ---------------------------
