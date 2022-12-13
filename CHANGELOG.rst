@@ -3,7 +3,7 @@ Changelog
 
 .. _section-1:
 
-0.3.0
+0.3.1
 -----
 
 .. _breaking-changes-1:
