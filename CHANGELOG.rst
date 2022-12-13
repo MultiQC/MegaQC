@@ -85,3 +85,7 @@ Development
 -  `[#440]`_ Set up poetry to manage the dependencies, which might keep 
    the dependencies from breaking down, and reduce the chances of the 
    happening of issues such as `[#430]`
+
+
+.. _[#430]: https://github.com/ewels/MegaQC/issues/430
+.. _[#440]: https://github.com/ewels/MegaQC/pull/440
