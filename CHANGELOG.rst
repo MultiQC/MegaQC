@@ -3,7 +3,7 @@ Changelog
 
 .. _section-1:
 
-0.3.0
+development
 -----
 
 .. _breaking-changes-1:
@@ -31,6 +31,10 @@ Breaking Changes
    unless it is the first account created
 
 -  Dropped support for Node 8
+
+-  `[#440]`_ Set up poetry to manage the dependencies, which might keep 
+   the dependencies from breaking down, and reduce the chances of the 
+   happening of issues `[#430]`
 
 .. _new-features-1:
 
