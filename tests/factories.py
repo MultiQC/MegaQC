@@ -4,7 +4,7 @@ Factories to help in tests.
 """
 import json
 from functools import partial
-from typing import Any, Callable, Optional, Type, Union
+from typing import Any, Callable, Dict, Optional, Type, Union
 
 from factory import (
     Factory,
@@ -27,6 +27,8 @@ from megaqc.user.models import User
 class SubFactoryList(SubFactory):
     """
     Calls a factory 'size' times while generating an object.
+
+    Copied from: https://github.com/FactoryBoy/factory_boy/issues/823#issuecomment-932400478
 
     Attributes:
         factory (fb.Factory): the factory to call "size-times"
@@ -57,7 +59,7 @@ class SubFactoryList(SubFactory):
         self,
         instance: Resolver,
         step: BuildStep,
-        extra: dict[str, Optional[Any]],
+        extra: Dict[str, Optional[Any]],
     ) -> Sequence:
         """
         Evaluate the current definition and fill its attributes.
