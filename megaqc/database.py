@@ -159,12 +159,14 @@ def init_db(url):
     Initialise a new database.
     """
     if "postgresql" in url:
+        import psycopg2
+
         try:
             # Attempt to connect to an existing database using provided credentials
             engine = create_engine(url)
             engine.connect().close()
 
-        except OperationalError as conn_err:
+        except (OperationalError, psycopg2.OperationalError) as conn_err:
             # Connection failed, so connect to default postgres DB and create new megaqc db and user
             config_url = make_url(url)
             postgres_url = copy(config_url)
