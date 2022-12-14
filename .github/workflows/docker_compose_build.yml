@@ -17,7 +17,9 @@ jobs:
           time: "60"
 
       - name: Check running containers
-        run: docker-compose logs
+        run: |
+          cd deployment
+          docker-compose logs
 
       # TODO It would be nice to upload an example report as a test
       - name: Run MegaQC Help
