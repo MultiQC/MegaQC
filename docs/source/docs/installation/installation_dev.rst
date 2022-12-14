@@ -22,7 +22,7 @@ If you’re doing development work, you need access to the source code
 2. Set up Poetry
 ------------------------------------------------
 
-You should install Poetry. You also need to install MegaQC and all its dependencies there:
+You should install MegaQC using Poetry. You also need to install MegaQC and all its dependencies there:
 
 .. code:: bash
 
@@ -126,4 +126,4 @@ accessible on your localhost at http://127.0.0.1:5000
 .. _node: https://nodejs.org/en/download/
 .. _Python 3: https://www.python.org/downloads/
 .. _pre-commit: https://pre-commit.com/
-.. _Poetry: https://pypi.org/project/poetry/
+.. _Poetry: https://python-poetry.org/docs#installation
