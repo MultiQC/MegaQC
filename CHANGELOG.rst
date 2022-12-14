@@ -1,6 +1,25 @@
 Changelog
 =========
 
+.. _section-2:
+
+0.3.1
+-----
+
+.. _development-1:
+
+Development
+~~~~~~~~~~~~~~~~
+
+-  `[#440]`_ Set up poetry to manage the dependencies, which might keep 
+   the dependencies from breaking down, and reduce the chances of the 
+   happening of issues such as `[#430]`
+
+
+.. _[#430]: https://github.com/ewels/MegaQC/issues/430
+.. _[#440]: https://github.com/ewels/MegaQC/pull/440
+
+
 .. _section-1:
 
 0.3.0
@@ -71,21 +90,3 @@ Internal Changes
 .. _[#156]: https://github.com/ewels/MegaQC/issues/156
 .. _[#170]: https://github.com/ewels/MegaQC/issues/170
 .. _[#194]: https://github.com/ewels/MegaQC/issues/194
-
-.. _section-2:
-
-0.3.1
------
-
-.. _development-1:
-
-Development
-~~~~~~~~~~~~~~~~
-
--  `[#440]`_ Set up poetry to manage the dependencies, which might keep 
-   the dependencies from breaking down, and reduce the chances of the 
-   happening of issues such as `[#430]`
-
-
-.. _[#430]: https://github.com/ewels/MegaQC/issues/430
-.. _[#440]: https://github.com/ewels/MegaQC/pull/440
