@@ -170,10 +170,13 @@ def init_db(url):
             # Connection failed, so connect to default postgres DB and create new megaqc db and user
             config_url = make_url(url)
             postgres_url = URL.create(
-                **config_url._asdict(),
                 database="postgres",
                 username="postgres",
                 password=None,
+                drivername=config_url.drivername,
+                host=config_url.host,
+                port=config_url.port,
+                query=config_url.query,
             )
 
             default_engine = create_engine(postgres_url, isolation_level="AUTOCOMMIT")
