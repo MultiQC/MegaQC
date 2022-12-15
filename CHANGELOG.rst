@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Development
+-----------
+
+* `[#443]`_
+   * Dropped support for Python 3.6, added support and testing for Python <= 3.11
+   * Added docker-compose logging in the CI
+   * Stopped using Meinheld workers in the Docker image, since this is largely unmaintained
+   * Fix a bug in the database script when constructing URLs that broken under new SQLAlchemy versions
+   * Bump pytest
+   * Fix a bug in pytest where we used `scope` as a positional argument
+   * Update the SubFactoryList to a new version that works with newer FactoryBoy versions
+
 .. _section-1:
 
 0.3.0
@@ -71,3 +83,4 @@ Internal Changes
 .. _[#156]: https://github.com/ewels/MegaQC/issues/156
 .. _[#170]: https://github.com/ewels/MegaQC/issues/170
 .. _[#194]: https://github.com/ewels/MegaQC/issues/194
+.. _[#443]: https://github.com/ewels/MegaQC/pull/443
