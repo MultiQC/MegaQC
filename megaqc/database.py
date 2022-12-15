@@ -9,7 +9,7 @@ from copy import copy
 from flask_migrate import stamp
 from past.builtins import basestring
 from sqlalchemy import create_engine, inspect
-from sqlalchemy.engine.url import make_url
+from sqlalchemy.engine.url import URL, make_url
 from sqlalchemy.exc import OperationalError, ProgrammingError
 
 from .compat import basestring
@@ -169,12 +169,12 @@ def init_db(url):
         except (OperationalError, psycopg2.OperationalError) as conn_err:
             # Connection failed, so connect to default postgres DB and create new megaqc db and user
             config_url = make_url(url)
-            postgres_url = copy(config_url)
-
-            # Default db settings
-            postgres_url.database = "postgres"
-            postgres_url.username = "postgres"
-            postgres_url.password = None
+            postgres_url = URL.create(
+                **config_url._asdict(),
+                database="postgres",
+                username="postgres",
+                password=None,
+            )
 
             default_engine = create_engine(postgres_url, isolation_level="AUTOCOMMIT")
             conn = default_engine.raw_connection()
