@@ -7,7 +7,6 @@ from builtins import object
 from copy import copy
 
 from flask_migrate import stamp
-from past.builtins import basestring
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine.url import URL, make_url
 from sqlalchemy.exc import OperationalError, ProgrammingError

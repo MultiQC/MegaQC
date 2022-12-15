@@ -24,3 +24,4 @@ COPY . /app
 # Copy the compiled JS in from the other node container
 COPY --from=0 /app/megaqc/static/ /app/megaqc/static/
 RUN pip install /app[prod]
+RUN pip install --no-cache-dir -U meinheld
