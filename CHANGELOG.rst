@@ -90,3 +90,4 @@ Internal Changes
 .. _[#156]: https://github.com/ewels/MegaQC/issues/156
 .. _[#170]: https://github.com/ewels/MegaQC/issues/170
 .. _[#194]: https://github.com/ewels/MegaQC/issues/194
+.. _[#443]: https://github.com/ewels/MegaQC/pull/443
