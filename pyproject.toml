@@ -35,7 +35,7 @@ classifiers = [
 packages = [{ include = "megaqc" }]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 argon2-cffi = "20.1"
 click = "^7.0"
 Flask-APScheduler = "^1.11"
