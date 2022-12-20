@@ -130,7 +130,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#development">Development</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clone-the-repo">1. Clone the repo</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#install-the-python-into-a-virtual-environment">2. Install the Python into a virtual environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-dependencies">2. Install Dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enable-development-mode">3. Enable development mode:</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id7">4. Set up the database</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#start-megaqc">5. Start megaqc</a></li>
@@ -581,6 +581,7 @@ Then, edit these lines to the full filepath of the respective <code class="docut
 <ul class="simple">
 <li><p><a class="reference external" href="https://nodejs.org/en/download/">node</a></p></li>
 <li><p><a class="reference external" href="https://www.python.org/downloads/">Python 3</a></p></li>
+<li><p><a class="reference external" href="https://python-poetry.org/docs#installation">Poetry</a></p></li>
 </ul>
 </div>
 <div class="section" id="clone-the-repo">
@@ -590,14 +591,11 @@ Then, edit these lines to the full filepath of the respective <code class="docut
 </pre></div>
 </div>
 </div>
-<div class="section" id="install-the-python-into-a-virtual-environment">
-<h3>2. Install the Python into a virtual environment<a class="headerlink" href="#install-the-python-into-a-virtual-environment" title="Permalink to this headline">¶</a></h3>
-<p>You should do your development in a virtual environment. You also need
-to install MegaQC and all its dependencies there:</p>
+<div class="section" id="install-dependencies">
+<h3>2. Install Dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this headline">¶</a></h3>
+<p>You should install MegaQC using Poetry. You also need to install MegaQC and all its dependencies there:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> MegaQC
-python3 -m venv venv
-<span class="nb">source</span> venv/bin/activate
-pip install -e .<span class="o">[</span>dev<span class="o">]</span>
+poetry install
 </pre></div>
 </div>
 </div>
