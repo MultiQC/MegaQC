@@ -14,11 +14,19 @@ Development
 -  `[#440]`_ Set up poetry to manage the dependencies, which might keep 
    the dependencies from breaking down, and reduce the chances of the 
    happening of issues such as `[#430]`_
-
+- `[#443]`_
+   * Dropped support for Python 3.6, added support and testing for Python <= 3.11
+   * Added docker-compose logging in the CI
+   * Stopped using Meinheld workers in the Docker image, since this is largely unmaintained
+   * Fix a bug in the database script when constructing URLs that broken under new SQLAlchemy versions
+   * Bump pytest
+   * Fix a bug in pytest where we used `scope` as a positional argument
+   * Update the SubFactoryList to a new version that works with newer FactoryBoy versions
 
 .. _[#430]: https://github.com/ewels/MegaQC/issues/430
 .. _[#440]: https://github.com/ewels/MegaQC/pull/440
 
+=======
 
 .. _section-1:
 

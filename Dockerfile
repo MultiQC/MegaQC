@@ -21,6 +21,11 @@ ENV MEGAQC_PRODUCTION=1 \
     DB_USER="megaqc" \
     DB_PASS="megaqcpswd"
 COPY . /app
+
+# Patch in a custom start script
+COPY ./start.sh /start.sh
+RUN chmod +x /start.sh
+
 # Copy the compiled JS in from the other node container
 COPY --from=0 /app/megaqc/static/ /app/megaqc/static/
 RUN pip install /app[prod]
