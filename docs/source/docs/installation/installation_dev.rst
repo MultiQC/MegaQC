@@ -19,7 +19,7 @@ If you’re doing development work, you need access to the source code
 
    git clone https://github.com/ewels/MegaQC
 
-2. Set up Poetry
+2. Install Dependencies
 ------------------------------------------------
 
 You should install MegaQC using Poetry. You also need to install MegaQC and all its dependencies there:
