@@ -1485,22 +1485,22 @@ testing = ["coverage (>=5.0)", "pytest", "pytest-cover"]
 
 [[package]]
 name = "webargs"
-version = "5.5.3"
-description = "Declarative parsing and validation of HTTP request objects, with built-in support for popular web frameworks, including Flask, Django, Bottle, Tornado, Pyramid, webapp2, Falcon, and aiohttp."
+version = "8.2.0"
+description = "Declarative parsing and validation of HTTP request objects, with built-in support for popular web frameworks, including Flask, Django, Bottle, Tornado, Pyramid, Falcon, and aiohttp."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7.2"
 
 [package.dependencies]
-marshmallow = ">=2.15.2"
-simplejson = ">=2.1.0"
+marshmallow = ">=3.0.0"
+packaging = "*"
 
 [package.extras]
-dev = ["Django (>=1.11.16)", "Flask (>=0.12.2)", "aiohttp (>=3.0.0)", "bottle (>=0.12.13)", "falcon (>=1.4.0,<2.0)", "flake8 (==3.7.8)", "flake8-bugbear (==19.8.0)", "mock", "mypy (==0.730)", "pre-commit (>=1.17,<2.0)", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "tornado (>=4.5.2)", "tox", "webapp2 (>=3.0.0b1)", "webtest (==2.0.33)", "webtest-aiohttp (==2.0.0)"]
-docs = ["Django (>=1.11.16)", "Flask (>=0.12.2)", "Sphinx (==2.2.0)", "aiohttp (>=3.0.0)", "bottle (>=0.12.13)", "falcon (>=1.4.0,<2.0)", "pyramid (>=1.9.1)", "sphinx-issues (==1.2.0)", "sphinx-typlog-theme (==0.7.3)", "tornado (>=4.5.2)", "webapp2 (>=3.0.0b1)"]
-frameworks = ["Django (>=1.11.16)", "Flask (>=0.12.2)", "aiohttp (>=3.0.0)", "bottle (>=0.12.13)", "falcon (>=1.4.0,<2.0)", "pyramid (>=1.9.1)", "tornado (>=4.5.2)", "webapp2 (>=3.0.0b1)"]
-lint = ["flake8 (==3.7.8)", "flake8-bugbear (==19.8.0)", "mypy (==0.730)", "pre-commit (>=1.17,<2.0)"]
-tests = ["Django (>=1.11.16)", "Flask (>=0.12.2)", "aiohttp (>=3.0.0)", "bottle (>=0.12.13)", "falcon (>=1.4.0,<2.0)", "mock", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "tornado (>=4.5.2)", "webapp2 (>=3.0.0b1)", "webtest (==2.0.33)", "webtest-aiohttp (==2.0.0)"]
+dev = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "flake8 (==4.0.1)", "flake8-bugbear (==22.7.1)", "mypy (==0.961)", "pre-commit (>=2.4,<3.0)", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "pytest-asyncio", "tornado (>=4.5.2)", "tox", "webtest (==3.0.0)", "webtest-aiohttp (==2.0.0)"]
+docs = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "Sphinx (==5.0.2)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "furo (==2022.6.21)", "pyramid (>=1.9.1)", "sphinx-issues (==3.0.1)", "tornado (>=4.5.2)"]
+frameworks = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "pyramid (>=1.9.1)", "tornado (>=4.5.2)"]
+lint = ["flake8 (==4.0.1)", "flake8-bugbear (==22.7.1)", "mypy (==0.961)", "pre-commit (>=2.4,<3.0)"]
+tests = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "pytest-asyncio", "tornado (>=4.5.2)", "webtest (==3.0.0)", "webtest-aiohttp (==2.0.0)"]
 
 [[package]]
 name = "webob"
@@ -1594,7 +1594,7 @@ prod = ["psycopg2", "gunicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "7e2904331dee597af7af46e8cfb63fe2be3b6466732ce702b5f0af9bac14fa1e"
+content-hash = "3cb1303fa7be16f9c7fbf9116f33c66eb90e47e15aa89920a4021b60ffc544f6"
 
 [metadata.files]
 alembic = [
@@ -2635,9 +2635,8 @@ waitress = [
     {file = "waitress-2.1.2.tar.gz", hash = "sha256:780a4082c5fbc0fde6a2fcfe5e26e6efc1e8f425730863c04085769781f51eba"},
 ]
 webargs = [
-    {file = "webargs-5.5.3-py2-none-any.whl", hash = "sha256:fc81c9f9d391acfbce406a319217319fd8b2fd862f7fdb5319ad06944f36ed25"},
-    {file = "webargs-5.5.3-py3-none-any.whl", hash = "sha256:4f04918864c7602886335d8099f9b8960ee698b6b914f022736ed50be6b71235"},
-    {file = "webargs-5.5.3.tar.gz", hash = "sha256:871642a2e0c62f21d5b78f357750ac7a87e6bc734c972f633aa5fb6204fbf29a"},
+    {file = "webargs-8.2.0-py3-none-any.whl", hash = "sha256:6746327faf549533bf30be7333f99541b6c60a85f23acf1bb0bea68498e3bcd7"},
+    {file = "webargs-8.2.0.tar.gz", hash = "sha256:99d68940c452e07726485a15fef43f12f8ae6c0c5b391bcba76065d4527fb85d"},
 ]
 webob = [
     {file = "WebOb-1.8.7-py2.py3-none-any.whl", hash = "sha256:73aae30359291c14fa3b956f8b5ca31960e420c28c1bec002547fb04928cf89b"},
