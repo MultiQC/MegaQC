@@ -20,8 +20,6 @@ jobs:
 
       - uses: snok/install-poetry@v1
 
-        run: pip install -U pip setuptools
-
       - name: Test with pytest
         run: poetry run pytest
 
