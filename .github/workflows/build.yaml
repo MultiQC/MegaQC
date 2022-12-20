@@ -20,11 +20,8 @@ jobs:
 
       - uses: snok/install-poetry@v1
 
-      - name: Install poetry
-        run: poetry install
-
-      - name: Install all extra features
-        run: poetry install --all-extras
+      - name: Install all extra features of poetry
+        run: poetry install --extras "dev"
 
       - name: Update setuptools
         run: pip install -U pip setuptools
