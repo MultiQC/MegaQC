@@ -1546,16 +1546,14 @@ watchdog = ["watchdog"]
 
 [[package]]
 name = "wheel"
-version = "0.30.0"
-description = "A built-package format for Python."
+version = "0.38.1"
+description = "A built-package format for Python"
 category = "main"
 optional = true
-python-versions = "*"
+python-versions = ">=3.7"
 
 [package.extras]
-faster-signatures = ["ed25519ll"]
-signatures = ["keyring", "keyrings.alt", "pyxdg"]
-test = ["jsonschema", "pytest (>=3.0.0)", "pytest-cov"]
+test = ["pytest (>=3.0.0)"]
 
 [[package]]
 name = "wtforms"
@@ -1594,7 +1592,7 @@ prod = ["psycopg2", "gunicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "7e2904331dee597af7af46e8cfb63fe2be3b6466732ce702b5f0af9bac14fa1e"
+content-hash = "f10b54df8c0def5e887235cdfdce90e0d1c6ad8347f2fcfa38966e1267684e1f"
 
 [metadata.files]
 alembic = [
@@ -2048,6 +2046,7 @@ kiwisolver = [
     {file = "kiwisolver-1.4.4.tar.gz", hash = "sha256:d41997519fcba4a1e46eb4a2fe31bc12f0ff957b2b81bac28db24744f333e955"},
 ]
 livereload = [
+    {file = "livereload-2.6.3-py2.py3-none-any.whl", hash = "sha256:ad4ac6f53b2d62bb6ce1a5e6e96f1f00976a32348afedcb4b6d68df2a1d346e4"},
     {file = "livereload-2.6.3.tar.gz", hash = "sha256:776f2f865e59fde56490a56bcc6773b6917366bce0c267c60ee8aaf1a0959869"},
 ]
 lzstring = [
@@ -2652,8 +2651,8 @@ werkzeug = [
     {file = "Werkzeug-1.0.1.tar.gz", hash = "sha256:6c80b1e5ad3665290ea39320b91e1be1e0d5f60652b964a3070216de83d2e47c"},
 ]
 wheel = [
-    {file = "wheel-0.30.0-py2.py3-none-any.whl", hash = "sha256:e721e53864f084f956f40f96124a74da0631ac13fbbd1ba99e8e2b5e9cafdf64"},
-    {file = "wheel-0.30.0.tar.gz", hash = "sha256:9515fe0a94e823fd90b08d22de45d7bde57c90edce705b22f5e1ecf7e1b653c8"},
+    {file = "wheel-0.38.1-py3-none-any.whl", hash = "sha256:7a95f9a8dc0924ef318bd55b616112c70903192f524d120acc614f59547a9e1f"},
+    {file = "wheel-0.38.1.tar.gz", hash = "sha256:ea041edf63f4ccba53ad6e035427997b3bb10ee88a4cd014ae82aeb9eea77bb9"},
 ]
 wtforms = [
     {file = "WTForms-2.3.3-py2.py3-none-any.whl", hash = "sha256:7b504fc724d0d1d4d5d5c114e778ec88c37ea53144683e084215eed5155ada4c"},
