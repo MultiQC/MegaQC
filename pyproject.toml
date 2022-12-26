@@ -62,7 +62,7 @@ flask-marshmallow = "^0.10"
 marshmallow = "^3.0"
 marshmallow-sqlalchemy = ">0.17,<0.26"
 flask-uploads = "^0.2"
-marshmallow-jsonapi = "^0.23.2"
+marshmallow-jsonapi = ">=0.23.2,<0.25.0"
 outlier-utils = "^0.0.3"
 webargs = "^5.5"                                   # do not upgrade, since it breaks parsing
 querystring-parser = "^1.2"

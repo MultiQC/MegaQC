@@ -823,7 +823,7 @@ tests = ["pytest", "pytz", "simplejson"]
 
 [[package]]
 name = "marshmallow-jsonapi"
-version = "0.23.2"
+version = "0.24.0"
 description = "JSON API 1.0 (https://jsonapi.org) formatting with marshmallow"
 category = "main"
 optional = false
@@ -833,9 +833,9 @@ python-versions = ">=3.6"
 marshmallow = ">=2.15.2"
 
 [package.extras]
-dev = ["Flask (==1.1.2)", "faker (==4.1.1)", "flake8 (==3.8.3)", "flake8-bugbear (==20.1.4)", "mock", "pre-commit (>=2.0,<3.0)", "pytest", "tox"]
-lint = ["flake8 (==3.8.3)", "flake8-bugbear (==20.1.4)", "pre-commit (>=2.0,<3.0)"]
-tests = ["Flask (==1.1.2)", "faker (==4.1.1)", "mock", "pytest"]
+dev = ["Flask (==1.1.2)", "faker (==4.18.0)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "mock", "pre-commit (>=2.0,<3.0)", "pytest", "tox"]
+lint = ["flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.0,<3.0)"]
+tests = ["Flask (==1.1.2)", "faker (==4.18.0)", "mock", "pytest"]
 
 [[package]]
 name = "marshmallow-sqlalchemy"
@@ -1594,7 +1594,7 @@ prod = ["psycopg2", "gunicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "7e2904331dee597af7af46e8cfb63fe2be3b6466732ce702b5f0af9bac14fa1e"
+content-hash = "aca2a2c7cf2d521fec996ed14d2f52094346611218a0942cbc86913ddb51a80f"
 
 [metadata.files]
 alembic = [
@@ -2048,6 +2048,7 @@ kiwisolver = [
     {file = "kiwisolver-1.4.4.tar.gz", hash = "sha256:d41997519fcba4a1e46eb4a2fe31bc12f0ff957b2b81bac28db24744f333e955"},
 ]
 livereload = [
+    {file = "livereload-2.6.3-py2.py3-none-any.whl", hash = "sha256:ad4ac6f53b2d62bb6ce1a5e6e96f1f00976a32348afedcb4b6d68df2a1d346e4"},
     {file = "livereload-2.6.3.tar.gz", hash = "sha256:776f2f865e59fde56490a56bcc6773b6917366bce0c267c60ee8aaf1a0959869"},
 ]
 lzstring = [
@@ -2137,8 +2138,8 @@ marshmallow = [
     {file = "marshmallow-3.19.0.tar.gz", hash = "sha256:90032c0fd650ce94b6ec6dc8dfeb0e3ff50c144586462c389b81a07205bedb78"},
 ]
 marshmallow-jsonapi = [
-    {file = "marshmallow-jsonapi-0.23.2.tar.gz", hash = "sha256:c5bbf57741c4af21b7d90b04b4e1ffc830032bc89f7f6b8b61fe9eef2efcff93"},
-    {file = "marshmallow_jsonapi-0.23.2-py2.py3-none-any.whl", hash = "sha256:2bbb5b8413eca253dbe02f04a51aaa406c718661210d86594acfe7152e4e8199"},
+    {file = "marshmallow-jsonapi-0.24.0.tar.gz", hash = "sha256:bd88c0ac0e2ddeb0a3ceb86229963b9f828d898041f29d92a68f585a1feb37b5"},
+    {file = "marshmallow_jsonapi-0.24.0-py2.py3-none-any.whl", hash = "sha256:b7403688297dfe8b89173582811989badbe1328ac36447c5a151c006fbe34d24"},
 ]
 marshmallow-sqlalchemy = [
     {file = "marshmallow-sqlalchemy-0.25.0.tar.gz", hash = "sha256:f1491f83833ac9c8406ba603458b1447fdfd904194833aab4b3cc01ef3646944"},
