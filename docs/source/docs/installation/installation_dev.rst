@@ -54,10 +54,11 @@ installation directory called ``megaqc.db``
 5. Start megaqc
 ---------------
 
-Start MegaQC:
+Start MegaQC. And you need to use poetry shell before running it.
 
 .. code:: bash
 
+   poetry shell
    megaqc run
 
 You will have to run the rest of these commands **in another terminal
