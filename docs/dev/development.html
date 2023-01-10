@@ -210,10 +210,10 @@ will likely be SQLite.</p>
 <h4>Database schema migrations<a class="headerlink" href="#database-schema-migrations" title="Permalink to this headline">¶</a></h4>
 <p>You need to generate a new migration whenever the database schema (ie
 any models class) changes. To generate a migration:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> megaqc
-<span class="nb">export</span> <span class="nv">FLASK_APP</span><span class="o">=</span>wsgi.py
-flask db upgrade <span class="c1"># Update to the latest migration</span>
-flask db migrate
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>megaqc
+<span class="nb">export</span><span class="w"> </span><span class="nv">FLASK_APP</span><span class="o">=</span>wsgi.py
+flask<span class="w"> </span>db<span class="w"> </span>upgrade<span class="w"> </span><span class="c1"># Update to the latest migration</span>
+flask<span class="w"> </span>db<span class="w"> </span>migrate
 </pre></div>
 </div>
 </div>

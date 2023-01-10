@@ -131,13 +131,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clone-the-repo">1. Clone the repo</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#install-dependencies">2. Install Dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#enable-development-mode">3. Enable development mode:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">4. Set up the database</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#start-megaqc">5. Start megaqc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#setup-your-access-key">6. Setup your access key</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#load-test-data">7. Load test data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#install-the-javascript-and-start-compiling">8. Install the JavaScript and start compiling</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#install-the-pre-commit-hooks">9. Install the pre-commit hooks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-poetry-shell">3. Install poetry shell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enable-development-mode">4. Enable development mode:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">5. Set up the database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#start-megaqc">6. Start megaqc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setup-your-access-key">7. Setup your access key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#load-test-data">8. Load test data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-the-javascript-and-start-compiling">9. Install the JavaScript and start compiling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-the-pre-commit-hooks">10. Install the pre-commit hooks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
@@ -242,7 +243,7 @@ containerized environment please refer to <a class="reference internal" href="#d
 <p>MegaQC is available on both the Python Package Index (PyPI).
 We are planning to add MegaQC to Conda soon.
 To install using PyPI, run the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install megaqc<span class="o">[</span>prod<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>megaqc<span class="o">[</span>prod<span class="o">]</span>
 </pre></div>
 </div>
 </div>
@@ -257,8 +258,8 @@ need to set the <code class="docutils literal notranslate"><span class="pre">MEG
 nicer than just having a difficult to remember IP address), then you
 need to set <code class="docutils literal notranslate"><span class="pre">SERVER_NAME</span></code> to the URL of the website.</p>
 <p>Add the following lines to your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">MEGAQC_PRODUCTION</span><span class="o">=</span><span class="m">1</span>
-<span class="nb">export</span> <span class="nv">SERVER_NAME</span><span class="o">=</span><span class="s1">&#39;http://megaqc.yourdomain.com&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MEGAQC_PRODUCTION</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SERVER_NAME</span><span class="o">=</span><span class="s1">&#39;http://megaqc.yourdomain.com&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -274,7 +275,7 @@ the documentation, that would be great!</p>
 <p>First, install PostgreSQL:
 <a class="reference external" href="https://wiki.postgresql.org/wiki/Detailed_installation_guides">https://wiki.postgresql.org/wiki/Detailed_installation_guides</a></p>
 <p>Then, install the Python package that handles requests:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install psycopg2
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>psycopg2
 </pre></div>
 </div>
 <p>MegaQC can assess whether the database to use is <code class="docutils literal notranslate"><span class="pre">postgresql</span></code>. If it
@@ -282,7 +283,7 @@ is, it will try to connect as <code class="docutils literal notranslate"><span c
 on <code class="docutils literal notranslate"><span class="pre">localhost:5432</span></code>. On failure, MegaQC will attempt to create the
 user and the database, and will then export the schema.</p>
 <p>In order to make this happen, run :</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>megaqc initdb
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>megaqc<span class="w"> </span>initdb
 </pre></div>
 </div>
 </div>
@@ -299,11 +300,11 @@ If you use MegaQC with MySQL we’d love to hear about your experiences!</p>
 <p>Then install the <a class="reference external" href="https://dev.mysql.com/downloads/connector/python/2.1.html">Python MySQL connector</a> (alternatively with the <a class="reference external" href="https://pypi.python.org/pypi/mysql-connector-python/2.0.4">PyPI package</a>).</p>
 <p>Now, create a custom MegaQC configuration file somewhere and set the
 environment variable <code class="docutils literal notranslate"><span class="pre">MEGAQC_CONFIG</span></code> to point to it. For example, in <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">MEGAQC_CONFIG</span><span class="o">=</span><span class="s2">&quot;/path/to/megaqc_config.yaml&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MEGAQC_CONFIG</span><span class="o">=</span><span class="s2">&quot;/path/to/megaqc_config.yaml&quot;</span>
 </pre></div>
 </div>
 <p>Then in this file, set the following configuration key pair:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">SQLALCHEMY_DBMS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">SQLALCHEMY_DBMS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span>
 </pre></div>
 </div>
 <p>This should, hopefully, make everything work. If you have problems,
@@ -337,7 +338,7 @@ anything. Please consider your server security!</em></p>
 <p><code class="docutils literal notranslate"><span class="pre">`a2enmod</span> <span class="pre">proxy</span> <span class="pre">a2enmod</span> <span class="pre">proxy_http`</span></code></p>
 <p>In order for these changes to be applied, you need to restart apache
 with the following command (or equivalent on your system):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>service restart httpd
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>service<span class="w"> </span>restart<span class="w"> </span>httpd
 </pre></div>
 </div>
 </div>
@@ -350,7 +351,7 @@ For more details please refer to <a class="reference internal" href="#docker-com
 </div>
 <div class="section" id="start-the-web-server">
 <h3>5. Start the web server<a class="headerlink" href="#start-the-web-server" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gunicorn --log-file megaqc.log --timeout <span class="m">300</span> megaqc.wsgi:app
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gunicorn<span class="w"> </span>--log-file<span class="w"> </span>megaqc.log<span class="w"> </span>--timeout<span class="w"> </span><span class="m">300</span><span class="w"> </span>megaqc.wsgi:app
 </pre></div>
 </div>
 <p><strong>Note:</strong><em>We recommend using a long timeout as the data upload from
@@ -384,7 +385,7 @@ is also the one spinning up the final server.</p>
 <div class="section" id="pulling-the-docker-image-from-dockerhub">
 <h4>Pulling the docker image from dockerhub<a class="headerlink" href="#pulling-the-docker-image-from-dockerhub" title="Permalink to this headline">¶</a></h4>
 <p>To run MegaQC with docker, simply use the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:80<span class="w"> </span>ewels/megaqc
 </pre></div>
 </div>
 <p>This will pull the latest image from <a class="reference external" href="https://hub.docker.com/r/ewels/megaqc/">dockerhub</a> and run MegaQC on port 80.</p>
@@ -395,11 +396,11 @@ the host, or other machines. For more information, read <a class="reference exte
 <h4>Building your own docker image<a class="headerlink" href="#building-your-own-docker-image" title="Permalink to this headline">¶</a></h4>
 <p>If you prefer, you can build your own docker image if you have pulled the
 MegaQC code from GitHub. Simply cd to the MegaQC root directory and run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker build . -t ewels/megaqc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>build<span class="w"> </span>.<span class="w"> </span>-t<span class="w"> </span>ewels/megaqc
 </pre></div>
 </div>
 <p>You can then run MegaQC as described above:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:80<span class="w"> </span>ewels/megaqc
 </pre></div>
 </div>
 </div>
@@ -428,17 +429,17 @@ host and port passed to gunicorn, let alone custom Gunicorn configuration files.
 For more information, please read
 <a class="reference external" href="https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file">Docker - setting environment variables</a>.
 Running MegaQC for example with a custom database password works as follows:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -e <span class="nv">DB_PASS</span><span class="o">=</span>someotherpassword ewels/megaqc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-e<span class="w"> </span><span class="nv">DB_PASS</span><span class="o">=</span>someotherpassword<span class="w"> </span>ewels/megaqc
 </pre></div>
 </div>
 <p>Furthermore, be aware that the default latest tag will typically be a development version
 and may not be very stable. You can specify a tagged version to run a release instead:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 ewels/megaqc:v0.1
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:80<span class="w"> </span>ewels/megaqc:v0.1
 </pre></div>
 </div>
 <p>Also note that docker will use a local version of the image if it
 exists. To pull the latest version of MegaQC use the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull ewels/megaqc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>ewels/megaqc
 </pre></div>
 </div>
 </div>
@@ -454,11 +455,11 @@ is to always specify the same volume for <code class="docutils literal notransla
 If a volume is found with that name it is used, otherwise it creates a
 new volume.</p>
 <p>To create or re-use a docker volume named <code class="docutils literal notranslate"><span class="pre">pg_data</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 -v pg_data:/usr/local/lib/postgresql ewels/megaqc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:80<span class="w"> </span>-v<span class="w"> </span>pg_data:/usr/local/lib/postgresql<span class="w"> </span>ewels/megaqc
 </pre></div>
 </div>
 <p>The same can be done for a log directory volume called <code class="docutils literal notranslate"><span class="pre">pg_logs</span></code></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80 -v pg_data:/usr/local/lib/postgresql -v pg_logs:/var/log/postgresql ewels/megaqc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:80<span class="w"> </span>-v<span class="w"> </span>pg_data:/usr/local/lib/postgresql<span class="w"> </span>-v<span class="w"> </span>pg_logs:/var/log/postgresql<span class="w"> </span>ewels/megaqc
 </pre></div>
 </div>
 <p>If you did not specify a volume name, docker will have given it a long
@@ -467,38 +468,38 @@ can check the output from <code class="docutils literal notranslate"><span class
 <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">volume</span> <span class="pre">inspect</span> <span class="pre">$VOLUME_NAME</span></code>. However, the easiest way is to
 inspect the docker container.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># ugly default docker output</span>
-docker inspect --format <span class="s1">&#39;{{json .Mounts}}&#39;</span> example_container
+docker<span class="w"> </span>inspect<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{json .Mounts}}&#39;</span><span class="w"> </span>example_container
 
 <span class="c1"># use jq for pretty formatting</span>
-docker inspect --format <span class="s1">&#39;{{json .Mounts}}&#39;</span> example_container <span class="p">|</span> jq
+docker<span class="w"> </span>inspect<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{json .Mounts}}&#39;</span><span class="w"> </span>example_container<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
 
 <span class="c1"># or use python for pretty formatting</span>
-docker inspect --format <span class="s1">&#39;{{json .Mounts}}&#39;</span> example_container <span class="p">|</span> python -m json.tool
+docker<span class="w"> </span>inspect<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{json .Mounts}}&#39;</span><span class="w"> </span>example_container<span class="w"> </span><span class="p">|</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>json.tool
 </pre></div>
 </div>
 <p>Example output for the above, nicely formatted:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;volume&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/lib/docker/volumes/7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804/_data&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/usr/local/lib/postgresql&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;RW&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Propagation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
-<span class="p">},</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;volume&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/lib/docker/volumes/6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428/_data&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/log/postgresql&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;RW&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;Propagation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
-<span class="p">]</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;Type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;volume&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/lib/docker/volumes/7c8c9dfbcc66874b472676659dde6a5c8e15dea756a620435c83f5980c21d804/_data&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/usr/local/lib/postgresql&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;RW&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Propagation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="p">},</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;Type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;volume&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/lib/docker/volumes/6d48d24a660d078dfe4c04960aeb1848ea688a3eae0d4b7b54b1043f7885e428/_data&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/log/postgresql&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;RW&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;Propagation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="p">}</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -509,7 +510,7 @@ the host’s networking. For more information, read
 <a class="reference external" href="https://docs.docker.com/network/host/">https://docs.docker.com/network/host/</a> .</p>
 <p>An example command to run MegaQC with a Postgres database which is accessible
 on <code class="docutils literal notranslate"><span class="pre">localhost:5432</span></code>, looks as follows:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run --network<span class="o">=</span><span class="s2">&quot;host&quot;</span> -p <span class="m">5432</span> ewels/megaqc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--network<span class="o">=</span><span class="s2">&quot;host&quot;</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w"> </span>ewels/megaqc
 </pre></div>
 </div>
 <p>Note that by default <code class="docutils literal notranslate"><span class="pre">localhost=127.0.0.1</span></code>.</p>
@@ -533,12 +534,12 @@ and a <a class="reference external" href="https://hub.docker.com/_/nginx">nginx 
 <p>Inside the <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment">deployment folder</a> the <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment/docker-compose.yml">docker-compose</a> configuration
 together with the associated <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment/.env">.env</a> file
 are found. To spin up all containers simply run from inside the <a class="reference external" href="https://github.com/ewels/MegaQC/blob/master/deployment">deployment folder</a>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose up
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose<span class="w"> </span>up
 </pre></div>
 </div>
 <p>All containers should now spin up and the MegaQC server should be accessible on <code class="docutils literal notranslate"><span class="pre">0.0.0.0:80</span></code>.
 Alternatively, you can spin up the containers in the background:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose up -d
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose<span class="w"> </span>up<span class="w"> </span>-d
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">-d</span></code> option detaches from the containers, but will keep them running.</p>
@@ -587,47 +588,54 @@ Then, edit these lines to the full filepath of the respective <code class="docut
 <div class="section" id="clone-the-repo">
 <h3>1. Clone the repo<a class="headerlink" href="#clone-the-repo" title="Permalink to this headline">¶</a></h3>
 <p>If you’re doing development work, you need access to the source code</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/ewels/MegaQC
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ewels/MegaQC
 </pre></div>
 </div>
 </div>
 <div class="section" id="install-dependencies">
 <h3>2. Install Dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this headline">¶</a></h3>
 <p>You should install MegaQC using Poetry. You also need to install MegaQC and all its dependencies there:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> MegaQC
-poetry install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>MegaQC
+poetry<span class="w"> </span>install
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-poetry-shell">
+<h3>3. Install poetry shell<a class="headerlink" href="#install-poetry-shell" title="Permalink to this headline">¶</a></h3>
+<p>You need to use poetry shell before running MegaQC.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>shell
 </pre></div>
 </div>
 </div>
 <div class="section" id="enable-development-mode">
-<h3>3. Enable development mode:<a class="headerlink" href="#enable-development-mode" title="Permalink to this headline">¶</a></h3>
+<h3>4. Enable development mode:<a class="headerlink" href="#enable-development-mode" title="Permalink to this headline">¶</a></h3>
 <p>Setting this bash variable runs MegaQC in development mode. This means
 that it will show full Python exception tracebacks in the web browser as
 well as additional Flask plugins which help with debugging and
 performance testing.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">FLASK_DEBUG</span><span class="o">=</span><span class="m">1</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">FLASK_DEBUG</span><span class="o">=</span><span class="m">1</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="id7">
-<h3>4. Set up the database<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<h3>5. Set up the database<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>Running this command creates an empty SQLite MegaQC database file in the
 installation directory called <code class="docutils literal notranslate"><span class="pre">megaqc.db</span></code></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>megaqc initdb
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>megaqc<span class="w"> </span>initdb
 </pre></div>
 </div>
 </div>
 <div class="section" id="start-megaqc">
-<h3>5. Start megaqc<a class="headerlink" href="#start-megaqc" title="Permalink to this headline">¶</a></h3>
-<p>Start MegaQC:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>megaqc run
+<h3>6. Start megaqc<a class="headerlink" href="#start-megaqc" title="Permalink to this headline">¶</a></h3>
+<p>Start MegaQC.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>megaqc<span class="w"> </span>run
 </pre></div>
 </div>
 <p>You will have to run the rest of these commands <strong>in another terminal
 window</strong>, because <code class="docutils literal notranslate"><span class="pre">megaqc</span> <span class="pre">run</span></code> blocks the terminal.</p>
 </div>
 <div class="section" id="setup-your-access-key">
-<h3>6. Setup your access key<a class="headerlink" href="#setup-your-access-key" title="Permalink to this headline">¶</a></h3>
+<h3>7. Setup your access key<a class="headerlink" href="#setup-your-access-key" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Login to MegaQC in your browser by browsing to
 <a class="reference external" href="http://localhost:5000/register/">http://localhost:5000/register/</a> (the port might differ, it will
@@ -642,30 +650,30 @@ current (MegaQC) directory. However, you will then have to run
 </ul>
 </div>
 <div class="section" id="load-test-data">
-<h3>7. Load test data<a class="headerlink" href="#load-test-data" title="Permalink to this headline">¶</a></h3>
+<h3>8. Load test data<a class="headerlink" href="#load-test-data" title="Permalink to this headline">¶</a></h3>
 <p>In order to develop new features you need some data to test it with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/TMiguelT/1000gFastqc
-<span class="k">for</span> report <span class="k">in</span> <span class="k">$(</span>find 1000gFastqc -name <span class="s1">&#39;*.json&#39;</span><span class="k">)</span>
-    <span class="k">do</span> megaqc upload <span class="nv">$report</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/TMiguelT/1000gFastqc
+<span class="k">for</span><span class="w"> </span>report<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>find<span class="w"> </span>1000gFastqc<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.json&#39;</span><span class="k">)</span>
+<span class="w">    </span><span class="k">do</span><span class="w"> </span>megaqc<span class="w"> </span>upload<span class="w"> </span><span class="nv">$report</span>
 <span class="k">done</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="install-the-javascript-and-start-compiling">
-<h3>8. Install the JavaScript and start compiling<a class="headerlink" href="#install-the-javascript-and-start-compiling" title="Permalink to this headline">¶</a></h3>
+<h3>9. Install the JavaScript and start compiling<a class="headerlink" href="#install-the-javascript-and-start-compiling" title="Permalink to this headline">¶</a></h3>
 <p>This command will run until you cancel it, but will ensure that any
 changes to the JavaScript are compiled instantly:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm install
-npm run watch
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
+npm<span class="w"> </span>run<span class="w"> </span>watch
 </pre></div>
 </div>
 </div>
 <div class="section" id="install-the-pre-commit-hooks">
-<h3>9. Install the pre-commit hooks<a class="headerlink" href="#install-the-pre-commit-hooks" title="Permalink to this headline">¶</a></h3>
+<h3>10. Install the pre-commit hooks<a class="headerlink" href="#install-the-pre-commit-hooks" title="Permalink to this headline">¶</a></h3>
 <p>MegaQC has a number of <a class="reference external" href="https://pre-commit.com/">pre-commit</a> hooks installed, which
 automatically format and check your code before you commit.
 To set it up, run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
 </pre></div>
 </div>
 <p>From now on, whenever you commit, each changed file will get processed
@@ -698,9 +706,9 @@ the need for migrations.</p>
 <div class="section" id="how-to-migrate">
 <h3>How to migrate<a class="headerlink" href="#how-to-migrate" title="Permalink to this headline">¶</a></h3>
 <p>To migrate, run the following commands:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> megaqc
-<span class="nb">export</span> <span class="nv">FLASK_APP</span><span class="o">=</span>wsgi.py
-flask db upgrade
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>megaqc
+<span class="nb">export</span><span class="w"> </span><span class="nv">FLASK_APP</span><span class="o">=</span>wsgi.py
+flask<span class="w"> </span>db<span class="w"> </span>upgrade
 </pre></div>
 </div>
 <p>Note: when you run these migrations, you <strong>must</strong> have the same
@@ -721,7 +729,7 @@ a change that wasn’t present in your database. At this point, note the
 <code class="docutils literal notranslate"><span class="pre">revision</span></code> value at the top of the file, (e.g. <code class="docutils literal notranslate"><span class="pre">revision</span> <span class="pre">=</span> <span class="pre">&quot;007c354223ec&quot;</span></code>).</p>
 <p>Next, run the following command, replacing <code class="docutils literal notranslate"><span class="pre">&lt;revision</span> <span class="pre">ID&gt;</span></code> with the
 revision you noted above:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>flask db stamp &lt;revision ID&gt;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>flask<span class="w"> </span>db<span class="w"> </span>stamp<span class="w"> </span>&lt;revision<span class="w"> </span>ID&gt;
 </pre></div>
 </div>
 </div>
