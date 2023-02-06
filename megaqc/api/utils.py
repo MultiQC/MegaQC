@@ -1464,12 +1464,12 @@ def generate_comparison_plot(
                     norm_plot_size.append(((old_div((x - smin), srange)) * 35) + 2)
                 else:
                     norm_plot_size.append(2)
-            markers["size"] = norm_plot_size
+            markers["size"] = int(norm_plot_size)
             ptitle += '<br><span style="font-size:0.7rem">Marker Size represents "{}"</span>'.format(
                 field_names["size"]
             )
     else:
-        markers["size"] = pointsize
+        markers["size"] = int(pointsize)
 
     plot_height = 600
     if all([x == None for x in plot_z]):
