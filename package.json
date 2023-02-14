@@ -35,7 +35,7 @@
     "prop-types": "^15.7.2",
     "ra-jsonapi-client": "github:tmiguelt/ra-jsonapi-client#github-publish",
     "react": "^16.14.0",
-    "react-admin": "^3.10.2",
+    "react-admin": "^3.19.12",
     "react-datepicker": "^3.3.0",
     "react-dom": "^16.14.0",
     "react-plotly.js": "^2.5.1",
