@@ -1,4 +1,3 @@
-import math
 import re
 
 import numpy
@@ -84,7 +83,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
             y=distance[distance < line],
             line=dict(color="rgb(0,0,250)"),
             mode="markers",
-            name="Inliers".format(data_type),
+            name="Inliers",
         )
     )
 
@@ -98,7 +97,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
             y=distance[distance > line],
             line=dict(color="rgb(250,0,0)"),
             mode="markers",
-            name="Outliers".format(data_type),
+            name="Outliers",
         )
     )
 
@@ -111,7 +110,7 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
             y=line,
             line=dict(color="rgb(250,0,0)"),
             mode="lines",
-            name="Criticial line".format(data_type),
+            name="Criticial line",
         )
     )
 
