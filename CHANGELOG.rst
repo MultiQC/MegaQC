@@ -1,6 +1,23 @@
 Changelog
 =========
 
+.. _section-3:
+
+0.3.2
+-----
+
+.. _plot-changes-1:
+
+Plot-changes-1
+~~~~~~~~~~~~~~~~
+
+- `[#467]`_ Display the variance estimation in the plot
+
+.. _[#467]: https://github.com/ewels/MegaQC/pull/467
+
+
+=======
+
 .. _section-2:
 
 0.3.1
@@ -11,7 +28,7 @@ Changelog
 Development
 ~~~~~~~~~~~~~~~~
 
--  `[#440]`_ Set up poetry to manage the dependencies, which might keep 
+- `[#440]`_ Set up poetry to manage the dependencies, which might keep 
    the dependencies from breaking down, and reduce the chances of the 
    happening of issues such as `[#430]`_
 - `[#443]`_
