@@ -72,6 +72,7 @@ flapison = "^0.30"
 Flask-Migrate = "^2.5"
 environs = "^9.2.0"
 MarkupSafe = "<2.1.0"
+pencils = "^0.1.0"
 # Testing
 pytest = { version = "^7.2", optional = true }
 WebTest = { version = "^2.0", optional = true }

@@ -8,6 +8,9 @@ import os
 import random
 import string
 import sys
+import pickle
+import pencils
+import numpy as np
 from builtins import map, range, str
 from collections import OrderedDict, defaultdict
 from datetime import datetime, timedelta
@@ -373,6 +376,8 @@ def handle_report_data(user, report_data):
 
 
 def generate_report_plot(plot_type, sample_names):
+    current_app.logger.info(f"Plot type is: {plot_type}")
+    current_app.logger.info(f"Filtered sample names are {sample_names}")
     # The common part of the query
     query = (
         db.session.query(PlotConfig, PlotData, PlotCategory, Sample)
@@ -661,6 +666,7 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
 
 
 def get_samples(filters=None, count=False, ids=False):
+    current_app.logger.info(f"Filters are: {filters}")
     if not filters:
         filters = []
     if count:
@@ -728,6 +734,24 @@ def get_sample_metadata_fields(filters=None):
     sample_fields.sort(key=lambda x: x["priority"], reverse=True)
     return sample_fields
 
+def get_colors_from_categorical(vals=None):
+
+    cats = np.unique(vals)
+
+    color_dict = {}
+    color_list = []
+    for cat in cats:
+        not_found = True
+        while not_found:
+            new_color = pencils.random_palette().random_color().hex
+            if new_color not in color_list:
+                color_dict[cat] = f"#{new_color}"
+                color_list.append(new_color)
+                not_found = False
+                
+    colors = [color_dict[x] for x in vals]
+
+    return colors
 
 def get_plot_types(user, filters=None):
     plot_types = []
@@ -931,7 +955,7 @@ def update_fav_sample_field(method, user, sample_field_id):
                 and_(
                     user_sampletype_map.c.user_id == user.user_id,
                     user_sampletype_map.c.sample_data_type_id
-                    == existing_sample_fielexisting_sample_fieldd.sample_data_type_id,
+                    == existing_sample_field.sample_data_type_id,
                 )
             )
         )
@@ -1372,6 +1396,9 @@ def generate_comparison_plot(
     plot_size = []
     annotations = go.Annotations([])
 
+    # with open('/home/ubuntu/data_dict.pkl', 'wb') as f:
+    #     pickle.dump(plot_data, f)
+
     # Remove any missing values from the plot data recursively
     number_data_including_none = len(plot_data)
 
@@ -1380,20 +1407,22 @@ def generate_comparison_plot(
             return dictionary
         if isinstance(dictionary, list):
             return [
-                val
+                val if val else np.nan
                 for val in (remove_none_vals_from_dict(val) for val in dictionary)
-                if val
             ]
         return {
-            key: val
+            key: (val if val else np.nan)
             for key, val in (
                 (key, remove_none_vals_from_dict(val))
                 for key, val in dictionary.items()
             )
-            if val
         }
 
     plot_data = remove_none_vals_from_dict(plot_data)
+
+    # with open('/home/ubuntu/data_dict_afterrm.pkl', 'wb') as f:
+    #     pickle.dump(plot_data, f)
+
     plot_names = plot_data.keys()
     number_removed_data = number_data_including_none - len(plot_data)
     current_app.logger.warn(
@@ -1401,6 +1430,8 @@ def generate_comparison_plot(
             number_removed_data
         )
     )
+    # current_app.logger.warn(f"x {data_keys['x']}")
+    # current_app.logger.warn(f"y {data_keys['y']}")
 
     # Sort the data by the x, y variables (needed when joining dots with lines)
     plot_names = sorted(
@@ -1437,8 +1468,11 @@ def generate_comparison_plot(
     # Colour with a colour scale
     markers = {}
     if not all([x == None for x in plot_col]):
-        markers["color"] = plot_col
-        markers["colorscale"] = "Viridis"
+        if isinstance(plot_col[0], str):
+            markers["color"] = get_colors_from_categorical(plot_col)
+        else:
+            markers["color"] = plot_col
+            markers["colorscale"] = "Viridis"
         markers["showscale"] = True
         annotations.append(
             go.Annotation(
@@ -1464,7 +1498,7 @@ def generate_comparison_plot(
                     norm_plot_size.append(((old_div((x - smin), srange)) * 35) + 2)
                 else:
                     norm_plot_size.append(2)
-            markers["size"] = int(norm_plot_size)
+            markers["size"] = norm_plot_size
             ptitle += '<br><span style="font-size:0.7rem">Marker Size represents "{}"</span>'.format(
                 field_names["size"]
             )

@@ -213,7 +213,8 @@ def get_samples_per_report(user, *args, **kwargs):
 def get_report_plot(user, *args, **kwargs):
     data = request.get_json()
     plot_type = data.get("plot_type")
-    filters = data.get("filters", [])
+    # filters = data.get("filters", [])
+    filters = get_filter_from_data(data)
     sample_names = get_samples(filters)
     html = generate_report_plot(plot_type, sample_names)
     return jsonify({"success": True, "plot": html})
