@@ -8,7 +8,6 @@ import os
 import random
 import string
 import sys
-import pickle
 import pencils
 import numpy as np
 from builtins import map, range, str
@@ -1396,9 +1395,6 @@ def generate_comparison_plot(
     plot_size = []
     annotations = go.Annotations([])
 
-    # with open('/home/ubuntu/data_dict.pkl', 'wb') as f:
-    #     pickle.dump(plot_data, f)
-
     # Remove any missing values from the plot data recursively
     number_data_including_none = len(plot_data)
 
@@ -1420,9 +1416,6 @@ def generate_comparison_plot(
 
     plot_data = remove_none_vals_from_dict(plot_data)
 
-    # with open('/home/ubuntu/data_dict_afterrm.pkl', 'wb') as f:
-    #     pickle.dump(plot_data, f)
-
     plot_names = plot_data.keys()
     number_removed_data = number_data_including_none - len(plot_data)
     current_app.logger.warn(
@@ -1430,8 +1423,6 @@ def generate_comparison_plot(
             number_removed_data
         )
     )
-    # current_app.logger.warn(f"x {data_keys['x']}")
-    # current_app.logger.warn(f"y {data_keys['y']}")
 
     # Sort the data by the x, y variables (needed when joining dots with lines)
     plot_names = sorted(
