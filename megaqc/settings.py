@@ -136,6 +136,7 @@ class DevConfig(Config):
 
     ENV = "dev"
     DEBUG = True
+    SQLALCHEMY_ECHO = True
     SQLALCHEMY_DBMS = "sqlite"
     DB_NAME = "megaqc.db"
     # Put the db file in project root
