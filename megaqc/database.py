@@ -162,7 +162,7 @@ def init_db(url):
 
         try:
             # Attempt to connect to an existing database using provided credentials
-            engine = create_engine(url)
+            engine = create_engine(url, echo=True)
             engine.connect().close()
 
         except (OperationalError, psycopg2.OperationalError) as conn_err:
@@ -201,10 +201,10 @@ def init_db(url):
                 )
 
             # Ue engine with newly created db / user, if it fails again something bigger wrong
-            engine = create_engine(url)
+            engine = create_engine(url, echo=True)
             engine.connect().close()
     else:
-        engine = create_engine(url)
+        engine = create_engine(url, echo=True)
 
     """Initializes the database."""
     db.metadata.bind = engine
