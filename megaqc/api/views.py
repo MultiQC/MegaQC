@@ -187,7 +187,7 @@ def admin_add_users(user, *args, **kwargs):
         abort(400)
     new_user = User(**data)
     new_user.enforce_admin()
-    password = new_user.reset_password()
+    password = data['password']
     new_user.active = True
     new_user.save()
     return jsonify({"success": True, "password": password, "api_token": user.api_token})
