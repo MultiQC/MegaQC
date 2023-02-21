@@ -64,10 +64,11 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
     cov = EmpiricalCovariance()
     y = y.reshape(-1, len(fields))
 
+    # Calculate the distance according to T-square distribution
     cov.fit(y)
     distance = cov.mahalanobis(y)
 
-    # Calculate the critical value
+    # Calculate the critical value according to the F distribution
     n, p = y.shape
     cri = f.isf(0.05, dfn=p, dfd=n - p)
     t = (p * (n - 1) / (n - p)) * cri
