@@ -22,7 +22,9 @@ def rgb_to_rgba(rgb, alpha):
     )
 
 
-def trend_data(fields, filter, plot_prefix, control_limits, center_line):
+def trend_data(
+    fields, filter, line, distance, plot_prefix, control_limits, center_line
+):
     """
     Returns data suitable for a plotly plot.
     """
@@ -60,19 +62,6 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
     names = numpy.asarray(names, dtype=str)
     x = numpy.asarray(x)
     y = numpy.asarray(y, dtype=float)
-
-    cov = EmpiricalCovariance()
-    y = y.reshape(-1, len(fields))
-
-    # Calculate the distance according to T-square distribution
-    cov.fit(y)
-    distance = cov.mahalanobis(y)
-
-    # Calculate the critical value according to the F distribution
-    n, p = y.shape
-    cri = f.isf(0.05, dfn=p, dfd=n - p)
-    t = (p * (n - 1) / (n - p)) * cri
-    line = numpy.repeat(t, n)
 
     plots.append(
         dict(
@@ -116,3 +105,18 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
     )
 
     return plots
+
+
+def cal_distance(fields):
+    cov = EmpiricalCovariance()
+    y = y.reshape(-1, len(fields))
+
+    # Calculate the distance according to T-square distribution
+    cov.fit(y)
+    distance = cov.mahalanobis(y)
+
+    # Calculate the critical value according to the F distribution
+    n, p = y.shape
+    cri = f.isf(0.05, dfn=p, dfd=n - p)
+    t = (p * (n - 1) / (n - p)) * cri
+    line = numpy.repeat(t, n)
