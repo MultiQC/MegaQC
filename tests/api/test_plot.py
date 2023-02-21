@@ -34,8 +34,8 @@ def test_get_trend_series(db, client):
     # unknown=EXCLUDE ensures we don't keep the ID field when we load at this point
     data = TrendSchema(many=True, unknown=EXCLUDE).load(response.json)
 
-    # Check that there are 4 series (mean, stdev, raw data, outliers)
-    assert len(data) == 4
+    # Check that there are 3 series (mean, raw data, outliers)
+    assert len(data) == 3
 
     # Test that this is valid plot data
     plot({"data": data}, validate=True, auto_open=False)
