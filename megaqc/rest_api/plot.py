@@ -23,7 +23,7 @@ def rgb_to_rgba(rgb, alpha):
 
 
 def trend_data(
-    fields, filter, line, distance, plot_prefix, control_limits, center_line
+    fields, filter, line, distance, t, n, plot_prefix, control_limits, center_line
 ):
     """
     Returns data suitable for a plotly plot.
@@ -62,6 +62,11 @@ def trend_data(
     names = numpy.asarray(names, dtype=str)
     x = numpy.asarray(x)
     y = numpy.asarray(y, dtype=float)
+
+    cov = EmpiricalCovariance()
+    y = y.reshape(-1, len(fields))
+
+    line = numpy.repeat(t, n)
 
     plots.append(
         dict(
@@ -107,9 +112,7 @@ def trend_data(
     return plots
 
 
-def cal_distance(fields):
-    cov = EmpiricalCovariance()
-    y = y.reshape(-1, len(fields))
+def cal_distance(cov, y):
 
     # Calculate the distance according to T-square distribution
     cov.fit(y)
@@ -119,4 +122,5 @@ def cal_distance(fields):
     n, p = y.shape
     cri = f.isf(0.05, dfn=p, dfd=n - p)
     t = (p * (n - 1) / (n - p)) * cri
-    line = numpy.repeat(t, n)
+
+    return distance
