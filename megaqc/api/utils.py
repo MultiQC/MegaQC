@@ -743,12 +743,13 @@ def get_colors_from_categorical(vals=None):
         not_found = True
         while not_found:
             new_color = pencils.random_palette().random_color().hex
-            if new_color not in color_list:
+            if new_color not in color_list and new_color != "#000000":
                 color_dict[cat] = f"#{new_color}"
                 color_list.append(new_color)
                 not_found = False
-                
-    colors = [color_dict[x] for x in vals]
+    
+    ## Black is used for np.nan entries
+    colors = [color_dict[x] if not isinstance(x, float) else "#000000" for x in vals]
 
     return colors
 
