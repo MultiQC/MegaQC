@@ -375,8 +375,10 @@ def handle_report_data(user, report_data):
 
 
 def generate_report_plot(plot_type, sample_names):
-    current_app.logger.info(f"Plot type is: {plot_type}")
-    current_app.logger.info(f"Filtered sample names are {sample_names}")
+
+    # current_app.logger.info(f"Plot type is: {plot_type}")
+    # current_app.logger.info(f"Filtered sample names are {sample_names}")
+    
     # The common part of the query
     query = (
         db.session.query(PlotConfig, PlotData, PlotCategory, Sample)
@@ -823,11 +825,21 @@ def build_filter(query, filters, source_table):
     for filter_group in filters:
         alchemy_and_cmps = []
         for filter_idx, one_filter in enumerate(filter_group):
+            
+            # Check for old vs new filter format
+            if (one_filter["type"] == "sampleids") or (one_filter["type"] == "samplemetaids"):
+                filter_value = one_filter['value']
+            else:
+                if isinstance(one_filter['value'], list):
+                    filter_value = one_filter['value'][0]
+                else:
+                    filter_value = one_filter['value']
+
             params = []
             cmps = []
             if one_filter["type"] == "daterange":
                 # daterange : make values actual datetimes
-                params = [datetime.strptime(x, "%Y-%m-%d") for x in one_filter["value"]]
+                params = [datetime.strptime(x, "%Y-%m-%d") for x in filter_value]
                 params[1] = params[1] + timedelta(
                     1
                 )  # right border is midnight, you usually want to include the date you use as right border
@@ -838,12 +850,12 @@ def build_filter(query, filters, source_table):
                     cmps = [">=", "<="]
 
             elif one_filter["type"] == "date":
-                params = [datetime.strptime(one_filter["value"], "%Y-%m-%d")]
+                params = [datetime.strptime(filter_value, "%Y-%m-%d")]
                 cmps = [one_filter["cmp"]]
             elif one_filter["type"] == "timedelta":
                 # timedeltarange : make datetime based on now and reverse the cmp,
                 # because time <7 days == time > _date_seven_days_ago
-                params = [datetime.now() - timedelta(int(one_filter["value"]))]
+                params = [datetime.now() - timedelta(int(filter_value))]
                 if one_filter["cmp"] in ["gt", ">"]:
                     cmps = ["<="]
                 elif one_filter["cmp"] in ["lt", "<"]:
@@ -857,13 +869,13 @@ def build_filter(query, filters, source_table):
                 cmps = [one_filter["cmp"]]
                 if "not in" == one_filter["cmp"]:
                     # not in is a special case, there is no sqlalchemy operator to deal with it, although there is one for "in" and "notlike"
-                    params = ["%{0}%".format(one_filter["value"])]
+                    params = ["%{0}%".format(filter_value)]
                 else:
                     try:
-                        val = float(one_filter["value"])
+                        val = float(filter_value)
                         params = [val]
                     except:
-                        params = [one_filter["value"]]
+                        params = [filter_value]
                 key = one_filter.get("key", None)
                 if key:
                     params.append(key)

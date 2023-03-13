@@ -4,6 +4,7 @@ import numpy
 from numpy import absolute, delete, take, zeros
 from plotly.colors import DEFAULT_PLOTLY_COLORS
 from scipy.stats import zscore
+from flask import current_app
 
 from megaqc.extensions import db
 from megaqc.model import models
@@ -25,7 +26,9 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
     """
     Returns data suitable for a plotly plot.
     """
+
     subquery = build_filter_query(filter)
+    
     plots = []
     for field, colour in zip(fields, DEFAULT_PLOTLY_COLORS):
 
@@ -58,7 +61,10 @@ def trend_data(fields, filter, plot_prefix, control_limits, center_line):
 
         # If the query returned nothing, skip this field
         if len(data) == 0:
+            current_app.logger.info("No samples passed filtering.")
             break
+        else:
+            current_app.logger.info(f"Number of samples passing filter is: {len(data)}.")
 
         names, data_types, x, y = zip(*data)
         data_type = data_types[0]
