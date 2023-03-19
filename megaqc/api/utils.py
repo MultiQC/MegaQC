@@ -1307,17 +1307,19 @@ def generate_distribution_plot(plot_data, nbins=20, ptype="boxplot"):
                 go.Histogram(
                     x=pdata,
                     opacity=0.75,
-                    nbinsx=nbins,
+                    nbinsx= int(nbins),
                     name="{} ({})".format(dtype, len(pdata)),
                 )
             )
         elif ptype == "violin":
-            if len(figs) == 0:
-                figs = {}
-            dname = "{} ({})".format(dtype, len(pdata))
-            figs[dname] = pdata
+            figs.append(
+                go.Violin(x= pdata,
+                          opacity= 0.75,
+                          name= "{} ({})".format(dtype, len(pdata)))
+            )
         else:
             return "Error - unrecognised plot type: {}".format(ptype)
+        
     layout = {}
     if ptype == "hist":
         layout = go.Layout(
@@ -1329,10 +1331,9 @@ def generate_distribution_plot(plot_data, nbins=20, ptype="boxplot"):
                 # TODO - integers only
             ),
         )
-    if ptype == "violin":
-        figure = ff.create_violin(figs)
-    else:
-        figure = go.Figure(data=figs, layout=layout)
+
+    figure = go.Figure(data=figs, layout=layout)
+
     plot_div = py.plot(
         figure,
         output_type="div",
@@ -1445,29 +1446,50 @@ def generate_comparison_plot(
             plot_data[s_name][data_keys["y"]],
         ),
     )
+
+    plot_names_2 = copy.deepcopy(plot_names)
+    
     # Collect the variables
-    for s_name in plot_names:
-        try:
-            plot_x.append(plot_data[s_name][data_keys["x"]])
-            plot_y.append(plot_data[s_name][data_keys["y"]])
-        except KeyError:
-            current_app.logger.error(
-                "Couldn't find key {} (available: {})".format(
-                    list(plot_data[s_name].keys()), data_keys
-                )
-            )
-        try:
-            plot_z.append(plot_data[s_name][data_keys["z"]])
-        except KeyError:
-            plot_z.append(None)
-        try:
-            plot_col.append(plot_data[s_name][data_keys["col"]])
-        except KeyError:
-            plot_col.append(None)
-        try:
-            plot_size.append(plot_data[s_name][data_keys["size"]])
-        except KeyError:
-            plot_size.append(None)
+    plot_x = [plot_data[name][data_keys["x"]] for name in plot_names]
+    plot_y = [plot_data[name][data_keys["y"]] for name in plot_names]
+
+    if data_keys["z"] is not None:
+        plot_z = [plot_data[name][data_keys["z"]] for name in plot_names]
+    else:
+        plot_z = [None for name in plot_names]
+    if data_keys["col"] is not None:
+        plot_col = [plot_data[name][data_keys["col"]] for name in plot_names]
+        plot_names_2 = [f"{name}_color={col}" for name, col in zip(plot_names_2, plot_col)]
+    else:
+        plot_col = [None for name in plot_names]
+    if data_keys["size"] is not None:
+        plot_size = [plot_data[name][data_keys["size"]] for name in plot_names]
+        plot_names_2 = [f"{name}_size={size}" for name, size in zip(plot_names_2, plot_size)]
+    else:
+        plot_size = [None for name in plot_names]
+
+    # for s_name in plot_names:
+    #     try:
+    #         plot_x.append(plot_data[s_name][data_keys["x"]])
+    #         plot_y.append(plot_data[s_name][data_keys["y"]])
+    #     except KeyError:
+    #         current_app.logger.error(
+    #             "Couldn't find key {} (available: {})".format(
+    #                 list(plot_data[s_name].keys()), data_keys
+    #             )
+    #         )
+    #     try:
+    #         plot_z.append(plot_data[s_name][data_keys["z"]])
+    #     except KeyError:
+    #         plot_z.append(None)
+    #     try:
+    #         plot_col.append(plot_data[s_name][data_keys["col"]])
+    #     except KeyError:
+    #         plot_col.append(None)
+    #     try:
+    #         plot_size.append(plot_data[s_name][data_keys["size"]])
+    #     except KeyError:
+    #         plot_size.append(None)
 
     # Colour with a colour scale
     markers = {}
@@ -1516,7 +1538,7 @@ def generate_comparison_plot(
             y=plot_y,
             mode="lines+markers" if joinmarkers else "markers",
             marker=markers,
-            text=plot_names,
+            text=plot_names_2,
         )
     else:
         markers.update({"opacity": 0.8})
@@ -1526,7 +1548,7 @@ def generate_comparison_plot(
             z=plot_z,
             mode="markers",
             marker=markers,
-            text=plot_names,
+            text=plot_names_2,
         )
         plot_height = 800
     # Make the plot
