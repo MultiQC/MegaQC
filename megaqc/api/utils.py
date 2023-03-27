@@ -8,6 +8,8 @@ import os
 import random
 import string
 import sys
+import pencils
+import numpy as np
 from builtins import map, range, str
 from collections import OrderedDict, defaultdict
 from datetime import datetime, timedelta
@@ -373,6 +375,10 @@ def handle_report_data(user, report_data):
 
 
 def generate_report_plot(plot_type, sample_names):
+
+    # current_app.logger.info(f"Plot type is: {plot_type}")
+    # current_app.logger.info(f"Filtered sample names are {sample_names}")
+    
     # The common part of the query
     query = (
         db.session.query(PlotConfig, PlotData, PlotCategory, Sample)
@@ -661,6 +667,7 @@ def config_translate(plot_type, config, series_nb, plotly_layout=go.Layout()):
 
 
 def get_samples(filters=None, count=False, ids=False):
+    current_app.logger.info(f"Filters are: {filters}")
     if not filters:
         filters = []
     if count:
@@ -728,6 +735,25 @@ def get_sample_metadata_fields(filters=None):
     sample_fields.sort(key=lambda x: x["priority"], reverse=True)
     return sample_fields
 
+def get_colors_from_categorical(vals=None):
+
+    cats = np.unique(vals)
+
+    color_dict = {}
+    color_list = []
+    for cat in cats:
+        not_found = True
+        while not_found:
+            new_color = pencils.random_palette().random_color().hex
+            if new_color not in color_list and new_color != "#000000":
+                color_dict[cat] = f"#{new_color}"
+                color_list.append(new_color)
+                not_found = False
+    
+    ## Black is used for np.nan entries
+    colors = [color_dict[x] if not isinstance(x, float) else "#000000" for x in vals]
+
+    return colors
 
 def get_plot_types(user, filters=None):
     plot_types = []
@@ -799,11 +825,21 @@ def build_filter(query, filters, source_table):
     for filter_group in filters:
         alchemy_and_cmps = []
         for filter_idx, one_filter in enumerate(filter_group):
+            
+            # Check for old vs new filter format
+            if (one_filter["type"] == "sampleids") or (one_filter["type"] == "samplemetaids"):
+                filter_value = one_filter['value']
+            else:
+                if isinstance(one_filter['value'], list):
+                    filter_value = one_filter['value'][0]
+                else:
+                    filter_value = one_filter['value']
+
             params = []
             cmps = []
             if one_filter["type"] == "daterange":
                 # daterange : make values actual datetimes
-                params = [datetime.strptime(x, "%Y-%m-%d") for x in one_filter["value"]]
+                params = [datetime.strptime(x, "%Y-%m-%d") for x in filter_value]
                 params[1] = params[1] + timedelta(
                     1
                 )  # right border is midnight, you usually want to include the date you use as right border
@@ -814,12 +850,12 @@ def build_filter(query, filters, source_table):
                     cmps = [">=", "<="]
 
             elif one_filter["type"] == "date":
-                params = [datetime.strptime(one_filter["value"], "%Y-%m-%d")]
+                params = [datetime.strptime(filter_value, "%Y-%m-%d")]
                 cmps = [one_filter["cmp"]]
             elif one_filter["type"] == "timedelta":
                 # timedeltarange : make datetime based on now and reverse the cmp,
                 # because time <7 days == time > _date_seven_days_ago
-                params = [datetime.now() - timedelta(int(one_filter["value"]))]
+                params = [datetime.now() - timedelta(int(filter_value))]
                 if one_filter["cmp"] in ["gt", ">"]:
                     cmps = ["<="]
                 elif one_filter["cmp"] in ["lt", "<"]:
@@ -833,13 +869,13 @@ def build_filter(query, filters, source_table):
                 cmps = [one_filter["cmp"]]
                 if "not in" == one_filter["cmp"]:
                     # not in is a special case, there is no sqlalchemy operator to deal with it, although there is one for "in" and "notlike"
-                    params = ["%{0}%".format(one_filter["value"])]
+                    params = ["%{0}%".format(filter_value)]
                 else:
                     try:
-                        val = float(one_filter["value"])
+                        val = float(filter_value)
                         params = [val]
                     except:
-                        params = [one_filter["value"]]
+                        params = [filter_value]
                 key = one_filter.get("key", None)
                 if key:
                     params.append(key)
@@ -931,7 +967,7 @@ def update_fav_sample_field(method, user, sample_field_id):
                 and_(
                     user_sampletype_map.c.user_id == user.user_id,
                     user_sampletype_map.c.sample_data_type_id
-                    == existing_sample_fielexisting_sample_fieldd.sample_data_type_id,
+                    == existing_sample_field.sample_data_type_id,
                 )
             )
         )
@@ -1026,16 +1062,18 @@ def get_favourite_plot_data(user, favourite_id):
     # Prep variables
     plot_type = fp_row[4]
     api_data = json.loads(fp_row[5])
+    current_app.logger.info(f"Here is the api_data: {api_data}")
     plot_html = '<p class="text-error">Could not find favourite plot</p>'
     # Report plot
     if plot_type == "report_plot":
         plot_type = api_data.get("plot_type")
-        filters = api_data.get("filters", [])
-        sample_names = get_samples(filters)
+        my_filters = get_filter_from_data(api_data)
+        sample_names = get_samples(my_filters)
         plot_html = generate_report_plot(plot_type, sample_names)
     # Distribution plot
     elif plot_type == "distribution":
         my_filters = get_filter_from_data(api_data)
+        # current_app.logger.info(f"Filters are: {my_filters}")
         data_keys = api_data.get("fields", {})
         nbins = api_data.get("nbins", 20)
         ptype = api_data.get("ptype", 20)
@@ -1044,12 +1082,14 @@ def get_favourite_plot_data(user, favourite_id):
     # Trend plot
     elif plot_type == "trend":
         my_filters = get_filter_from_data(api_data)
+        # current_app.logger.info(f"Filters are: {my_filters}")
         data_keys = api_data.get("fields", {})
         plot_data = get_timeline_sample_data(my_filters, data_keys)
         plot_html = generate_trend_plot(plot_data)
     # Comparison plot
     elif plot_type == "comparison":
         my_filters = get_filter_from_data(api_data)
+        # current_app.logger.info(f"Filters are: {my_filters}")
         data_keys = api_data.get("fields", {})
         field_names = api_data.get("field_names", {})
         pointsize = api_data.get("pointsize", 10)
@@ -1271,17 +1311,19 @@ def generate_distribution_plot(plot_data, nbins=20, ptype="boxplot"):
                 go.Histogram(
                     x=pdata,
                     opacity=0.75,
-                    nbinsx=nbins,
+                    nbinsx= int(nbins),
                     name="{} ({})".format(dtype, len(pdata)),
                 )
             )
         elif ptype == "violin":
-            if len(figs) == 0:
-                figs = {}
-            dname = "{} ({})".format(dtype, len(pdata))
-            figs[dname] = pdata
+            figs.append(
+                go.Violin(x= pdata,
+                          opacity= 0.75,
+                          name= "{} ({})".format(dtype, len(pdata)))
+            )
         else:
             return "Error - unrecognised plot type: {}".format(ptype)
+        
     layout = {}
     if ptype == "hist":
         layout = go.Layout(
@@ -1293,10 +1335,9 @@ def generate_distribution_plot(plot_data, nbins=20, ptype="boxplot"):
                 # TODO - integers only
             ),
         )
-    if ptype == "violin":
-        figure = ff.create_violin(figs)
-    else:
-        figure = go.Figure(data=figs, layout=layout)
+
+    figure = go.Figure(data=figs, layout=layout)
+
     plot_div = py.plot(
         figure,
         output_type="div",
@@ -1380,20 +1421,19 @@ def generate_comparison_plot(
             return dictionary
         if isinstance(dictionary, list):
             return [
-                val
+                val if val else np.nan
                 for val in (remove_none_vals_from_dict(val) for val in dictionary)
-                if val
             ]
         return {
-            key: val
+            key: (val if val else np.nan)
             for key, val in (
                 (key, remove_none_vals_from_dict(val))
                 for key, val in dictionary.items()
             )
-            if val
         }
 
     plot_data = remove_none_vals_from_dict(plot_data)
+
     plot_names = plot_data.keys()
     number_removed_data = number_data_including_none - len(plot_data)
     current_app.logger.warn(
@@ -1410,35 +1450,36 @@ def generate_comparison_plot(
             plot_data[s_name][data_keys["y"]],
         ),
     )
+
+    plot_names_2 = copy.deepcopy(plot_names)
+    
     # Collect the variables
-    for s_name in plot_names:
-        try:
-            plot_x.append(plot_data[s_name][data_keys["x"]])
-            plot_y.append(plot_data[s_name][data_keys["y"]])
-        except KeyError:
-            current_app.logger.error(
-                "Couldn't find key {} (available: {})".format(
-                    list(plot_data[s_name].keys()), data_keys
-                )
-            )
-        try:
-            plot_z.append(plot_data[s_name][data_keys["z"]])
-        except KeyError:
-            plot_z.append(None)
-        try:
-            plot_col.append(plot_data[s_name][data_keys["col"]])
-        except KeyError:
-            plot_col.append(None)
-        try:
-            plot_size.append(plot_data[s_name][data_keys["size"]])
-        except KeyError:
-            plot_size.append(None)
+    plot_x = [plot_data[name][data_keys["x"]] for name in plot_names]
+    plot_y = [plot_data[name][data_keys["y"]] for name in plot_names]
+
+    if data_keys["z"] is not None:
+        plot_z = [plot_data[name][data_keys["z"]] for name in plot_names]
+    else:
+        plot_z = [None for name in plot_names]
+    if data_keys["col"] is not None:
+        plot_col = [plot_data[name][data_keys["col"]] for name in plot_names]
+        plot_names_2 = [f"{name}_color={col}" for name, col in zip(plot_names_2, plot_col)]
+    else:
+        plot_col = [None for name in plot_names]
+    if data_keys["size"] is not None:
+        plot_size = [plot_data[name][data_keys["size"]] for name in plot_names]
+        plot_names_2 = [f"{name}_size={size}" for name, size in zip(plot_names_2, plot_size)]
+    else:
+        plot_size = [None for name in plot_names]
 
     # Colour with a colour scale
     markers = {}
     if not all([x == None for x in plot_col]):
-        markers["color"] = plot_col
-        markers["colorscale"] = "Viridis"
+        if isinstance(plot_col[0], str):
+            markers["color"] = get_colors_from_categorical(plot_col)
+        else:
+            markers["color"] = plot_col
+            markers["colorscale"] = "Viridis"
         markers["showscale"] = True
         annotations.append(
             go.Annotation(
@@ -1469,7 +1510,7 @@ def generate_comparison_plot(
                 field_names["size"]
             )
     else:
-        markers["size"] = pointsize
+        markers["size"] = int(pointsize)
 
     plot_height = 600
     if all([x == None for x in plot_z]):
@@ -1478,7 +1519,7 @@ def generate_comparison_plot(
             y=plot_y,
             mode="lines+markers" if joinmarkers else "markers",
             marker=markers,
-            text=plot_names,
+            text=plot_names_2,
         )
     else:
         markers.update({"opacity": 0.8})
@@ -1488,7 +1529,7 @@ def generate_comparison_plot(
             z=plot_z,
             mode="markers",
             marker=markers,
-            text=plot_names,
+            text=plot_names_2,
         )
         plot_height = 800
     # Make the plot
