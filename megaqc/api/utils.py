@@ -1062,16 +1062,18 @@ def get_favourite_plot_data(user, favourite_id):
     # Prep variables
     plot_type = fp_row[4]
     api_data = json.loads(fp_row[5])
+    current_app.logger.info(f"Here is the api_data: {api_data}")
     plot_html = '<p class="text-error">Could not find favourite plot</p>'
     # Report plot
     if plot_type == "report_plot":
         plot_type = api_data.get("plot_type")
-        filters = api_data.get("filters", [])
-        sample_names = get_samples(filters)
+        my_filters = get_filter_from_data(api_data)
+        sample_names = get_samples(my_filters)
         plot_html = generate_report_plot(plot_type, sample_names)
     # Distribution plot
     elif plot_type == "distribution":
         my_filters = get_filter_from_data(api_data)
+        # current_app.logger.info(f"Filters are: {my_filters}")
         data_keys = api_data.get("fields", {})
         nbins = api_data.get("nbins", 20)
         ptype = api_data.get("ptype", 20)
@@ -1080,12 +1082,14 @@ def get_favourite_plot_data(user, favourite_id):
     # Trend plot
     elif plot_type == "trend":
         my_filters = get_filter_from_data(api_data)
+        # current_app.logger.info(f"Filters are: {my_filters}")
         data_keys = api_data.get("fields", {})
         plot_data = get_timeline_sample_data(my_filters, data_keys)
         plot_html = generate_trend_plot(plot_data)
     # Comparison plot
     elif plot_type == "comparison":
         my_filters = get_filter_from_data(api_data)
+        # current_app.logger.info(f"Filters are: {my_filters}")
         data_keys = api_data.get("fields", {})
         field_names = api_data.get("field_names", {})
         pointsize = api_data.get("pointsize", 10)
@@ -1467,29 +1471,6 @@ def generate_comparison_plot(
         plot_names_2 = [f"{name}_size={size}" for name, size in zip(plot_names_2, plot_size)]
     else:
         plot_size = [None for name in plot_names]
-
-    # for s_name in plot_names:
-    #     try:
-    #         plot_x.append(plot_data[s_name][data_keys["x"]])
-    #         plot_y.append(plot_data[s_name][data_keys["y"]])
-    #     except KeyError:
-    #         current_app.logger.error(
-    #             "Couldn't find key {} (available: {})".format(
-    #                 list(plot_data[s_name].keys()), data_keys
-    #             )
-    #         )
-    #     try:
-    #         plot_z.append(plot_data[s_name][data_keys["z"]])
-    #     except KeyError:
-    #         plot_z.append(None)
-    #     try:
-    #         plot_col.append(plot_data[s_name][data_keys["col"]])
-    #     except KeyError:
-    #         plot_col.append(None)
-    #     try:
-    #         plot_size.append(plot_data[s_name][data_keys["size"]])
-    #     except KeyError:
-    #         plot_size.append(None)
 
     # Colour with a colour scale
     markers = {}
