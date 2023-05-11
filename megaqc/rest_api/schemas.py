@@ -8,7 +8,7 @@ from marshmallow import INCLUDE
 from marshmallow import Schema as BaseSchema
 from marshmallow import post_load, validate
 from marshmallow_jsonapi import fields as f
-from marshmallow_jsonapi.flask import Relationship
+from marshmallow_jsonapi.flask import Relationship as FlaskRelationship
 from marshmallow_jsonapi.flask import Schema as JsonApiSchema
 from marshmallow_jsonapi.utils import resolve_params
 from marshmallow_sqlalchemy.fields import Related
@@ -19,6 +19,11 @@ from megaqc.model import models
 from megaqc.rest_api import outlier
 from megaqc.rest_api.fields import FilterReference, JsonString
 from megaqc.user import models as user_models
+
+
+class Relationship(FlaskRelationship):
+    def _jsonschema_type_mapping(self):
+        return {}
 
 
 class OptionalLinkSchema(JsonApiSchema):
@@ -459,8 +464,8 @@ class ControlLimitSchema(BaseSchema):
 
     # If we should enable the limits at all
     enabled = f.Bool()
-    # Number of standard deviations on each side
-    sigma = f.Float()
+    # Significance level, below which we consider points to be outliers
+    alpha = f.Float()
 
 
 class TrendInputSchema(BaseSchema):
@@ -472,6 +477,13 @@ class TrendInputSchema(BaseSchema):
     filter = FilterReference()
     control_limits = f.Nested(ControlLimitSchema, required=True)
     center_line = f.String(
-        validate=validate.OneOf(["mean", "median", "none"]), required=True
+        validate=validate.OneOf(["mean", "median", "none"]),
+        required=True,
+        description="Type of center line",
+    )
+    statistic = f.String(
+        validate=validate.OneOf(["measurement", "hotelling"]),
+        default="none",
+        description="Which statistics are plotted. Measurement means unprocessed QC metrics, and Hotelling means a multivariate Hotelling or Mahalanobis distance.",
     )
     # outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)

@@ -4,7 +4,9 @@ Click commands.
 """
 from __future__ import print_function
 
+import json
 import os
+import sys
 from builtins import next, str
 from datetime import datetime
 from glob import glob
@@ -13,11 +15,13 @@ from subprocess import call, check_output
 import click
 from flask import current_app
 from flask.cli import with_appcontext
+from marshmallow_jsonschema import JSONSchema
 from sqlalchemy import create_engine
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 
 from megaqc.database import init_db
 from megaqc.extensions import db
+from megaqc.rest_api import schemas
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(HERE, os.pardir)
@@ -214,3 +218,14 @@ def upload(json_files, date):
                         MEGAQC_DATE_FORMAT
                     )
                 multiqc_megaqc.multiqc_api_post(multiqc_json_dump)
+
+
+@click.command()
+@click.argument("schema_name")
+def dump_schema(schema_name):
+    """
+    Dumps a schema to JSON schema, so it can be used in the frontend.
+    """
+    json_schema = JSONSchema()
+    schema = getattr(schemas, schema_name)()
+    json.dump(json_schema.dump(schema), sys.stdout, indent=4)

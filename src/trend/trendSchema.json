@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ControlLimitSchema": {
+      "properties": {
+        "alpha": {
+          "title": "Alpha",
+          "type": "number",
+          "format": "Float"
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "TrendInputSchema": {
+      "properties": {
+        "center_line": {
+          "title": "Center Line",
+          "type": "string",
+          "description": "Type of center line",
+          "enum": ["mean", "median", "none"],
+          "enumNames": []
+        },
+        "control_limits": {
+          "title": "Control Limits",
+          "type": "object",
+          "$ref": "#/definitions/ControlLimitSchema"
+        },
+        "fields": {
+          "type": "string",
+          "title": "Fields"
+        },
+        "filter": {
+          "type": "array",
+          "title": "Filter"
+        },
+        "statistic": {
+          "title": "Statistic",
+          "type": "string",
+          "default": "none",
+          "description": "Which statistics are plotted. Measurement means unprocessed QC metrics, and Hotelling means a multivariate Hotelling or Mahalanobis distance.",
+          "enum": ["measurement", "hotelling"],
+          "enumNames": ["Measurement", "Hotelling"]
+        }
+      },
+      "type": "object",
+      "required": ["center_line", "control_limits", "fields"],
+      "additionalProperties": false
+    }
+  },
+  "$ref": "#/definitions/TrendInputSchema"
+}

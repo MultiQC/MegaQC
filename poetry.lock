@@ -846,6 +846,21 @@ lint = ["flake8 (==3.8.3)", "flake8-bugbear (==20.1.4)", "pre-commit (>=2.0,<3.0
 tests = ["Flask (==1.1.2)", "faker (==4.1.1)", "mock", "pytest"]
 
 [[package]]
+name = "marshmallow-jsonschema"
+version = "0.13.0"
+description = "JSON Schema Draft v7 (http://json-schema.org/) formatting with marshmallow"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+marshmallow = ">=3.11"
+
+[package.extras]
+enum = ["marshmallow-enum"]
+union = ["marshmallow-union"]
+
+[[package]]
 name = "marshmallow-sqlalchemy"
 version = "0.25.0"
 description = "SQLAlchemy integration with the marshmallow (de)serialization library"
@@ -1630,7 +1645,7 @@ prod = ["psycopg2", "gunicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "bc0d8e9e9e0c532b18b8dfb8648a99c24321ccf9da12bdde5a83b9cf0c575d26"
+content-hash = "560396039f1f516037826eab8a366c73f8c607e2bd2b1300d87f02f0830bca48"
 
 [metadata.files]
 alembic = [
@@ -2088,6 +2103,7 @@ kiwisolver = [
     {file = "kiwisolver-1.4.4.tar.gz", hash = "sha256:d41997519fcba4a1e46eb4a2fe31bc12f0ff957b2b81bac28db24744f333e955"},
 ]
 livereload = [
+    {file = "livereload-2.6.3-py2.py3-none-any.whl", hash = "sha256:ad4ac6f53b2d62bb6ce1a5e6e96f1f00976a32348afedcb4b6d68df2a1d346e4"},
     {file = "livereload-2.6.3.tar.gz", hash = "sha256:776f2f865e59fde56490a56bcc6773b6917366bce0c267c60ee8aaf1a0959869"},
 ]
 lzstring = [
@@ -2179,6 +2195,10 @@ marshmallow = [
 marshmallow-jsonapi = [
     {file = "marshmallow-jsonapi-0.23.2.tar.gz", hash = "sha256:c5bbf57741c4af21b7d90b04b4e1ffc830032bc89f7f6b8b61fe9eef2efcff93"},
     {file = "marshmallow_jsonapi-0.23.2-py2.py3-none-any.whl", hash = "sha256:2bbb5b8413eca253dbe02f04a51aaa406c718661210d86594acfe7152e4e8199"},
+]
+marshmallow-jsonschema = [
+    {file = "marshmallow-jsonschema-0.13.0.tar.gz", hash = "sha256:f8ce19cfc0edd909e81f141d7420c33544b849bc5ebbfae8f6a3deea5a3b1f47"},
+    {file = "marshmallow_jsonschema-0.13.0-py3-none-any.whl", hash = "sha256:2814f2afb94a6e01b3c0a5795b3dfb142b628763655f20378400af5c0a2307fb"},
 ]
 marshmallow-sqlalchemy = [
     {file = "marshmallow-sqlalchemy-0.25.0.tar.gz", hash = "sha256:f1491f83833ac9c8406ba603458b1447fdfd904194833aab4b3cc01ef3646944"},
