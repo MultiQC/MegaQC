@@ -1,12 +1,17 @@
 import re
 from collections.abc import Sequence
-from typing import Any, Iterable, Iterator
+from datetime import datetime
+from typing import Any, Collection, Iterable, Iterator, Tuple
 
 import numpy
+import numpy.typing as npt
 from numpy import absolute, delete, take, zeros
 from plotly.colors import DEFAULT_PLOTLY_COLORS
-from scipy.stats import f, zscore
+from scipy.stats import f, norm, zscore
 from sklearn.covariance import EmpiricalCovariance
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import OneHotEncoder
+from sqlalchemy.orm.query import Query
 
 from megaqc.extensions import db
 from megaqc.model import models
@@ -21,6 +26,39 @@ def rgb_to_rgba(rgb, alpha):
     match = re.match(r"rgb\((\d+), (\d+), (\d+)\)", rgb)
     return "rgba({}, {}, {}, {})".format(
         match.group(1), match.group(2), match.group(3), alpha
+    )
+
+
+def encode_to_numeric(y: Iterable, chunk_size: int) -> Iterable[numpy.ndarray]:
+    encoder = OneHotEncoder()
+    args = [iter(y)] * chunk_size
+    for col in zip(*args):
+        # Return numeric columns if possible, otherwise categorical
+        try:
+            yield numpy.asarray(col, float)
+        except:
+            yield encoder.fit_transform(
+                numpy.asarray(col, dtype=numpy.object_).reshape(-1, 1)
+            ).toarray()
+
+
+def extract_query_data(
+    query: Query, ncol: int
+) -> Tuple[
+    npt.NDArray[numpy.string_],
+    npt.NDArray[numpy.string_],
+    npt.NDArray[numpy.datetime64],
+    npt.NDArray[numpy.float_],
+]:
+    data = query.all()
+    names, data_types, x, y = zip(*data)
+    y = numpy.column_stack(list(encode_to_numeric(y, len(y) // ncol)))
+    nrow = len(x) // ncol
+    return (
+        numpy.array(names, dtype=str),
+        numpy.array(data_types, dtype=str),
+        numpy.array(x, dtype=datetime)[0:nrow],
+        y,
     )
 
 
@@ -40,96 +78,92 @@ def univariate_trend_data(
         else:
             field_query = query.filter(models.SampleDataType.data_key == field)
 
-        data = field_query.all()
+        names, data_types, x, all_y = extract_query_data(field_query, 1)
+        for i, y in enumerate(all_y.T):
+            # We are only considering 1 field at a time
+            data_type = data_types[0]
 
-        # If the query returned nothing, skip this field
-        if len(data) == 0:
-            break
+            # Anything outside the control limits is an outlier
+            mean, stdev = norm.fit(y)
+            dist = norm(mean, stdev)
+            lower, upper = dist.interval(1 - control_limits["alpha"])
+            outliers = (y < lower) | (y > upper)
+            inliers = ~outliers
 
-        names, data_types, x, y = zip(*data)
-        data_type = data_types[0]
-        names = numpy.asarray(names, dtype=str)
-        x = numpy.asarray(x)
-        y = numpy.asarray(y, dtype=float)
-
-        # Anything outside the control limits is an outlier
-        outliers = absolute(zscore(y)) > control_limits["sigma"]
-        inliers = ~outliers
-
-        # Add the outliers
-        yield dict(
-            id=plot_prefix + "_outlier_" + field,
-            type="scatter",
-            text=names[outliers],
-            hoverinfo="text+x+y",
-            x=x[outliers],
-            y=y[outliers],
-            line=dict(color="rgb(250,0,0)"),
-            mode="markers",
-            name="{} Outliers".format(data_type),
-        )
-
-        # Add the non-outliers
-        yield dict(
-            id=plot_prefix + "_raw_" + field,
-            type="scatter",
-            text=names[inliers],
-            hoverinfo="text+x+y",
-            x=x[inliers],
-            y=y[inliers],
-            line=dict(color=colour),
-            mode="markers",
-            name="{} Samples".format(data_type),
-        )
-
-        # Add the mean
-        if center_line == "mean":
-            y2 = numpy.repeat(numpy.mean(y), len(x))
+            # Add the outliers
             yield dict(
-                id=plot_prefix + "_mean_" + field,
+                id=f"{plot_prefix}_outlier_{i}_{field}",
                 type="scatter",
-                x=x,
-                y=y2.tolist(),
+                text=names[outliers],
+                hoverinfo="text+x+y",
+                x=x[outliers],
+                y=y[outliers],
+                line=dict(color="rgb(250,0,0)"),
+                mode="markers",
+                name=f"{data_type} Category {i} Outliers",
+            )
+
+            # Add the non-outliers
+            yield dict(
+                id=f"{plot_prefix}_raw_{i}_{field}",
+                type="scatter",
+                text=names[inliers],
+                hoverinfo="text+x+y",
+                x=x[inliers],
+                y=y[inliers],
                 line=dict(color=colour),
-                mode="lines",
-                name="{} Mean".format(data_type),
-            )
-        elif center_line == "median":
-            y2 = numpy.repeat(numpy.median(y), len(x))
-            yield dict(
-                id=plot_prefix + "_median_" + field,
-                type="scatter",
-                x=x,
-                y=y2.tolist(),
-                line=dict(color=colour),
-                mode="lines",
-                name="{} Median".format(data_type),
-            )
-        else:
-            # The user could request control limits without a center line. Assume they
-            # want a mean in this case
-            y2 = numpy.repeat(numpy.mean(y), len(x))
-
-        # Add the stdev
-        if control_limits["enabled"]:
-            x3 = numpy.concatenate((x, numpy.flip(x, axis=0)))
-            stdev = numpy.repeat(numpy.std(y) * control_limits["sigma"], len(x))
-            upper = y2 + stdev
-            lower = y2 - stdev
-            y3 = numpy.concatenate((lower, upper))
-            yield dict(
-                id=plot_prefix + "_stdev_" + field,
-                type="scatter",
-                x=x3.tolist(),
-                y=y3.tolist(),
-                fill="tozerox",
-                fillcolor=rgb_to_rgba(colour, 0.5),
-                line=dict(color="rgba(255,255,255,0)"),
-                name="{} Control Limits".format(data_type),
+                mode="markers",
+                name=f"{data_type} Category {i} Samples",
             )
 
+            # Add the mean
+            if center_line == "mean":
+                y2 = numpy.repeat(numpy.mean(y), len(x))
+                yield dict(
+                    id=f"{plot_prefix}_mean_{i}_{field}",
+                    type="scatter",
+                    x=x,
+                    y=y2.tolist(),
+                    line=dict(color=colour),
+                    mode="lines",
+                    name=f"{data_type} Category {i} Mean",
+                )
+            elif center_line == "median":
+                y2 = numpy.repeat(numpy.median(y), len(x))
+                yield dict(
+                    id=f"{plot_prefix}_median_{i}_{field}",
+                    type="scatter",
+                    x=x,
+                    y=y2.tolist(),
+                    line=dict(color=colour),
+                    mode="lines",
+                    name=f"{data_type} Category {i} Median",
+                )
+            else:
+                # The user could request control limits without a center line. Assume they
+                # want a mean in this case
+                y2 = numpy.repeat(numpy.mean(y), len(x))
 
-def hotelling_trend_data(
+            # Add the stdev
+            if control_limits["enabled"]:
+                sorted_x = numpy.sort(x)
+                x3 = numpy.concatenate((sorted_x, numpy.flip(sorted_x, axis=0)))
+                y3 = numpy.concatenate(
+                    (numpy.repeat(lower, len(x)), numpy.repeat(upper, len(x)))
+                )
+                yield dict(
+                    id=f"{plot_prefix}_stdev_{i}_{field}",
+                    type="scatter",
+                    x=x3.tolist(),
+                    y=y3.tolist(),
+                    fill="tozerox",
+                    fillcolor=rgb_to_rgba(colour, 0.5),
+                    line=dict(color="rgba(255,255,255,0)"),
+                    name=f"{data_type} Category {i} Control Limits",
+                )
+
+
+def iforest_trend_data(
     query: Any,
     fields: Sequence[str],
     plot_prefix: str,
@@ -149,11 +183,11 @@ def hotelling_trend_data(
     x = numpy.asarray(x)
     y = numpy.asarray(y, dtype=float).reshape(-1, len(fields))
     n, p = y.shape
-    distance, critical = maha_distance(y)
+    distance, critical = maha_distance(y, alpha=control_limits["alpha"])
     line = numpy.repeat(critical, n)
 
     yield dict(
-        id="inliers",
+        id=plot_prefix + "_inliers",
         type="scatter",
         text=names,
         hoverinfo="text+x+y",
@@ -165,7 +199,7 @@ def hotelling_trend_data(
     )
 
     yield dict(
-        id="outliers",
+        id=plot_prefix + "outliers",
         type="scatter",
         text=names,
         hoverinfo="text+x+y",
@@ -177,7 +211,7 @@ def hotelling_trend_data(
     )
 
     yield dict(
-        id="plot_line",
+        id=plot_prefix + "plot_line",
         type="scatter",
         hoverinfo="text+x+y",
         x=x.tolist(),
@@ -191,7 +225,7 @@ def hotelling_trend_data(
 # Parameters correspond to fields in
 # `TrendInputSchema`
 def trend_data(
-    fields: Sequence[str], filter: Any, transform: str, **kwargs
+    fields: Sequence[str], filter: Any, statistic: str, **kwargs
 ) -> Iterator[dict]:
     """
     Returns data suitable for a plotly plot.
@@ -211,21 +245,23 @@ def trend_data(
             models.SampleData.value,
         )
         .order_by(
-            models.Report.created_at.asc(),
+            models.SampleDataType.sample_data_type_id
+            # models.Report.created_at.asc(),
         )
         .filter(Sample.sample_id.in_(subquery))
         .distinct()
     )
 
-    if transform == "none":
+    if statistic == "measurement":
         return univariate_trend_data(fields=fields, query=query, **kwargs)
-    elif transform == "hotelling":
-        return hotelling_trend_data(fields=fields, query=query, **kwargs)
+    elif statistic == "iforest":
+        return isolation_forest_trend(fields=fields, query=query, **kwargs)
+        # return hotelling_trend_data(fields=fields, query=query, **kwargs)
     else:
         raise ValueError("Invalid transform!")
 
 
-def maha_distance(y):
+def maha_distance(y, alpha=0.05):
     cov = EmpiricalCovariance()
     # Calculate the distance according to T-square distribution
     cov.fit(y)
@@ -233,7 +269,63 @@ def maha_distance(y):
 
     # Calculate the critical value according to the F distribution
     n, p = y.shape
-    cri = f.isf(0.05, dfn=p, dfd=n - p)
+    cri = f.isf(alpha, dfn=p, dfd=n - p)
     t = (p * (n - 1) / (n - p)) * cri
 
     return distance, t
+
+
+def isolation_forest_trend(
+    query: Any,
+    fields: Sequence[str],
+    plot_prefix: str,
+    control_limits: dict,
+    center_line: str,
+) -> Iterator[dict]:
+    # Fields can be specified either as type IDs, or as type names
+    if fields[0].isdigit():
+        query = query.filter(models.SampleDataType.sample_data_type_id.in_(fields))
+    else:
+        query = query.filter(models.SampleDataType.data_key.in_(fields))
+
+    names, data_types, x, y = extract_query_data(query, len(fields))
+
+    clf = IsolationForest(n_estimators=100, contamination=control_limits["alpha"])
+    outliers = clf.fit_predict(y) < 0
+    scores = clf.decision_function(y)
+    # line = numpy.repeat(0, n)
+
+    yield dict(
+        id=plot_prefix + "_inliers",
+        type="scatter",
+        text=names,
+        hoverinfo="text+x+y",
+        x=x[~outliers],
+        y=scores[~outliers],
+        line=dict(color="rgb(0,0,250)"),
+        mode="markers",
+        name="Inliers",
+    )
+
+    yield dict(
+        id=plot_prefix + "outliers",
+        type="scatter",
+        text=names,
+        hoverinfo="text+x+y",
+        x=x[outliers],
+        y=scores[outliers],
+        line=dict(color="rgb(250,0,0)"),
+        mode="markers",
+        name="Outliers",
+    )
+
+    # yield dict(
+    #     id=plot_prefix +"plot_line",
+    #     type="scatter",
+    #     hoverinfo="text+x+y",
+    #     x=x.tolist(),
+    #     y=line,
+    #     line=dict(color="rgb(250,0,0)"),
+    #     mode="lines",
+    #     name="Criticial line",
+    # )

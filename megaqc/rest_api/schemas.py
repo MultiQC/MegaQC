@@ -482,8 +482,7 @@ class TrendInputSchema(BaseSchema):
         description="Type of center line",
     )
     statistic = f.String(
-        validate=validate.OneOf(["measurement", "hotelling"]),
+        validate=validate.OneOf(["measurement", "iforest"]),
         default="none",
-        description="Which statistics are plotted. Measurement means unprocessed QC metrics, and Hotelling means a multivariate Hotelling or Mahalanobis distance.",
+        description="Which statistics are plotted. Measurement means unprocessed QC metrics, and Isolation Forest means an anomaly score generated using random forest.",
     )
-    # outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)

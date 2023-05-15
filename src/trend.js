@@ -61,8 +61,9 @@ function Trend(props) {
         fields: JSON.stringify(plotSettings.fields),
         control_limits: {
           enabled: plotSettings.controlLimits,
-          sigma: plotSettings.stdDevs,
+          alpha: plotSettings.alpha,
         },
+        statistic: plotSettings.statistic,
         center_line: plotSettings.centerLine,
       })
       .then((data) => {

@@ -182,4 +182,3 @@ def register_commands(app):
     app.cli.add_command(commands.urls)
     app.cli.add_command(commands.initdb)
     app.cli.add_command(commands.upload)
-    app.cli.add_command(commands.dump_schema)
