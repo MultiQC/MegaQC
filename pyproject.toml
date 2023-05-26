@@ -75,13 +75,10 @@ MarkupSafe = "<2.1.0"
 scikit-learn = "^1.2.0"
 marshmallow-jsonschema = "^0.13.0"
 marshmallow-polyfield = "^5.11"
-
-# Testing
 pytest = { version = "^7.2", optional = true }
 WebTest = { version = "^2.0", optional = true }
 factory-boy = { version = ">2.12,<4.0", optional = true }
 livereload = { version = "^2.5", optional = true }
-
 pre-commit = { version = "*", optional = true }
 wheel = { version = "^0.30", optional = true }
 psycopg2 = { version = "^2.6", optional = true }
@@ -93,13 +90,6 @@ dev = [
         "WebTest",
         "factory-boy",
         "livereload",
-        # Lint and code style
-        "flake8",
-        "flake8-blind-except",
-        "flake8-debugger",
-        "flake8-docstrings",
-        "isort[pyproject]",
-        "pep8-naming",
         "pre-commit",
 ]
 deploy = ["wheel"]
