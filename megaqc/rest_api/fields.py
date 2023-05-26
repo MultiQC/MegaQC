@@ -10,8 +10,8 @@ from megaqc.model import models
 
 class JsonString(ma.Field):
     """
-    Serializes a JSON structure as JSON, but deserializes it as a string (for
-    DB storage), or vice-versa.
+    Serializes a JSON structure as JSON, but deserializes it as a string (for DB
+    storage), or vice-versa.
     """
 
     def _jsonschema_type_mapping(self):

@@ -71,8 +71,8 @@ def object_as_dict(obj, relationships=False):
 
 def resource_from_endpoint(app, endpoint):
     """
-    Given a string endpoint, e.g. "rest_api.upload", returns the Resource
-    object for that URL.
+    Given a string endpoint, e.g. "rest_api.upload", returns the Resource object for
+    that URL.
     """
     return app.view_functions[endpoint].view_class
 
@@ -91,16 +91,15 @@ def find_factory(model):
 
 def relationship_fields(model):
     """
-    Returns a list of keys that each correspond to a relationship on this
-    model.
+    Returns a list of keys that each correspond to a relationship on this model.
     """
     return [rel.key for rel in inspect(model).relationships.values()]
 
 
 def instance_pk(instance):
     """
-    Returns a tuple of (column_name, column_value) for the first primary key on
-    this instance.
+    Returns a tuple of (column_name, column_value) for the first primary key on this
+    instance.
     """
     column_name = inspect(instance.__class__).primary_key[0].name
     return column_name, getattr(instance, column_name)
@@ -108,8 +107,8 @@ def instance_pk(instance):
 
 def find_matching_resource(data, instance, model):
     """
-    Given an array of dictionaries, checks if at least one of the dictionaries
-    matches the provided instance.
+    Given an array of dictionaries, checks if at least one of the dictionaries matches
+    the provided instance.
 
     :param data: A list of dictionaries
     :param instance: An SQLAlchemy model instance
@@ -123,8 +122,8 @@ def find_matching_resource(data, instance, model):
 
 def is_matching_resource(result, instance, model):
     """
-    Given a single dictionary, checks if it matches the provided SQLAlchemy
-    model instance.
+    Given a single dictionary, checks if it matches the provided SQLAlchemy model
+    instance.
 
     :param result: Instance dictionary
     :param instance: An SQLAlchemy model instance
@@ -157,9 +156,8 @@ def clone_model(instance):
 
 def factory_clone(instance, factory):
     """
-    Generate a new object using the factory, except that relationships are
-    copied from the provided instance, ensuring that no new objects are
-    created.
+    Generate a new object using the factory, except that relationships are copied from
+    the provided instance, ensuring that no new objects are created.
     """
     rels = {
         key: getattr(instance, key) for key in relationship_fields(instance.__class__)
