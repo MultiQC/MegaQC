@@ -250,7 +250,6 @@ def handle_report_data(user, report_data):
 
             # Save bar graph data
             if report_data["report_plot_data"][plot]["plot_type"] == "bar_graph":
-
                 for sub_dict in dataset:
                     data_key = str(sub_dict["name"])
                     existing_category = (
@@ -941,7 +940,6 @@ def update_fav_sample_field(method, user, sample_field_id):
 
 
 def update_fav_report_plot_type(method, user, plot_info):
-
     existing_plot_config_q = db.session.query(PlotConfig).filter(
         PlotConfig.config_name == plot_info[0]
     )

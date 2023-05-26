@@ -80,18 +80,17 @@ def round_date(date, direction):
 
 def build_filter_query(filters):
     """
-    Returns an SQLAlchemy query with the provided filters applied. This filter
-    will only select Sample IDs that meet the filter, so you should only use
-    this as a subquery.
+    Returns an SQLAlchemy query with the provided filters applied. This filter will only
+    select Sample IDs that meet the filter, so you should only use this as a subquery.
 
-    :param filters: Array of filters in the MegaQC filter format (each filter is a dictionary)
+    :param filters: Array of filters in the MegaQC filter format (each
+        filter is a dictionary)
     :type filters: list
     :rtype: Query
     """
     # The outermost group are joined by boolean OR
     or_filters = []
     for filter_group in filters:
-
         # The innermost group are joined by boolean AND
         and_filters = []
         for filter in filter_group:

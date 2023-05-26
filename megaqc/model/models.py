@@ -31,7 +31,7 @@ user_sampletype_map = db.Table(
 
 class Report(db.Model, CRUDMixin):
     """
-    a MultiQC report.
+    A MultiQC report.
     """
 
     __tablename__ = "report"

@@ -16,6 +16,7 @@ repos:
     hooks:
       - id: docformatter
         args:
+          - "--black"
           - "--make-summary-multi-line"
           - "--pre-summary-newline"
           - "--in-place"

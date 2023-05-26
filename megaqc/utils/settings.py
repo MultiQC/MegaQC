@@ -50,6 +50,7 @@ with io.open(searchp_fn) as f:
     for c, v in list(configs.items()):
         globals()[c] = v
 
+
 ##### Functions to load user config files. These are called by the main MegaQC script.
 # Note that config files are loaded in a specific order and values can overwrite each other.
 def mqc_load_userconfig(paths=()):

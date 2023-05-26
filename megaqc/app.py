@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-""" MegaQC: A web-based tool to collect and visualise data from multiple MultiQC reports.
-This file contains the app module, with the app factory function."""
+"""
+MegaQC: A web-based tool to collect and visualise data from multiple MultiQC reports.
+
+This file contains the app module, with the app factory function.
+"""
 
 from __future__ import print_function
 

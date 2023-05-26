@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-""" MegaQC: a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.
+"""
+MegaQC: a web application that collects results from multiple runs of MultiQC and allows
+bulk visualisation.
 """
 
 import os

@@ -1,5 +1,5 @@
 """
-empty message.
+Empty message.
 
 Revision ID: eb9fdf01bbae
 Revises:

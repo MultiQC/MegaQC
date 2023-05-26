@@ -8,7 +8,7 @@ import requests
 
 def raise_response(resp):
     """
-    :param resp: Requests response object
+    :param resp: Requests response object.
     """
     if not str(resp.status_code).startswith("2"):
         raise Exception(

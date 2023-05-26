@@ -1,8 +1,8 @@
 """
 These schemas describe the format of the web requests to and from the API.
 
-They incidentally share most fields with the database models, but they
-can be opinionated about REST-specific fields
+They incidentally share most fields with the database models, but they can be
+opinionated about REST-specific fields
 """
 from marshmallow import INCLUDE
 from marshmallow import Schema as BaseSchema
@@ -177,8 +177,8 @@ class SampleFilterSchema(OptionalLinkSchema):
 
 class FilterGroupSchema(OptionalLinkSchema):
     """
-    Fake schema (no underlying model) for filter groups, which dump from a
-    filter object.
+    Fake schema (no underlying model) for filter groups, which dump from a filter
+    object.
     """
 
     class Meta:
@@ -420,12 +420,9 @@ class TrendSchema(PlotSchema):
 
 class FilterObjectSchema(BaseSchema):
     """
-    A single filter object, e.g.
-    {
-    'type': 'daterange',
-    'value': [],
-    'cmp': 'in'
-    }
+    A single filter object, e.g. { 'type': 'daterange', 'value': [], 'cmp':
+
+    'in' }
     """
 
     type = f.String(

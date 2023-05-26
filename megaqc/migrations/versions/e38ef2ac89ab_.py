@@ -1,9 +1,9 @@
 """
-empty message.
+Empty message.
 
-Revision ID: e38ef2ac89ab
-Revises: eb9fdf01bbae
-Create Date: 2020-08-05 12:00:54.737816
+Revision ID
+: e38ef2ac89ab Revises: eb9fdf01bbae Create Date
+: 2020-08-05 12: 00:54.737816
 """
 import sqlalchemy as sa
 from alembic import op
