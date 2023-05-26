@@ -63,12 +63,12 @@ def extract_query_data(
 
 
 def univariate_trend_data(
-    query: Any,
-    fields: Sequence[str],
-    plot_prefix: str,
-    control_limits: dict,
-    center_line: str,
+    query: Any, fields: Sequence[str], plot_prefix: str, statistic_options: dict
 ) -> Iterator[dict]:
+    """
+    Returns the plot series for the "raw measurement" statistic.
+    """
+    center_line = statistic_options["center_line"]
     for field, colour in zip(fields, DEFAULT_PLOTLY_COLORS):
         # Fields can be specified either as type IDs, or as type names
         if field.isdigit():
@@ -83,34 +83,13 @@ def univariate_trend_data(
             # We are only considering 1 field at a time
             data_type = data_types[0]
 
-            # Anything outside the control limits is an outlier
-            mean, stdev = norm.fit(y)
-            dist = norm(mean, stdev)
-            lower, upper = dist.interval(1 - control_limits["alpha"])
-            outliers = (y < lower) | (y > upper)
-            inliers = ~outliers
-
-            # Add the outliers
-            yield dict(
-                id=f"{plot_prefix}_outlier_{i}_{field}",
-                type="scatter",
-                text=names[outliers],
-                hoverinfo="text+x+y",
-                x=x[outliers],
-                y=y[outliers],
-                line=dict(color="rgb(250,0,0)"),
-                mode="markers",
-                name=f"{data_type} Category {i} Outliers",
-            )
-
-            # Add the non-outliers
             yield dict(
                 id=f"{plot_prefix}_raw_{i}_{field}",
                 type="scatter",
-                text=names[inliers],
+                text=names,
                 hoverinfo="text+x+y",
-                x=x[inliers],
-                y=y[inliers],
+                x=x,
+                y=y,
                 line=dict(color=colour),
                 mode="markers",
                 name=f"{data_type} Category {i} Samples",
@@ -143,83 +122,6 @@ def univariate_trend_data(
                 # The user could request control limits without a center line. Assume they
                 # want a mean in this case
                 y2 = numpy.repeat(numpy.mean(y), len(x))
-
-            # Add the stdev
-            if control_limits["enabled"]:
-                sorted_x = numpy.sort(x)
-                x3 = numpy.concatenate((sorted_x, numpy.flip(sorted_x, axis=0)))
-                y3 = numpy.concatenate(
-                    (numpy.repeat(lower, len(x)), numpy.repeat(upper, len(x)))
-                )
-                yield dict(
-                    id=f"{plot_prefix}_stdev_{i}_{field}",
-                    type="scatter",
-                    x=x3.tolist(),
-                    y=y3.tolist(),
-                    fill="tozerox",
-                    fillcolor=rgb_to_rgba(colour, 0.5),
-                    line=dict(color="rgba(255,255,255,0)"),
-                    name=f"{data_type} Category {i} Control Limits",
-                )
-
-
-def iforest_trend_data(
-    query: Any,
-    fields: Sequence[str],
-    plot_prefix: str,
-    control_limits: dict,
-    center_line: str,
-) -> Iterator[dict]:
-    # Fields can be specified either as type IDs, or as type names
-    if fields[0].isdigit():
-        query = query.filter(models.SampleDataType.sample_data_type_id.in_(fields))
-    else:
-        query = query.filter(models.SampleDataType.data_key.in_(fields))
-
-    data = query.all()
-
-    names, data_types, x, y = zip(*data)
-    names = numpy.asarray(names, dtype=str)
-    x = numpy.asarray(x)
-    y = numpy.asarray(y, dtype=float).reshape(-1, len(fields))
-    n, p = y.shape
-    distance, critical = maha_distance(y, alpha=control_limits["alpha"])
-    line = numpy.repeat(critical, n)
-
-    yield dict(
-        id=plot_prefix + "_inliers",
-        type="scatter",
-        text=names,
-        hoverinfo="text+x+y",
-        x=x[distance < line],
-        y=distance[distance < line],
-        line=dict(color="rgb(0,0,250)"),
-        mode="markers",
-        name="Inliers",
-    )
-
-    yield dict(
-        id=plot_prefix + "outliers",
-        type="scatter",
-        text=names,
-        hoverinfo="text+x+y",
-        x=x[distance > line],
-        y=distance[distance > line],
-        line=dict(color="rgb(250,0,0)"),
-        mode="markers",
-        name="Outliers",
-    )
-
-    yield dict(
-        id=plot_prefix + "plot_line",
-        type="scatter",
-        hoverinfo="text+x+y",
-        x=x.tolist(),
-        y=line,
-        line=dict(color="rgb(250,0,0)"),
-        mode="lines",
-        name="Criticial line",
-    )
 
 
 # Parameters correspond to fields in
@@ -276,12 +178,11 @@ def maha_distance(y, alpha=0.05):
 
 
 def isolation_forest_trend(
-    query: Any,
-    fields: Sequence[str],
-    plot_prefix: str,
-    control_limits: dict,
-    center_line: str,
+    query: Any, fields: Sequence[str], plot_prefix: str, statistic_options: dict
 ) -> Iterator[dict]:
+    """
+    Yields plotly series for the "Isolation Forest" statistic.
+    """
     # Fields can be specified either as type IDs, or as type names
     if fields[0].isdigit():
         query = query.filter(models.SampleDataType.sample_data_type_id.in_(fields))
@@ -290,9 +191,11 @@ def isolation_forest_trend(
 
     names, data_types, x, y = extract_query_data(query, len(fields))
 
-    clf = IsolationForest(n_estimators=100, contamination=control_limits["alpha"])
+    clf = IsolationForest(
+        n_estimators=100, contamination=statistic_options["contamination"]
+    )
     outliers = clf.fit_predict(y) < 0
-    scores = clf.decision_function(y)
+    scores = -clf.decision_function(y)
     # line = numpy.repeat(0, n)
 
     yield dict(

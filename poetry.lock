@@ -861,6 +861,17 @@ enum = ["marshmallow-enum"]
 union = ["marshmallow-union"]
 
 [[package]]
+name = "marshmallow-polyfield"
+version = "5.11"
+description = "An unofficial extension to Marshmallow to allow for polymorphic fields"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+marshmallow = ">=3.0.0b10"
+
+[[package]]
 name = "marshmallow-sqlalchemy"
 version = "0.25.0"
 description = "SQLAlchemy integration with the marshmallow (de)serialization library"
@@ -1645,7 +1656,7 @@ prod = ["psycopg2", "gunicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "560396039f1f516037826eab8a366c73f8c607e2bd2b1300d87f02f0830bca48"
+content-hash = "132a387dd2cfd31c588c9249c311ced3ec4f9634047c85160cd2d5a16e4a8aaf"
 
 [metadata.files]
 alembic = [
@@ -2199,6 +2210,9 @@ marshmallow-jsonapi = [
 marshmallow-jsonschema = [
     {file = "marshmallow-jsonschema-0.13.0.tar.gz", hash = "sha256:f8ce19cfc0edd909e81f141d7420c33544b849bc5ebbfae8f6a3deea5a3b1f47"},
     {file = "marshmallow_jsonschema-0.13.0-py3-none-any.whl", hash = "sha256:2814f2afb94a6e01b3c0a5795b3dfb142b628763655f20378400af5c0a2307fb"},
+]
+marshmallow-polyfield = [
+    {file = "marshmallow-polyfield-5.11.tar.gz", hash = "sha256:8075a9cc490da4af58b902b4a40a99882dd031adb7aaa96abd147a4fcd53415f"},
 ]
 marshmallow-sqlalchemy = [
     {file = "marshmallow-sqlalchemy-0.25.0.tar.gz", hash = "sha256:f1491f83833ac9c8406ba603458b1447fdfd904194833aab4b3cc01ef3646944"},

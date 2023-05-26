@@ -11,6 +11,7 @@ from marshmallow_jsonapi import fields as f
 from marshmallow_jsonapi.flask import Relationship as FlaskRelationship
 from marshmallow_jsonapi.flask import Schema as JsonApiSchema
 from marshmallow_jsonapi.utils import resolve_params
+from marshmallow_polyfield import PolyField
 from marshmallow_sqlalchemy.fields import Related
 from marshmallow_sqlalchemy.schema import ModelSchema, ModelSchemaMeta, ModelSchemaOpts
 
@@ -439,24 +440,6 @@ class FilterObjectSchema(BaseSchema):
     )
 
 
-class OutlierSchema(BaseSchema):
-    """
-    Schema for defining how we mark outliers for a dataset.
-    """
-
-    type = f.String(validate=validate.OneOf(["grubbs", "z", "none"]))
-    threshold = f.Float()
-
-    @post_load()
-    def get_detector(self, data, **kwargs):
-        if data["type"] == "grubbs":
-            return outlier.GrubbsDetector(data["threshold"])
-        elif data["type"] == "z":
-            return outlier.ZScoreDetector(data["threshold"])
-        else:
-            return outlier.OutlierDetector()
-
-
 class ControlLimitSchema(BaseSchema):
     """
     Defines "control limits" for a control chart.
@@ -468,6 +451,32 @@ class ControlLimitSchema(BaseSchema):
     alpha = f.Float()
 
 
+class IsolationForestSchema(BaseSchema):
+    """
+    Schema for the isolation forest statistic option.
+    """
+
+    contamination = f.Float()
+
+
+class RawMeasurementSchema(BaseSchema):
+    """
+    For when the user has chosen the raw measurement option.
+    """
+
+    center_line = f.String(
+        validate=validate.OneOf(["mean", "median", "none"]),
+        required=True,
+        description="Type of center line",
+    )
+
+
+statistic_options = {
+    "iforest": IsolationForestSchema,
+    "measurement": RawMeasurementSchema,
+}
+
+
 class TrendInputSchema(BaseSchema):
     """
     Schema for the request for trend data (not the response)
@@ -475,14 +484,17 @@ class TrendInputSchema(BaseSchema):
 
     fields = JsonString(invert=True, required=True)
     filter = FilterReference()
-    control_limits = f.Nested(ControlLimitSchema, required=True)
-    center_line = f.String(
-        validate=validate.OneOf(["mean", "median", "none"]),
-        required=True,
-        description="Type of center line",
-    )
     statistic = f.String(
         validate=validate.OneOf(["measurement", "iforest"]),
         default="none",
         description="Which statistics are plotted. Measurement means unprocessed QC metrics, and Isolation Forest means an anomaly score generated using random forest.",
+    )
+    statistic_options = PolyField(
+        # Dynamically choose our schema based on the statistic
+        serialization_schema_selector=lambda base, parent: statistic_options.get(
+            parent["statistic"]
+        ),
+        deserialization_schema_selector=lambda base, parent: statistic_options.get(
+            parent["statistic"]
+        ),
     )

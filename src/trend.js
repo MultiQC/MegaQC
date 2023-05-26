@@ -53,18 +53,21 @@ function Trend(props) {
 
   // Whenever the form data changes, redraw the plot
   useEffect(() => {
+    if (Object.keys(plotSettings).length === 0) {
+      return;
+    }
+
     client.current
       .find("plots/trends/series", {
         // filter, unlike the Formik fields is special because it is
         // a reuseable component that isn't a field
         filter: selectedFilter,
         fields: JSON.stringify(plotSettings.fields),
-        control_limits: {
-          enabled: plotSettings.controlLimits,
-          alpha: plotSettings.alpha,
+        statistic_options: {
+          center_line: plotSettings.statisticOptions.centerLine,
+          contamination: plotSettings.statisticOptions.contamination,
         },
         statistic: plotSettings.statistic,
-        center_line: plotSettings.centerLine,
       })
       .then((data) => {
         const newData = data.map((datum) => datum.toJSON());
