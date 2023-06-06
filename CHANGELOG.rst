@@ -4,11 +4,17 @@ Changelog
 Development
 ----------
 
-`[#479]`_:
-   * Allow unprivileged users to create new filters and delete their own filters via the REST API. This also resolves issues where these users couldn't create their own filters on certain pages.
-   * Give all users access to the admin interface. Unprivileged users won't be able to edit or delete most entities, however
-   * Added a "Filters" resource to the admin interface, allowing users to view, edit and delete filters there. This resolves `[#476]`_.
-   * Consistently added show, edit and delete buttons to all pages of the admin interface
+Added
+~~~~~
+
+* `[#479]`_: A "Filters" resource to the admin interface, allowing users to view, edit and delete filters there. This resolves `[#476]`_.
+
+Changed
+~~~~~~~
+
+* `[#479]`_: Allow unprivileged users to create new filters and delete their own filters via the REST API. This also resolves issues where these users couldn't create their own filters on certain pages.
+* `[#479]`_: Give all users access to the admin interface. Unprivileged users won't be able to edit or delete most entities, however
+* `[#479]`_: Consistently added show, edit and delete buttons to all pages of the admin interface
 
 0.3.0
 -----
