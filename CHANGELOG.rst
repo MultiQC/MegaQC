@@ -17,6 +17,7 @@ Changed
 ~~~~~~~
 
 - `[#479]`_: Allow unprivileged users to create new filters and delete their own filters via the REST API. This also resolves issues where these users couldn't create their own filters on certain pages.
+- `[#479]`_: The "Edit Filters" page now redirects to the Filters tab of the Data Admin page. This relates to `[#476]`_.
 - `[#440]`_ Set up poetry to manage the dependencies, which might keep the dependencies from breaking down, and reduce the chances of the happening of issues such as `[#430]`_
 
 Fixed
