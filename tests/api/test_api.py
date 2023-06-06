@@ -1,6 +1,5 @@
 """
-Generic tests for normal resources that follow a schema for GET, POST, DELETE
-etc.
+Generic tests for normal resources that follow a schema for GET, POST, DELETE etc.
 """
 import pytest
 from flask import url_for

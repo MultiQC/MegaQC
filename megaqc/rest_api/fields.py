@@ -10,9 +10,14 @@ from megaqc.model import models
 
 class JsonString(ma.Field):
     """
-    Serializes a JSON structure as JSON, but deserializes it as a string (for
-    DB storage), or vice-versa.
+    Serializes a JSON structure as JSON, but deserializes it as a string (for DB
+    storage), or vice-versa.
     """
+
+    def _jsonschema_type_mapping(self):
+        return {
+            "type": "string",
+        }
 
     def __init__(self, *args, invert=False, **kwargs):
         self.invert = invert
@@ -54,6 +59,11 @@ class FilterReference(ModelAssociation):
     """
     Dumps as a SampleFilter foreign key, e.g. "3", and loads as a filter array.
     """
+
+    def _jsonschema_type_mapping(self):
+        return {
+            "type": "array",
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(models.SampleFilter, *args, **kwargs)

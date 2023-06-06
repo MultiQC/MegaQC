@@ -1,19 +1,15 @@
 Changelog
 =========
 
-.. _section-2:
-
-0.3.1
------
-
-.. _development-1:
 
 Development
-~~~~~~~~~~~~~~~~
+-----------
 
--  `[#440]`_ Set up poetry to manage the dependencies, which might keep 
-   the dependencies from breaking down, and reduce the chances of the 
-   happening of issues such as `[#430]`_
+- `[#433]`_ Rewrite of trend chart outlier detection
+   * Added a "statistic" selector that allows the selection of "measurement" or "isolation forest"
+   * Remove outlier detection from normal measurement plot, because the normal assumption is not reasonable
+   * The isolation forest statistic plots the multivariate outlier score in a non-parametric way, with an adjustable threshold
+- `[#440]`_ Set up poetry to manage the dependencies, which might keep the dependencies from breaking down, and reduce the chances of the happening of issues such as `[#430]`_
 - `[#443]`_
    * Dropped support for Python 3.6, added support and testing for Python <= 3.11
    * Added docker-compose logging in the CI
@@ -25,6 +21,7 @@ Development
 
 .. _[#430]: https://github.com/ewels/MegaQC/issues/430
 .. _[#440]: https://github.com/ewels/MegaQC/pull/440
+.. _[#433]: https://github.com/ewels/MegaQC/pull/433
 
 =======
 

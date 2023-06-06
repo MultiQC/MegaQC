@@ -41,7 +41,6 @@ class SubFactoryList(SubFactory):
         size: Union[int, Callable[[], int]] = 2,
         **kwargs: Optional[Any],
     ) -> None:
-
         if callable(size):
             size = size()
 

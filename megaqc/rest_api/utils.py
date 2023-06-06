@@ -34,10 +34,11 @@ class Permission(IntEnum):
 
 def api_perms(min_level: Permission = Permission.NONUSER):
     """
-    Adds a "user" and "permission" kwarg to the view function. Also verifies a
-    minimum permissions level.
+    Adds a "user" and "permission" kwarg to the view function. Also verifies a minimum
+    permissions level.
 
-    :param min_level: If provided, this is the minimum permission level required by this endpoint
+    :param min_level: If provided, this is the minimum permission level
+        required by this endpoint
     """
 
     def wrapper(function):

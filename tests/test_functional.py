@@ -2,7 +2,8 @@
 """
 Functional tests using WebTest.
 
-See: http://webtest.readthedocs.org/
+See
+: http: //webtest.readthedocs.org/
 """
 import pytest
 from flask import url_for

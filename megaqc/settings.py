@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import logging
 import os
+import sys
 import tempfile
 from builtins import object
 
@@ -124,9 +125,12 @@ class ProdConfig(Config):
         super(ProdConfig, self).__init__()
         self.update_db_uri()
         # Log to the terminal
-        print(" * Environment: Prod")
-        print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
-        print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
+        print(" * Environment: Prod", file=sys.stderr)
+        print(" * Database type: {}".format(self.SQLALCHEMY_DBMS), file=sys.stderr)
+        print(
+            " * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN),
+            file=sys.stderr,
+        )
 
 
 class DevConfig(Config):
@@ -136,6 +140,7 @@ class DevConfig(Config):
 
     ENV = "dev"
     DEBUG = True
+    SQLALCHEMY_ECHO = True
     SQLALCHEMY_DBMS = "sqlite"
     DB_NAME = "megaqc.db"
     # Put the db file in project root
@@ -150,9 +155,12 @@ class DevConfig(Config):
         super(DevConfig, self).__init__()
         self.update_db_uri()
         # Log to the terminal
-        print(" * Environment: dev")
-        print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
-        print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
+        print(" * Environment: dev", file=sys.stderr)
+        print(" * Database type: {}".format(self.SQLALCHEMY_DBMS), file=sys.stderr)
+        print(
+            " * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN),
+            file=sys.stderr,
+        )
 
 
 class TestConfig(Config):
@@ -173,6 +181,9 @@ class TestConfig(Config):
         super(TestConfig, self).__init__()
         self.update_db_uri()
         # Log to the terminal
-        print(" * Environment: test")
-        print(" * Database type: {}".format(self.SQLALCHEMY_DBMS))
-        print(" * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN))
+        print(" * Environment: test", file=sys.stderr)
+        print(" * Database type: {}".format(self.SQLALCHEMY_DBMS), file=sys.stderr)
+        print(
+            " * Database path: {}".format(self.SQLALCHEMY_DATABASE_URI_SAN),
+            file=sys.stderr,
+        )

@@ -41,8 +41,7 @@ def test_single_resource_permissions(
     endpoint, method, success, token, admin_token, session, client, app
 ):
     """
-    Test that each endpoint can only be accessed by the appropriate permission
-    level.
+    Test that each endpoint can only be accessed by the appropriate permission level.
     """
     resource = resource_from_endpoint(app, endpoint)
     model = resource.data_layer["model"]
@@ -90,8 +89,7 @@ def test_many_resources_permissions(
     endpoint, method, success, session, client, admin_token, token
 ):
     """
-    Test that each endpoint can only be accessed by the appropriate permission
-    level.
+    Test that each endpoint can only be accessed by the appropriate permission level.
     """
     # Do the request
     url = url_for(endpoint)
@@ -117,8 +115,8 @@ def test_many_resources_permissions(
 @pytest.mark.parametrize("strict", [True, False])
 def test_active_inactive(session, strict, app, client):
     """
-    The first user to register should be an activated admin, and subsequent
-    users should be inactive and regular users.
+    The first user to register should be an activated admin, and subsequent users should
+    be inactive and regular users.
     """
     app.config["USER_REGISTRATION_APPROVAL"] = strict
 
