@@ -239,11 +239,11 @@
 </div>
 <div class="section" id="module-megaqc.app">
 <span id="megaqc-app-module"></span><h2>megaqc.app module<a class="headerlink" href="#module-megaqc.app" title="Permalink to this headline">¶</a></h2>
-<p>MegaQC: A web-based tool to collect and visualise data from multiple MultiQC reports.
-This file contains the app module, with the app factory function.</p>
+<p>MegaQC: A web-based tool to collect and visualise data from multiple MultiQC reports.</p>
+<p>This file contains the app module, with the app factory function.</p>
 <dl class="py function">
 <dt id="megaqc.app.create_app">
-<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">create_app</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_object</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L35-L56"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.create_app" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">create_app</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_object</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L38-L59"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.create_app" title="Permalink to this definition">¶</a></dt>
 <dd><p>An application factory, as explained here:
 <a class="reference external" href="http://flask.pocoo.org/docs/patterns/appfactories/">http://flask.pocoo.org/docs/patterns/appfactories/</a>.</p>
 <dl class="field-list simple">
@@ -255,46 +255,47 @@ This file contains the app module, with the app factory function.</p>
 
 <dl class="py function">
 <dt id="megaqc.app.register_blueprints">
-<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_blueprints</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L86-L97"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_blueprints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_blueprints</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L89-L100"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_blueprints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register Flask blueprints.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="megaqc.app.register_commands">
-<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_commands</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L175-L184"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_commands" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_commands</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L178-L187"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register Click commands.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="megaqc.app.register_errorhandlers">
-<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_errorhandlers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L100-L158"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_errorhandlers" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_errorhandlers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L103-L161"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_errorhandlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register error handlers.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="megaqc.app.register_extensions">
-<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_extensions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L59-L83"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_extensions" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_extensions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L62-L86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_extensions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register Flask extensions.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="megaqc.app.register_shellcontext">
-<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_shellcontext</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L161-L172"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_shellcontext" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.app.</code><code class="sig-name descname">register_shellcontext</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/app.py#L164-L175"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.app.register_shellcontext" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register shell context objects.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-megaqc.cli">
 <span id="megaqc-cli-module"></span><h2>megaqc.cli module<a class="headerlink" href="#module-megaqc.cli" title="Permalink to this headline">¶</a></h2>
-<p>MegaQC: a web application that collects results from multiple runs of MultiQC and allows bulk visualisation.</p>
+<p>MegaQC: a web application that collects results from multiple runs of MultiQC and allows
+bulk visualisation.</p>
 <dl class="py function">
 <dt id="megaqc.cli.create_megaqc_app">
-<code class="sig-prename descclassname">megaqc.cli.</code><code class="sig-name descname">create_megaqc_app</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/cli.py#L20-L46"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.cli.create_megaqc_app" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.cli.</code><code class="sig-name descname">create_megaqc_app</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/cli.py#L22-L48"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.cli.create_megaqc_app" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="megaqc.cli.main">
-<code class="sig-prename descclassname">megaqc.cli.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/cli.py#L63-L72"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.cli.main" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.cli.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/cli.py#L65-L74"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.cli.main" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -313,29 +314,28 @@ This file contains the app module, with the app factory function.</p>
 </div>
 <div class="section" id="module-megaqc.database">
 <span id="megaqc-database-module"></span><h2>megaqc.database module<a class="headerlink" href="#module-megaqc.database" title="Permalink to this headline">¶</a></h2>
-<p>Database module, including the SQLAlchemy database object and DB-related
-utilities.</p>
+<p>Database module, including the SQLAlchemy database object and DB-related utilities.</p>
 <dl class="py class">
 <dt id="megaqc.database.CRUDMixin">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">CRUDMixin</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L21-L78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">CRUDMixin</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L20-L77"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Mixin that adds convenience methods for CRUD (create, read, update, delete)
 operations.</p>
 <dl class="py method">
 <dt id="megaqc.database.CRUDMixin.create">
-<em class="property">classmethod </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L36-L42"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.create" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L35-L41"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new record and save it the database.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="megaqc.database.CRUDMixin.delete">
-<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L61-L66"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.delete" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L60-L65"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the record from the database.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="megaqc.database.CRUDMixin.get_or_create">
-<em class="property">classmethod </em><code class="sig-name descname">get_or_create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L27-L34"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.get_or_create" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">get_or_create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L26-L33"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.get_or_create" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -345,23 +345,23 @@ operations.</p>
 
 <dl class="py method">
 <dt id="megaqc.database.CRUDMixin.primary_key_columns">
-<em class="property">classmethod </em><code class="sig-name descname">primary_key_columns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L72-L74"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.primary_key_columns" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">primary_key_columns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L71-L73"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.primary_key_columns" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="megaqc.database.CRUDMixin.primary_key_name">
-<em class="property">classmethod </em><code class="sig-name descname">primary_key_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L76-L78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.primary_key_name" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">primary_key_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L75-L77"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.primary_key_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="megaqc.database.CRUDMixin.save">
-<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L52-L59"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.save" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L51-L58"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the record.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="megaqc.database.CRUDMixin.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L44-L50"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L43-L49"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.CRUDMixin.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update specific fields of a record.</p>
 </dd></dl>
 
@@ -369,20 +369,20 @@ operations.</p>
 
 <dl class="py class">
 <dt id="megaqc.database.Model">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L81-L86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.Model" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L80-L85"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megaqc.database.CRUDMixin" title="megaqc.database.CRUDMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">megaqc.database.CRUDMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.orm.decl_api.Model</span></code></p>
 <p>Base model class that includes CRUD convenience methods.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="megaqc.database.SurrogatePK">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">SurrogatePK</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L91-L113"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.SurrogatePK" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">SurrogatePK</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L90-L112"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.SurrogatePK" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A mixin that adds a surrogate integer ‘primary key’ column named <code class="docutils literal notranslate"><span class="pre">id</span></code> to
 any declarative-mapped class.</p>
 <dl class="py method">
 <dt id="megaqc.database.SurrogatePK.get_by_id">
-<em class="property">classmethod </em><code class="sig-name descname">get_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record_id</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L101-L113"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.SurrogatePK.get_by_id" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">get_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record_id</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L100-L112"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.SurrogatePK.get_by_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get record by ID.</p>
 </dd></dl>
 
@@ -395,19 +395,19 @@ any declarative-mapped class.</p>
 
 <dl class="py function">
 <dt id="megaqc.database.init_db">
-<code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">init_db</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L156-L216"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.init_db" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">init_db</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L155-L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.init_db" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialise a new database.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="megaqc.database.postgres_create_database">
-<code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">postgres_create_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">cur</span></em>, <em class="sig-param"><span class="n">database</span></em>, <em class="sig-param"><span class="n">user</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L141-L153"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.postgres_create_database" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">postgres_create_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">cur</span></em>, <em class="sig-param"><span class="n">database</span></em>, <em class="sig-param"><span class="n">user</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L140-L152"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.postgres_create_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Postgres database, with the given owner.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="megaqc.database.postgres_create_user">
-<code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">postgres_create_user</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">cur</span></em>, <em class="sig-param"><span class="n">password</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L116-L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.postgres_create_user" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">megaqc.database.</code><code class="sig-name descname">postgres_create_user</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">cur</span></em>, <em class="sig-param"><span class="n">password</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/database.py#L115-L137"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.database.postgres_create_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a postgres user, including a password if provided.</p>
 </dd></dl>
 
@@ -435,7 +435,7 @@ any declarative-mapped class.</p>
 <p>Application configuration.</p>
 <dl class="py class">
 <dt id="megaqc.settings.Config">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">Config</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L21-L100"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">Config</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L22-L101"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base configuration.</p>
 <dl class="py attribute">
@@ -540,14 +540,14 @@ any declarative-mapped class.</p>
 
 <dl class="py method">
 <dt id="megaqc.settings.Config.update_db_uri">
-<code class="sig-name descname">update_db_uri</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L64-L100"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.Config.update_db_uri" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update_db_uri</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L65-L101"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.Config.update_db_uri" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt id="megaqc.settings.DevConfig">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">DevConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L132-L155"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.DevConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">DevConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L136-L163"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.DevConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megaqc.settings.Config" title="megaqc.settings.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">megaqc.settings.Config</span></code></a></p>
 <p>Development configuration.</p>
 <dl class="py attribute">
@@ -591,6 +591,11 @@ any declarative-mapped class.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt id="megaqc.settings.DevConfig.SQLALCHEMY_ECHO">
+<code class="sig-name descname">SQLALCHEMY_ECHO</code><em class="property"> = True</em><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.DevConfig.SQLALCHEMY_ECHO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt id="megaqc.settings.DevConfig.SQLALCHEMY_RECORD_QUERIES">
 <code class="sig-name descname">SQLALCHEMY_RECORD_QUERIES</code><em class="property"> = True</em><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.DevConfig.SQLALCHEMY_RECORD_QUERIES" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -604,7 +609,7 @@ any declarative-mapped class.</p>
 
 <dl class="py class">
 <dt id="megaqc.settings.ProdConfig">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">ProdConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L103-L129"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.ProdConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">ProdConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L104-L133"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.ProdConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megaqc.settings.Config" title="megaqc.settings.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">megaqc.settings.Config</span></code></a></p>
 <p>Production configuration.</p>
 <dl class="py attribute">
@@ -651,7 +656,7 @@ any declarative-mapped class.</p>
 
 <dl class="py class">
 <dt id="megaqc.settings.TestConfig">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">TestConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L158-L178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.TestConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.settings.</code><code class="sig-name descname">TestConfig</code><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py#L166-L189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.TestConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#megaqc.settings.Config" title="megaqc.settings.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">megaqc.settings.Config</span></code></a></p>
 <p>Test configuration.</p>
 <dl class="py attribute">
@@ -661,7 +666,7 @@ any declarative-mapped class.</p>
 
 <dl class="py attribute">
 <dt id="megaqc.settings.TestConfig.DB_PATH">
-<code class="sig-name descname">DB_PATH</code><em class="property"> = '/tmp/tmpgwhuhmcw/megaqc.db'</em><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.TestConfig.DB_PATH" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">DB_PATH</code><em class="property"> = '/tmp/tmpa0x_owth/megaqc.db'</em><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/settings.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.settings.TestConfig.DB_PATH" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

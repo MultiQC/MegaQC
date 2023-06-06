@@ -336,7 +336,7 @@
 
 <dl class="py class">
 <dt id="megaqc.user.models.User">
-<em class="property">class </em><code class="sig-prename descclassname">megaqc.user.models.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">password</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L59-L152"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">megaqc.user.models.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">password</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L59-L151"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.orm.decl_api.Model</span></code>, <a class="reference internal" href="megaqc.html#megaqc.database.CRUDMixin" title="megaqc.database.CRUDMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">megaqc.database.CRUDMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_login.mixins.UserMixin</span></code></p>
 <p>A user of the app.</p>
 <dl class="py attribute">
@@ -351,7 +351,7 @@
 
 <dl class="py method">
 <dt id="megaqc.user.models.User.check_password">
-<code class="sig-name descname">check_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L132-L136"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.check_password" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">check_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L131-L135"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.check_password" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check password.</p>
 </dd></dl>
 
@@ -372,11 +372,10 @@
 
 <dl class="py method">
 <dt id="megaqc.user.models.User.enforce_admin">
-<code class="sig-name descname">enforce_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L101-L111"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.enforce_admin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">enforce_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L101-L110"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.enforce_admin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enforce that the first user is an active admin.</p>
-<p>This is included as a method that isn’t automatically called,
-because there are cases where we don’t want this behaviour to
-happen, such as during testing.</p>
+<p>This is included as a method that isn’t automatically called, because there are
+cases where we don’t want this behaviour to happen, such as during testing.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -406,12 +405,12 @@ happen, such as during testing.</p>
 
 <dl class="py method">
 <dt id="megaqc.user.models.User.get_id">
-<code class="sig-name descname">get_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L144-L146"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.get_id" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L143-L145"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.get_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="megaqc.user.models.User.is_active">
-<code class="sig-name descname">is_active</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L141-L142"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.is_active" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_active</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L140-L141"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.is_active" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -421,7 +420,7 @@ happen, such as during testing.</p>
 
 <dl class="py method">
 <dt id="megaqc.user.models.User.is_authenticated">
-<code class="sig-name descname">is_authenticated</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L138-L139"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.is_authenticated" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_authenticated</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L137-L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.is_authenticated" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -441,7 +440,7 @@ happen, such as during testing.</p>
 
 <dl class="py method">
 <dt id="megaqc.user.models.User.reset_password">
-<code class="sig-name descname">reset_password</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L121-L124"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.reset_password" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset_password</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L120-L123"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.reset_password" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -456,7 +455,7 @@ happen, such as during testing.</p>
 
 <dl class="py method">
 <dt id="megaqc.user.models.User.set_password">
-<code class="sig-name descname">set_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">password</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L126-L130"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.set_password" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">password</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/ewels/megaqc/blob/master/megaqc/user/models.py#L125-L129"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#megaqc.user.models.User.set_password" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set password.</p>
 </dd></dl>
 
