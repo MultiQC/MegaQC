@@ -1,12 +1,17 @@
 Changelog
 =========
 
-.. _section-1:
+Development
+----------
+
+`[#479]`_:
+   * Allow unprivileged users to create new filters and delete their own filters via the REST API. This also resolves issues where these users couldn't create their own filters on certain pages.
+   * Give all users access to the admin interface. Unprivileged users won't be able to edit or delete most entities, however
+   * Added a "Filters" resource to the admin interface, allowing users to view, edit and delete filters there. This resolves `[#476]`_.
+   * Consistently added show, edit and delete buttons to all pages of the admin interface
 
 0.3.0
 -----
-
-.. _breaking-changes-1:
 
 Breaking Changes
 ~~~~~~~~~~~~~~~~
@@ -32,17 +37,12 @@ Breaking Changes
 
 -  Dropped support for Node 8
 
-.. _new-features-1:
-
 New Features
 ~~~~~~~~~~~~
 
 -  `[#140]`_ Added a changelog. It’s here! You’re reading it!
 -  Sphinx based documentation on Github Pages
 -  `[#69]`_ Added a check to verify that a database exists and exit nicely if not
-
-
-.. _bug-fixes-1:
 
 Bug Fixes
 ~~~~~~~~~
@@ -53,15 +53,12 @@ Bug Fixes
 - `[#170]`_ Improved handling of environment variables with environs
 - `[#194]`_ Forward more headers through nginx when using Docker Compose. This should avoid bad HTTP redirects.
 
-.. _internal-changes-1:
-
 Internal Changes
 ~~~~~~~~~~~~~~~~
 
 -  Tests for the REST API permissions
 -  Enforce inactive users (by default) in the model layer
 -  Many and more dependency updates
-
 
 .. _[#69]:  https://github.com/ewels/MegaQC/issues/69
 .. _[#138]: https://github.com/ewels/MegaQC/issues/138
@@ -71,3 +68,5 @@ Internal Changes
 .. _[#156]: https://github.com/ewels/MegaQC/issues/156
 .. _[#170]: https://github.com/ewels/MegaQC/issues/170
 .. _[#194]: https://github.com/ewels/MegaQC/issues/194
+.. _[#476]: https://github.com/ewels/MegaQC/issues/476
+.. _[#479]: https://github.com/ewels/MegaQC/issues/479
