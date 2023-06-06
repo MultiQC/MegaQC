@@ -1,36 +1,38 @@
 Changelog
 =========
 
-
 Development
------------
+----------
 
-- `[#433]`_ Rewrite of trend chart outlier detection
-   * Added a "statistic" selector that allows the selection of "measurement" or "isolation forest"
-   * Remove outlier detection from normal measurement plot, because the normal assumption is not reasonable
-   * The isolation forest statistic plots the multivariate outlier score in a non-parametric way, with an adjustable threshold
+Added
+~~~~~
+
+- `[#443]`_: Added support and testing for Python 3.11
+- `[#479]`_: A "Filters" resource to the admin interface, allowing users to view, edit and delete filters there. This resolves `[#476]`_.
+- `[#433]`_: "Statistic" selector that allows the selection of "measurement" or "isolation forest". The isolation forest statistic plots the multivariate outlier score in a non-parametric way, with an adjustable threshold
+- `[#479]`_: Give all users access to the admin interface. Unprivileged users won't be able to edit or delete most entities, however
+- `[#479]`_: Consistently added show, edit and delete buttons to all pages of the admin interface
+
+Changed
+~~~~~~~
+
+- `[#479]`_: Allow unprivileged users to create new filters and delete their own filters via the REST API. This also resolves issues where these users couldn't create their own filters on certain pages.
+- `[#479]`_: The "Edit Filters" page now redirects to the Filters tab of the Data Admin page. This relates to `[#476]`_.
 - `[#440]`_ Set up poetry to manage the dependencies, which might keep the dependencies from breaking down, and reduce the chances of the happening of issues such as `[#430]`_
-- `[#443]`_
-   * Dropped support for Python 3.6, added support and testing for Python <= 3.11
-   * Added docker-compose logging in the CI
-   * Stopped using Meinheld workers in the Docker image, since this is largely unmaintained
-   * Fix a bug in the database script when constructing URLs that broken under new SQLAlchemy versions
-   * Bump pytest
-   * Fix a bug in pytest where we used `scope` as a positional argument
-   * Update the SubFactoryList to a new version that works with newer FactoryBoy versions
 
-.. _[#430]: https://github.com/ewels/MegaQC/issues/430
-.. _[#440]: https://github.com/ewels/MegaQC/pull/440
-.. _[#433]: https://github.com/ewels/MegaQC/pull/433
+Fixed
+~~~~~
 
-=======
+- `[#443]`_: Fix a bug in the database script when constructing URLs that broken under new SQLAlchemy versions
 
-.. _section-1:
+Removed
+~~~~~~~
+
+- `[#433]`_ Removed outlier detection from normal measurement plot, because the normal assumption is not reasonable
+- `[#443]`_: Dropped support for Python 3.6
 
 0.3.0
 -----
-
-.. _breaking-changes-1:
 
 Breaking Changes
 ~~~~~~~~~~~~~~~~
@@ -56,17 +58,12 @@ Breaking Changes
 
 -  Dropped support for Node 8
 
-.. _new-features-1:
-
 New Features
 ~~~~~~~~~~~~
 
 -  `[#140]`_ Added a changelog. It’s here! You’re reading it!
 -  Sphinx based documentation on Github Pages
 -  `[#69]`_ Added a check to verify that a database exists and exit nicely if not
-
-
-.. _bug-fixes-1:
 
 Bug Fixes
 ~~~~~~~~~
@@ -77,15 +74,12 @@ Bug Fixes
 - `[#170]`_ Improved handling of environment variables with environs
 - `[#194]`_ Forward more headers through nginx when using Docker Compose. This should avoid bad HTTP redirects.
 
-.. _internal-changes-1:
-
 Internal Changes
 ~~~~~~~~~~~~~~~~
 
 -  Tests for the REST API permissions
 -  Enforce inactive users (by default) in the model layer
 -  Many and more dependency updates
-
 
 .. _[#69]:  https://github.com/ewels/MegaQC/issues/69
 .. _[#138]: https://github.com/ewels/MegaQC/issues/138
@@ -95,4 +89,9 @@ Internal Changes
 .. _[#156]: https://github.com/ewels/MegaQC/issues/156
 .. _[#170]: https://github.com/ewels/MegaQC/issues/170
 .. _[#194]: https://github.com/ewels/MegaQC/issues/194
+.. _[#430]: https://github.com/ewels/MegaQC/issues/430
+.. _[#433]: https://github.com/ewels/MegaQC/pull/433
+.. _[#440]: https://github.com/ewels/MegaQC/pull/440
 .. _[#443]: https://github.com/ewels/MegaQC/pull/443
+.. _[#476]: https://github.com/ewels/MegaQC/issues/476
+.. _[#479]: https://github.com/ewels/MegaQC/issues/479

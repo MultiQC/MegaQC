@@ -15,6 +15,7 @@ import {
   SimpleShowLayout,
   TextField,
   TextInput,
+  DeleteButton,
 } from "react-admin";
 
 import ResourceLink from "./components/resourceLink";
@@ -34,6 +35,7 @@ export const SampleList = (props) => (
       </ReferenceField>
       <EditButton />
       <ShowButton />
+      <DeleteButton />
     </Datagrid>
   </List>
 );

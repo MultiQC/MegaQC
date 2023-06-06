@@ -12,6 +12,9 @@ import {
   SimpleShowLayout,
   TextField,
   TextInput,
+  EditButton,
+  ShowButton,
+  DeleteButton,
 } from "react-admin";
 import { JsonInput, JsonField } from "./components/jsonField";
 
@@ -23,6 +26,9 @@ export const DashboardList = (props) => (
       <DateField source="created_at" />
       <DateField source="modified_at" />
       <BooleanField source="is_public" />
+      <EditButton />
+      <ShowButton />
+      <DeleteButton />
     </Datagrid>
   </List>
 );

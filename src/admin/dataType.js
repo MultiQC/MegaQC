@@ -9,6 +9,9 @@ import {
   SimpleShowLayout,
   TextField,
   TextInput,
+  EditButton,
+  ShowButton,
+  DeleteButton,
 } from "react-admin";
 
 export const DataTypeList = (props) => (
@@ -17,6 +20,9 @@ export const DataTypeList = (props) => (
       <TextField source="id" />
       <TextField source="section" />
       <TextField source="key" />
+      <EditButton />
+      <ShowButton />
+      <DeleteButton />
     </Datagrid>
   </List>
 );
