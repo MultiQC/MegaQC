@@ -3,10 +3,16 @@ Location of a rewritten API in a RESTful style, with appropriate resources
 Following the JSON API standard where relevant: https://jsonapi.org/format/
 """
 
+import typing
 from hashlib import sha1
 from http import HTTPStatus
 
-from flapison import ResourceDetail, ResourceList, ResourceRelationship
+from flapison import (
+    JsonApiException,
+    ResourceDetail,
+    ResourceList,
+    ResourceRelationship,
+)
 from flapison.schema import get_nested_fields, get_relationships
 from flask import Blueprint, current_app, jsonify, make_response, request
 from flask_login import current_user, login_required
@@ -286,10 +292,33 @@ class FilterList(PermissionsMixin, ResourceList):
     schema = schemas.SampleFilterSchema
     data_layer = dict(session=db.session, model=models.SampleFilter)
 
+    # Users should be able to create new filters
+    @api_perms(Permission.USER)
+    def post(self, **kwargs):
+        # Bypass the default admin-only permissions inherited from the parent class
+        return ResourceList.post(self, **kwargs)
+
 
 class Filter(PermissionsMixin, ResourceDetail):
     schema = schemas.SampleFilterSchema
     data_layer = dict(session=db.session, model=models.SampleFilter)
+
+    @api_perms(Permission.USER)
+    def delete(self, **kwargs):
+        if kwargs["permission"] == Permission.USER:
+            # Users should be able to delete their own filters
+            filter = db.session.query(models.SampleFilter).get(kwargs["id"])
+            if filter is not None:
+                filter = typing.cast(models.SampleFilter, filter)
+                if filter.user_id != kwargs["user"].user_id:
+                    raise JsonApiException(
+                        title="Insufficient permissions to access this resource",
+                        detail="You do not own this filter",
+                        status=403,
+                    )
+
+        # Bypass the default admin-only permissions inherited from the parent class
+        return ResourceDetail.delete(self, **kwargs)
 
 
 class FilterRelationship(PermissionsMixin, ResourceRelationship):

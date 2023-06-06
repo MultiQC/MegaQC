@@ -14,6 +14,7 @@ import {
   SimpleShowLayout,
   TextField,
   TextInput,
+  DeleteButton,
 } from "react-admin";
 import DefaultForm from "./components/defaultForm";
 
@@ -40,6 +41,7 @@ export const DataList = (props) => (
       </ReferenceField>
       <EditButton />
       <ShowButton />
+      <DeleteButton />
     </Datagrid>
   </List>
 );
