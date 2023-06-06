@@ -74,9 +74,10 @@ def test_single_resource_permissions(
 
 
 @pytest.mark.parametrize(
-    # These two have unusual permissions
+    # These three have unusual permissions
     "endpoint",
-    set(list_resource_endpoints) - {"rest_api.uploadlist", "rest_api.userlist"},
+    set(list_resource_endpoints)
+    - {"rest_api.uploadlist", "rest_api.userlist", "rest_api.filterlist"},
 )
 @pytest.mark.parametrize(
     "method,success",
