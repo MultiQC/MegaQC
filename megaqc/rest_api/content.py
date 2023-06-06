@@ -7,8 +7,8 @@ from io import StringIO
 
 def flatten_dicts(dictionary, delim=".", _path=None):
     """
-    Flattens a nested JSON dictionary into a flat dictionary, but does NOT
-    flatten any lists in the structure.
+    Flattens a nested JSON dictionary into a flat dictionary, but does NOT flatten any
+    lists in the structure.
 
     :param dictionary: Dictionary to flatten
     :param delim: The delimiter for nested fields

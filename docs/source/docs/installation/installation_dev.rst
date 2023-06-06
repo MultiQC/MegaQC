@@ -8,6 +8,7 @@ You will need:
 
 -  `node`_
 -  `Python 3`_
+-  `Poetry`_
 
 1. Clone the repo
 -----------------
@@ -18,20 +19,26 @@ If you’re doing development work, you need access to the source code
 
    git clone https://github.com/ewels/MegaQC
 
-2. Install the Python into a virtual environment
+2. Install Dependencies
 ------------------------------------------------
 
-You should do your development in a virtual environment. You also need
-to install MegaQC and all its dependencies there:
+You should install MegaQC using Poetry. You also need to install MegaQC and all its dependencies there:
 
 .. code:: bash
 
    cd MegaQC
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -e .[dev]
+   poetry install
 
-3. Enable development mode:
+3. Install poetry shell
+------------------------------------------------
+
+You need to use poetry shell before running MegaQC.
+
+.. code:: bash
+
+   poetry shell
+
+4. Enable development mode:
 ---------------------------
 
 Setting this bash variable runs MegaQC in development mode. This means
@@ -43,7 +50,7 @@ performance testing.
 
    export FLASK_DEBUG=1
 
-4. Set up the database
+5. Set up the database
 ----------------------
 
 Running this command creates an empty SQLite MegaQC database file in the
@@ -53,10 +60,10 @@ installation directory called ``megaqc.db``
 
    megaqc initdb
 
-5. Start megaqc
+6. Start megaqc
 ---------------
 
-Start MegaQC:
+Start MegaQC.
 
 .. code:: bash
 
@@ -65,7 +72,7 @@ Start MegaQC:
 You will have to run the rest of these commands **in another terminal
 window**, because ``megaqc run`` blocks the terminal.
 
-6. Setup your access key
+7. Setup your access key
 ------------------------
 
 -  Login to MegaQC in your browser by browsing to
@@ -79,7 +86,7 @@ window**, because ``megaqc run`` blocks the terminal.
    current (MegaQC) directory. However, you will then have to run
    ``megaqc upload`` from that directory each time
 
-7. Load test data
+8. Load test data
 -----------------
 
 In order to develop new features you need some data to test it with:
@@ -91,7 +98,7 @@ In order to develop new features you need some data to test it with:
        do megaqc upload $report
    done
 
-8. Install the JavaScript and start compiling
+9. Install the JavaScript and start compiling
 ---------------------------------------------
 
 This command will run until you cancel it, but will ensure that any
@@ -102,7 +109,7 @@ changes to the JavaScript are compiled instantly:
    npm install
    npm run watch
 
-9. Install the pre-commit hooks
+10. Install the pre-commit hooks
 -------------------------------
 
 MegaQC has a number of `pre-commit`_ hooks installed, which
@@ -128,3 +135,4 @@ accessible on your localhost at http://127.0.0.1:5000
 .. _node: https://nodejs.org/en/download/
 .. _Python 3: https://www.python.org/downloads/
 .. _pre-commit: https://pre-commit.com/
+.. _Poetry: https://python-poetry.org/docs#installation

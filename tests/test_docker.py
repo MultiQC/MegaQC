@@ -8,7 +8,7 @@ import requests
 
 def raise_response(resp):
     """
-    :param resp: Requests response object
+    :param resp: Requests response object.
     """
     if not str(resp.status_code).startswith("2"):
         raise Exception(
@@ -25,7 +25,7 @@ def compose_stack():
     subprocess.run(
         ["docker-compose", "up", "--build", "--detach"], cwd=deploy, check=True
     )
-    time.sleep(15)
+    time.sleep(60)
     yield
     # When we're done, stop the stack and cleanup the volumes
     subprocess.run(["docker-compose", "down", "-v"], cwd=deploy, check=True)

@@ -1,12 +1,46 @@
 #!/usr/bin/env python
 """
-MegaQC is a web application that collects results from multiple runs of MultiQC
-and allows bulk visualisation.
+MegaQC is a web application that collects results from multiple runs of MultiQC and
+allows bulk visualisation.
 
-See the MegaQC website for installation instructions and documentation: https://megaqc.info
+See the MegaQC website for installation instructions and documentation:
+https://megaqc.info
 
-MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at SciLifeLab Sweden (http://www.scilifelab.se)
-and extended by Michael Milton, Tor Solli-Nowlan and Lukas Heumos.
+MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis Moreno at
+SciLifeLab Sweden (
+http://www.scilifelab.se)
+  : https: //megaqc.info  MegaQC was written by Phil Ewels ( http://phil.ewels.co.uk)  :
+https:
+ //megaqc.info  MegaQC was written by Phil Ewels ( http://phil.ewels.co.uk)  : https:
+//megaqc.info  MegaQC was written by Phil Ewels (
+http://phil.ewels.co.uk)
+  : https: //megaqc.info  MegaQC was written by Phil Ewels ( http://phil.ewels.co.uk) :
+https:
+ //megaqc.info  MegaQC was written by Phil Ewels ( http://phil.ewels.co.uk) : https:
+//megaqc.info  MegaQC was written by Phil Ewels (
+http://phil.ewels.co.uk)
+ : https: //megaqc.info  MegaQC was written by Phil Ewels ( http://phil.ewels.co.uk) :
+https:
+ //megaqc.info  MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and Denis
+Moreno at SciLifeLab Sweden (
+http://www.scilifelab.se)
+: https: //megaqc.info  MegaQC was written by Phil Ewels (
+http://phil.ewels.co.uk)
+: https: //megaqc.info  MegaQC was written by Phil Ewels (
+http://phil.ewels.co.uk)
+: https: //megaqc.info  MegaQC was written by Phil Ewels (
+http://phil.ewels.co.uk)
+: https: //megaqc.info  MegaQC was written by Phil Ewels (
+http://phil.ewels.co.uk)
+: https: //megaqc.info  MegaQC was written by Phil Ewels (
+http://phil.ewels.co.uk)
+: https: //megaqc.info  MegaQC was written by Phil Ewels (
+http://phil.ewels.co.uk)
+: https: //megaqc.info  MegaQC was written by Phil Ewels (
+http://phil.ewels.co.uk)
+: https: //megaqc.info  MegaQC was written by Phil Ewels (http://phil.ewels.co.uk) and
+Denis Moreno at SciLifeLab Sweden (http://www.scilifelab.se) and extended by Michael
+Milton, Tor Solli- Nowlan and Lukas Heumos.
 """
 
 from setuptools import setup
@@ -78,7 +112,7 @@ setup(
     extras_require={
         "dev": [
             # Testing
-            "pytest~=3.0",
+            "pytest~=7.2",
             "WebTest~=2.0",
             "factory-boy>=2.12,<4.0",
             "livereload~=2.5",

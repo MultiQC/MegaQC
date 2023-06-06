@@ -1,6 +1,6 @@
 """
-Location of a rewritten API in a RESTful style, with appropriate resources
-Following the JSON API standard where relevant: https://jsonapi.org/format/
+Location of a rewritten API in a RESTful style, with appropriate resources Following the
+JSON API standard where relevant: https://jsonapi.org/format/
 """
 
 import typing
@@ -35,10 +35,9 @@ class PermissionsMixin:
     """
     Adds shared config to all views.
 
-    Logged-out users shouldn't be able to access the API at all, logged
-    in users should be able to only GET, and only admins should be able
-    to POST, PATCH or DELETE. These decorators can be overriden by child
-    classes, however
+    Logged-out users shouldn't be able to access the API at all, logged in users should
+    be able to only GET, and only admins should be able to POST, PATCH or DELETE. These
+    decorators can be overriden by child classes, however
     """
 
     @api_perms(Permission.USER)
@@ -81,8 +80,8 @@ class UploadList(PermissionsMixin, ResourceList):
         """
         Upload a new report.
 
-        This is rare in that average users *can* do this, even though
-        they aren't allowed to edit arbitrary data
+        This is rare in that average users *can* do this, even though they aren't
+        allowed to edit arbitrary data
         """
         # This doesn't exactly follow the JSON API spec, since it doesn't exactly support file uploads:
         # https://github.com/json-api/json-api/issues/246
@@ -262,9 +261,8 @@ class CurrentUser(PermissionsMixin, ResourceDetail):
         """
         Get details about the current user.
 
-        This is also how the frontend can get an access token. For that
-        reason, this endpoint is authenticated using the session, NOT
-        the access token
+        This is also how the frontend can get an access token. For that reason, this
+        endpoint is authenticated using the session, NOT the access token
         """
 
         # Fail if we aren't logged in

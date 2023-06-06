@@ -73,6 +73,7 @@ html_context = {
     "conf_py_path": "/source/",
 }
 
+
 # Resolve function for the linkcode extension.
 def linkcode_resolve(domain, info):
     def find_source():

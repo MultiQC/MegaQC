@@ -3,8 +3,11 @@
 Factories to help in tests.
 """
 import json
+from functools import partial
+from typing import Any, Callable, Dict, Optional, Type, Union
 
 from factory import (
+    Factory,
     Faker,
     PostGenerationMethodCall,
     RelatedFactoryList,
@@ -13,6 +16,7 @@ from factory import (
     SubFactory,
 )
 from factory.alchemy import SQLAlchemyModelFactory
+from factory.builder import BuildStep, Resolver
 from factory.fuzzy import FuzzyChoice
 
 from megaqc.database import db
@@ -21,18 +25,52 @@ from megaqc.user.models import User
 
 
 class SubFactoryList(SubFactory):
-    def __init__(self, factory, size=2, **defaults):
-        super().__init__(factory, **defaults)
+    """
+    Calls a factory 'size' times while generating an object.
+
+    Copied from: https://github.com/FactoryBoy/factory_boy/issues/823#issuecomment-932400478
+
+    Attributes:
+        factory (fb.Factory): the factory to call "size-times"
+        size (int|Callable[[], int]): the number of times 'factory' is called, ultimately returning a list of 'factory' objects w/ size 'size'.
+    """
+
+    def __init__(
+        self,
+        factory: Type[Factory],
+        size: Union[int, Callable[[], int]] = 2,
+        **kwargs: Optional[Any],
+    ) -> None:
+        if callable(size):
+            size = size()
+
         self.size = size
 
-    def generate(self, step, params):
-        parent = super()
-        return [parent.generate(step, params) for i in range(self.size)]
+        into: Type = kwargs.get("into", list)
+        if into not in (list, tuple, set):
+            into = list
 
-    # def call(self, instance, step, context):
-    #     return [super().call(instance, step, context)
-    #             for i in range(self.size if isinstance(self.size, int)
-    #                            else self.size())]
+        self.into = into
+
+        super(SubFactoryList, self).__init__(factory, **kwargs)
+
+    def evaluate(
+        self,
+        instance: Resolver,
+        step: BuildStep,
+        extra: Dict[str, Optional[Any]],
+    ) -> Sequence:
+        """
+        Evaluate the current definition and fill its attributes.
+
+        Args:
+            instance: The object holding currently computed attributes
+            step: a factory.builder.BuildStep
+            extra: additional, call-time added kwargs for the step.
+        """
+        evaluator = partial(super(SubFactoryList, self).evaluate, instance, step, extra)
+
+        return self.into((evaluator() for _ in range(self.size)))
 
 
 class BaseFactory(SQLAlchemyModelFactory):

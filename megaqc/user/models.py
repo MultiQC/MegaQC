@@ -102,9 +102,8 @@ class User(db.Model, CRUDMixin, UserMixin):
         """
         Enforce that the first user is an active admin.
 
-        This is included as a method that isn't automatically called,
-        because there are cases where we don't want this behaviour to
-        happen, such as during testing.
+        This is included as a method that isn't automatically called, because there are
+        cases where we don't want this behaviour to happen, such as during testing.
         """
         if db.session.query(User).count() == 0:
             self.is_admin = True

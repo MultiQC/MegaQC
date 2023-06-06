@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/timothycrosley/isort
-    rev: 5.5.4
+    rev: 5.12.0
     hooks:
       - id: isort
         types: [python]
@@ -12,22 +12,23 @@ repos:
           - "--line-width=88"
 
   - repo: https://github.com/myint/docformatter
-    rev: v1.3.1
+    rev: v1.7.1
     hooks:
       - id: docformatter
         args:
+          - "--black"
           - "--make-summary-multi-line"
           - "--pre-summary-newline"
           - "--in-place"
           - "--recursive"
 
   - repo: https://github.com/psf/black
-    rev: "22.3.0"
+    rev: "23.3.0"
     hooks:
       - id: black
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v2.1.2
+    rev: v2.7.1
     hooks:
       - id: prettier
         exclude: (megaqc/templates|megaqc/static|docs/source)

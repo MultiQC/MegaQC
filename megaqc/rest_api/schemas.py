@@ -1,16 +1,17 @@
 """
 These schemas describe the format of the web requests to and from the API.
 
-They incidentally share most fields with the database models, but they
-can be opinionated about REST-specific fields
+They incidentally share most fields with the database models, but they can be
+opinionated about REST-specific fields
 """
 from marshmallow import INCLUDE
 from marshmallow import Schema as BaseSchema
 from marshmallow import post_load, validate
 from marshmallow_jsonapi import fields as f
-from marshmallow_jsonapi.flask import Relationship
+from marshmallow_jsonapi.flask import Relationship as FlaskRelationship
 from marshmallow_jsonapi.flask import Schema as JsonApiSchema
 from marshmallow_jsonapi.utils import resolve_params
+from marshmallow_polyfield import PolyField
 from marshmallow_sqlalchemy.fields import Related
 from marshmallow_sqlalchemy.schema import ModelSchema, ModelSchemaMeta, ModelSchemaOpts
 
@@ -19,6 +20,11 @@ from megaqc.model import models
 from megaqc.rest_api import outlier
 from megaqc.rest_api.fields import FilterReference, JsonString
 from megaqc.user import models as user_models
+
+
+class Relationship(FlaskRelationship):
+    def _jsonschema_type_mapping(self):
+        return {}
 
 
 class OptionalLinkSchema(JsonApiSchema):
@@ -171,8 +177,8 @@ class SampleFilterSchema(OptionalLinkSchema):
 
 class FilterGroupSchema(OptionalLinkSchema):
     """
-    Fake schema (no underlying model) for filter groups, which dump from a
-    filter object.
+    Fake schema (no underlying model) for filter groups, which dump from a filter
+    object.
     """
 
     class Meta:
@@ -414,12 +420,9 @@ class TrendSchema(PlotSchema):
 
 class FilterObjectSchema(BaseSchema):
     """
-    A single filter object, e.g.
-    {
-    'type': 'daterange',
-    'value': [],
-    'cmp': 'in'
-    }
+    A single filter object, e.g. { 'type': 'daterange', 'value': [], 'cmp':
+
+    'in' }
     """
 
     type = f.String(
@@ -434,24 +437,6 @@ class FilterObjectSchema(BaseSchema):
     )
 
 
-class OutlierSchema(BaseSchema):
-    """
-    Schema for defining how we mark outliers for a dataset.
-    """
-
-    type = f.String(validate=validate.OneOf(["grubbs", "z", "none"]))
-    threshold = f.Float()
-
-    @post_load()
-    def get_detector(self, data, **kwargs):
-        if data["type"] == "grubbs":
-            return outlier.GrubbsDetector(data["threshold"])
-        elif data["type"] == "z":
-            return outlier.ZScoreDetector(data["threshold"])
-        else:
-            return outlier.OutlierDetector()
-
-
 class ControlLimitSchema(BaseSchema):
     """
     Defines "control limits" for a control chart.
@@ -459,8 +444,34 @@ class ControlLimitSchema(BaseSchema):
 
     # If we should enable the limits at all
     enabled = f.Bool()
-    # Number of standard deviations on each side
-    sigma = f.Float()
+    # Significance level, below which we consider points to be outliers
+    alpha = f.Float()
+
+
+class IsolationForestSchema(BaseSchema):
+    """
+    Schema for the isolation forest statistic option.
+    """
+
+    contamination = f.Float()
+
+
+class RawMeasurementSchema(BaseSchema):
+    """
+    For when the user has chosen the raw measurement option.
+    """
+
+    center_line = f.String(
+        validate=validate.OneOf(["mean", "median", "none"]),
+        required=True,
+        description="Type of center line",
+    )
+
+
+statistic_options = {
+    "iforest": IsolationForestSchema,
+    "measurement": RawMeasurementSchema,
+}
 
 
 class TrendInputSchema(BaseSchema):
@@ -470,8 +481,17 @@ class TrendInputSchema(BaseSchema):
 
     fields = JsonString(invert=True, required=True)
     filter = FilterReference()
-    control_limits = f.Nested(ControlLimitSchema, required=True)
-    center_line = f.String(
-        validate=validate.OneOf(["mean", "median", "none"]), required=True
+    statistic = f.String(
+        validate=validate.OneOf(["measurement", "iforest"]),
+        default="none",
+        description="Which statistics are plotted. Measurement means unprocessed QC metrics, and Isolation Forest means an anomaly score generated using random forest.",
     )
-    # outliers = f.Nested(OutlierSchema, missing=outlier.OutlierDetector)
+    statistic_options = PolyField(
+        # Dynamically choose our schema based on the statistic
+        serialization_schema_selector=lambda base, parent: statistic_options.get(
+            parent["statistic"]
+        ),
+        deserialization_schema_selector=lambda base, parent: statistic_options.get(
+            parent["statistic"]
+        ),
+    )

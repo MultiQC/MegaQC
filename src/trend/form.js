@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, CardBody, CardHeader, Form, FormGroup, Label } from "reactstrap";
 import OutlierDetection from "./outlierDetection";
 import { Field, Formik } from "formik";
@@ -13,27 +13,44 @@ export default function TrendForm({ dataTypes, onSubmit }) {
       initialValues={{
         // Which field to plot
         fields: [],
-        // What outlier detection (if any) to use
-        // outlier: null,
-        // The statistic plotted on the center line
-        centerLine: "mean",
-        // Whether or not to show control limits
         controlLimits: true,
-        // Number of standard deviations to use as the control limit
-        stdDevs: 3,
+        statistic: "measurement",
+        statisticOptions: {
+          centerLine: "mean",
+        },
       }}
       validationSchema={Yup.object().shape({
         fields: Yup.array().min(1).label("Data Types"),
         // Outlier has its own internal field validation
-        centerLine: Yup.string()
-          .oneOf(["mean", "median", "none"])
-          .label("Center Line"),
-        controlLimits: Yup.bool().label("Show Control Limits"),
-        stdDevs: Yup.number().min(0).label("Control Limits"),
+        statistic: Yup.string()
+          .oneOf(["measurement", "iforest"])
+          .label("Statistic"),
+        statisticOptions: Yup.object().shape({
+          centerLine: Yup.string()
+            .oneOf(["mean", "median", "none"])
+            .label("Center Line")
+            .optional(),
+          contamination: Yup.number()
+            .min(0)
+            .label("Significance Level")
+            .optional(),
+        }),
       })}
       onSubmit={onSubmit}
     >
-      {({ setFieldValue }) => {
+      {({ setFieldValue, values }) => {
+        // Dynamically change defaults
+        useEffect(() => {
+          if (values.statistic === "iforest") {
+            setFieldValue("statisticOptions", {
+              contamination: 0.05,
+            });
+          } else {
+            setFieldValue("statisticOptions", {
+              centerLine: "mean",
+            });
+          }
+        }, [values.statistic]);
         // Whenever the plot data type or filter changes, we have to re-calculate the plot data
 
         return (
@@ -70,35 +87,43 @@ export default function TrendForm({ dataTypes, onSubmit }) {
                   </Field>
                 </FormGroup>
                 <FormGroup>
-                  <Label>Center Line</Label>
+                  <Label>Statistic</Label>
                   <Field
                     component={BootstrapField}
-                    name={`centerLine`}
+                    name={"statistic"}
                     type={"select"}
+                    on
                   >
-                    <option value="median">Median</option>
-                    <option value="mean">Mean</option>
-                    <option value="none">None</option>
+                    <option value="measurement">Raw Measurement</option>
+                    <option value="iforest">Isolation Forest</option>
                   </Field>
                 </FormGroup>
-                <FormGroup check>
-                  <Label check>
+                {values.statistic == "measurement" && (
+                  <FormGroup>
+                    <Label>Center Line</Label>
                     <Field
                       component={BootstrapField}
-                      name={`controlLimits`}
-                      type={"checkbox"}
+                      name={"statisticOptions.centerLine"}
+                      type={"select"}
+                    >
+                      <option value="median">Median</option>
+                      <option value="mean">Mean</option>
+                      <option value="none">None</option>
+                    </Field>
+                  </FormGroup>
+                )}
+                {values.statistic == "iforest" && (
+                  <FormGroup>
+                    <Label>Contamination Level</Label>
+                    <Field
+                      component={BootstrapField}
+                      name={"statisticOptions.contamination"}
+                      type={"number"}
+                      step="0.01"
+                      min="0.01"
                     />
-                    &nbsp; Show Control Limits
-                  </Label>
-                </FormGroup>
-                <FormGroup>
-                  <Label>Control Limits</Label>
-                  <Field
-                    component={BootstrapField}
-                    name={`stdDevs`}
-                    type={"number"}
-                  />
-                </FormGroup>
+                  </FormGroup>
+                )}
               </Form>
             </CardBody>
           </Card>

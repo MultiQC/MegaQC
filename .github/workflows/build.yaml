@@ -4,11 +4,11 @@ on: [push, pull_request]
 
 jobs:
   build-python:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
       - uses: actions/checkout@v2
@@ -18,13 +18,13 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .[dev]
+      - uses: snok/install-poetry@v1.3.3
+
+      - name: Install all extra features of poetry
+        run: poetry install --extras "dev"
 
       - name: Test with pytest
-        run: pytest
+        run: poetry run pytest
 
   build-node:
     env:

@@ -21,14 +21,8 @@ import { format, parse } from "date-fns";
 import { DATE_FORMAT } from "../util/filter";
 
 function FilterRow(props) {
-  const {
-    sampleFields,
-    reportFields,
-    name,
-    formik,
-    innerArrayHelpers,
-    index,
-  } = props;
+  const { sampleFields, reportFields, name, formik, innerArrayHelpers, index } =
+    props;
 
   const rowError = getIn(formik.errors, name);
   const errorMsg = rowError instanceof String ? rowError : "";
