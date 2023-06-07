@@ -153,11 +153,12 @@ def build_filter_query(filters):
                     (SampleDataType.data_key == filter["key"])
                     & add_operator(SampleData.value, filter["cmp"], filter["value"][0])
                 )
+            elif filter["type"] == "samplelist":
+                and_filters.append(Sample.sample_id.in_(filter["value"]))
             else:
                 raise Exception('Unsupported filter type "{}"'.format(filter["type"]))
 
         or_filters.append(concat_clauses(and_filters, "and"))
-
     query = (
         db.session.query(Sample)
         .join(SampleData, isouter=True)

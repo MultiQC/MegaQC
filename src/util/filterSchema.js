@@ -13,7 +13,13 @@ const schema = Yup.object().shape({
       .of(
         Yup.object().shape({
           type: Yup.string()
-            .oneOf(["timedelta", "daterange", "reportmeta", "samplemeta"])
+            .oneOf([
+              "timedelta",
+              "daterange",
+              "reportmeta",
+              "samplemeta",
+              "samplelist",
+            ])
             .label("Type")
             .required(),
           key: Yup.mixed()
