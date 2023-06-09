@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import re
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Collection, Iterable, Iterator, Tuple
+from itertools import cycle
+from typing import Any, Collection, Dict, Iterable, Iterator, List, Optional, Tuple
 
 import numpy
 import numpy.typing as npt
 from numpy import absolute, delete, take, zeros
-from plotly.colors import DEFAULT_PLOTLY_COLORS
+from plotly.colors import DEFAULT_PLOTLY_COLORS, qualitative
 from scipy.stats import f, norm, zscore
 from sklearn.covariance import EmpiricalCovariance
 from sklearn.ensemble import IsolationForest
@@ -31,47 +33,59 @@ def rgb_to_rgba(rgb, alpha):
     )
 
 
-def encode_to_numeric(y: Iterable, chunk_size: int) -> Iterable[numpy.ndarray]:
+@dataclass
+class DataColumn:
+    """
+    A processed "column" of data, which corresponds to a single data type and the data
+    associated with that.
+    """
+
+    name: str
+    sample_names: npt.NDArray[numpy.str_]
+    x: npt.NDArray[numpy.datetime64]
+    y: npt.NDArray[numpy.float_]
+
+
+def extract_query_data(query: Query, ncol: int) -> Iterable[DataColumn]:
+    """
+    Converts a query into processed data for manipulation.
+    """
     encoder = OneHotEncoder()
-    args = [iter(y)] * chunk_size
-    for col in zip(*args):
-        # Return numeric columns if possible, otherwise categorical
-        try:
-            yield numpy.asarray(col, float)
-        except:
-            yield encoder.fit_transform(
-                numpy.asarray(col, dtype=numpy.object_).reshape(-1, 1)
-            ).toarray()
-
-
-def extract_query_data(
-    query: Query, ncol: int
-) -> Tuple[
-    npt.NDArray[numpy.string_],
-    npt.NDArray[numpy.string_],
-    npt.NDArray[numpy.datetime64],
-    npt.NDArray[numpy.float_],
-]:
     data = query.all()
-    names, data_types, x, y = zip(*data)
-    y = numpy.column_stack(list(encode_to_numeric(y, len(y) // ncol)))
-    nrow = len(x) // ncol
-    return (
-        numpy.array(names, dtype=str),
-        numpy.array(data_types, dtype=str),
-        numpy.array(x, dtype=datetime)[0:nrow],
-        y,
-    )
+    for column in zip(*[iter(data)] * (len(data) // ncol)):
+        names, data_types, x, y = zip(*column)
+        x = numpy.array(x, dtype=datetime)
+        try:
+            yield DataColumn(
+                y=numpy.asarray(y, float),
+                x=x,
+                name=data_types[0],
+                sample_names=numpy.array(names),
+            )
+        except:
+            result = encoder.fit_transform(
+                numpy.asarray(y, dtype=numpy.object_).reshape(-1, 1)
+            ).toarray()
+            transformed_types = encoder.get_feature_names_out(data_types[0:1])
+            for y, data_type in zip(result.T, transformed_types):
+                yield DataColumn(
+                    y=y, name=data_type, x=x, sample_names=numpy.array(names)
+                )
 
 
 def univariate_trend_data(
-    query: Any, fields: Sequence[str], plot_prefix: str, statistic_options: dict
+    query: Any,
+    fields: Sequence[str],
+    plot_prefix: str,
+    statistic_options: dict,
+    colours: Iterator[str],
+    filter: SampleFilter,
 ) -> Iterator[dict]:
     """
     Returns the plot series for the "raw measurement" statistic.
     """
     center_line = statistic_options["center_line"]
-    for field, colour in zip(fields, DEFAULT_PLOTLY_COLORS):
+    for field in fields:
         # Fields can be specified either as type IDs, or as type names
         if field.isdigit():
             field_query = query.filter(
@@ -80,89 +94,106 @@ def univariate_trend_data(
         else:
             field_query = query.filter(models.SampleDataType.data_key == field)
 
-        names, data_types, x, all_y = extract_query_data(field_query, 1)
-        for i, y in enumerate(all_y.T):
+        # Each dummy variable needs to be a unique series
+        for i, column in enumerate(extract_query_data(field_query, 1)):
             # We are only considering 1 field at a time
-            data_type = data_types[0]
+            colour = next(colours)
 
             yield dict(
                 id=f"{plot_prefix}_raw_{i}_{field}",
                 type="scatter",
-                text=names,
+                text=column.sample_names,
                 hoverinfo="text+x+y",
-                x=x,
-                y=y,
+                x=column.x,
+                y=column.y,
                 line=dict(color=colour),
                 mode="markers",
-                name=f"{data_type} Category {i} Samples",
+                name=f"{column.name} Samples",
             )
 
             # Add the mean
             if center_line == "mean":
-                y2 = numpy.repeat(numpy.mean(y), len(x))
+                y2 = numpy.repeat(numpy.mean(column.y), len(column.x))
                 yield dict(
                     id=f"{plot_prefix}_mean_{i}_{field}",
                     type="scatter",
-                    x=x,
+                    x=column.x,
                     y=y2.tolist(),
                     line=dict(color=colour),
                     mode="lines",
-                    name=f"{data_type} Category {i} Mean",
+                    name=f"{column.name} Mean",
                 )
             elif center_line == "median":
-                y2 = numpy.repeat(numpy.median(y), len(x))
+                y2 = numpy.repeat(numpy.median(column.y), len(column.x))
                 yield dict(
                     id=f"{plot_prefix}_median_{i}_{field}",
                     type="scatter",
-                    x=x,
+                    x=column.x,
                     y=y2.tolist(),
                     line=dict(color=colour),
                     mode="lines",
-                    name=f"{data_type} Category {i} Median",
+                    name=f"{column.name} Median",
                 )
             else:
                 # The user could request control limits without a center line. Assume they
                 # want a mean in this case
-                y2 = numpy.repeat(numpy.mean(y), len(x))
+                y2 = numpy.repeat(numpy.mean(column.y), len(column.x))
 
 
 # Parameters correspond to fields in
 # `TrendInputSchema`
 def trend_data(
-    fields: Sequence[str], filter: Any, statistic: str, **kwargs
+    fields: Sequence[str],
+    filters: List[Optional[SampleFilter]],
+    statistic: str,
+    plot_prefix: str,
+    **kwargs,
 ) -> Iterator[dict]:
     """
     Returns data suitable for a plotly plot.
     """
-    subquery = build_filter_query(filter)
-    plots = []
-    # Choose the columns to select, and further filter it down to samples with the column we want to plot
-    query = (
-        db.session.query(Sample)
-        .join(SampleData, isouter=True)
-        .join(SampleDataType, isouter=True)
-        .join(Report, Report.report_id == Sample.report_id, isouter=True)
-        .with_entities(
-            models.Sample.sample_name,
-            models.SampleDataType.nice_name,
-            models.Report.created_at,
-            models.SampleData.value,
-        )
-        .order_by(
-            models.SampleDataType.sample_data_type_id
-            # models.Report.created_at.asc(),
-        )
-        .filter(Sample.sample_id.in_(subquery))
-        .distinct()
-    )
+    # filter_details = db.session.query(SampleFilter).where(SampleFilter.sample_filter_id.in_(filters))
 
-    if statistic == "measurement":
-        return univariate_trend_data(fields=fields, query=query, **kwargs)
-    elif statistic == "iforest":
-        return isolation_forest_trend(fields=fields, query=query, **kwargs)
-        # return hotelling_trend_data(fields=fields, query=query, **kwargs)
-    else:
-        raise ValueError("Invalid transform!")
+    colours = cycle(iter(qualitative.Alphabet))
+    for i, filter in enumerate(filters):
+        prefix = f"{plot_prefix}_{i}"
+        subquery = build_filter_query([] if filter is None else filter.filter_json)
+        # Choose the columns to select, and further filter it down to samples with the column we want to plot
+        query = (
+            db.session.query(Sample)
+            .join(SampleData, isouter=True)
+            .join(SampleDataType, isouter=True)
+            .join(Report, Report.report_id == Sample.report_id, isouter=True)
+            .with_entities(
+                models.Sample.sample_name,
+                models.SampleDataType.nice_name,
+                models.Report.created_at,
+                models.SampleData.value,
+            )
+            .order_by(
+                models.SampleDataType.sample_data_type_id
+                # models.Report.created_at.asc(),
+            )
+            .filter(Sample.sample_id.in_(subquery))
+            .distinct()
+        )
+
+        if statistic == "measurement":
+            yield from univariate_trend_data(
+                fields=fields,
+                query=query,
+                colours=colours,
+                plot_prefix=prefix,
+                filter=filter,
+                **kwargs,
+            )
+        elif statistic == "iforest":
+            yield from isolation_forest_trend(
+                fields=fields, query=query, plot_prefix=prefix, filter=filter, **kwargs
+            )
+            # return hotelling_trend_data(fields=fields, query=query, **kwargs)
+        else:
+            raise ValueError("Invalid transform!")
 
 
 def maha_distance(y, alpha=0.05):

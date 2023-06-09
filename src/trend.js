@@ -24,7 +24,7 @@ const trendSchema = Yup.object().shape({
 function Trend(props) {
   const [dataTypes, setDataTypes] = useState([]);
   const [plotData, setPlotData] = useState({});
-  const [selectedFilter, selectFilter] = useState(null);
+  const [selectedFilters, selectFilters] = useState([]);
   const [revision, setRevision] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const [plotSettings, setPlotSettings] = useState({});
@@ -61,7 +61,7 @@ function Trend(props) {
       .find("plots/trends/series", {
         // filter, unlike the Formik fields is special because it is
         // a reuseable component that isn't a field
-        filter: selectedFilter,
+        filters: selectedFilters.join(","),
         fields: JSON.stringify(plotSettings.fields),
         statistic_options: {
           center_line: plotSettings.statisticOptions.centerLine,
@@ -74,7 +74,7 @@ function Trend(props) {
         setPlotData(newData);
         setRevision((rev) => rev + 1);
       });
-  }, [selectedFilter, plotSettings]);
+  }, [selectedFilters, plotSettings]);
 
   return (
     <>
@@ -83,7 +83,9 @@ function Trend(props) {
         <Col lg={{ size: 4 }}>
           <SampleFilter
             qcApi={client.current}
-            onFilterChange={selectFilter}
+            onFilterChange={(newFilters) => {
+              selectFilters(newFilters);
+            }}
             user={currentUser}
           />
         </Col>
@@ -107,7 +109,7 @@ function Trend(props) {
             client={client}
             plotData={plotData}
             plotSettings={plotSettings}
-            selectedFilter={selectedFilter}
+            selectedFilter={selectedFilters}
           />
         </Col>
       </Row>

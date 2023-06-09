@@ -14,11 +14,12 @@ from marshmallow_jsonapi.utils import resolve_params
 from marshmallow_polyfield import PolyField
 from marshmallow_sqlalchemy.fields import Related
 from marshmallow_sqlalchemy.schema import ModelSchema, ModelSchemaMeta, ModelSchemaOpts
+from webargs.fields import DelimitedList
 
 from megaqc.extensions import db
 from megaqc.model import models
 from megaqc.rest_api import outlier
-from megaqc.rest_api.fields import FilterReference, JsonString
+from megaqc.rest_api.fields import FilterReference, JsonString, ModelAssociation
 from megaqc.user import models as user_models
 
 
@@ -480,7 +481,7 @@ class TrendInputSchema(BaseSchema):
     """
 
     fields = JsonString(invert=True, required=True)
-    filter = FilterReference()
+    filters = DelimitedList(ModelAssociation(models.SampleFilter))
     statistic = f.String(
         validate=validate.OneOf(["measurement", "iforest"]),
         default="none",
