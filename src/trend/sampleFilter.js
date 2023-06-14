@@ -111,7 +111,7 @@ export function SampleFilter(props) {
   const { qcApi, onFilterChange, user } = props;
 
   const [sampleFilters, setSampleFilters] = useState([]);
-  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState([null]);
   const [selectedGroup, setSelectedGroup] = useState("Global");
   const [modalOpen, setModalOpen] = useState(false);
   const [editFilter, setEditFilter] = useState(null);
@@ -220,17 +220,23 @@ export function SampleFilter(props) {
             <div id="sample-filter-groups">
               <ListGroup>
                 <ListGroupItem
+                  active={selectedFilters.includes(null)}
                   onClick={() => {
-                    setSelectedFilters([]);
+                    if (selectedFilters.includes(null)) {
+                      setSelectedFilters(
+                        selectedFilters.filter((it) => it != null)
+                      );
+                    } else {
+                      setSelectedFilters([...selectedFilters, null]);
+                    }
                   }}
                   tag={"button"}
                   className={classnames({
                     "sample-filter-btn": true,
                     "list-group-item-action": true,
-                    active: selectedFilters.length === 0,
                   })}
                 >
-                  None
+                  All Samples
                 </ListGroupItem>
                 {selectedGroup in filterGroups &&
                   filterGroups[selectedGroup].map((filter, i) => {

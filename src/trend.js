@@ -24,7 +24,7 @@ const trendSchema = Yup.object().shape({
 function Trend(props) {
   const [dataTypes, setDataTypes] = useState([]);
   const [plotData, setPlotData] = useState({});
-  const [selectedFilters, selectFilters] = useState([]);
+  const [selectedFilters, selectFilters] = useState([null]);
   const [revision, setRevision] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const [plotSettings, setPlotSettings] = useState({});

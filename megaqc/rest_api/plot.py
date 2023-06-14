@@ -73,73 +73,6 @@ def extract_query_data(query: Query, ncol: int) -> Iterable[DataColumn]:
                 )
 
 
-def univariate_trend_data(
-    query: Any,
-    fields: Sequence[str],
-    plot_prefix: str,
-    statistic_options: dict,
-    colours: Iterator[str],
-    filter: SampleFilter,
-) -> Iterator[dict]:
-    """
-    Returns the plot series for the "raw measurement" statistic.
-    """
-    center_line = statistic_options["center_line"]
-    for field in fields:
-        # Fields can be specified either as type IDs, or as type names
-        if field.isdigit():
-            field_query = query.filter(
-                models.SampleDataType.sample_data_type_id == field
-            )
-        else:
-            field_query = query.filter(models.SampleDataType.data_key == field)
-
-        # Each dummy variable needs to be a unique series
-        for i, column in enumerate(extract_query_data(field_query, 1)):
-            # We are only considering 1 field at a time
-            colour = next(colours)
-
-            yield dict(
-                id=f"{plot_prefix}_raw_{i}_{field}",
-                type="scatter",
-                text=column.sample_names,
-                hoverinfo="text+x+y",
-                x=column.x,
-                y=column.y,
-                line=dict(color=colour),
-                mode="markers",
-                name=f"{column.name} Samples",
-            )
-
-            # Add the mean
-            if center_line == "mean":
-                y2 = numpy.repeat(numpy.mean(column.y), len(column.x))
-                yield dict(
-                    id=f"{plot_prefix}_mean_{i}_{field}",
-                    type="scatter",
-                    x=column.x,
-                    y=y2.tolist(),
-                    line=dict(color=colour),
-                    mode="lines",
-                    name=f"{column.name} Mean",
-                )
-            elif center_line == "median":
-                y2 = numpy.repeat(numpy.median(column.y), len(column.x))
-                yield dict(
-                    id=f"{plot_prefix}_median_{i}_{field}",
-                    type="scatter",
-                    x=column.x,
-                    y=y2.tolist(),
-                    line=dict(color=colour),
-                    mode="lines",
-                    name=f"{column.name} Median",
-                )
-            else:
-                # The user could request control limits without a center line. Assume they
-                # want a mean in this case
-                y2 = numpy.repeat(numpy.mean(column.y), len(column.x))
-
-
 # Parameters correspond to fields in
 # `TrendInputSchema`
 def trend_data(
@@ -157,6 +90,7 @@ def trend_data(
     colours = cycle(iter(qualitative.Alphabet))
     for i, filter in enumerate(filters):
         prefix = f"{plot_prefix}_{i}"
+        # Special case for the None filter, which should return all samples
         subquery = build_filter_query([] if filter is None else filter.filter_json)
         # Choose the columns to select, and further filter it down to samples with the column we want to plot
         query = (
@@ -178,20 +112,20 @@ def trend_data(
             .distinct()
         )
 
+        args = dict(
+            fields=fields,
+            query=query,
+            colours=colours,
+            plot_prefix=prefix,
+            filter_name="All Samples" if filter is None else filter.sample_filter_name,
+            **kwargs,
+        )
         if statistic == "measurement":
-            yield from univariate_trend_data(
-                fields=fields,
-                query=query,
-                colours=colours,
-                plot_prefix=prefix,
-                filter=filter,
-                **kwargs,
-            )
+            yield from univariate_trend_data(**args)
         elif statistic == "iforest":
-            yield from isolation_forest_trend(
-                fields=fields, query=query, plot_prefix=prefix, filter=filter, **kwargs
-            )
-            # return hotelling_trend_data(fields=fields, query=query, **kwargs)
+            yield from iforest_trend_data(
+                **args
+            )  # return hotelling_trend_data(fields=fields, query=query, **kwargs)
         else:
             raise ValueError("Invalid transform!")
 
@@ -210,8 +144,13 @@ def maha_distance(y, alpha=0.05):
     return distance, t
 
 
-def isolation_forest_trend(
-    query: Any, fields: Sequence[str], plot_prefix: str, statistic_options: dict
+def iforest_trend_data(
+    query: Any,
+    fields: Sequence[str],
+    plot_prefix: str,
+    statistic_options: dict,
+    colours: Iterator[str],
+    filter_name: str,
 ) -> Iterator[dict]:
     """
     Yields plotly series for the "Isolation Forest" statistic.
@@ -222,7 +161,10 @@ def isolation_forest_trend(
     else:
         query = query.filter(models.SampleDataType.data_key.in_(fields))
 
-    names, data_types, x, y = extract_query_data(query, len(fields))
+    query_data = list(extract_query_data(query, len(fields)))
+    y = numpy.column_stack([column.y for column in query_data])
+    x = query_data[0].x
+    names = query_data[0].sample_names
 
     clf = IsolationForest(
         n_estimators=100, contamination=statistic_options["contamination"]
@@ -238,9 +180,9 @@ def isolation_forest_trend(
         hoverinfo="text+x+y",
         x=x[~outliers],
         y=scores[~outliers],
-        line=dict(color="rgb(0,0,250)"),
+        line=dict(color=next(colours)),
         mode="markers",
-        name="Inliers",
+        name=f"{filter_name} Inliers",
     )
 
     yield dict(
@@ -250,18 +192,75 @@ def isolation_forest_trend(
         hoverinfo="text+x+y",
         x=x[outliers],
         y=scores[outliers],
-        line=dict(color="rgb(250,0,0)"),
+        line=dict(color=next(colours)),
         mode="markers",
-        name="Outliers",
+        name=f"{filter_name} Outliers",
     )
 
-    # yield dict(
-    #     id=plot_prefix +"plot_line",
-    #     type="scatter",
-    #     hoverinfo="text+x+y",
-    #     x=x.tolist(),
-    #     y=line,
-    #     line=dict(color="rgb(250,0,0)"),
-    #     mode="lines",
-    #     name="Criticial line",
-    # )
+
+def univariate_trend_data(
+    query: Any,
+    fields: Sequence[str],
+    plot_prefix: str,
+    statistic_options: dict,
+    colours: Iterator[str],
+    filter_name: str,
+) -> Iterator[dict]:
+    """
+    Returns the plot series for the "raw measurement" statistic.
+    """
+    center_line = statistic_options["center_line"]
+    for field in fields:
+        # Fields can be specified either as type IDs, or as type names
+        if field.isdigit():
+            field_query = query.filter(
+                models.SampleDataType.sample_data_type_id == field
+            )
+        else:
+            field_query = query.filter(models.SampleDataType.data_key == field)
+
+        # Each dummy variable needs to be a unique series
+        for i, column in enumerate(extract_query_data(field_query, 1)):
+            # We are only considering 1 field at a time
+            colour = next(colours)
+            name = f"{column.name} {filter_name}"
+
+            yield dict(
+                id=f"{plot_prefix}_raw_{i}_{field}",
+                type="scatter",
+                text=column.sample_names,
+                hoverinfo="text+x+y",
+                x=column.x,
+                y=column.y,
+                line=dict(color=colour),
+                mode="markers",
+                name=f"{name} Samples",
+            )
+
+            # Add the mean
+            if center_line == "mean":
+                y2 = numpy.repeat(numpy.mean(column.y), len(column.x))
+                yield dict(
+                    id=f"{plot_prefix}_mean_{i}_{field}",
+                    type="scatter",
+                    x=column.x,
+                    y=y2.tolist(),
+                    line=dict(color=colour),
+                    mode="lines",
+                    name=f"{name} Mean",
+                )
+            elif center_line == "median":
+                y2 = numpy.repeat(numpy.median(column.y), len(column.x))
+                yield dict(
+                    id=f"{plot_prefix}_median_{i}_{field}",
+                    type="scatter",
+                    x=column.x,
+                    y=y2.tolist(),
+                    line=dict(color=colour),
+                    mode="lines",
+                    name=f"{name} Median",
+                )
+            else:
+                # The user could request control limits without a center line. Assume they
+                # want a mean in this case
+                y2 = numpy.repeat(numpy.mean(column.y), len(column.x))
