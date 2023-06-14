@@ -12,6 +12,8 @@ Added
 - `[#433]`_: "Statistic" selector that allows the selection of "measurement" or "isolation forest". The isolation forest statistic plots the multivariate outlier score in a non-parametric way, with an adjustable threshold
 - `[#479]`_: Give all users access to the admin interface. Unprivileged users won't be able to edit or delete most entities, however
 - `[#479]`_: Consistently added show, edit and delete buttons to all pages of the admin interface
+- `[#480]`_: Added a new type of filter, called "Specific samples", which filters samples based on their ID and not on their metadata
+- `[#480]`_: Multiple filters can now be simultaneously selected on the Trend page. This does *not* take the intersection of all the filters, but rather plots data that passes each of the filters on the same plot. This allows you to compare one group of samples to another group in the same plot, as each group will be distinctly coloured.
 
 Changed
 ~~~~~~~
@@ -95,3 +97,4 @@ Internal Changes
 .. _[#443]: https://github.com/ewels/MegaQC/pull/443
 .. _[#476]: https://github.com/ewels/MegaQC/issues/476
 .. _[#479]: https://github.com/ewels/MegaQC/issues/479
+.. _[#480]: https://github.com/ewels/MegaQC/issues/480
