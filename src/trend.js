@@ -61,7 +61,7 @@ function Trend(props) {
       .find("plots/trends/series", {
         // filter, unlike the Formik fields is special because it is
         // a reuseable component that isn't a field
-        filters: selectedFilters.join(","),
+        filter: selectedFilters.join(","),
         fields: JSON.stringify(plotSettings.fields),
         statistic_options: {
           center_line: plotSettings.statisticOptions.centerLine,

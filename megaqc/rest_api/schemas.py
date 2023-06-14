@@ -481,7 +481,9 @@ class TrendInputSchema(BaseSchema):
     """
 
     fields = JsonString(invert=True, required=True)
-    filters = DelimitedList(ModelAssociation(models.SampleFilter))
+    # This field is named filter for backwards compatibility. A 1-filter plot should work as in previous versions,
+    # but multi-filter plots are now also possible
+    filters = DelimitedList(ModelAssociation(models.SampleFilter), data_key="filter")
     statistic = f.String(
         validate=validate.OneOf(["measurement", "iforest"]),
         default="none",
