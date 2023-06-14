@@ -28,6 +28,8 @@ import { Field, FieldArray, Form, Formik } from "formik";
 
 export default function EditFilter(props) {
   const { isOpen, toggle, qcApi, resourceId, user, revision } = props;
+  // We need to obtain lists of options that we can use to create a filter
+  const [sampleList, setSampleList] = useState([]);
   const [sampleFields, setSampleFields] = useState([]);
   const [reportFields, setReportFields] = useState([]);
   const [filterGroups, setFilterGroups] = useState([]);
@@ -99,6 +101,15 @@ export default function EditFilter(props) {
       .then((groups) => {
         setReportFields(groups.map((group) => group._getUid()));
       });
+    // Fetch the list of sample IDs
+    qcApi
+      .find("samples", {
+        "page[size]": 0,
+        sort: "id",
+      })
+      .then((samples) => {
+        setSampleList(samples.map((sample) => sample.toJSON()));
+      });
   }, [user]);
 
   return (
@@ -137,7 +148,12 @@ export default function EditFilter(props) {
       }}
     >
       {({ values, isSubmitting }) => (
-        <Modal size={"xl"} isOpen={isOpen} toggle={() => toggle(false)}>
+        <Modal
+          size={"xl"}
+          isOpen={isOpen}
+          toggle={() => toggle(false)}
+          style={{ maxWidth: "90%" }}
+        >
           <Form>
             <ModalHeader tag={"h3"} toggle={toggle}>
               Sample Filters: New Set
@@ -254,6 +270,7 @@ export default function EditFilter(props) {
                                             index={j}
                                             sampleFields={sampleFields}
                                             reportFields={reportFields}
+                                            sampleList={sampleList}
                                             name={`filters[${i}][${j}]`}
                                             innerArrayHelpers={
                                               innerArrayHelpers

@@ -10,6 +10,9 @@ import {
   SimpleShowLayout,
   TextField,
   TextInput,
+  EditButton,
+  ShowButton,
+  DeleteButton,
 } from "react-admin";
 
 export const UploadList = (props) => (
@@ -21,6 +24,9 @@ export const UploadList = (props) => (
       <DateField source="created_at" />
       <DateField source="modified_at" />
       <TextField source="status" />
+      <EditButton />
+      <ShowButton />
+      <DeleteButton />
     </Datagrid>
   </List>
 );

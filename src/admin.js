@@ -24,6 +24,7 @@ import {
   DashboardEdit,
   DashboardShow,
 } from "./admin/dashboards";
+import { FilterList, FilterEdit, FilterShow } from "./admin/filter";
 import { DataList, DataEdit, DataShow, DataCreate } from "./admin/sampleData";
 import { UserList, UserEdit, UserShow } from "./admin/user";
 import { getClient, getToken } from "./util/api";
@@ -132,6 +133,12 @@ function App() {
           list={UserList}
           show={UserShow}
           edit={UserEdit}
+        />
+        <Resource
+          name="filters"
+          list={FilterList}
+          edit={FilterEdit}
+          show={FilterShow}
         />
         <Resource name="filter_groups" list={FilterGroupList} />
         <Resource

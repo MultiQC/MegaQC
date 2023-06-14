@@ -21,8 +21,15 @@ import { format, parse } from "date-fns";
 import { DATE_FORMAT } from "../util/filter";
 
 function FilterRow(props) {
-  const { sampleFields, reportFields, name, formik, innerArrayHelpers, index } =
-    props;
+  const {
+    sampleFields,
+    reportFields,
+    name,
+    formik,
+    innerArrayHelpers,
+    index,
+    sampleList,
+  } = props;
 
   const rowError = getIn(formik.errors, name);
   const errorMsg = rowError instanceof String ? rowError : "";
@@ -66,6 +73,14 @@ function FilterRow(props) {
           cmp: "eq",
           key: reportFields[0],
           value: [""],
+        };
+        break;
+      case "samplelist":
+        newFilter = {
+          type: currentType,
+          cmp: "in",
+          key: null,
+          value: [],
         };
         break;
     }
@@ -209,6 +224,27 @@ function FilterRow(props) {
         </>
       );
       break;
+    case "samplelist":
+      keyComponent = null;
+      cmpComponent = null;
+      valueComponent = (
+        <Field
+          component={BootstrapField}
+          name={`${name}.value`}
+          type={"select"}
+          style={{ minWidth: "500px" }}
+          multiple
+        >
+          {sampleList.map((field) => {
+            return (
+              <option key={field.id} value={field.id}>
+                {field.name}
+              </option>
+            );
+          })}
+        </Field>
+      );
+      break;
   }
 
   return (
@@ -224,6 +260,7 @@ function FilterRow(props) {
             <option value="daterange">Specific dates</option>
             <option value="reportmeta">Report metadata</option>
             <option value="samplemeta">Sample data</option>
+            <option value="samplelist">Specific samples</option>
           </Field>
         </FormGroup>
       </td>
@@ -233,7 +270,7 @@ function FilterRow(props) {
       <td>
         <InputGroup>{cmpComponent}</InputGroup>
       </td>
-      <td>
+      <td style={{}}>
         <FormGroup>{valueComponent}</FormGroup>
       </td>
       <td>

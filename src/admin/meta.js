@@ -12,6 +12,9 @@ import {
   SimpleShowLayout,
   TextField,
   TextInput,
+  EditButton,
+  ShowButton,
+  DeleteButton,
 } from "react-admin";
 
 import DefaultForm from "./components/defaultForm";
@@ -30,6 +33,9 @@ export const ReportMetaList = (props) => (
       >
         <TextField source="id" />
       </ReferenceField>
+      <EditButton />
+      <ShowButton />
+      <DeleteButton />
     </Datagrid>
   </List>
 );

@@ -42,15 +42,15 @@
           <a class="dropdown-item" href="{{ url_for('public.create_dashboard') }}">Create Dashboard</a>
           <a class="dropdown-item" href="{{ url_for('public.plot_favourites') }}">Favourite Plots</a>
           <div class="dropdown-divider"></div>
-          <h6 class="dropdown-header">Uploads and Filters</h6>
+          <h6 class="dropdown-header">Manage Data</h6>
           <a class="dropdown-item" href="{{ url_for('public.queued_uploads') }}">Pending Uploads</a>
-          <a class="dropdown-item" href="{{ url_for('public.edit_filters') }}">Edit Filters</a>
+          <a class="dropdown-item" href="{{ url_for('public.admin', _anchor='filters') }}">Edit Filters</a>
           <a class="dropdown-item" href="{{ url_for('public.edit_reports') }}">Edit Reports</a>
+          <a class="dropdown-item" href="{{ url_for('public.admin') }}">Data Admin</a>
           {% if current_user.is_admin %}
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">Administration Pages</h6>
           <a class="dropdown-item" href="{{ url_for('user.manage_users') }}">Manage Users</a>
-          <a class="dropdown-item" href="{{ url_for('public.admin') }}">Data Admin</a>
           {% endif %}
           <div class="dropdown-divider"></div>
           <a class="dropdown-item text-danger" href="{{ url_for('public.logout') }}">Log Out</a>

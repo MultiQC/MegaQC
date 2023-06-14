@@ -18,6 +18,7 @@ import {
   SimpleShowLayout,
   TextField,
   TextInput,
+  DeleteButton,
 } from "react-admin";
 
 export const UserList = (props) => (
@@ -34,6 +35,9 @@ export const UserList = (props) => (
       <TextField source="salt" />
       <TextField source="password" />
       <BooleanField source="admin" />
+      <EditButton />
+      <ShowButton />
+      <DeleteButton />
     </Datagrid>
   </List>
 );

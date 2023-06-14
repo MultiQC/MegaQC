@@ -3,6 +3,7 @@ import json
 from flask_restful import url_for
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.collections import InstrumentedList
+from webargs.fields import DelimitedList
 
 from megaqc.extensions import db, ma
 from megaqc.model import models
@@ -53,6 +54,11 @@ class ModelAssociation(ma.Field):
             return None
 
         return db.session.query(self.model).get(value)
+
+
+class FilterReferenceList(DelimitedList):
+    def deserialize(self, *args, **kwargs):
+        list = super().deserialize(*args, **kwargs)
 
 
 class FilterReference(ModelAssociation):

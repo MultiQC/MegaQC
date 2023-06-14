@@ -10,6 +10,9 @@ import {
   SimpleShowLayout,
   TextField,
   TextInput,
+  EditButton,
+  ShowButton,
+  DeleteButton,
 } from "react-admin";
 import { JsonInput, JsonField } from "./components/jsonField";
 
@@ -21,6 +24,9 @@ export const FavouriteList = (props) => (
       <TextField source="description" />
       <TextField source="plot_type" />
       <DateField source="created_at" />
+      <EditButton />
+      <ShowButton />
+      <DeleteButton />
     </Datagrid>
   </List>
 );

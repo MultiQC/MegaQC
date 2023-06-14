@@ -111,7 +111,7 @@ export function SampleFilter(props) {
   const { qcApi, onFilterChange, user } = props;
 
   const [sampleFilters, setSampleFilters] = useState([]);
-  const [selectedFilter, setSelectedFilter] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState([null]);
   const [selectedGroup, setSelectedGroup] = useState("Global");
   const [modalOpen, setModalOpen] = useState(false);
   const [editFilter, setEditFilter] = useState(null);
@@ -155,8 +155,8 @@ export function SampleFilter(props) {
 
   // Whenever the filter selection changes, report back to anything listening for this event
   useEffect(() => {
-    onFilterChange(selectedFilter);
-  }, [selectedFilter]);
+    onFilterChange(selectedFilters);
+  }, [selectedFilters]);
 
   return (
     <Card>
@@ -220,21 +220,28 @@ export function SampleFilter(props) {
             <div id="sample-filter-groups">
               <ListGroup>
                 <ListGroupItem
+                  active={selectedFilters.includes(null)}
                   onClick={() => {
-                    setSelectedFilter(null);
+                    if (selectedFilters.includes(null)) {
+                      setSelectedFilters(
+                        selectedFilters.filter((it) => it != null)
+                      );
+                    } else {
+                      setSelectedFilters([...selectedFilters, null]);
+                    }
                   }}
                   tag={"button"}
                   className={classnames({
                     "sample-filter-btn": true,
                     "list-group-item-action": true,
-                    active: null === selectedFilter,
                   })}
                 >
-                  None
+                  All Samples
                 </ListGroupItem>
                 {selectedGroup in filterGroups &&
                   filterGroups[selectedGroup].map((filter, i) => {
-                    const active = filter._getUid() === selectedFilter;
+                    const currentId = filter._getUid();
+                    const active = selectedFilters.includes(currentId);
                     return (
                       <FilterItem
                         filter={filter}
@@ -249,7 +256,15 @@ export function SampleFilter(props) {
                           incrementRevision();
                         }}
                         setSelected={() => {
-                          setSelectedFilter(filter._getUid());
+                          if (active) {
+                            // If it's currently active, remove it
+                            setSelectedFilters(
+                              selectedFilters.filter((it) => it != currentId)
+                            );
+                          } else {
+                            // If it's not currently active, add it
+                            setSelectedFilters([...selectedFilters, currentId]);
+                          }
                         }}
                         onDelete={(filter) => {
                           filter.delete().then(() => {
