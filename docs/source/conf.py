@@ -98,4 +98,4 @@ def linkcode_resolve(domain, info):
     tag = "master"
     # TODO use this after the first release: tag = 'master' if 'dev' in release else ('v' + release)
 
-    return "https://github.com/ewels/megaqc/blob/%s/%s" % (tag, filename)
+    return "https://github.com/MultiQC/MegaQC/blob/%s/%s" % (tag, filename)

@@ -2,8 +2,8 @@ Production
 =============
 
 This section explains how to set up a production environment without
-the usage of container technologies. If you want to run MegaQC in a 
-containerized environment please refer to :ref:`docker_installation`. 
+the usage of container technologies. If you want to run MegaQC in a
+containerized environment please refer to :ref:`docker_installation`.
 
 1. Install the MegaQC package
 -----------------------------
@@ -169,5 +169,5 @@ If you run an older OS, ensure that the package is installed.
 
 .. _Python MySQL connector: https://dev.mysql.com/downloads/connector/python/2.1.html
 .. _PyPI package: https://pypi.python.org/pypi/mysql-connector-python/2.0.4
-.. _create an issue: https://github.com/ewels/MegaQC/issues/new
-.. _deployment_folder: https://github.com/ewels/MegaQC/blob/master/deployment
+.. _create an issue: https://github.com/MultiQC/MegaQC/issues/new
+.. _deployment_folder: https://github.com/MultiQC/MegaQC/blob/master/deployment

@@ -14,7 +14,7 @@ keywords = [
         "quality control",
 ]
 homepage = "https://megaqc.info/"
-repository = "https://github.com/ewels/MegaQC/"
+repository = "https://github.com/MultiQC/MegaQC"
 documentation = "https://megaqc.info/docs/index.html"
 classifiers = [
         "Development Status :: 4 - Beta",

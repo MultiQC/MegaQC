@@ -18,9 +18,9 @@ Usage
 
 -  When creating a violin plot I get an error.
 
-   - This is a known issue: https://github.com/ewels/MegaQC/issues/31
+   - This is a known issue: https://github.com/MultiQC/MegaQC/issues/31
 
 -  TypeError: '<' not supported between instances of 'NoneType' and 'float' when trying to compare data
 
-   - This is a known issue: https://github.com/ewels/MegaQC/issues/156
+   - This is a known issue: https://github.com/MultiQC/MegaQC/issues/156
    - Please ensure that your reports do not have missing fields

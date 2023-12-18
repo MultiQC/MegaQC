@@ -19,9 +19,9 @@ Development
    * Fix a bug in pytest where we used `scope` as a positional argument
    * Update the SubFactoryList to a new version that works with newer FactoryBoy versions
 
-.. _[#430]: https://github.com/ewels/MegaQC/issues/430
-.. _[#440]: https://github.com/ewels/MegaQC/pull/440
-.. _[#433]: https://github.com/ewels/MegaQC/pull/433
+.. _[#430]: https://github.com/MultiQC/MegaQC/issues/430
+.. _[#440]: https://github.com/MultiQC/MegaQC/pull/440
+.. _[#433]: https://github.com/MultiQC/MegaQC/pull/433
 
 =======
 
@@ -87,12 +87,12 @@ Internal Changes
 -  Many and more dependency updates
 
 
-.. _[#69]:  https://github.com/ewels/MegaQC/issues/69
-.. _[#138]: https://github.com/ewels/MegaQC/issues/138
-.. _[#139]: https://github.com/ewels/MegaQC/issues/139
-.. _[#140]: https://github.com/ewels/MegaQC/issues/140
-.. _[#148]: https://github.com/ewels/MegaQC/issues/148
-.. _[#156]: https://github.com/ewels/MegaQC/issues/156
-.. _[#170]: https://github.com/ewels/MegaQC/issues/170
-.. _[#194]: https://github.com/ewels/MegaQC/issues/194
-.. _[#443]: https://github.com/ewels/MegaQC/pull/443
+.. _[#69]:  https://github.com/MultiQC/MegaQC/issues/69
+.. _[#138]: https://github.com/MultiQC/MegaQC/issues/138
+.. _[#139]: https://github.com/MultiQC/MegaQC/issues/139
+.. _[#140]: https://github.com/MultiQC/MegaQC/issues/140
+.. _[#148]: https://github.com/MultiQC/MegaQC/issues/148
+.. _[#156]: https://github.com/MultiQC/MegaQC/issues/156
+.. _[#170]: https://github.com/MultiQC/MegaQC/issues/170
+.. _[#194]: https://github.com/MultiQC/MegaQC/issues/194
+.. _[#443]: https://github.com/MultiQC/MegaQC/pull/443

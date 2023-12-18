@@ -17,7 +17,7 @@ If you’re doing development work, you need access to the source code
 
 .. code:: bash
 
-   git clone https://github.com/ewels/MegaQC
+   git clone https://github.com/MultiQC/MegaQC/
 
 2. Install Dependencies
 ------------------------------------------------

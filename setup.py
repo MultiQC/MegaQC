@@ -61,7 +61,7 @@ setup(
         "quality control",
     ],
     url="https://megaqc.info/",
-    download_url="https://github.com/ewels/MegaQC/releases",
+    download_url="https://github.com/MultiQC/MegaQC/releases",
     license="GPLv3",
     packages=["megaqc"],
     include_package_data=True,
