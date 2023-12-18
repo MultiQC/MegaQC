@@ -206,8 +206,8 @@ Usage
 ~~~~~~~~
 
 Inside the `deployment folder`_ the `docker-compose`_ configuration
-together with the associated `.env <https://github.com/MultiQC/MegaQC/blob/master/deployment/.env>`_ file
-are found. To spin up all containers simply run from inside the `deployment folder <https://github.com/MultiQC/MegaQC/blob/master/deployment>`_:
+together with the associated `.env <https://github.com/MultiQC/MegaQC/blob/main/deployment/.env>`_ file
+are found. To spin up all containers simply run from inside the `deployment folder <https://github.com/MultiQC/MegaQC/blob/main/deployment>`_:
 
 .. code:: bash
 
@@ -229,7 +229,7 @@ Environment variables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The default environment variables for MegaQC used when starting the :ref:`megaqc_docker_container`
-are defined inside the `.env <https://github.com/MultiQC/MegaQC/blob/master/deployment/.env>`_ file.
+are defined inside the `.env <https://github.com/MultiQC/MegaQC/blob/main/deployment/.env>`_ file.
 Simply edit the file and the new environment variables will be passed to the :ref:`megaqc_docker_container`.
 
 Further runtime arguments
@@ -239,8 +239,8 @@ Further runtime arguments can be added to a
 `command section <https://docs.docker.com/compose/compose-file/#command>`_
 inside the `docker-compose`_ configuration file.
 
-.. _deployment_folder: https://github.com/MultiQC/MegaQC/blob/master/deployment
-.. _docker-compose: https://github.com/MultiQC/MegaQC/blob/master/deployment/docker-compose.yml
+.. _deployment_folder: https://github.com/MultiQC/MegaQC/blob/main/deployment
+.. _docker-compose: https://github.com/MultiQC/MegaQC/blob/main/deployment/docker-compose.yml
 .. _dockerhub: https://hub.docker.com/r/ewels/megaqc/
 
 HTTPS

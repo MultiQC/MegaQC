@@ -20,7 +20,7 @@ MegaQC is a web application that you can install and run on your own
 network. It collects and visualises data parsed by MultiQC across multiple runs.
 The MegaQC home page looks something like this:
 
-.. figure:: https://raw.githubusercontent.com/MultiQC/MegaQC/master/docs/source/images/megaqc_homepage.png
+.. figure:: https://raw.githubusercontent.com/MultiQC/MegaQC/main/docs/source/images/megaqc_homepage.png
    :alt: MegaQC homepage
 
    Screenshot of the MegaQC home page.
@@ -37,10 +37,10 @@ to learn how to install, deploy and use MegaQC.
 .. _MultiQC website: http://multiqc.info
 .. _GitHub repository: https://github.com/ewels/MultiQC
 
-.. |MegaQC| image:: https://raw.githubusercontent.com/MultiQC/MegaQC/master/megaqc/static/img/MegaQC_logo.png
+.. |MegaQC| image:: https://raw.githubusercontent.com/MultiQC/MegaQC/main/megaqc/static/img/MegaQC_logo.png
 .. |Docker| image:: https://img.shields.io/docker/automated/ewels/megaqc.svg?style=flat-square
    :target: https://hub.docker.com/r/ewels/megaqc/
-.. |Build Status| image:: https://travis-ci.org/ewels/MegaQC.svg?branch=master
+.. |Build Status| image:: https://travis-ci.org/ewels/MegaQC.svg?branch=main
    :target: https://travis-ci.org/ewels/MegaQC
 .. |Gitter| image:: https://img.shields.io/badge/gitter-%20join%20chat%20%E2%86%92-4fb99a.svg?style=flat-square
    :target: https://gitter.im/ewels/MegaQC

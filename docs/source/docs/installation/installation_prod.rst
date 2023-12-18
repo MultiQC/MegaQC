@@ -170,4 +170,4 @@ If you run an older OS, ensure that the package is installed.
 .. _Python MySQL connector: https://dev.mysql.com/downloads/connector/python/2.1.html
 .. _PyPI package: https://pypi.python.org/pypi/mysql-connector-python/2.0.4
 .. _create an issue: https://github.com/MultiQC/MegaQC/issues/new
-.. _deployment_folder: https://github.com/MultiQC/MegaQC/blob/master/deployment
+.. _deployment_folder: https://github.com/MultiQC/MegaQC/blob/main/deployment

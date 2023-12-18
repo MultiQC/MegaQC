@@ -61,16 +61,16 @@ be done inside `test_api.py`_, which tests all REST API endpoints.
 
 .. _flask: https://www.palletsprojects.com/p/flask/
 .. _SQLAlchemy: https://docs.sqlalchemy.org/
-.. _model/models.py: https://github.com/MultiQC/MegaQC/blob/master/megaqc/model/models.py
-.. _user/models.py: https://github.com/MultiQC/MegaQC/blob/master/megaqc/user/models.py
-.. _megaqc/api: https://github.com/MultiQC/MegaQC/tree/master/megaqc/api
-.. _megaqc/rest_api: https://github.com/MultiQC/MegaQC/tree/master/megaqc/rest_api
-.. _views.py: https://github.com/MultiQC/MegaQC/blob/master/megaqc/rest_api/views.py
+.. _model/models.py: https://github.com/MultiQC/MegaQC/blob/main/megaqc/model/models.py
+.. _user/models.py: https://github.com/MultiQC/MegaQC/blob/main/megaqc/user/models.py
+.. _megaqc/api: https://github.com/MultiQC/MegaQC/tree/main/megaqc/api
+.. _megaqc/rest_api: https://github.com/MultiQC/MegaQC/tree/main/megaqc/rest_api
+.. _views.py: https://github.com/MultiQC/MegaQC/blob/main/megaqc/rest_api/views.py
 .. _flapison: https://github.com/TMiguelT/flapison
-.. _schemas.py: https://github.com/MultiQC/MegaQC/tree/master/megaqc/rest_api/schemas.py
-.. _public/views.py: https://github.com/MultiQC/MegaQC/tree/master/megaqc/public/views.py
-.. _user/views.py: https://github.com/MultiQC/MegaQC/tree/master/megaqc/user/views.py
+.. _schemas.py: https://github.com/MultiQC/MegaQC/tree/main/megaqc/rest_api/schemas.py
+.. _public/views.py: https://github.com/MultiQC/MegaQC/tree/main/megaqc/public/views.py
+.. _user/views.py: https://github.com/MultiQC/MegaQC/tree/main/megaqc/user/views.py
 .. _Jinja2: https://jinja.palletsprojects.com/en/2.11.x/
 .. _frontend: ./frontend.md
-.. _python_tests: https://github.com/MultiQC/MegaQC/tree/master/tests
-.. _test_api.py: https://github.com/MultiQC/MegaQC/tree/master/megaqc/api/test_api.py
+.. _python_tests: https://github.com/MultiQC/MegaQC/tree/main/tests
+.. _test_api.py: https://github.com/MultiQC/MegaQC/tree/main/megaqc/api/test_api.py

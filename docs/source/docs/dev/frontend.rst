@@ -22,7 +22,7 @@ Note that all new pages going forward should be written using React, to
 improve the maintainability of the frontend.
 
 .. _React: https://reactjs.org/
-.. _templates: https://github.com/MultiQC/MegaQC/tree/master/megaqc/templates
-.. _static: https://github.com/MultiQC/MegaQC/tree/master/megaqc/static
-.. _react.html: https://github.com/MultiQC/MegaQC/tree/master/megaqc/templates/public/react.html
-.. _src: https://github.com/MultiQC/MegaQC/tree/master/src
+.. _templates: https://github.com/MultiQC/MegaQC/tree/main/megaqc/templates
+.. _static: https://github.com/MultiQC/MegaQC/tree/main/megaqc/static
+.. _react.html: https://github.com/MultiQC/MegaQC/tree/main/megaqc/templates/public/react.html
+.. _src: https://github.com/MultiQC/MegaQC/tree/main/src

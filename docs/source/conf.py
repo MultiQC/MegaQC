@@ -69,7 +69,7 @@ html_context = {
     # Format Template: https://{{ github_host|default("github.com") }}/{{ github_user }}/{{ github_repo }}/blob/{{ github_version }}{{ conf_py_path }}{{ pagename }}{{ suffix }}
     "github_user": "ewels",
     "github_repo": "MegaQC",
-    "github_version": "master/docs",
+    "github_version": "main/docs",
     "conf_py_path": "/source/",
 }
 
@@ -95,7 +95,7 @@ def linkcode_resolve(domain, info):
         filename = "megaqc/%s#L%d-L%d" % find_source()
     except Exception:
         filename = info["module"].replace(".", "/") + ".py"
-    tag = "master"
-    # TODO use this after the first release: tag = 'master' if 'dev' in release else ('v' + release)
+    tag = "main"
+    # TODO use this after the first release: tag = 'main' if 'dev' in release else ('v' + release)
 
     return "https://github.com/MultiQC/MegaQC/blob/%s/%s" % (tag, filename)
