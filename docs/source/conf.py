@@ -67,7 +67,7 @@ html_context = {
     "display_github": True,
     # Set the following variables to generate the resulting github URL for each page.
     # Format Template: https://{{ github_host|default("github.com") }}/{{ github_user }}/{{ github_repo }}/blob/{{ github_version }}{{ conf_py_path }}{{ pagename }}{{ suffix }}
-    "github_user": "ewels",
+    "github_user": "MultiQC",
     "github_repo": "MegaQC",
     "github_version": "main/docs",
     "conf_py_path": "/source/",

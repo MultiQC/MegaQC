@@ -38,10 +38,8 @@ to learn how to install, deploy and use MegaQC.
 .. _GitHub repository: https://github.com/ewels/MultiQC
 
 .. |MegaQC| image:: https://raw.githubusercontent.com/MultiQC/MegaQC/main/megaqc/static/img/MegaQC_logo.png
-.. |Docker| image:: https://img.shields.io/docker/automated/ewels/megaqc.svg?style=flat-square
-   :target: https://hub.docker.com/r/ewels/megaqc/
-.. |Build Status| image:: https://travis-ci.org/ewels/MegaQC.svg?branch=main
-   :target: https://travis-ci.org/ewels/MegaQC
+.. |Docker| image:: https://img.shields.io/docker/automated/multiqc/megaqc.svg?style=flat-square
+   :target: https://hub.docker.com/r/multiqc/megaqc/
 .. |Gitter| image:: https://img.shields.io/badge/gitter-%20join%20chat%20%E2%86%92-4fb99a.svg?style=flat-square
    :target: https://gitter.im/ewels/MegaQC
 .. |Documentation| image:: https://img.shields.io/badge/Documentation-passing-passing
