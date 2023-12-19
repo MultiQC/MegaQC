@@ -14,10 +14,10 @@ The MegaQC Docker container
 Overview
 ~~~~~~~~~~
 
-The MegaQC container is based on the `Node container <https://hub.docker.com/_/node>`_ 
+The MegaQC container is based on the `Node container <https://hub.docker.com/_/node>`_
 to compile all Javascript scripts and the `Gunicorn Flask container <https://hub.docker.com/r/tiangolo/meinheld-gunicorn-flask/dockerfile>`_
 providing Gunicorn, Flask and MegaQC preconfigured for production deployments.
-The `Gunicorn Flask <https://hub.docker.com/r/tiangolo/meinheld-gunicorn-flask/dockerfile>`_ container 
+The `Gunicorn Flask <https://hub.docker.com/r/tiangolo/meinheld-gunicorn-flask/dockerfile>`_ container
 is also the one spinning up the final server.
 
 Pulling the docker image from dockerhub
@@ -27,7 +27,7 @@ To run MegaQC with docker, simply use the following command:
 
 .. code:: bash
 
-   docker run -p 80:80 ewels/megaqc
+   docker run -p 80:80 multiqc/megaqc
 
 This will pull the latest image from `dockerhub`_ and run MegaQC on port 80.
 
@@ -42,21 +42,21 @@ MegaQC code from GitHub. Simply cd to the MegaQC root directory and run
 
 .. code:: bash
 
-   docker build . -t ewels/megaqc
+   docker build . -t multiqc/megaqc
 
 You can then run MegaQC as described above:
 
 .. code:: bash
 
-   docker run -p 80:80 ewels/megaqc
+   docker run -p 80:80 multiqc/megaqc
 
 Configuration
 ~~~~~~~~~~~~~~~
 
-Besides the sections below it is also recommended to read the 
+Besides the sections below it is also recommended to read the
 `Gunicorn Flask container documentation <https://github.com/tiangolo/meinheld-gunicorn-flask-docker>`_,
 which explains how to customize the ``host`` IP where Gunicorn listens
-to requests, the ``port`` the container should listen on and ``bind``, the actual 
+to requests, the ``port`` the container should listen on and ``bind``, the actual
 host and port passed to gunicorn, let alone custom Gunicorn configuration files.
 
 Environment variables
@@ -83,21 +83,21 @@ Running MegaQC for example with a custom database password works as follows:
 
 .. code-block:: bash
 
-   docker run -e DB_PASS=someotherpassword ewels/megaqc
+   docker run -e DB_PASS=someotherpassword multiqc/megaqc
 
 Furthermore, be aware that the default latest tag will typically be a development version
 and may not be very stable. You can specify a tagged version to run a release instead:
 
 .. code:: bash
 
-   docker run -p 80:80 ewels/megaqc:v0.1
+   docker run -p 80:80 multiqc/megaqc:v0.2.0
 
 Also note that docker will use a local version of the image if it
 exists. To pull the latest version of MegaQC use the following command:
 
 .. code:: bash
 
-   docker pull ewels/megaqc
+   docker pull multiqc/megaqc
 
 Using persistent data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -117,13 +117,13 @@ To create or re-use a docker volume named ``pg_data``:
 
 .. code:: bash
 
-   docker run -p 80:80 -v pg_data:/usr/local/lib/postgresql ewels/megaqc
+   docker run -p 80:80 -v pg_data:/usr/local/lib/postgresql multiqc/megaqc
 
 The same can be done for a log directory volume called ``pg_logs``
 
 .. code:: bash
 
-   docker run -p 80:80 -v pg_data:/usr/local/lib/postgresql -v pg_logs:/var/log/postgresql ewels/megaqc
+   docker run -p 80:80 -v pg_data:/usr/local/lib/postgresql -v pg_logs:/var/log/postgresql multiqc/megaqc
 
 If you did not specify a volume name, docker will have given it a long
 hex string as a unique name. If you do not use volumes frequently, you
@@ -181,7 +181,7 @@ on ``localhost:5432``, looks as follows:
 
 .. code:: bash
 
-   docker run --network="host" -p 5432 ewels/megaqc
+   docker run --network="host" -p 5432 multiqc/megaqc
 
 Note that by default ``localhost=127.0.0.1``.
 
@@ -199,15 +199,15 @@ Overview
 
 The `docker-compose`_ configuration can be accessed in the `deployment folder`_.
 The docker-compose configuration provides the :ref:`megaqc_docker_container`,
-a `postgres container <https://hub.docker.com/_/postgres>`_ for the SQL database 
+a `postgres container <https://hub.docker.com/_/postgres>`_ for the SQL database
 and a `nginx container <https://hub.docker.com/_/nginx>`_ for the reverse proxy setup.
 
 Usage
 ~~~~~~~~
 
 Inside the `deployment folder`_ the `docker-compose`_ configuration
-together with the associated `.env <https://github.com/ewels/MegaQC/blob/master/deployment/.env>`_ file 
-are found. To spin up all containers simply run from inside the `deployment folder <https://github.com/ewels/MegaQC/blob/master/deployment>`_:
+together with the associated `.env <https://github.com/MultiQC/MegaQC/blob/main/deployment/.env>`_ file
+are found. To spin up all containers simply run from inside the `deployment folder <https://github.com/MultiQC/MegaQC/blob/main/deployment>`_:
 
 .. code:: bash
 
@@ -229,19 +229,19 @@ Environment variables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The default environment variables for MegaQC used when starting the :ref:`megaqc_docker_container`
-are defined inside the `.env <https://github.com/ewels/MegaQC/blob/master/deployment/.env>`_ file.
+are defined inside the `.env <https://github.com/MultiQC/MegaQC/blob/main/deployment/.env>`_ file.
 Simply edit the file and the new environment variables will be passed to the :ref:`megaqc_docker_container`.
 
 Further runtime arguments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Further runtime arguments can be added to a 
+Further runtime arguments can be added to a
 `command section <https://docs.docker.com/compose/compose-file/#command>`_
 inside the `docker-compose`_ configuration file.
 
-.. _deployment_folder: https://github.com/ewels/MegaQC/blob/master/deployment
-.. _docker-compose: https://github.com/ewels/MegaQC/blob/master/deployment/docker-compose.yml
-.. _dockerhub: https://hub.docker.com/r/ewels/megaqc/
+.. _deployment_folder: https://github.com/MultiQC/MegaQC/blob/main/deployment
+.. _docker-compose: https://github.com/MultiQC/MegaQC/blob/main/deployment/docker-compose.yml
+.. _dockerhub: https://hub.docker.com/r/multiqc/megaqc/
 
 HTTPS
 ~~~~~

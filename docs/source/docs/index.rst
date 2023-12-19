@@ -23,4 +23,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. |MegaQC| image:: https://raw.githubusercontent.com/ewels/MegaQC/master/megaqc/static/img/MegaQC_logo.png
+.. |MegaQC| image:: https://raw.githubusercontent.com/MultiQC/MegaQC/main/megaqc/static/img/MegaQC_logo.png
