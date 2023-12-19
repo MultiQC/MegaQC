@@ -92,7 +92,7 @@ setup(
         "pyyaml~=5.1",
         "SQLAlchemy~=1.1",
         "Werkzeug>=0.14,<2.0",
-        "WTForms[email]~=2.1",
+        "WTForms[email]>=2.1,<4.0",
         "flask_restful~=0.3",
         "flask-marshmallow~=0.10",
         "marshmallow~=3.0",
