@@ -601,6 +601,7 @@ def generate_report_plot(plot_type, sample_names):
                 for d_idx, d in enumerate(data):
                     xs.append(" " + str(config["categories"][d_idx]))
                     ys.append(d)
+
             else:
                 for d in data:
                     xs.append(d[0])
