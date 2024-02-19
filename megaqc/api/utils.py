@@ -319,39 +319,33 @@ def handle_report_data(user, report_data):
                         existing_category.save()
                         category_id = existing_category.plot_category_id
                     for sa_idx, actual_data in enumerate(sub_dict["data"]):
-                        try:
-                            existing_sample = (
-                                db.session.query(Sample)
-                                .filter(
-                                    Sample.sample_name
-                                    == report_data["report_plot_data"][plot]["samples"][
-                                        dst_idx
-                                    ][sa_idx]
-                                )
-                                .first()
+                        existing_sample = (
+                            db.session.query(Sample)
+                            .filter(
+                                Sample.sample_name
+                                == report_data["report_plot_data"][plot]["samples"][
+                                    dst_idx
+                                ][sa_idx]
                             )
-                            if existing_sample:
-                                sample_id = existing_sample.sample_id
-                            else:
-                                new_sample = Sample(
-                                    sample_name=sub_dict["name"], report_id=report_id
-                                )
-                                new_sample.save()
-                                sample_id = new_sample.sample_id
-                            new_dataset_row = PlotData(
-                                report_id=report_id,
-                                config_id=config_id,
-                                sample_id=sample_id,
-                                plot_category_id=existing_category.plot_category_id,
-                                data=json.dumps(actual_data),
+                            .first()
+                        )
+                        if existing_sample:
+                            sample_id = existing_sample.sample_id
+                        else:
+                            new_sample = Sample(
+                                sample_name=sub_dict["name"], report_id=report_id
                             )
-                            new_dataset_row.save()
-                            new_plotdata_cnt += 1
-                        except Exception as e:
-                            current_app.logger.error(
-                                "Error saving plot data: {}".format(str(e))
-                            )
-                            raise
+                            new_sample.save()
+                            sample_id = new_sample.sample_id
+                        new_dataset_row = PlotData(
+                            report_id=report_id,
+                            config_id=config_id,
+                            sample_id=sample_id,
+                            plot_category_id=existing_category.plot_category_id,
+                            data=json.dumps(actual_data),
+                        )
+                        new_dataset_row.save()
+                        new_plotdata_cnt += 1
 
             # Save line plot data
             elif report_data["report_plot_data"][plot]["plot_type"] == "xy_line":
@@ -450,7 +444,7 @@ def handle_report_data(user, report_data):
                             config_id=config_id,
                             sample_id=sample_id,
                             plot_category_id=category_id,
-                            data=json.dumps(actual_data),
+                            data=json.dumps(sub_dict["data"]),
                         )
                     new_dataset_row.save()
                     new_plotdata_cnt += 1
