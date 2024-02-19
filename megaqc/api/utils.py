@@ -269,16 +269,13 @@ def handle_report_data(user, report_data):
                             report_id=report_id,
                             config_id=config_id,
                             category_name=data_key,
-                            data=cat_data["data"],
+                            data=data,
                         )
                         existing_category.save()
                     else:
                         existing_category.data = data
                         existing_category.save()
-                        category_id = existing_category.plot_category_id
-                    for sname, actual_data in enumerate(
-                        zip(dataset["samples"], cat_data["data"])
-                    ):
+                    for sname, actual_data in zip(dataset["samples"], cat_data["data"]):
                         existing_sample = (
                             db.session.query(Sample)
                             .filter(Sample.sample_name == sname)
@@ -409,7 +406,18 @@ def generate_report_plot(plot_type, sample_names):
                 series.append(row[2].category_name)
                 cat_config = json.loads(row[2].data)
                 if "color" in cat_config:
-                    colors.append(cat_config["color"])
+                    color = cat_config["color"]
+                    if not any(
+                        color.startswith(prefix) for prefix in ["#", "rgb", "hsl"]
+                    ):
+                        if len(color.split(",")) == 3:
+                            color = f"rgb({color})"
+                        elif len(color.split(",")) == 4:
+                            color = f"rgba({color})"
+                        else:
+                            color = None
+                    if color:
+                        colors.append(color)
             plot_data[row[2].category_name][row[3].sample_name] = float(row[1].data)
             # count total per sample for percentages
             total_per_sample[row[3].sample_name] = total_per_sample[
