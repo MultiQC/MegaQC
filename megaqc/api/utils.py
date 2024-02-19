@@ -199,33 +199,25 @@ def handle_report_data(user, report_data):
         ]:
             continue
         # Save the plot config as a JSON string
-        config = json.dumps(report_data["report_plot_data"][plot]["config"])
         for dst_idx, dataset in enumerate(
             report_data["report_plot_data"][plot]["datasets"]
         ):
-            try:
-                if isinstance(
-                    report_data["report_plot_data"][plot]["config"]["data_labels"][
-                        dst_idx
-                    ],
-                    dict,
-                ):
-                    dataset_name = report_data["report_plot_data"][plot]["config"][
-                        "data_labels"
-                    ][dst_idx]["ylab"]
+            config = copy.deepcopy(report_data["report_plot_data"][plot]["config"])
+            dls = None
+            dataset_name = None
+            if "data_labels" in config and dst_idx < len(config["data_labels"]):
+                dls = config["data_labels"][dst_idx]
+                if isinstance(dls, dict):
+                    if "ylab" in dls:
+                        dataset_name = dls["ylab"]
+                    for k, v in dls.items():
+                        config[k] = v
                 else:
-                    dataset_name = report_data["report_plot_data"][plot]["config"][
-                        "data_labels"
-                    ][dst_idx]
-            except KeyError:
-                try:
-                    dataset_name = report_data["report_plot_data"][plot]["config"][
-                        "ylab"
-                    ]
-                except KeyError:
-                    dataset_name = report_data["report_plot_data"][plot]["config"][
-                        "title"
-                    ]
+                    dataset_name = dls
+            if not dataset_name and "ylab" in config:
+                dataset_name = config["ylab"]
+            elif not dataset_name and "title" in config:
+                dataset_name = config["title"]
 
             plot_config = (
                 db.session.query(PlotConfig)
@@ -242,7 +234,7 @@ def handle_report_data(user, report_data):
                     config_type=report_data["report_plot_data"][plot]["plot_type"],
                     config_name=plot,
                     config_dataset=dataset_name,
-                    data=config,
+                    data=json.dumps(config),
                 )
                 plot_config.save()
                 new_plotcfg_cnt += 1
@@ -250,19 +242,69 @@ def handle_report_data(user, report_data):
 
             # Save bar graph data
             if report_data["report_plot_data"][plot]["plot_type"] == "bar_graph":
-                for cat_data in dataset["cats"]:
-                    data_key = str(cat_data["name"])
+                if "cats" in dataset:
+                    # Plotly-backed MultiQC 1.20+
+                    for cat_data in dataset["cats"]:
+                        data_key = str(cat_data["name"])
+                        existing_category = (
+                            db.session.query(PlotCategory)
+                            .filter(PlotCategory.category_name == data_key)
+                            .first()
+                        )
+                        data = json.dumps(
+                            {
+                                x: y
+                                for x, y in list(cat_data.items())
+                                if x not in ["data", "data_pct"]
+                            }
+                        )
+                        if not existing_category:
+                            existing_category = PlotCategory(
+                                report_id=report_id,
+                                config_id=config_id,
+                                category_name=data_key,
+                                data=data,
+                            )
+                            existing_category.save()
+                        else:
+                            existing_category.data = data
+                            existing_category.save()
+                        for sname, actual_data in zip(
+                            dataset["samples"], cat_data["data"]
+                        ):
+                            existing_sample = (
+                                db.session.query(Sample)
+                                .filter(Sample.sample_name == sname)
+                                .first()
+                            )
+                            if existing_sample:
+                                sample_id = existing_sample.sample_id
+                            else:
+                                new_sample = Sample(
+                                    sample_name=sname, report_id=report_id
+                                )
+                                new_sample.save()
+                                sample_id = new_sample.sample_id
+                            new_dataset_row = PlotData(
+                                report_id=report_id,
+                                config_id=config_id,
+                                sample_id=sample_id,
+                                plot_category_id=existing_category.plot_category_id,
+                                data=json.dumps(actual_data),
+                            )
+                            new_dataset_row.save()
+                            new_plotdata_cnt += 1
+                    continue
+                # Legacy MultiQC < 1.20:
+                for sub_dict in dataset:
+                    data_key = str(sub_dict["name"])
                     existing_category = (
                         db.session.query(PlotCategory)
                         .filter(PlotCategory.category_name == data_key)
                         .first()
                     )
                     data = json.dumps(
-                        {
-                            x: y
-                            for x, y in list(cat_data.items())
-                            if x not in ["data", "data_pct"]
-                        }
+                        {x: y for x, y in list(sub_dict.items()) if x != "data"}
                     )
                     if not existing_category:
                         existing_category = PlotCategory(
@@ -275,52 +317,107 @@ def handle_report_data(user, report_data):
                     else:
                         existing_category.data = data
                         existing_category.save()
-                    for sname, actual_data in zip(dataset["samples"], cat_data["data"]):
-                        existing_sample = (
-                            db.session.query(Sample)
-                            .filter(Sample.sample_name == sname)
+                        category_id = existing_category.plot_category_id
+                    for sa_idx, actual_data in enumerate(sub_dict["data"]):
+                        try:
+                            existing_sample = (
+                                db.session.query(Sample)
+                                .filter(
+                                    Sample.sample_name
+                                    == report_data["report_plot_data"][plot]["samples"][
+                                        dst_idx
+                                    ][sa_idx]
+                                )
+                                .first()
+                            )
+                            if existing_sample:
+                                sample_id = existing_sample.sample_id
+                            else:
+                                new_sample = Sample(
+                                    sample_name=sub_dict["name"], report_id=report_id
+                                )
+                                new_sample.save()
+                                sample_id = new_sample.sample_id
+                            new_dataset_row = PlotData(
+                                report_id=report_id,
+                                config_id=config_id,
+                                sample_id=sample_id,
+                                plot_category_id=existing_category.plot_category_id,
+                                data=json.dumps(actual_data),
+                            )
+                            new_dataset_row.save()
+                            new_plotdata_cnt += 1
+                        except Exception as e:
+                            current_app.logger.error(
+                                "Error saving plot data: {}".format(str(e))
+                            )
+                            raise
+
+            # Save line plot data
+            elif report_data["report_plot_data"][plot]["plot_type"] == "xy_line":
+                if dls and "ylab" in dls:
+                    data_key = dls["ylab"]
+                elif "ylab" in config:
+                    data_key = config["ylab"]
+                else:
+                    data_key = config["title"]
+
+                if "lines" in dataset:
+                    # Plotly-backed MultiQC 1.20+
+                    for line_data in dataset["lines"]:
+                        existing_category = (
+                            db.session.query(PlotCategory)
+                            .filter(PlotCategory.category_name == data_key)
                             .first()
                         )
-                        if existing_sample:
-                            sample_id = existing_sample.sample_id
+                        data = json.dumps(
+                            {x: y for x, y in list(line_data.items()) if x != "data"}
+                        )
+                        if not existing_category:
+                            existing_category = PlotCategory(
+                                report_id=report_id,
+                                config_id=config_id,
+                                category_name=data_key,
+                                data=data,
+                            )
+                            existing_category.save()
                         else:
-                            new_sample = Sample(sample_name=sname, report_id=report_id)
-                            new_sample.save()
-                            sample_id = new_sample.sample_id
+                            existing_category.data = data
+                            existing_category.save()
+                        category_id = existing_category.plot_category_id
+
+                        sample = (
+                            db.session.query(Sample)
+                            .filter(Sample.sample_name == line_data["name"])
+                            .first()
+                        )
+                        if not sample:
+                            sample = Sample(
+                                sample_name=line_data["name"], report_id=report_id
+                            )
+                            sample.save()
+                        sample_id = sample.sample_id
+
                         new_dataset_row = PlotData(
                             report_id=report_id,
                             config_id=config_id,
                             sample_id=sample_id,
-                            plot_category_id=existing_category.plot_category_id,
-                            data=json.dumps(actual_data),
+                            plot_category_id=category_id,
+                            data=json.dumps(line_data["data"]),
                         )
-                        new_dataset_row.save()
-                        new_plotdata_cnt += 1
+                    new_dataset_row.save()
+                    new_plotdata_cnt += 1
+                    continue
 
-            # Save line plot data
-            elif report_data["report_plot_data"][plot]["plot_type"] == "xy_line":
-                for line_data in dataset["lines"]:
-                    try:
-                        data_key = report_data["report_plot_data"][plot]["config"][
-                            "data_labels"
-                        ][dst_idx]["ylab"]
-                    except (KeyError, TypeError):
-                        try:
-                            data_key = report_data["report_plot_data"][plot]["config"][
-                                "ylab"
-                            ]
-                        except KeyError:
-                            data_key = report_data["report_plot_data"][plot]["config"][
-                                "title"
-                            ]
-
+                # Legacy MultiQC < 1.20
+                for sub_dict in dataset:
                     existing_category = (
                         db.session.query(PlotCategory)
                         .filter(PlotCategory.category_name == data_key)
                         .first()
                     )
                     data = json.dumps(
-                        {x: y for x, y in list(line_data.items()) if x != "data"}
+                        {x: y for x, y in list(sub_dict.items()) if x != "data"}
                     )
                     if not existing_category:
                         existing_category = PlotCategory(
@@ -335,27 +432,28 @@ def handle_report_data(user, report_data):
                         existing_category.save()
                     category_id = existing_category.plot_category_id
 
-                    sample = (
-                        db.session.query(Sample)
-                        .filter(Sample.sample_name == line_data["name"])
-                        .first()
-                    )
-                    if not sample:
-                        sample = Sample(
-                            sample_name=line_data["name"], report_id=report_id
+                    for sa_idx, actual_data in enumerate(sub_dict["data"]):
+                        sample = (
+                            db.session.query(Sample)
+                            .filter(Sample.sample_name == sub_dict["name"])
+                            .first()
                         )
-                        sample.save()
-                    sample_id = sample.sample_id
+                        if not sample:
+                            sample = Sample(
+                                sample_name=sub_dict["name"], report_id=report_id
+                            )
+                            sample.save()
+                        sample_id = sample.sample_id
 
-                    new_dataset_row = PlotData(
-                        report_id=report_id,
-                        config_id=config_id,
-                        sample_id=sample_id,
-                        plot_category_id=category_id,
-                        data=json.dumps(line_data["data"]),
-                    )
-                new_dataset_row.save()
-                new_plotdata_cnt += 1
+                        new_dataset_row = PlotData(
+                            report_id=report_id,
+                            config_id=config_id,
+                            sample_id=sample_id,
+                            plot_category_id=category_id,
+                            data=json.dumps(actual_data),
+                        )
+                    new_dataset_row.save()
+                    new_plotdata_cnt += 1
     current_app.logger.info(
         "Finished writing plot data ({} cfg, {} data points) for report {}".format(
             new_plotcfg_cnt, new_plotdata_cnt, new_report.report_id
@@ -509,7 +607,6 @@ def generate_report_plot(plot_type, sample_names):
                 for d_idx, d in enumerate(data):
                     xs.append(" " + str(config["categories"][d_idx]))
                     ys.append(d)
-
             else:
                 for d in data:
                     xs.append(d[0])
