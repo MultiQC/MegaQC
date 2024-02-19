@@ -202,6 +202,8 @@ def handle_report_data(user, report_data):
         for dst_idx, dataset in enumerate(
             report_data["report_plot_data"][plot]["datasets"]
         ):
+            # MultiQC 1.20 stores "categories" per-dataset, so need to re-add it into
+            # the main pconfig for MegaQC:
             config = copy.deepcopy(report_data["report_plot_data"][plot]["config"])
             dls = None
             dataset_name = None
@@ -295,6 +297,7 @@ def handle_report_data(user, report_data):
                             new_dataset_row.save()
                             new_plotdata_cnt += 1
                     continue
+
                 # Legacy MultiQC < 1.20:
                 for sub_dict in dataset:
                     data_key = str(sub_dict["name"])
