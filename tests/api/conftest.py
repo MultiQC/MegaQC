@@ -1,5 +1,4 @@
 import pytest
-from flask import request
 from flask.testing import FlaskClient
 
 from tests import factories
@@ -13,7 +12,7 @@ def client(app):
 
 
 @pytest.fixture(scope="function")
-def token(db: str):
+def token(db) -> str:
     user = factories.UserFactory(is_admin=False)
     db.session.add(user)
     db.session.commit()
