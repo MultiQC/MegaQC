@@ -14,21 +14,15 @@ def upload(session):
     return r
 
 
-def test_get_upload_list(db, client, token):
-    _test_post_upload_list(db, client, token, "multiqc_data.json")
-
-
-def test_get_upload_list_v120(db, client, token):
-    # New MultiQC 1.20 format (Plotly-backed)
-    _test_post_upload_list(db, client, token, "multiqc_data_v120.json")
-
-
-def test_get_upload_list_v120_hc(db, client, token):
-    # New MultiQC 1.20 format (`--template highcharts` legacy HighCharts backend)
-    _test_post_upload_list(db, client, token, "multiqc_data_v120_hc.json")
-
-
-def _test_post_upload_list(db, client, token, fname):
+@pytest.mark.parametrize(
+    "file_name",
+    [
+        "multiqc_data.json",  # MultiQC Pre-1.20
+        "multiqc_data_v120.json",  # MultiQC 1.20 Plotly-backed format
+        "multiqc_data_v120_hc.json",  # MultiQC 1.20 with `--template highcharts` legacy backend
+    ],
+)
+def test_post_upload_list(db, client, token, file_name):
     """
     Test uploading a report.
     """
@@ -36,7 +30,7 @@ def _test_post_upload_list(db, client, token, fname):
 
     rv = client.post(
         "/rest_api/v1/uploads",
-        data={"report": resource_stream("tests", fname)},
+        data={"report": resource_stream("tests", file_name)},
         headers={
             "access_token": token,
             "Content-Type": "multipart/form-data",
@@ -45,11 +39,11 @@ def _test_post_upload_list(db, client, token, fname):
     )
 
     # Check the request was successful
-    assert rv.status_code == 201, rv.json
+    assert rv.status_code == 201, f"Failed to upload {file_name}: {rv.json}"
 
     # Validate the response
     schemas.UploadSchema().validate(rv.json)
 
     # Check that there is a new Upload
     count_2 = db.session.query(models.Upload).count()
-    assert count_2 == count_1 + 1
+    assert count_2 == count_1 + 1, f"Count did not increase after uploading {file_name}"
