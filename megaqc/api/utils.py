@@ -600,7 +600,11 @@ def generate_report_plot(plot_type, sample_names):
             ys = []
             data = json.loads(row[1].data)
             config = json.loads(row[0].data)
-            if "categories" in config:
+            if (
+                "categories" in config
+                and isinstance(config["categories"], list)
+                and len(config["categories"]) == len(data)
+            ):
                 for d_idx, d in enumerate(data):
                     xs.append(" " + str(config["categories"][d_idx]))
                     ys.append(d)
