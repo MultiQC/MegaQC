@@ -1,0 +1,2497 @@
+{
+  "report_data_sources": {
+    "FastQC": {
+      "all_sections": {
+        "SRR1067505_1": "/Users/vlad/git/MultiQC/test_data/data/modules/fastqc/v0.11.2/SRR1067505_1_fastqc.zip"
+      }
+    }
+  },
+  "report_general_stats_data": [
+    {
+      "SRR1067505_1": {
+        "percent_gc": 47.0,
+        "avg_sequence_length": 36.0,
+        "median_sequence_length": 36,
+        "total_sequences": 18361776.0,
+        "percent_duplicates": 8.211571393929418,
+        "percent_fails": 16.666666666666664
+      }
+    }
+  ],
+  "report_general_stats_headers": [
+    {
+      "percent_duplicates": {
+        "title": "% Dups",
+        "description": "% Duplicate Reads",
+        "max": 100,
+        "min": 0,
+        "suffix": "%",
+        "scale": "RdYlGn-rev",
+        "namespace": "FastQC",
+        "rid": "mqc-generalstats-fastqc-percent_duplicates",
+        "format": "{:,.1f}",
+        "colour": "55,126,184",
+        "hidden": null,
+        "ceiling": null,
+        "floor": null,
+        "minRange": null,
+        "shared_key": null,
+        "modify": null,
+        "placement": 1000.0,
+        "dmax": 100.0,
+        "dmin": 0.0
+      },
+      "percent_gc": {
+        "title": "% GC",
+        "description": "Average % GC Content",
+        "max": 100,
+        "min": 0,
+        "suffix": "%",
+        "scale": "PuRd",
+        "format": "{:,.0f}",
+        "namespace": "FastQC",
+        "rid": "mqc-generalstats-fastqc-percent_gc",
+        "colour": "55,126,184",
+        "hidden": null,
+        "ceiling": null,
+        "floor": null,
+        "minRange": null,
+        "shared_key": null,
+        "modify": null,
+        "placement": 1000.0,
+        "dmax": 100.0,
+        "dmin": 0.0
+      },
+      "avg_sequence_length": {
+        "title": "Average Read Length",
+        "description": "Average Read Length (bp)",
+        "min": 0,
+        "suffix": " bp",
+        "scale": "RdYlGn",
+        "format": "{:,.0f}",
+        "hidden": true,
+        "namespace": "FastQC",
+        "rid": "mqc-generalstats-fastqc-avg_sequence_length",
+        "colour": "55,126,184",
+        "max": null,
+        "ceiling": null,
+        "floor": null,
+        "minRange": null,
+        "shared_key": null,
+        "modify": null,
+        "placement": 1000.0,
+        "dmax": 36.0,
+        "dmin": 0.0
+      },
+      "median_sequence_length": {
+        "title": "Median Read Length",
+        "description": "Median Read Length (bp)",
+        "min": 0,
+        "suffix": " bp",
+        "scale": "RdYlGn",
+        "format": "{:,.0f}",
+        "hidden": true,
+        "namespace": "FastQC",
+        "rid": "mqc-generalstats-fastqc-median_sequence_length",
+        "colour": "55,126,184",
+        "max": null,
+        "ceiling": null,
+        "floor": null,
+        "minRange": null,
+        "shared_key": null,
+        "modify": null,
+        "placement": 1000.0,
+        "dmax": 36.0,
+        "dmin": 0.0
+      },
+      "percent_fails": {
+        "title": "% Failed",
+        "description": "Percentage of modules failed in FastQC report (includes those not plotted here)",
+        "max": 100,
+        "min": 0,
+        "suffix": "%",
+        "scale": "Reds",
+        "format": "{:,.0f}",
+        "hidden": true,
+        "namespace": "FastQC",
+        "rid": "mqc-generalstats-fastqc-percent_fails",
+        "colour": "55,126,184",
+        "ceiling": null,
+        "floor": null,
+        "minRange": null,
+        "shared_key": null,
+        "modify": null,
+        "placement": 1000.0,
+        "dmax": 100.0,
+        "dmin": 0.0
+      },
+      "total_sequences": {
+        "title": "M Seqs",
+        "description": "Total Sequences (millions)",
+        "min": 0,
+        "scale": "Blues",
+        "modify": 1e-6,
+        "shared_key": "read_count",
+        "namespace": "FastQC",
+        "rid": "mqc-generalstats-fastqc-total_sequences",
+        "suffix": "&nbsp;M",
+        "format": "{:,.1f}",
+        "colour": "55,126,184",
+        "hidden": null,
+        "max": null,
+        "ceiling": null,
+        "floor": null,
+        "minRange": null,
+        "placement": 1000.0,
+        "dmax": 18.361776,
+        "dmin": 0.0
+      }
+    }
+  ],
+  "report_multiqc_command": "/Users/vlad/git/MultiQC/venv/bin/multiqc -fv test_data/data/modules/fastqc/v0.11.2",
+  "report_plot_data": {
+    "fastqc_sequence_counts_plot": {
+      "id": "fastqc_sequence_counts_plot",
+      "layout": {
+        "autosize": true,
+        "colorway": [
+          "#7cb5ec",
+          "#434348",
+          "#90ed7d",
+          "#f7a35c",
+          "#8085e9",
+          "#f15c80",
+          "#e4d354",
+          "#2b908f",
+          "#f45b5b",
+          "#91e8e1"
+        ],
+        "font": {
+          "color": "Black",
+          "family": "Lucida Grande"
+        },
+        "height": 300,
+        "hoverlabel": {
+          "namelength": -1,
+          "bgcolor": "rgba(255, 255, 255, 0.8)",
+          "font": {
+            "color": "black"
+          }
+        },
+        "margin": {
+          "b": 65,
+          "l": 60,
+          "pad": 5,
+          "r": 15,
+          "t": 50
+        },
+        "modebar": {
+          "activecolor": "rgba(0, 0, 0, 1)",
+          "bgcolor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(0, 0, 0, 0.5)"
+        },
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "showlegend": true,
+        "title": {
+          "font": {
+            "size": 20
+          },
+          "text": "FastQC: Sequence Counts",
+          "x": 0.5,
+          "xanchor": "center"
+        },
+        "xaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "yaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)",
+          "showgrid": false,
+          "categoryorder": "trace",
+          "type": "category"
+        },
+        "barmode": "relative",
+        "bargroupgap": 0,
+        "bargap": 0.2,
+        "legend": {
+          "tracegroupgap": 0,
+          "traceorder": "normal"
+        },
+        "hovermode": "y unified"
+      },
+      "datasets": [
+        {
+          "label": 1,
+          "uid": "fastqc_sequence_counts_plot",
+          "dconfig": {},
+          "layout": {
+            "xaxis": {
+              "title": {
+                "text": "Number of reads"
+              },
+              "hoverformat": ",.0f",
+              "ticksuffix": "",
+              "autorangeoptions": {
+                "minallowed": 0,
+                "maxallowed": 18361776
+              }
+            },
+            "yaxis": {
+              "title": null,
+              "hoverformat": null,
+              "ticksuffix": "",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": null,
+                "maxallowed": null
+              }
+            },
+            "showlegend": true
+          },
+          "trace_params": {
+            "hovertemplate": "<b></b>%{meta}: <b>%{x}</b><extra></extra>",
+            "orientation": "h",
+            "marker": {
+              "line": {
+                "width": 0
+              }
+            },
+            "textposition": "inside",
+            "insidetextanchor": "start"
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "cats": [
+            {
+              "name": "Unique Reads",
+              "data": [16853986],
+              "color": "0.49,0.71,0.93",
+              "data_pct": [91.78843048733413]
+            },
+            {
+              "name": "Duplicate Reads",
+              "data": [1507790],
+              "color": "0.26,0.26,0.28",
+              "data_pct": [8.211569512665877]
+            }
+          ],
+          "samples": ["SRR1067505_1"]
+        }
+      ],
+      "plot_type": "bar_graph",
+      "pct_axis_update": {
+        "ticksuffix": "%",
+        "hoverformat": ".1f"
+      },
+      "axis_controlled_by_switches": ["xaxis"],
+      "p_active": false,
+      "l_active": false,
+      "square": null,
+      "config": {
+        "id": "fastqc_sequence_counts_plot",
+        "title": "FastQC: Sequence Counts",
+        "ylab": "Number of reads",
+        "cpswitch_counts_label": "Number of reads",
+        "hide_zero_cats": false
+      }
+    },
+    "fastqc_per_base_sequence_quality_plot": {
+      "id": "fastqc_per_base_sequence_quality_plot",
+      "layout": {
+        "autosize": true,
+        "colorway": [
+          "#7cb5ec",
+          "#434348",
+          "#90ed7d",
+          "#f7a35c",
+          "#8085e9",
+          "#f15c80",
+          "#e4d354",
+          "#2b908f",
+          "#f45b5b",
+          "#91e8e1"
+        ],
+        "font": {
+          "color": "Black",
+          "family": "Lucida Grande"
+        },
+        "height": 500,
+        "hoverlabel": {
+          "namelength": -1
+        },
+        "margin": {
+          "b": 65,
+          "l": 60,
+          "pad": 5,
+          "r": 15,
+          "t": 50
+        },
+        "modebar": {
+          "activecolor": "rgba(0, 0, 0, 1)",
+          "bgcolor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(0, 0, 0, 0.5)"
+        },
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "showlegend": false,
+        "title": {
+          "font": {
+            "size": 20
+          },
+          "text": "FastQC: Mean Quality Scores",
+          "x": 0.5,
+          "xanchor": "center"
+        },
+        "xaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "yaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "hoverdistance": -1,
+        "shapes": [
+          {
+            "fillcolor": "#c3e6c3",
+            "layer": "below",
+            "line": {
+              "width": 0
+            },
+            "type": "rect",
+            "x0": 0,
+            "x1": 1,
+            "xref": "paper",
+            "y0": 28,
+            "y1": 100
+          },
+          {
+            "fillcolor": "#e6dcc3",
+            "layer": "below",
+            "line": {
+              "width": 0
+            },
+            "type": "rect",
+            "x0": 0,
+            "x1": 1,
+            "xref": "paper",
+            "y0": 20,
+            "y1": 28
+          },
+          {
+            "fillcolor": "#e6c3c3",
+            "layer": "below",
+            "line": {
+              "width": 0
+            },
+            "type": "rect",
+            "x0": 0,
+            "x1": 1,
+            "xref": "paper",
+            "y0": 0,
+            "y1": 20
+          }
+        ]
+      },
+      "datasets": [
+        {
+          "label": 1,
+          "uid": "fastqc_per_base_sequence_quality_plot",
+          "dconfig": {
+            "categories": []
+          },
+          "layout": {
+            "xaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": "Position (bp)"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": null
+              },
+              "range": [0, 36]
+            },
+            "yaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": "Phred Score"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": null
+              },
+              "range": [0, 34.50746479792414]
+            }
+          },
+          "trace_params": {
+            "hovertemplate": "<b>%{text}</b><br><b>Base %{x}</b>: %{y:.2f}<extra></extra>",
+            "mode": "lines",
+            "line": {
+              "width": 2
+            },
+            "marker": {
+              "size": 4
+            }
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "lines": [
+            {
+              "name": "SRR1067505_1",
+              "data": [
+                [1, 29.665143339075698],
+                [2, 31.049790336185346],
+                [3, 30.895792759916034],
+                [4, 31.65117241382315],
+                [5, 31.765900967313836],
+                [6, 32.016359038472096],
+                [7, 32.19933028264804],
+                [8, 32.425703646531794],
+                [9, 32.275273317788],
+                [10, 32.5869615771372],
+                [11, 32.688166547723924],
+                [12, 31.7942790501311],
+                [13, 32.560235295322194],
+                [14, 32.12930154468718],
+                [15, 32.74619001996321],
+                [16, 30.471543983544947],
+                [17, 31.49528618582429],
+                [18, 32.782091558027936],
+                [19, 32.21803811352453],
+                [20, 32.67264402964071],
+                [21, 30.020980977003532],
+                [22, 32.62832059382491],
+                [23, 31.55563149229138],
+                [24, 32.51026349520874],
+                [25, 32.51768124172738],
+                [26, 32.524057313410204],
+                [27, 32.4029427218805],
+                [28, 31.89765505253958],
+                [29, 32.33656793329796],
+                [30, 32.149760622284035],
+                [31, 32.01538974225587],
+                [32, 31.33168387415248],
+                [33, 29.825087344492168],
+                [34, 31.15393200527008],
+                [35, 30.27100455860043],
+                [36, 29.228183755209734]
+              ],
+              "color": "#5cb85c",
+              "marker": {
+                "size": 4,
+                "color": "#5cb85c"
+              }
+            }
+          ]
+        }
+      ],
+      "plot_type": "xy_line",
+      "pct_axis_update": {
+        "ticksuffix": "%",
+        "hoverformat": ".1f"
+      },
+      "axis_controlled_by_switches": ["yaxis"],
+      "p_active": false,
+      "l_active": false,
+      "square": null,
+      "config": {
+        "id": "fastqc_per_base_sequence_quality_plot",
+        "title": "FastQC: Mean Quality Scores",
+        "ylab": "Phred Score",
+        "xlab": "Position (bp)",
+        "ymin": 0,
+        "xmin": 0,
+        "xDecimals": false,
+        "tt_label": "<b>Base {point.x}</b>: {point.y:.2f}",
+        "colors": {
+          "SRR1067505_1": "#5cb85c"
+        },
+        "yPlotBands": [
+          {
+            "from": 28,
+            "to": 100,
+            "color": "#c3e6c3"
+          },
+          {
+            "from": 20,
+            "to": 28,
+            "color": "#e6dcc3"
+          },
+          {
+            "from": 0,
+            "to": 20,
+            "color": "#e6c3c3"
+          }
+        ]
+      }
+    },
+    "fastqc_per_sequence_quality_scores_plot": {
+      "id": "fastqc_per_sequence_quality_scores_plot",
+      "layout": {
+        "autosize": true,
+        "colorway": [
+          "#7cb5ec",
+          "#434348",
+          "#90ed7d",
+          "#f7a35c",
+          "#8085e9",
+          "#f15c80",
+          "#e4d354",
+          "#2b908f",
+          "#f45b5b",
+          "#91e8e1"
+        ],
+        "font": {
+          "color": "Black",
+          "family": "Lucida Grande"
+        },
+        "height": 500,
+        "hoverlabel": {
+          "namelength": -1
+        },
+        "margin": {
+          "b": 65,
+          "l": 60,
+          "pad": 5,
+          "r": 15,
+          "t": 50
+        },
+        "modebar": {
+          "activecolor": "rgba(0, 0, 0, 1)",
+          "bgcolor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(0, 0, 0, 0.5)"
+        },
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "showlegend": false,
+        "title": {
+          "font": {
+            "size": 20
+          },
+          "text": "FastQC: Per Sequence Quality Scores",
+          "x": 0.5,
+          "xanchor": "center"
+        },
+        "xaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "yaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "hoverdistance": -1,
+        "shapes": [
+          {
+            "fillcolor": "#c3e6c3",
+            "layer": "below",
+            "line": {
+              "width": 0
+            },
+            "type": "rect",
+            "x0": 28,
+            "x1": 100,
+            "y0": 0,
+            "y1": 1,
+            "yref": "paper"
+          },
+          {
+            "fillcolor": "#e6dcc3",
+            "layer": "below",
+            "line": {
+              "width": 0
+            },
+            "type": "rect",
+            "x0": 20,
+            "x1": 28,
+            "y0": 0,
+            "y1": 1,
+            "yref": "paper"
+          },
+          {
+            "fillcolor": "#e6c3c3",
+            "layer": "below",
+            "line": {
+              "width": 0
+            },
+            "type": "rect",
+            "x0": 0,
+            "x1": 20,
+            "y0": 0,
+            "y1": 1,
+            "yref": "paper"
+          }
+        ]
+      },
+      "datasets": [
+        {
+          "label": 1,
+          "uid": "fastqc_per_sequence_quality_scores_plot",
+          "dconfig": {
+            "categories": []
+          },
+          "layout": {
+            "xaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": "Mean Sequence Quality (Phred Score)"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": null
+              },
+              "range": [0, 35]
+            },
+            "yaxis": {
+              "hoverformat": null,
+              "ticksuffix": " reads",
+              "title": {
+                "text": "Count"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": null
+              },
+              "range": [0, 7786009.47368421]
+            }
+          },
+          "trace_params": {
+            "hovertemplate": "<b>%{text}</b><br><b>Phred %{x}</b>: %{y}<extra></extra>",
+            "mode": "lines",
+            "line": {
+              "width": 2
+            },
+            "marker": {
+              "size": 4
+            }
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "lines": [
+            {
+              "name": "SRR1067505_1",
+              "data": [
+                [2.0, 112267.0],
+                [3.0, 7624.0],
+                [4.0, 7299.0],
+                [5.0, 8761.0],
+                [6.0, 5660.0],
+                [7.0, 6977.0],
+                [8.0, 10184.0],
+                [9.0, 15985.0],
+                [10.0, 15783.0],
+                [11.0, 15152.0],
+                [12.0, 17404.0],
+                [13.0, 19043.0],
+                [14.0, 19752.0],
+                [15.0, 21687.0],
+                [16.0, 25027.0],
+                [17.0, 28418.0],
+                [18.0, 32652.0],
+                [19.0, 39613.0],
+                [20.0, 50122.0],
+                [21.0, 64773.0],
+                [22.0, 83159.0],
+                [23.0, 106629.0],
+                [24.0, 138191.0],
+                [25.0, 182117.0],
+                [26.0, 244508.0],
+                [27.0, 332011.0],
+                [28.0, 457386.0],
+                [29.0, 654887.0],
+                [30.0, 1018177.0],
+                [31.0, 1678451.0],
+                [32.0, 3647543.0],
+                [33.0, 7396709.0],
+                [34.0, 1896672.0],
+                [35.0, 1153.0]
+              ],
+              "color": "#5cb85c",
+              "marker": {
+                "size": 4,
+                "color": "#5cb85c"
+              }
+            }
+          ]
+        }
+      ],
+      "plot_type": "xy_line",
+      "pct_axis_update": {
+        "ticksuffix": "%",
+        "hoverformat": ".1f"
+      },
+      "axis_controlled_by_switches": ["yaxis"],
+      "p_active": false,
+      "l_active": false,
+      "square": null,
+      "config": {
+        "id": "fastqc_per_sequence_quality_scores_plot",
+        "title": "FastQC: Per Sequence Quality Scores",
+        "ylab": "Count",
+        "xlab": "Mean Sequence Quality (Phred Score)",
+        "ymin": 0,
+        "xmin": 0,
+        "xDecimals": false,
+        "colors": {
+          "SRR1067505_1": "#5cb85c"
+        },
+        "tt_label": "<b>Phred {point.x}</b>: {point.y} reads",
+        "xPlotBands": [
+          {
+            "from": 28,
+            "to": 100,
+            "color": "#c3e6c3"
+          },
+          {
+            "from": 20,
+            "to": 28,
+            "color": "#e6dcc3"
+          },
+          {
+            "from": 0,
+            "to": 20,
+            "color": "#e6c3c3"
+          }
+        ]
+      }
+    },
+    "fastqc_per_sequence_gc_content_plot": {
+      "id": "fastqc_per_sequence_gc_content_plot",
+      "layout": {
+        "autosize": true,
+        "colorway": [
+          "#7cb5ec",
+          "#434348",
+          "#90ed7d",
+          "#f7a35c",
+          "#8085e9",
+          "#f15c80",
+          "#e4d354",
+          "#2b908f",
+          "#f45b5b",
+          "#91e8e1"
+        ],
+        "font": {
+          "color": "Black",
+          "family": "Lucida Grande"
+        },
+        "height": 500,
+        "hoverlabel": {
+          "namelength": -1
+        },
+        "margin": {
+          "b": 65,
+          "l": 60,
+          "pad": 5,
+          "r": 15,
+          "t": 50
+        },
+        "modebar": {
+          "activecolor": "rgba(0, 0, 0, 1)",
+          "bgcolor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(0, 0, 0, 0.5)"
+        },
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "showlegend": false,
+        "title": {
+          "font": {
+            "size": 20
+          },
+          "text": "FastQC: Per Sequence GC Content",
+          "x": 0.5,
+          "xanchor": "center"
+        },
+        "xaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "yaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "hoverdistance": -1
+      },
+      "datasets": [
+        {
+          "label": "Percentages",
+          "uid": "fastqc_per_sequence_gc_content_plot_Percentages",
+          "dconfig": {
+            "name": "Percentages",
+            "ylab": "Percentage",
+            "tt_suffix": "%",
+            "categories": []
+          },
+          "layout": {
+            "xaxis": {
+              "hoverformat": null,
+              "ticksuffix": "% GC",
+              "title": {
+                "text": "% GC"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": 100
+              }
+            },
+            "yaxis": {
+              "hoverformat": null,
+              "ticksuffix": "%",
+              "title": {
+                "text": "Percentage"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": null
+              }
+            }
+          },
+          "trace_params": {
+            "hovertemplate": "<b>%{text}</b><br><b>%{x}</b>: %{y}<extra></extra>",
+            "mode": "lines",
+            "line": {
+              "width": 2
+            },
+            "marker": {
+              "size": 4
+            }
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "lines": [
+            {
+              "name": "SRR1067505_1",
+              "data": [
+                [0.0, 0.050631462593781984],
+                [1.0, 0.03283028109616969],
+                [2.0, 0.015029099598557402],
+                [3.0, 0.015029099598557402],
+                [4.0, 0.012506259753435238],
+                [5.0, 0.009983419908313073],
+                [6.0, 0.009983419908313073],
+                [7.0, 0.012878160298476583],
+                [8.0, 0.015772900688640092],
+                [9.0, 0.015772900688640092],
+                [10.0, 0.026302886833333195],
+                [11.0, 0.036832872978026295],
+                [12.0, 0.036832872978026295],
+                [13.0, 0.0599270136839579],
+                [14.0, 0.0830211543898895],
+                [15.0, 0.1271693797776341],
+                [16.0, 0.17131760516537867],
+                [17.0, 0.17131760516537867],
+                [18.0, 0.2456457069734178],
+                [19.0, 0.319973808781457],
+                [20.0, 0.319973808781457],
+                [21.0, 0.4279652881572756],
+                [22.0, 0.5359567675330942],
+                [23.0, 0.5359567675330942],
+                [24.0, 0.6838554323080857],
+                [25.0, 0.831754097083077],
+                [26.0, 1.0095333515600582],
+                [27.0, 1.1873126060370391],
+                [28.0, 1.1873126060370391],
+                [29.0, 1.3892869838361426],
+                [30.0, 1.591261361635246],
+                [31.0, 1.591261361635246],
+                [32.0, 1.7917550061296865],
+                [33.0, 1.9922486506241268],
+                [34.0, 1.9922486506241268],
+                [35.0, 2.162519242909402],
+                [36.0, 2.332789835194678],
+                [37.0, 2.332789835194678],
+                [38.0, 2.448685427737536],
+                [39.0, 2.5645810202803943],
+                [40.0, 2.6067088150025977],
+                [41.0, 2.6488366097248006],
+                [42.0, 2.6488366097248006],
+                [43.0, 2.6499689929147157],
+                [44.0, 2.6511013761046307],
+                [45.0, 2.6511013761046307],
+                [46.0, 2.6694785618764887],
+                [47.0, 2.687855747648347],
+                [48.0, 2.687855747648347],
+                [49.0, 2.704185027252656],
+                [50.0, 2.720514306856965],
+                [51.0, 2.6199284565403205],
+                [52.0, 2.519342606223676],
+                [53.0, 2.519342606223676],
+                [54.0, 2.4116347132793003],
+                [55.0, 2.303926820334925],
+                [56.0, 2.303926820334925],
+                [57.0, 2.189453085020998],
+                [58.0, 2.074979349707071],
+                [59.0, 2.074979349707071],
+                [60.0, 1.9078301707035277],
+                [61.0, 1.7406809916999846],
+                [62.0, 1.7406809916999846],
+                [63.0, 1.5599922778139068],
+                [64.0, 1.3793035639278295],
+                [65.0, 1.2174905199214758],
+                [66.0, 1.0556774759151222],
+                [67.0, 1.0556774759151222],
+                [68.0, 0.9259077361259853],
+                [69.0, 0.7961379963368483],
+                [70.0, 0.7961379963368483],
+                [71.0, 0.6922982615680744],
+                [72.0, 0.5884585267993004],
+                [73.0, 0.5884585267993004],
+                [74.0, 0.5058602988867535],
+                [75.0, 0.4232620709742065],
+                [76.0, 0.358643615322326],
+                [77.0, 0.2940251596704455],
+                [78.0, 0.2940251596704455],
+                [79.0, 0.24414632957810603],
+                [80.0, 0.19426749948576655],
+                [81.0, 0.19426749948576655],
+                [82.0, 0.15546129670278472],
+                [83.0, 0.11665509391980289],
+                [84.0, 0.11665509391980289],
+                [85.0, 0.08837397094186983],
+                [86.0, 0.060092847963936755],
+                [87.0, 0.060092847963936755],
+                [88.0, 0.043288634682055356],
+                [89.0, 0.026484421400173954],
+                [90.0, 0.018147569076503046],
+                [91.0, 0.00981071675283213],
+                [92.0, 0.00981071675283213],
+                [93.0, 0.0065067876363302515],
+                [94.0, 0.003202858519828373],
+                [95.0, 0.003202858519828373],
+                [96.0, 0.002194115088951055],
+                [97.0, 0.001185371658073736],
+                [98.0, 0.001185371658073736],
+                [99.0, 0.0012805546471740278],
+                [100.0, 0.0013757376362743196]
+              ],
+              "color": "#5cb85c",
+              "marker": {}
+            }
+          ]
+        },
+        {
+          "label": "Counts",
+          "uid": "fastqc_per_sequence_gc_content_plot_Counts",
+          "dconfig": {
+            "name": "Counts",
+            "ylab": "Count",
+            "tt_suffix": "",
+            "categories": []
+          },
+          "layout": {
+            "xaxis": {
+              "hoverformat": null,
+              "ticksuffix": "% GC",
+              "title": {
+                "text": "% GC"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": 100
+              }
+            },
+            "yaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": "Count"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": null
+              }
+            }
+          },
+          "trace_params": {
+            "hovertemplate": "<b>%{text}</b><br><b>%{x}</b>: %{y}<extra></extra>",
+            "mode": "lines",
+            "line": {
+              "width": 2
+            },
+            "marker": {
+              "size": 4
+            }
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "lines": [
+            {
+              "name": "SRR1067505_1",
+              "data": [
+                [0.0, 25799.0],
+                [1.0, 16728.5],
+                [2.0, 7658.0],
+                [3.0, 7658.0],
+                [4.0, 6372.5],
+                [5.0, 5087.0],
+                [6.0, 5087.0],
+                [7.0, 6562.0],
+                [8.0, 8037.0],
+                [9.0, 8037.0],
+                [10.0, 13402.5],
+                [11.0, 18768.0],
+                [12.0, 18768.0],
+                [13.0, 30535.5],
+                [14.0, 42303.0],
+                [15.0, 64798.5],
+                [16.0, 87294.0],
+                [17.0, 87294.0],
+                [18.0, 125167.5],
+                [19.0, 163041.0],
+                [20.0, 163041.0],
+                [21.0, 218067.5],
+                [22.0, 273094.0],
+                [23.0, 273094.0],
+                [24.0, 348455.0],
+                [25.0, 423816.0],
+                [26.0, 514402.5],
+                [27.0, 604989.0],
+                [28.0, 604989.0],
+                [29.0, 707904.0],
+                [30.0, 810819.0],
+                [31.0, 810819.0],
+                [32.0, 912979.5],
+                [33.0, 1015140.0],
+                [34.0, 1015140.0],
+                [35.0, 1101900.5],
+                [36.0, 1188661.0],
+                [37.0, 1188661.0],
+                [38.0, 1247715.0],
+                [39.0, 1306769.0],
+                [40.0, 1328235.0],
+                [41.0, 1349701.0],
+                [42.0, 1349701.0],
+                [43.0, 1350278.0],
+                [44.0, 1350855.0],
+                [45.0, 1350855.0],
+                [46.0, 1360219.0],
+                [47.0, 1369583.0],
+                [48.0, 1369583.0],
+                [49.0, 1377903.5],
+                [50.0, 1386224.0],
+                [51.0, 1334971.0],
+                [52.0, 1283718.0],
+                [53.0, 1283718.0],
+                [54.0, 1228836.0],
+                [55.0, 1173954.0],
+                [56.0, 1173954.0],
+                [57.0, 1115624.5],
+                [58.0, 1057295.0],
+                [59.0, 1057295.0],
+                [60.0, 972125.0],
+                [61.0, 886955.0],
+                [62.0, 886955.0],
+                [63.0, 794886.0],
+                [64.0, 702817.0],
+                [65.0, 620366.0],
+                [66.0, 537915.0],
+                [67.0, 537915.0],
+                [68.0, 471791.5],
+                [69.0, 405668.0],
+                [70.0, 405668.0],
+                [71.0, 352757.0],
+                [72.0, 299846.0],
+                [73.0, 299846.0],
+                [74.0, 257758.5],
+                [75.0, 215671.0],
+                [76.0, 182745.0],
+                [77.0, 149819.0],
+                [78.0, 149819.0],
+                [79.0, 124403.5],
+                [80.0, 98988.0],
+                [81.0, 98988.0],
+                [82.0, 79214.5],
+                [83.0, 59441.0],
+                [84.0, 59441.0],
+                [85.0, 45030.5],
+                [86.0, 30620.0],
+                [87.0, 30620.0],
+                [88.0, 22057.5],
+                [89.0, 13495.0],
+                [90.0, 9247.0],
+                [91.0, 4999.0],
+                [92.0, 4999.0],
+                [93.0, 3315.5],
+                [94.0, 1632.0],
+                [95.0, 1632.0],
+                [96.0, 1118.0],
+                [97.0, 604.0],
+                [98.0, 604.0],
+                [99.0, 652.5],
+                [100.0, 701.0]
+              ],
+              "color": "#5cb85c",
+              "marker": {}
+            }
+          ]
+        }
+      ],
+      "plot_type": "xy_line",
+      "pct_axis_update": {
+        "ticksuffix": "%",
+        "hoverformat": ".1f"
+      },
+      "axis_controlled_by_switches": ["yaxis"],
+      "p_active": false,
+      "l_active": false,
+      "square": null,
+      "config": {
+        "id": "fastqc_per_sequence_gc_content_plot",
+        "title": "FastQC: Per Sequence GC Content",
+        "xlab": "% GC",
+        "ylab": "Percentage",
+        "ymin": 0,
+        "xmax": 100,
+        "xmin": 0,
+        "yDecimals": false,
+        "tt_label": "<b>{point.x}% GC</b>: {point.y}",
+        "colors": {
+          "SRR1067505_1": "#5cb85c"
+        },
+        "data_labels": [
+          {
+            "name": "Percentages",
+            "ylab": "Percentage",
+            "tt_suffix": "%",
+            "categories": []
+          },
+          {
+            "name": "Counts",
+            "ylab": "Count",
+            "tt_suffix": "",
+            "categories": []
+          }
+        ]
+      }
+    },
+    "fastqc_per_base_n_content_plot": {
+      "id": "fastqc_per_base_n_content_plot",
+      "layout": {
+        "autosize": true,
+        "colorway": [
+          "#7cb5ec",
+          "#434348",
+          "#90ed7d",
+          "#f7a35c",
+          "#8085e9",
+          "#f15c80",
+          "#e4d354",
+          "#2b908f",
+          "#f45b5b",
+          "#91e8e1"
+        ],
+        "font": {
+          "color": "Black",
+          "family": "Lucida Grande"
+        },
+        "height": 500,
+        "hoverlabel": {
+          "namelength": -1
+        },
+        "margin": {
+          "b": 65,
+          "l": 60,
+          "pad": 5,
+          "r": 15,
+          "t": 50
+        },
+        "modebar": {
+          "activecolor": "rgba(0, 0, 0, 1)",
+          "bgcolor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(0, 0, 0, 0.5)"
+        },
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "showlegend": false,
+        "title": {
+          "font": {
+            "size": 20
+          },
+          "text": "FastQC: Per Base N Content",
+          "x": 0.5,
+          "xanchor": "center"
+        },
+        "xaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "yaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "hoverdistance": -1,
+        "shapes": [
+          {
+            "fillcolor": "#e6c3c3",
+            "layer": "below",
+            "line": {
+              "width": 0
+            },
+            "type": "rect",
+            "x0": 0,
+            "x1": 1,
+            "xref": "paper",
+            "y0": 20,
+            "y1": 100
+          },
+          {
+            "fillcolor": "#e6dcc3",
+            "layer": "below",
+            "line": {
+              "width": 0
+            },
+            "type": "rect",
+            "x0": 0,
+            "x1": 1,
+            "xref": "paper",
+            "y0": 5,
+            "y1": 20
+          },
+          {
+            "fillcolor": "#c3e6c3",
+            "layer": "below",
+            "line": {
+              "width": 0
+            },
+            "type": "rect",
+            "x0": 0,
+            "x1": 1,
+            "xref": "paper",
+            "y0": 0,
+            "y1": 5
+          }
+        ]
+      },
+      "datasets": [
+        {
+          "label": 1,
+          "uid": "fastqc_per_base_n_content_plot",
+          "dconfig": {
+            "categories": []
+          },
+          "layout": {
+            "xaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": "Position in Read (bp)"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": null
+              },
+              "range": [0, 36]
+            },
+            "yaxis": {
+              "hoverformat": null,
+              "ticksuffix": "%",
+              "title": {
+                "text": "Percentage N-Count"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": 100,
+                "minallowed": 0,
+                "maxallowed": null
+              },
+              "range": [0, 5]
+            }
+          },
+          "trace_params": {
+            "hovertemplate": "<b>%{text}</b><br><b>Base %{x}</b>: %{y:.2f}%<extra></extra>",
+            "mode": "lines",
+            "line": {
+              "width": 2
+            },
+            "marker": {
+              "size": 4
+            }
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "lines": [
+            {
+              "name": "SRR1067505_1",
+              "data": [
+                [1, 0.021746262453043758],
+                [2, 0.0016283827882444487],
+                [3, 0.0],
+                [4, 0.0005500557244571549],
+                [5, 0.0],
+                [6, 0.12154597681618598],
+                [7, 0.00862661651029835],
+                [8, 1.0892192563508018e-5],
+                [9, 0.00011436802191683419],
+                [10, 1.0892192563508018e-5],
+                [11, 0.0],
+                [12, 0.054172319714607134],
+                [13, 5.99070590992941e-5],
+                [14, 0.0],
+                [15, 0.0],
+                [16, 0.1419470534876365],
+                [17, 0.07132752300213226],
+                [18, 0.0007406690943185453],
+                [19, 0.0013887545518472724],
+                [20, 0.0],
+                [21, 0.07578787585688879],
+                [22, 5.446096281754009e-5],
+                [23, 0.011142712992468702],
+                [24, 0.008321635118520125],
+                [25, 0.0027992934888215605],
+                [26, 0.003659776701338694],
+                [27, 0.0021076392610388014],
+                [28, 0.00782604035688051],
+                [29, 0.011834367220251461],
+                [30, 0.012378976848426862],
+                [31, 0.015477805632744895],
+                [32, 0.008376096081337665],
+                [33, 0.04716319379998972],
+                [34, 0.053447988909133846],
+                [35, 0.02537880867297368],
+                [36, 0.03229535095080127]
+              ],
+              "color": "#5cb85c",
+              "marker": {
+                "size": 4,
+                "color": "#5cb85c"
+              }
+            }
+          ]
+        }
+      ],
+      "plot_type": "xy_line",
+      "pct_axis_update": {
+        "ticksuffix": "%",
+        "hoverformat": ".1f"
+      },
+      "axis_controlled_by_switches": ["yaxis"],
+      "p_active": false,
+      "l_active": false,
+      "square": null,
+      "config": {
+        "id": "fastqc_per_base_n_content_plot",
+        "title": "FastQC: Per Base N Content",
+        "ylab": "Percentage N-Count",
+        "xlab": "Position in Read (bp)",
+        "yCeiling": 100,
+        "yMinRange": 5,
+        "ymin": 0,
+        "xmin": 0,
+        "xDecimals": false,
+        "colors": {
+          "SRR1067505_1": "#5cb85c"
+        },
+        "tt_label": "<b>Base {point.x}</b>: {point.y:.2f}%",
+        "yPlotBands": [
+          {
+            "from": 20,
+            "to": 100,
+            "color": "#e6c3c3"
+          },
+          {
+            "from": 5,
+            "to": 20,
+            "color": "#e6dcc3"
+          },
+          {
+            "from": 0,
+            "to": 5,
+            "color": "#c3e6c3"
+          }
+        ]
+      }
+    },
+    "fastqc_sequence_duplication_levels_plot": {
+      "id": "fastqc_sequence_duplication_levels_plot",
+      "layout": {
+        "autosize": true,
+        "colorway": [
+          "#7cb5ec",
+          "#434348",
+          "#90ed7d",
+          "#f7a35c",
+          "#8085e9",
+          "#f15c80",
+          "#e4d354",
+          "#2b908f",
+          "#f45b5b",
+          "#91e8e1"
+        ],
+        "font": {
+          "color": "Black",
+          "family": "Lucida Grande"
+        },
+        "height": 500,
+        "hoverlabel": {
+          "namelength": -1
+        },
+        "margin": {
+          "b": 65,
+          "l": 60,
+          "pad": 5,
+          "r": 15,
+          "t": 50
+        },
+        "modebar": {
+          "activecolor": "rgba(0, 0, 0, 1)",
+          "bgcolor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(0, 0, 0, 0.5)"
+        },
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "showlegend": false,
+        "title": {
+          "font": {
+            "size": 20
+          },
+          "text": "FastQC: Sequence Duplication Levels",
+          "x": 0.5,
+          "xanchor": "center"
+        },
+        "xaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "yaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)"
+        },
+        "hoverdistance": -1
+      },
+      "datasets": [
+        {
+          "label": 1,
+          "uid": "fastqc_sequence_duplication_levels_plot",
+          "dconfig": {
+            "categories": [
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0,
+              6.0,
+              7.0,
+              8.0,
+              9.0,
+              ">10",
+              ">50",
+              ">100",
+              ">500",
+              ">1k",
+              ">5k",
+              ">10k+"
+            ]
+          },
+          "layout": {
+            "xaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": "Sequence Duplication Level"
+              },
+              "rangemode": "normal",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": null,
+                "maxallowed": null
+              },
+              "type": "category"
+            },
+            "yaxis": {
+              "hoverformat": ",.2f",
+              "ticksuffix": "%",
+              "title": {
+                "text": "% of Library"
+              },
+              "rangemode": "tozero",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": 0,
+                "maxallowed": 100
+              }
+            }
+          },
+          "trace_params": {
+            "hovertemplate": "<b>%{text}</b><br>%{x}: %{y}<extra></extra>",
+            "mode": "lines",
+            "line": {
+              "width": 2
+            },
+            "marker": {
+              "size": 4
+            }
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "lines": [
+            {
+              "name": "SRR1067505_1",
+              "data": [
+                84.86695932110335, 12.226824355441291, 1.9882815610803997,
+                0.35022304965001694, 0.11259915421833573, 0.08759848095519944,
+                0.037551362329234714, 0.01252017334097974, 0.012523226401560894,
+                0.213681110402904, 0.025423976244243512, 0.06581422883248206,
+                0.0, 0.0, 0.0, 0.0
+              ],
+              "color": "#5cb85c",
+              "marker": {}
+            }
+          ]
+        }
+      ],
+      "plot_type": "xy_line",
+      "pct_axis_update": {
+        "ticksuffix": "%",
+        "hoverformat": ".1f"
+      },
+      "axis_controlled_by_switches": ["yaxis"],
+      "p_active": false,
+      "l_active": false,
+      "square": null,
+      "config": {
+        "id": "fastqc_sequence_duplication_levels_plot",
+        "title": "FastQC: Sequence Duplication Levels",
+        "ylab": "% of Library",
+        "xlab": "Sequence Duplication Level",
+        "ymax": 100,
+        "ymin": 0,
+        "colors": {
+          "SRR1067505_1": "#5cb85c"
+        },
+        "tt_decimals": 2,
+        "tt_suffix": "%",
+        "data_labels": [
+          {
+            "categories": [
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0,
+              6.0,
+              7.0,
+              8.0,
+              9.0,
+              ">10",
+              ">50",
+              ">100",
+              ">500",
+              ">1k",
+              ">5k",
+              ">10k+"
+            ]
+          }
+        ]
+      }
+    },
+    "violin-fastqc_top_overrepresented_sequences_table": {
+      "id": "violin-fastqc_top_overrepresented_sequences_table",
+      "layout": {
+        "autosize": true,
+        "colorway": [
+          "#7cb5ec",
+          "#434348",
+          "#90ed7d",
+          "#f7a35c",
+          "#8085e9",
+          "#f15c80",
+          "#e4d354",
+          "#2b908f",
+          "#f45b5b",
+          "#91e8e1"
+        ],
+        "font": {
+          "color": "Black",
+          "family": "Lucida Grande"
+        },
+        "height": 500,
+        "hoverlabel": {
+          "namelength": -1
+        },
+        "margin": {
+          "b": 40,
+          "l": 60,
+          "pad": 0,
+          "r": 15,
+          "t": 50
+        },
+        "modebar": {
+          "activecolor": "rgba(0, 0, 0, 1)",
+          "bgcolor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(0, 0, 0, 0.5)"
+        },
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "showlegend": false,
+        "title": {
+          "font": {
+            "size": 20
+          },
+          "text": "FastQC: Top overrepresented sequences",
+          "x": 0.5,
+          "xanchor": "center"
+        },
+        "xaxis": {
+          "automargin": false,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.1)",
+          "tickfont": {
+            "color": "rgba(0,0,0,0.5)",
+            "size": 9
+          },
+          "zerolinecolor": "rgba(0,0,0,0.1)"
+        },
+        "yaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.1)",
+          "tickfont": {
+            "color": "rgba(0,0,0,0.5)",
+            "size": 9
+          },
+          "zerolinecolor": "rgba(0,0,0,0.1)"
+        },
+        "violingap": 0,
+        "grid": {
+          "columns": 1,
+          "roworder": "top to bottom",
+          "ygap": 0.4
+        }
+      },
+      "datasets": [
+        {
+          "label": 1,
+          "uid": "violin-fastqc_top_overrepresented_sequences_table",
+          "dconfig": {},
+          "layout": {
+            "xaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": null
+              },
+              "rangemode": "normal",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": null,
+                "maxallowed": null
+              }
+            },
+            "yaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": null
+              },
+              "rangemode": "normal",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": null,
+                "maxallowed": null
+              }
+            }
+          },
+          "trace_params": {
+            "hovertemplate": "<b>%{text}</b>: %{x}<extra></extra>",
+            "orientation": "h",
+            "box": {
+              "visible": true
+            },
+            "meanline": {
+              "visible": true
+            },
+            "fillcolor": "grey",
+            "line": {
+              "width": 2,
+              "color": "grey"
+            },
+            "opacity": 0.5,
+            "points": false,
+            "hoveron": "points"
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "metrics": [],
+          "header_by_metric": {},
+          "violin_values_by_sample_by_metric": {},
+          "scatter_values_by_sample_by_metric": {},
+          "all_samples": [],
+          "scatter_trace_params": {
+            "mode": "markers",
+            "marker": {
+              "size": 4,
+              "color": "rgba(0,0,0,1)"
+            },
+            "showlegend": false,
+            "hovertemplate": "<b>%{text}</b>: %{x}<extra></extra>",
+            "hoverlabel": {
+              "bgcolor": "white"
+            }
+          }
+        }
+      ],
+      "plot_type": "violin",
+      "pct_axis_update": {
+        "ticksuffix": "%",
+        "hoverformat": ".1f"
+      },
+      "axis_controlled_by_switches": [],
+      "p_active": false,
+      "l_active": false,
+      "square": null,
+      "config": {
+        "namespace": "FastQC",
+        "table_title": "FastQC: Top overrepresented sequences",
+        "col1_header": "Overrepresented sequence",
+        "sortRows": false
+      },
+      "static": true,
+      "violin_height": 70,
+      "extra_height": 63
+    },
+    "fastqc-status-check-heatmap": {
+      "id": "fastqc-status-check-heatmap",
+      "layout": {
+        "autosize": true,
+        "colorway": [
+          "#7cb5ec",
+          "#434348",
+          "#90ed7d",
+          "#f7a35c",
+          "#8085e9",
+          "#f15c80",
+          "#e4d354",
+          "#2b908f",
+          "#f45b5b",
+          "#91e8e1"
+        ],
+        "font": {
+          "color": "Black",
+          "family": "Lucida Grande"
+        },
+        "height": 300,
+        "hoverlabel": {
+          "namelength": -1
+        },
+        "margin": {
+          "b": 65,
+          "l": 60,
+          "pad": 5,
+          "r": 15,
+          "t": 50
+        },
+        "modebar": {
+          "activecolor": "rgba(0, 0, 0, 1)",
+          "bgcolor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(0, 0, 0, 0.5)"
+        },
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "showlegend": false,
+        "title": {
+          "font": {
+            "size": 20
+          },
+          "text": "FastQC: Status Checks",
+          "x": 0.5,
+          "xanchor": "center"
+        },
+        "xaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)",
+          "type": "category",
+          "tickmode": "array",
+          "tickvals": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+          "ticktext": [
+            "Basic <br>Statistics",
+            "Per Base <br>Sequence <br>Quality",
+            "Per Tile <br>Sequence <br>Quality",
+            "Per <br>Sequence <br>Quality <br>Scores",
+            "Per Base <br>Sequence <br>Content",
+            "Per <br>Sequence <br>GC Content",
+            "Per Base N<br> Content",
+            "Sequence <br>Length <br>Distribution",
+            "Sequence <br>Duplication<br> Levels",
+            "Overrepresented<br> Sequences",
+            "Adapter <br>Content",
+            "Kmer <br>Content"
+          ],
+          "tickangle": 0,
+          "showgrid": false
+        },
+        "yaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.05)",
+          "tickfont": {
+            "color": "rgba(0,0,0,1)",
+            "size": 10
+          },
+          "zerolinecolor": "rgba(0,0,0,0.05)",
+          "type": "category",
+          "tickmode": "array",
+          "tickvals": [0],
+          "ticktext": ["SRR1067505_1"],
+          "showgrid": false,
+          "autorange": "reversed",
+          "ticklabelposition": "outside right"
+        }
+      },
+      "datasets": [
+        {
+          "label": 1,
+          "uid": "fastqc-status-check-heatmap",
+          "dconfig": {},
+          "layout": {
+            "xaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": null
+              },
+              "rangemode": "normal",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": null,
+                "maxallowed": null
+              }
+            },
+            "yaxis": {
+              "hoverformat": ",.1f",
+              "ticksuffix": "",
+              "title": {
+                "text": null
+              },
+              "rangemode": "normal",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": null,
+                "maxallowed": null
+              }
+            }
+          },
+          "trace_params": {
+            "colorscale": [
+              [0.0, "#ffffff"],
+              [0.25, "#d9534f"],
+              [0.5, "#fee391"],
+              [1.0, "#5cb85c"]
+            ],
+            "reversescale": false,
+            "showscale": false,
+            "zmin": 0,
+            "zmax": 1
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "rows": [[1, 1, 0.25, 1, 1, 1, 1, 1, 1, 1, 1, 0.25]],
+          "xcats": [
+            "Basic Statistics",
+            "Per Base Sequence Quality",
+            "Per Tile Sequence Quality",
+            "Per Sequence Quality Scores",
+            "Per Base Sequence Content",
+            "Per Sequence GC Content",
+            "Per Base N Content",
+            "Sequence Length Distribution",
+            "Sequence Duplication Levels",
+            "Overrepresented Sequences",
+            "Adapter Content",
+            "Kmer Content"
+          ],
+          "ycats": ["SRR1067505_1"]
+        }
+      ],
+      "plot_type": "heatmap",
+      "pct_axis_update": {
+        "ticksuffix": "%",
+        "hoverformat": ".1f"
+      },
+      "axis_controlled_by_switches": [],
+      "p_active": false,
+      "l_active": false,
+      "square": false,
+      "config": {
+        "id": "fastqc-status-check-heatmap",
+        "title": "FastQC: Status Checks",
+        "xTitle": "Section Name",
+        "yTitle": "Sample",
+        "min": 0,
+        "max": 1,
+        "square": false,
+        "colstops": [
+          [0, "#ffffff"],
+          [0.25, "#d9534f"],
+          [0.5, "#fee391"],
+          [1, "#5cb85c"]
+        ],
+        "decimalPlaces": 1,
+        "legend": false,
+        "datalabels": false,
+        "xcats_samples": false,
+        "angled_xticks": false
+      },
+      "xcats_samples": false,
+      "ycats_samples": true
+    },
+    "violin-general_stats_table": {
+      "id": "violin-general_stats_table",
+      "layout": {
+        "autosize": true,
+        "colorway": [
+          "#7cb5ec",
+          "#434348",
+          "#90ed7d",
+          "#f7a35c",
+          "#8085e9",
+          "#f15c80",
+          "#e4d354",
+          "#2b908f",
+          "#f45b5b",
+          "#91e8e1"
+        ],
+        "font": {
+          "color": "Black",
+          "family": "Lucida Grande"
+        },
+        "height": 500,
+        "hoverlabel": {
+          "namelength": -1
+        },
+        "margin": {
+          "b": 40,
+          "l": 60,
+          "pad": 0,
+          "r": 15,
+          "t": 50
+        },
+        "modebar": {
+          "activecolor": "rgba(0, 0, 0, 1)",
+          "bgcolor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(0, 0, 0, 0.5)"
+        },
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "showlegend": false,
+        "title": {
+          "font": {
+            "size": 20
+          },
+          "text": "General Statistics",
+          "x": 0.5,
+          "xanchor": "center"
+        },
+        "xaxis": {
+          "automargin": false,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.1)",
+          "tickfont": {
+            "color": "rgba(0,0,0,0.5)",
+            "size": 9
+          },
+          "zerolinecolor": "rgba(0,0,0,0.1)"
+        },
+        "yaxis": {
+          "automargin": true,
+          "color": "rgba(0,0,0,0.3)",
+          "gridcolor": "rgba(0,0,0,0.1)",
+          "tickfont": {
+            "color": "rgba(0,0,0,0.5)",
+            "size": 9
+          },
+          "zerolinecolor": "rgba(0,0,0,0.1)"
+        },
+        "violingap": 0,
+        "grid": {
+          "columns": 1,
+          "roworder": "top to bottom",
+          "ygap": 0.4
+        }
+      },
+      "datasets": [
+        {
+          "label": 1,
+          "uid": "violin-general_stats_table",
+          "dconfig": {},
+          "layout": {
+            "xaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": null
+              },
+              "rangemode": "normal",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": null,
+                "maxallowed": null
+              }
+            },
+            "yaxis": {
+              "hoverformat": null,
+              "ticksuffix": "",
+              "title": {
+                "text": null
+              },
+              "rangemode": "normal",
+              "autorangeoptions": {
+                "clipmin": null,
+                "clipmax": null,
+                "minallowed": null,
+                "maxallowed": null
+              }
+            }
+          },
+          "trace_params": {
+            "hovertemplate": "<b>%{text}</b>: %{x}<extra></extra>",
+            "orientation": "h",
+            "box": {
+              "visible": true
+            },
+            "meanline": {
+              "visible": true
+            },
+            "fillcolor": "grey",
+            "line": {
+              "width": 2,
+              "color": "grey"
+            },
+            "opacity": 0.5,
+            "points": false,
+            "hoveron": "points"
+          },
+          "pct_range": {
+            "xaxis": {
+              "min": 0,
+              "max": 100
+            },
+            "yaxis": {
+              "min": 0,
+              "max": 100
+            }
+          },
+          "metrics": [
+            "mqc-generalstats-fastqc-percent_duplicates",
+            "mqc-generalstats-fastqc-percent_gc",
+            "mqc-generalstats-fastqc-avg_sequence_length",
+            "mqc-generalstats-fastqc-median_sequence_length",
+            "mqc-generalstats-fastqc-percent_fails",
+            "mqc-generalstats-fastqc-total_sequences"
+          ],
+          "header_by_metric": {
+            "mqc-generalstats-fastqc-percent_duplicates": {
+              "namespace": "FastQC",
+              "title": "% Dups",
+              "description": "% Duplicate Reads",
+              "dmax": 100.0,
+              "dmin": 0.0,
+              "suffix": "%",
+              "hidden": null,
+              "modify": null,
+              "xaxis": {
+                "ticksuffix": "%",
+                "tickvals": null,
+                "range": [-0.5, 100.5025]
+              },
+              "show_points": true,
+              "show_only_outliers": false,
+              "hoverformat": ".2f"
+            },
+            "mqc-generalstats-fastqc-percent_gc": {
+              "namespace": "FastQC",
+              "title": "% GC",
+              "description": "Average % GC Content",
+              "dmax": 100.0,
+              "dmin": 0.0,
+              "suffix": "%",
+              "hidden": null,
+              "modify": null,
+              "xaxis": {
+                "ticksuffix": "%",
+                "tickvals": null,
+                "range": [-0.5, 100.5025]
+              },
+              "show_points": true,
+              "show_only_outliers": false,
+              "hoverformat": ".2f"
+            },
+            "mqc-generalstats-fastqc-avg_sequence_length": {
+              "namespace": "FastQC",
+              "title": "Average Read Length",
+              "description": "Average Read Length (bp)",
+              "dmax": 36.0,
+              "dmin": 0.0,
+              "suffix": " bp",
+              "hidden": true,
+              "modify": null,
+              "xaxis": {
+                "ticksuffix": " bp",
+                "tickvals": null,
+                "range": [-0.18, 36.1809]
+              },
+              "show_points": true,
+              "show_only_outliers": false,
+              "hoverformat": ".2f"
+            },
+            "mqc-generalstats-fastqc-median_sequence_length": {
+              "namespace": "FastQC",
+              "title": "Median Read Length",
+              "description": "Median Read Length (bp)",
+              "dmax": 36.0,
+              "dmin": 0.0,
+              "suffix": " bp",
+              "hidden": true,
+              "modify": null,
+              "tt_decimals": 2,
+              "xaxis": {
+                "ticksuffix": " bp",
+                "tickvals": null,
+                "range": [-0.18, 36.1809]
+              },
+              "show_points": true,
+              "show_only_outliers": false
+            },
+            "mqc-generalstats-fastqc-percent_fails": {
+              "namespace": "FastQC",
+              "title": "% Failed",
+              "description": "Percentage of modules failed in FastQC report (includes those not plotted here)",
+              "dmax": 100.0,
+              "dmin": 0.0,
+              "suffix": "%",
+              "hidden": true,
+              "modify": null,
+              "xaxis": {
+                "ticksuffix": "%",
+                "tickvals": null,
+                "range": [-0.5, 100.5025]
+              },
+              "show_points": true,
+              "show_only_outliers": false,
+              "hoverformat": ".2f"
+            },
+            "mqc-generalstats-fastqc-total_sequences": {
+              "namespace": "FastQC",
+              "title": "M Seqs",
+              "description": "Total Sequences (millions)",
+              "dmax": 18.361776,
+              "dmin": 0.0,
+              "suffix": "&nbsp;M",
+              "hidden": null,
+              "xaxis": {
+                "ticksuffix": "&nbsp;M",
+                "tickvals": null,
+                "range": [-0.09180888, 18.4540439244]
+              },
+              "show_points": true,
+              "show_only_outliers": false,
+              "hoverformat": ".2f"
+            }
+          },
+          "violin_values_by_sample_by_metric": {
+            "mqc-generalstats-fastqc-percent_duplicates": {
+              "SRR1067505_1": 8.211571393929418
+            },
+            "mqc-generalstats-fastqc-percent_gc": {
+              "SRR1067505_1": 47.0
+            },
+            "mqc-generalstats-fastqc-avg_sequence_length": {
+              "SRR1067505_1": 36.0
+            },
+            "mqc-generalstats-fastqc-median_sequence_length": {
+              "SRR1067505_1": 36
+            },
+            "mqc-generalstats-fastqc-percent_fails": {
+              "SRR1067505_1": 16.666666666666664
+            },
+            "mqc-generalstats-fastqc-total_sequences": {
+              "SRR1067505_1": 18.361776
+            }
+          },
+          "scatter_values_by_sample_by_metric": {
+            "mqc-generalstats-fastqc-percent_duplicates": {},
+            "mqc-generalstats-fastqc-percent_gc": {},
+            "mqc-generalstats-fastqc-avg_sequence_length": {},
+            "mqc-generalstats-fastqc-median_sequence_length": {},
+            "mqc-generalstats-fastqc-percent_fails": {},
+            "mqc-generalstats-fastqc-total_sequences": {}
+          },
+          "all_samples": ["SRR1067505_1"],
+          "scatter_trace_params": {
+            "mode": "markers",
+            "marker": {
+              "size": 4,
+              "color": "rgba(0,0,0,1)"
+            },
+            "showlegend": false,
+            "hovertemplate": "<b>%{text}</b>: %{x}<extra></extra>",
+            "hoverlabel": {
+              "bgcolor": "white"
+            }
+          }
+        }
+      ],
+      "plot_type": "violin",
+      "pct_axis_update": {
+        "ticksuffix": "%",
+        "hoverformat": ".1f"
+      },
+      "axis_controlled_by_switches": [],
+      "p_active": false,
+      "l_active": false,
+      "square": null,
+      "config": {
+        "table_title": "General Statistics",
+        "save_file": true,
+        "raw_data_fn": "multiqc_general_stats"
+      },
+      "static": true,
+      "violin_height": 70,
+      "extra_height": 63
+    }
+  },
+  "report_saved_raw_data": {
+    "multiqc_fastqc": {
+      "SRR1067505_1": {
+        "Filename": "SRR1067505_1.fastq.gz",
+        "File type": "Conventional base calls",
+        "Encoding": "Sanger / Illumina 1.9",
+        "Total Sequences": 18361776.0,
+        "Sequences flagged as poor quality": 0.0,
+        "Sequence length": 36.0,
+        "%GC": 47.0,
+        "total_deduplicated_percentage": 91.78842860607058,
+        "avg_sequence_length": 36.0,
+        "median_sequence_length": 36,
+        "basic_statistics": "pass",
+        "per_base_sequence_quality": "pass",
+        "per_tile_sequence_quality": "fail",
+        "per_sequence_quality_scores": "pass",
+        "per_base_sequence_content": "pass",
+        "per_sequence_gc_content": "pass",
+        "per_base_n_content": "pass",
+        "sequence_length_distribution": "pass",
+        "sequence_duplication_levels": "pass",
+        "overrepresented_sequences": "pass",
+        "adapter_content": "pass",
+        "kmer_content": "fail"
+      }
+    },
+    "multiqc_general_stats": {
+      "SRR1067505_1": {
+        "FastQC_mqc-generalstats-fastqc-percent_duplicates": 8.211571393929418,
+        "FastQC_mqc-generalstats-fastqc-percent_gc": 47.0,
+        "FastQC_mqc-generalstats-fastqc-avg_sequence_length": 36.0,
+        "FastQC_mqc-generalstats-fastqc-median_sequence_length": 36,
+        "FastQC_mqc-generalstats-fastqc-percent_fails": 16.666666666666664,
+        "FastQC_mqc-generalstats-fastqc-total_sequences": 18361776.0
+      }
+    }
+  },
+  "config_analysis_dir_abs": [
+    "/Users/vlad/git/MultiQC/test_data/data/modules/fastqc/v0.11.2"
+  ],
+  "config_analysis_dir": ["test_data/data/modules/fastqc/v0.11.2"],
+  "config_creation_date": "2024-02-21, 18:40 CET",
+  "config_git_hash": "549bd0f7f2b557a60d4f5eff3034cd78dff3fb29",
+  "config_intro_text": null,
+  "config_report_comment": null,
+  "config_report_header_info": null,
+  "config_script_path": "/Users/vlad/git/MultiQC/multiqc/utils",
+  "config_short_version": "1.21.dev0",
+  "config_subtitle": null,
+  "config_title": null,
+  "config_version": "1.21.dev0 (549bd0f)",
+  "config_output_dir": "/Users/vlad/git/MultiQC"
+}
