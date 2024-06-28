@@ -33,7 +33,7 @@ class Config(object):
     CACHE_TYPE = "simple"  # Can be "memcached", "redis", etc.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JOBS = [
-        {"id": "job1", "func": upload_reports_job, "trigger": "interval", "seconds": 30}
+        {"id": "job1", "func": upload_reports_job, "trigger": "interval", "seconds": 30, "max_instances": 1}
     ]
     SCHEDULER_API_ENABLED = True
     EXTRA_CONFIG = env("MEGAQC_CONFIG", None)
