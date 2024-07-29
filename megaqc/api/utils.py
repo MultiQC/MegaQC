@@ -155,15 +155,16 @@ def handle_report_data(user, report_data):
 
             # Go through each data key
             for d_key in report_data["report_saved_raw_data"][s_key][s_name]:
+                section_data_key = "{}__{}".format(section, d_key)
                 # Save / load the data type
                 key_type = (
                     db.session.query(SampleDataType)
-                    .filter(SampleDataType.data_id == d_key)
+                    .filter(SampleDataType.data_key == section_data_key)
                     .first()
                 )
                 if not key_type:
                     key_type = SampleDataType(
-                        data_key="{}__{}".format(section, d_key),
+                        data_key=section_data_key,
                         data_section=section,
                         data_id=d_key,
                     )
