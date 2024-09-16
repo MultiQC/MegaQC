@@ -22,7 +22,7 @@
     "axios": "^0.21.0",
     "babel-loader": "^8.2.2",
     "classnames": "^2.2.6",
-    "css-loader": "^5.0.1",
+    "css-loader": "^7.1.2",
     "date-fns": "^2.16.1",
     "formik": "https://pkg.csb.dev/jaredpalmer/formik/commit/157603ab/formik",
     "formik-effect": "^1.2.0",
