@@ -43,7 +43,7 @@ jobs:
           python setup.py sdist bdist_wheel
 
       - name: Upload to existing release
-        uses: AButler/upload-release-assets@v2.0
+        uses: AButler/upload-release-assets@v3.0
         with:
           files: "dist/*"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
