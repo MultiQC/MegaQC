@@ -56,7 +56,7 @@ plotly = ">2,<5"
 pyyaml = "^5.1"
 SQLAlchemy = "^1.1"
 Werkzeug = ">0.14,<2.0"
-WTForms = { version = "^2.1", extras = ["email"] }
+WTForms = { version = ">=2.1,<4.0", extras = ["email"] }
 flask_restful = "^0.3"
 flask-marshmallow = "^0.10"
 marshmallow = "^3.0"
