@@ -117,7 +117,7 @@ setup(
             "factory-boy>=2.12,<4.0",
             "livereload~=2.5",
             # Lint and code style
-            "flake8~=3.7",
+            "flake8>=3.7,<8.0",
             "flake8-blind-except~=0.1",
             "flake8-debugger>=3.1,<5.0",
             "flake8-docstrings~=1.3",
