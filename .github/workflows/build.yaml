@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - uses: snok/install-poetry@v1.3.3
+      - uses: snok/install-poetry@v1.4.1
 
       - name: Install all extra features of poetry
         run: poetry install --extras "dev"
