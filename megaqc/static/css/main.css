@@ -154,6 +154,7 @@ footer p a {
 }
 .new-filter-group-card .card-body .filter-group-table {
     margin: 0;
+    overflow-x: visible;
 }
 .new-filter-group-card .card-body .filter-group-table td {
     /*min-width: 200px;*/
