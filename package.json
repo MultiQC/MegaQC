@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "webpack --mode development --watch",
-    "build": "webpack --mode production"
+    "watch": "NODE_OPTIONS='--openssl-legacy-provider' webpack --mode development --watch",
+    "build": "NODE_OPTIONS='--openssl-legacy-provider' webpack --mode production"
   },
   "keywords": [],
   "author": "",

@@ -9,10 +9,15 @@ import os
 import sys
 
 import click
-import pkg_resources
 import sqlalchemy
 from environs import Env
 from flask.cli import FlaskGroup
+
+try:
+    from importlib.metadata import version as get_version
+except ImportError:
+    # Python < 3.8 fallback
+    from importlib_metadata import version as get_version
 
 from megaqc import settings
 
@@ -63,7 +68,7 @@ def cli(ctx):
 
 
 def main():
-    version = pkg_resources.get_distribution("megaqc").version
+    version = get_version("megaqc")
     print("This is MegaQC v{}\n".format(version))
 
     if env.bool("FLASK_DEBUG", False):

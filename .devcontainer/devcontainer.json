@@ -1,0 +1,82 @@
+{
+	"name": "MegaQC Development",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspace",
+	
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"nodeGypDependencies": true,
+			"version": "18"
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"configureZshAsDefaultShell": true,
+			"installOhMyZsh": true,
+			"upgradePackages": true
+		},
+		"ghcr.io/rails/devcontainer/features/postgres-client:1": {}
+	},
+
+	"runArgs": ["--init"],
+
+	"postCreateCommand": {
+		"install-uv": "curl -LsSf https://astral.sh/uv/install.sh | sh",
+		"install-npm-deps": "npm install",
+		"install-python-deps": "uv sync --dev",
+		"build-frontend": "npm run build"
+	},
+
+	"postStartCommand": "echo '🚀 MegaQC dev container ready! Run: ~/.cargo/bin/uv run python -m megaqc.cli run'",
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.flake8",
+				"ms-python.black-formatter",
+				"ms-python.isort",
+				"esbenp.prettier-vscode",
+				"ms-vscode.vscode-typescript-next",
+				"ms-vscode.vscode-json",
+				"redhat.vscode-yaml",
+				"GitHub.copilot"
+			],
+			"settings": {
+				"python.defaultInterpreterPath": "./.venv/bin/python",
+				"python.linting.enabled": true,
+				"python.linting.flake8Enabled": true,
+				"python.formatting.provider": "black",
+				"editor.formatOnSave": true,
+				"files.exclude": {
+					"**/__pycache__": true,
+					"**/*.pyc": true,
+					"**/node_modules": true
+				}
+			}
+		}
+	},
+
+	"forwardPorts": [5000, 8000, 5432],
+	"portsAttributes": {
+		"5000": {
+			"label": "MegaQC Flask Dev Server",
+			"onAutoForward": "notify"
+		},
+		"5432": {
+			"label": "PostgreSQL Database",
+			"onAutoForward": "silent"
+		}
+	},
+
+	"containerEnv": {
+		"MEGAQC_PRODUCTION": "0",
+		"FLASK_ENV": "development",
+		"FLASK_DEBUG": "1"
+	},
+
+	"remoteUser": "vscode",
+	
+	"shutdownAction": "stopCompose"
+} 

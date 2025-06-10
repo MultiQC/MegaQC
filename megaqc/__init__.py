@@ -2,6 +2,10 @@
 """
 Main application package.
 """
-import pkg_resources
+try:
+    from importlib.metadata import version as get_version
+except ImportError:
+    # Python < 3.8 fallback
+    from importlib_metadata import version as get_version
 
-version = pkg_resources.get_distribution("megaqc").version
+version = get_version("megaqc")
